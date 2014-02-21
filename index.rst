@@ -19,7 +19,7 @@
     _templates/host_aggregates
 
 
-技术积累
+openstack学习 
 ==================
 
 .. toctree::
