@@ -1,0 +1,30 @@
+.. niusmallnan documentation master file, created by
+   sphinx-quickstart on Tue Feb 18 13:49:43 2014.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+=======================================
+欢迎来访
+=======================================
+这里暂时放一些日常些的技术文档、项目方案之类的
+
+
+技术方案
+==================
+
+.. toctree::
+    :maxdepth: 1
+    
+    _templates/tenant_solution
+    _templates/host_aggregates
+
+
+技术积累
+==================
+
+.. toctree::
+    :maxdepth: 1
+    
+    _templates/flavor_metadata
+
+
