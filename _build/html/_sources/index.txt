@@ -17,7 +17,7 @@
     
     _templates/tenant_solution
     _templates/host_aggregates
-
+    _templates/api_signature
 
 openstack学习 
 ==================
@@ -26,5 +26,16 @@ openstack学习 
     :maxdepth: 1
     
     _templates/flavor_metadata
+
+
+杂七杂八 
+==================
+
+.. toctree::
+    :maxdepth: 1
+    
+    _templates/python_exam
+
+
 
 
