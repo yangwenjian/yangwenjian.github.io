@@ -77,7 +77,7 @@ FQA
 1. Client是如何拥有UUID和SigningKey的::
 
     通常使用SDK开发时，UUID和SigningKey是可以直接发放给用户使用的，
-    也可用使用username和password通过请求获取。
+    也可用使用username和password通过Https请求获取。
 
 2. 如果我们没有使用HTTPS，而且消息体被截获，那么怎么保证API不被恶意调用，所谓的中间人攻击::
 

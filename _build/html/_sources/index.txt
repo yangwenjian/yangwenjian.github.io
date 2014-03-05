@@ -18,6 +18,10 @@
     _templates/tenant_solution
     _templates/host_aggregates
     _templates/api_signature
+    _templates/user_system
+    _templates/sdn_test
+    
+
 
 openstack学习 
 ==================
