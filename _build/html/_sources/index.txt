@@ -30,8 +30,17 @@ openstack学习 
     :maxdepth: 1
     
     _templates/flavor_metadata
+    _templates/monkey_patch
 
 
+openstack部署
+==================
+.. toctree::
+    :maxdepth: 1
+    
+    _templates/openstack/arista_setup
+
+    
 杂七杂八 
 ==================
 
