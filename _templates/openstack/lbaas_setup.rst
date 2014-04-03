@@ -174,8 +174,26 @@ LBaas(负载均衡即服务)是基于neutron组件实现的L4-L7层的服务，�
 
 
 
-缺点分析
+优缺点分析
 ------------
+关于Haproxy:
+
+- HAProxy是支持虚拟主机的，可以工作在4、7层(支持多网段)；
+
+- 能够补充Nginx的一些缺点比如Session的保持，Cookie的引导等工作；
+
+- 支持url检测后端的服务器；
+
+- 它跟LVS一样，本身仅仅就只是一款负载均衡软件；单纯从效率上来讲HAProxy更会比Nginx有更出色的负载均衡速度，在并发处理上也是优于Nginx的；
+
+- HAProxy可以对Mysql读进行负载均衡，对后端的MySQL节点进行检测和负载均衡，不过在后端的MySQL slaves数量超过10台时性能不如LVS；
+
+- HAProxy的算法较多，达到8种；
+
+
+
+关于LBaas-agent:
+
 - Haproxy可以说是软件负载均衡里面做的很顶级的了，性能和功能上还都可以，不过只用haproxy会有单点故障，所以通常会Haproxy+keepAlived一起使用，保证高可用性，这点openstack还不支持。
 
 - lbaas-agent是官方的一个参考实现，所以真正离商用还有距离

@@ -205,7 +205,17 @@ backend 2b66cbf3-a125-4da1-a3c2-3d50a23ef243
 <p>如果你对Haproxy还算了解，那么基本能看出个大概意思，用一句话说明Lbaas-agent做的事，就是把对Lbaas-agent的操作翻译为Haproxy的服务和配置。</p>
 </div>
 <div class="section" id="id6">
-<h3>缺点分析<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<h3>优缺点分析<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>关于Haproxy:</p>
+<ul class="simple">
+<li>HAProxy是支持虚拟主机的，可以工作在4、7层(支持多网段)；</li>
+<li>能够补充Nginx的一些缺点比如Session的保持，Cookie的引导等工作；</li>
+<li>支持url检测后端的服务器；</li>
+<li>它跟LVS一样，本身仅仅就只是一款负载均衡软件；单纯从效率上来讲HAProxy更会比Nginx有更出色的负载均衡速度，在并发处理上也是优于Nginx的；</li>
+<li>HAProxy可以对Mysql读进行负载均衡，对后端的MySQL节点进行检测和负载均衡，不过在后端的MySQL slaves数量超过10台时性能不如LVS；</li>
+<li>HAProxy的算法较多，达到8种；</li>
+</ul>
+<p>关于LBaas-agent:</p>
 <ul class="simple">
 <li>Haproxy可以说是软件负载均衡里面做的很顶级的了，性能和功能上还都可以，不过只用haproxy会有单点故障，所以通常会Haproxy+keepAlived一起使用，保证高可用性，这点openstack还不支持。</li>
 <li>lbaas-agent是官方的一个参考实现，所以真正离商用还有距离</li>
@@ -229,7 +239,7 @@ backend 2b66cbf3-a125-4da1-a3c2-3d50a23ef243
 <li><a class="reference internal" href="#id3">基本流程</a></li>
 <li><a class="reference internal" href="#id4">基本概念</a></li>
 <li><a class="reference internal" href="#id5">后端实现</a></li>
-<li><a class="reference internal" href="#id6">缺点分析</a></li>
+<li><a class="reference internal" href="#id6">优缺点分析</a></li>
 </ul>
 </li>
 </ul>
