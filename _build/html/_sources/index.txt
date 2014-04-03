@@ -39,6 +39,7 @@ openstack部署
     :maxdepth: 1
     
     _templates/openstack/arista_setup
+    _templates/openstack/lbaas_setup
 
     
 杂七杂八 
