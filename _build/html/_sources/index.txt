@@ -31,6 +31,7 @@ openstack学习 
     
     _templates/flavor_metadata
     _templates/monkey_patch
+    _templates/openstack/learn_guide
 
 
 openstack部署
