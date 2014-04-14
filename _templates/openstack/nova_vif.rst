@@ -54,7 +54,7 @@ LibvirtDriver中当你创建虚拟时，它会执行_create_domain_and_network�
             self.plug_ovs_ethernet(instance, vif)
 
 
-我们看到一共有plug_ovs_hybrid、plug_ovs_bridge、plug_ovs_ethernet三种模式。plug_ovs_hybrid模式之前我们在讲Neutron SDN的时候有提到过，一张图来了解下:
+我们看到一共有plug_ovs_hybrid、plug_ovs_bridge、plug_ovs_ethernet三种模式。plug_ovs_hybrid模式之前我们在讲Neutron SDN的时候有提到过，一张图(VLAN网络)来了解下:
 
 .. image:: /images/nova/compute_vif.png
 
@@ -72,7 +72,7 @@ qbr就是KVM Bridge模式需要的网桥，但是这种模式比较浪费，因�
         </virtualport>
     </interface>
 
-这样一来，虚拟机对应的虚拟网卡(tap device)就会直接连接到br-int的port上::
+这样一来，虚拟机对应的虚拟网卡(tap device)就会直接连接到br-int的port上(图示为GRE网络):
 
     01eaa6d1-185f-41bd-9282-b1ad512b8351
         Port "tap0256b6ea-d1"
