@@ -86,7 +86,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plug_ovs_ethernet</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">vif</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>我们看到一共有plug_ovs_hybrid、plug_ovs_bridge、plug_ovs_ethernet三种模式。plug_ovs_hybrid模式之前我们在讲Neutron SDN的时候有提到过，一张图来了解下:</p>
+<p>我们看到一共有plug_ovs_hybrid、plug_ovs_bridge、plug_ovs_ethernet三种模式。plug_ovs_hybrid模式之前我们在讲Neutron SDN的时候有提到过，一张图(VLAN网络)来了解下:</p>
 <img alt="../../_images/compute_vif.png" src="../../_images/compute_vif.png" />
 <p>qbr就是KVM Bridge模式需要的网桥，但是这种模式比较浪费，因为每个虚拟机都要建立一个qbr和一对veth设备，以便连接到ovs的br-int上。</p>
 <p>这个明显是能优化的，libvirt 0.9.11版本之后，libvirt能够和ovs之间集成起来，省去qbr和veth pair的开销，这就是plug_ovs_bridge模式，这种模式原理也是KVM Bridge模式，只不过由ovs的br-int实现KVM Bridge的功能，随意选择一台虚机查看它的libvirt.xml</p>
@@ -101,13 +101,18 @@
 &lt;/interface&gt;
 </pre></div>
 </div>
-<p>这样一来，虚拟机对应的虚拟网卡(tap device)就会直接连接到br-int的port上:</p>
-<div class="highlight-python"><div class="highlight"><pre>01eaa6d1-185f-41bd-9282-b1ad512b8351
-    Port &quot;tap0256b6ea-d1&quot;
-        tag: 2
-        Interface &quot;tap0256b6ea-d1&quot;
-</pre></div>
-</div>
+<p>这样一来，虚拟机对应的虚拟网卡(tap device)就会直接连接到br-int的port上(图示为GRE网络):</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>01eaa6d1-185f-41bd-9282-b1ad512b8351</dt>
+<dd><dl class="first last docutils">
+<dt>Port &#8220;tap0256b6ea-d1&#8221;</dt>
+<dd>tag: 2
+Interface &#8220;tap0256b6ea-d1&#8221;</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
 <img alt="../../_images/compute_ovs_bridge.png" src="../../_images/compute_ovs_bridge.png" />
 <p>plug_ovs_ethernet其实和plug_ovs_bridge是一样的，只不过是兼容了下不能和OVS直接集成的libvirt低版本而已。</p>
 <p>无论哪种模式，归根结底都是实现KVM Bridge网络，虚拟网卡tap device就是一个dhcp设备，它不会有静态ip，而对应的dhcp服务是由dnsmasq实现的，
