@@ -108,6 +108,7 @@
         Interface &quot;tap0256b6ea-d1&quot;
 </pre></div>
 </div>
+<img alt="../../_images/compute_ovs_bridge.png" src="../../_images/compute_ovs_bridge.png" />
 <p>plug_ovs_ethernet其实和plug_ovs_bridge是一样的，只不过是兼容了下不能和OVS直接集成的libvirt低版本而已。</p>
 <p>无论哪种模式，归根结底都是实现KVM Bridge网络，虚拟网卡tap device就是一个dhcp设备，它不会有静态ip，而对应的dhcp服务是由dnsmasq实现的，
 dhcp服务的host-file中保存着这些tap device的mac地址对应的ip:</p>

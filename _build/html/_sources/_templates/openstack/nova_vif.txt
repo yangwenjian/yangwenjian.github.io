@@ -80,6 +80,10 @@ qbr就是KVM Bridge模式需要的网桥，但是这种模式比较浪费，因�
             Interface "tap0256b6ea-d1"
 
 
+.. image:: /images/nova/compute_ovs_bridge.png
+
+
+
 plug_ovs_ethernet其实和plug_ovs_bridge是一样的，只不过是兼容了下不能和OVS直接集成的libvirt低版本而已。
 
 
