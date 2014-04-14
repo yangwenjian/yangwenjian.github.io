@@ -132,7 +132,7 @@ veth 从名字上来看是 Virtual ETHernet 的缩写，它的作用很简单，
 
 network node上vlan tag的封包操作仍然是在phy-br-eth2与int-br-eth2之间进行，封包是交给openvswitch来做的。
 
-那么虚拟机通信是如何通过这些网桥的呢，我们可以看一下compute-弄的上br-int的dump-flow::
+那么虚拟机通信是如何通过这些网桥的呢，我们可以看一下compute-node上br-int的dump-flow::
     
     $ ovs-ofctl dump-flows br-int
     NXST_FLOW reply (xid=0x4):

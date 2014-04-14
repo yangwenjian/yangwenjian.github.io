@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="niusmallnan 0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Arista SDN部署" href="arista_setup.html" />
+    <link rel="next" title="Nova中VIF的实现" href="nova_vif.html" />
     <link rel="prev" title="openstack学习指南" href="learn_guide.html" /> 
   </head>
   <body>
@@ -35,7 +35,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="arista_setup.html" title="Arista SDN部署"
+          <a href="nova_vif.html" title="Nova中VIF的实现"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="learn_guide.html" title="openstack学习指南"
@@ -143,7 +143,7 @@ ovs_version: &quot;1.10.2&quot;
 <img alt="../../_images/vlan_logic_2.png" src="../../_images/vlan_logic_2.png" />
 <p>veth 从名字上来看是 Virtual ETHernet 的缩写，它的作用很简单，就是要把从一个 network namespace 发出的数据包转发到另一个namespace。通常 veth 会和 bridge 搭配使用，这样一来，从外面进来的包就可以转发到 container 之中了。</p>
 <p>network node上vlan tag的封包操作仍然是在phy-br-eth2与int-br-eth2之间进行，封包是交给openvswitch来做的。</p>
-<p>那么虚拟机通信是如何通过这些网桥的呢，我们可以看一下compute-弄的上br-int的dump-flow:</p>
+<p>那么虚拟机通信是如何通过这些网桥的呢，我们可以看一下compute-node上br-int的dump-flow:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ovs-ofctl dump-flows br-int
 NXST_FLOW reply (xid=0x4):
     cookie=0x0, duration=14.186s, table=0, n_packets=0, n_bytes=0, idle_age=14, priority=3,in_port=1,dl_vlan=1000 actions=mod_vlan_vid:11,NORMAL
@@ -240,8 +240,8 @@ ovs_version: &quot;1.10.2&quot;
   <p class="topless"><a href="learn_guide.html"
                         title="previous chapter">openstack学习指南</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="arista_setup.html"
-                        title="next chapter">Arista SDN部署</a></p>
+  <p class="topless"><a href="nova_vif.html"
+                        title="next chapter">Nova中VIF的实现</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/openstack/how_to_sdn.txt"
@@ -271,7 +271,7 @@ ovs_version: &quot;1.10.2&quot;
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="arista_setup.html" title="Arista SDN部署"
+          <a href="nova_vif.html" title="Nova中VIF的实现"
              >next</a> |</li>
         <li class="right" >
           <a href="learn_guide.html" title="openstack学习指南"
