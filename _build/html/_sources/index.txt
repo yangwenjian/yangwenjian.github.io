@@ -47,9 +47,13 @@ openstack部署
     _templates/openstack/fwaas_setup
 
 
-Fix各种小问题
+奇技淫巧
 ==================
-    
+.. toctree::
+    :maxdepth: 1
+ 
+    _templates/knowladge/func_cache
+
 
 杂七杂八 
 ==================
