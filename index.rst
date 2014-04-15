@@ -34,6 +34,7 @@ openstack学习 
     _templates/openstack/learn_guide
     _templates/openstack/how_to_sdn
     _templates/openstack/nova_vif
+    _templates/openstack/block_migration
 
 
 openstack部署
