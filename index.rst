@@ -30,7 +30,7 @@ openstack学习 
     :maxdepth: 1
     
     _templates/flavor_metadata
-    _templates/monkey_patch
+    _templates/openstack/coroutine_usage.rst
     _templates/openstack/learn_guide
     _templates/openstack/how_to_sdn
     _templates/openstack/nova_vif
