@@ -35,6 +35,10 @@ openstack学习 
     _templates/openstack/how_to_sdn
     _templates/openstack/nova_vif
     _templates/openstack/block_migration
+    _templates/openstack/integrate_keystone
+    _templates/openstack/read_setting
+    _templates/openstack/api_develop
+    _templates/openstack/db_version
 
 
 openstack部署
