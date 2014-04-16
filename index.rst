@@ -57,6 +57,7 @@ openstack部署
     :maxdepth: 1
  
     _templates/knowladge/func_cache
+    _templates/knowladge/pythonic_singleton
 
 
 杂七杂八 
