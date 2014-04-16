@@ -58,7 +58,7 @@ openstack部署
  
     _templates/knowladge/func_cache
     _templates/knowladge/pythonic_singleton
-
+    _templates/knowladge/kde_clock
 
 杂七杂八 
 ==================
