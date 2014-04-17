@@ -80,6 +80,9 @@ eventlet已经做好了封装，简化了调用，另外值得注意的是，wsg
 
 eventlet.hubs.use_hub()也是十分重要的，设置之后，default_hub的值会根据系统不同而调整，Linux会选择epoll，FreeBSD会选择kqueen，这两者都是在各自系统实现AIO，这使得线程处理IO的时候可以使用异步回调机制，大幅度提升CPU的运行效率。但是，我们已经抛弃了线程使用协程，协程并不能被系统感知而使用AIO，use_hub()正是实现了协程也能使用AIO。
 
+最后整体看下这张图，有助于消化理解:
+
+.. image:: /images/coroutine_in_openstack.png
 
 
 使用中的问题
