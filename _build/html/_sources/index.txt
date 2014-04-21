@@ -49,6 +49,7 @@ openstack部署
     _templates/openstack/arista_setup
     _templates/openstack/lbaas_setup
     _templates/openstack/fwaas_setup
+    _templates/openstack/diors_cinder_swift
 
 
 奇技淫巧
