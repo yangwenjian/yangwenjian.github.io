@@ -75,7 +75,7 @@ openstack主要通过eventlet库来使用协程的，较为突出的应用场景
 
 eventlet已经做好了封装，简化了调用，另外值得注意的是，wsgi-server的实现需要用到python标准库，而这些标准库的内部实现还是用标准的线程，需要给标准库打patch，将标准线程替换为协程，eventlet有个monkey-patch的经典实现，只需要调用eventlet.patcher.monkey_patch()即可，这个调用，你在所有的openstack组件上都可以看到，monkey-patch的原理本文不做讨论。
 
-在利用多核方面，openstack的实现方式是使用父子进程共用端口，多个子进程提供服务，通常这里子进程的数量我们是可以配置的，一般配置成和CPU核数一样，以达到最高效率，每个子进程内部实现协程池，并自己调度协程切换，减少CPU的消耗。
+在利用多核方面，openstack的实现方式是使用父进程进行任务分配调度，多个子进程提供服务，通常这里子进程的数量我们是可以配置的，一般配置成和CPU核数一样，以达到最高效率，每个子进程内部实现协程池，并自己调度协程切换，减少CPU的消耗。
 
 
 eventlet.hubs.use_hub()也是十分重要的，设置之后，default_hub的值会根据系统不同而调整，Linux会选择epoll，FreeBSD会选择kqueen，这两者都是在各自系统实现AIO，这使得线程处理IO的时候可以使用异步回调机制，大幅度提升CPU的运行效率。但是，我们已经抛弃了线程使用协程，协程并不能被系统感知而使用AIO，use_hub()正是实现了协程也能使用AIO。
@@ -87,6 +87,7 @@ eventlet.hubs.use_hub()也是十分重要的，设置之后，default_hub的值�
 
 使用中的问题
 =======================
+由于任何进程默认就会启动一个线程，我们把该线程称为主线程，当你使用线程，那么主线程又可以启动新的线程，如果你使用协程，那么主线程去启动一些协程。
 但是协程并不是完美的，也会有很多问题，在openstack中，会有如下问题:
 
 - there is only one operating system thread, a call that blocks that main thread will block the entire process.
