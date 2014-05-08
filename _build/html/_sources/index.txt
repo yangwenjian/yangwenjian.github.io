@@ -51,7 +51,7 @@ openstack部署
     _templates/openstack/lbaas_setup
     _templates/openstack/fwaas_setup
     _templates/openstack/diors_cinder_swift
-
+    _templates/openstack/maas_juju
 
 奇技淫巧
 ==================
