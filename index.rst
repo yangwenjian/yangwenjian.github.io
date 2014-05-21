@@ -37,6 +37,7 @@ openstack学习 
     _templates/openstack/block_migration
     _templates/openstack/metadata_server
     _templates/openstack/vm_data_flow
+    _templates/openstack/ceilometer_collect
     _templates/openstack/integrate_keystone
     _templates/openstack/read_setting
     _templates/openstack/api_develop
