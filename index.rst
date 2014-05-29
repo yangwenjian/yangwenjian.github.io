@@ -72,6 +72,7 @@ openstack部署
     :maxdepth: 1
     
     _templates/python_exam
+    _templates/ubuntu_tips
 
 
 深藏功与名
