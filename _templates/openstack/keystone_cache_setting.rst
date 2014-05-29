@@ -6,6 +6,9 @@ keystone的Token可以存储在多种后端介质中，你可以存储在mysql�
 
 配置实现
 =================
+首先你要安装 apt-get install python-memcache memcached
+
+
 配置keystone.conf中的[cache]模块如下::
 
 
