@@ -1,0 +1,9 @@
+
+
+
+
+
+cobbler自动化安装操作系统
+cobbler是redhat公司开发的自动化部署操作系统的工具，使用python编写，轻量级，利用pxe自动进行操作系统的安装。
+pxe
+在cobbler出现之前，操作系统都是使用pxe自动安装的，pxe是preboot excute enviroment，由intel公司进行设计开发的预执行环境，是cpu的特性，pxe的主要原理是在开机的过程

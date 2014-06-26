@@ -1,0 +1,158 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Hadoop介绍及基础研究 &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="WebService简介与机制" href="../web/webservice.html" />
+    <link rel="prev" title="自动化安装操作系统" href="../automation/cobbler.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../web/webservice.html" title="WebService简介与机制"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../automation/cobbler.html" title="自动化安装操作系统"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Hadoop介绍及基础研究</a><ul>
+<li><a class="reference internal" href="#id1">基本概念</a></li>
+<li><a class="reference internal" href="#id2">实验</a><ul>
+<li><a class="reference internal" href="#hadoopwordcount">利用Hadoop进行WordCount</a></li>
+<li><a class="reference internal" href="#haddop">利用Haddop进行图像融合</a><ul>
+<li><a class="reference internal" href="#mapreduceenvi">MapReduce调用ENVI中的问题</a></li>
+<li><a class="reference internal" href="#id3">性能瓶颈</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../automation/cobbler.html"
+                        title="previous chapter">自动化安装操作系统</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../web/webservice.html"
+                        title="next chapter">WebService简介与机制</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/distribution/hadoop.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="hadoop">
+<h1>Hadoop介绍及基础研究<a class="headerlink" href="#hadoop" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>基本概念<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>HDFS
+MapReduce</p>
+</div>
+<div class="section" id="id2">
+<h2>实验<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="hadoopwordcount">
+<h3>利用Hadoop进行WordCount<a class="headerlink" href="#hadoopwordcount" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="haddop">
+<h3>利用Haddop进行图像融合<a class="headerlink" href="#haddop" title="Permalink to this headline">¶</a></h3>
+<p>利用Haddop的MapReduce进行分布式调用ENVI本地程序进行图像融合</p>
+<p>我们的目标是利用Hadoop的MapReduce将融合的过程进行分布式化，提高融合的效率N倍（N为Hadoop的计算节点数），之后再进行拼接，整个过程充分利用Hadoop的HDFS与MapReduce，存储在HDFS上，计算则利用分布式集群的特性，但这里也有系能瓶颈，稍后会进行分析。</p>
+<p>首先利用IDL编写一个图像融合的程序，输入是两张大小相同的经过几何矫正的一幅高分辨率黑白图像和一张低分辨率真彩色图像，输出是一张高分辨率真彩色图像，这个过程是遥感图像处理的基本过程之一，这里就不详细介绍了。</p>
+<div class="section" id="mapreduceenvi">
+<h4>MapReduce调用ENVI中的问题<a class="headerlink" href="#mapreduceenvi" title="Permalink to this headline">¶</a></h4>
+<p>这个问题是我在初学Hadoop的时候碰到的地一个问题，也是我一个月内都没有解决的问题，后来牛小楠来到公司，空间信息研发团队一样碰到这个问题，牛小楠出手分析问题的原因在哪。</p>
+<p>伪分布式下，使用Hadoop调用本地库的时候需要将本地库添加到LIBRARY_PATH中，系统就能找到envi提供的so文件，实现hadoop调用envi。</p>
+<p>但在集群环境下，每次调用都会出现本地库调用异常，就是本地库找不到，这使我很头疼，因为我不仅将所有节点的环境都设置正确，并且还将envi的本地库传到HDFS上去了，这都不能解决问题，归根到底，这个问题是由Hadoop本身的调用机制产生的。</p>
+<p>Hadoop中master和slave节点经由ssh通道打通，进行命令的交互和数据的传输，但是ssh通道本身拿不到远程机器的窗口句柄，也就是你用ssh不能实例化一个图形界面，而恰恰envi在进行融合时需要调用本地的窗口句柄，弹出一个小的进度条，ssh通道不能拿到这个句柄，也就不能调用envi的库，这条路也就不能继续走下去。</p>
+<p>解决办法很简单了，只要你自己实现一套算法库，比如利用opencv，不依赖于窗口句柄，这样这个问题就能解决了，这里我没有做这个东西，只是利用c++写了一个小程序，生成一个so文件，放到HDFS上，利用MapReduce进行调用，这样就能顺利的RUN了。</p>
+</div>
+<div class="section" id="id3">
+<h4>性能瓶颈<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>首先，图像的分割和拼接过程不能利用MapReduce，如果硬要分布式只能是利用</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../web/webservice.html" title="WebService简介与机制"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../automation/cobbler.html" title="自动化安装操作系统"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

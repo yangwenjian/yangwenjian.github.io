@@ -1,0 +1,164 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Guice Introduction and Analysis &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="代码优化篇" href="../common/codeOptimization.html" />
+    <link rel="prev" title="Java Annotation" href="annotation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../common/codeOptimization.html" title="代码优化篇"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="annotation.html" title="Java Annotation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Guice Introduction and Analysis</a><ul>
+<li><a class="reference internal" href="#basic-information">Basic Information</a><ul>
+<li><a class="reference internal" href="#motivation">Motivation</a></li>
+<li><a class="reference internal" href="#using-guice">Using guice</a></li>
+<li><a class="reference internal" href="#personal-comprehension">Personal comprehension</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="annotation.html"
+                        title="previous chapter">Java Annotation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../common/codeOptimization.html"
+                        title="next chapter">代码优化篇</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/programming/java/guice.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="guice-introduction-and-analysis">
+<h1>Guice Introduction and Analysis<a class="headerlink" href="#guice-introduction-and-analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="basic-information">
+<h2>Basic Information<a class="headerlink" href="#basic-information" title="Permalink to this headline">¶</a></h2>
+<p>The essence of DI is to have your classes accept their dependencies through references to interfaces instead of constructing them (or using static references).</p>
+<div class="section" id="motivation">
+<h3>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h3>
+<p>Object come to you, instead of &#8216;new&#8217; and factory(factories aren&#8217;t fun);
+Reusable Modules;
+First-class scopes;
+Easier tests and more confidence;
+Less boilerplate.</p>
+</div>
+<div class="section" id="using-guice">
+<h3>Using guice<a class="headerlink" href="#using-guice" title="Permalink to this headline">¶</a></h3>
+<p>&#64;inject is the new &#8216;new&#8217;</p>
+</div>
+<div class="section" id="personal-comprehension">
+<h3>Personal comprehension<a class="headerlink" href="#personal-comprehension" title="Permalink to this headline">¶</a></h3>
+<p>When we need to create an instance, we know that we have to use &#8216;new&#8217; to create one. But it will lead our code is dependent by the real implemation, so we create design pattern called &#8216;Factory Mode&#8217;, but the factory mode still has some shortcoming, Some bigger man in google works on the project called guice.
+When we use facotry we still have some dependency, such as class or some name.But when we use guice, we can bind implementation class to abstract class. If we change implementation code, we only have to change the dependency binding. In this case, some class extends AbstractModule(from guice).</p>
+<div class="code java highlight-python"><pre>public class BillingModule extends AbstractModule {
+@Override
+    protected void configure() {
+        bind(TransactionLog.class).to(DatabaseTransactionLog.class);
+        bind(CreditCardProcessor.class).to(PaypalCreditCardProcessor.class);
+        bind(BillingService.class).to(RealBillingService.class);
+    }
+}</pre>
+</div>
+<p>So, we don&#8217;t use new or factory, or we even don&#8217;t have to specify the instance name in String. All work is done in guice, we only have to make bind and use some annotaion(&#8216;&#64;&#8217;) in the implementation class</p>
+<div class="code java highlight-python"><pre>public static void main(String[] args) {
+    Injector injector = Guice.createInjector(new BillingModule());
+    BillingService billingService = injector.getInstance(BillingService.class);
+    ...
+ }</pre>
+</div>
+<p>For more information:
+<a class="reference external" href="https://code.google.com/p/google-guice/wiki/">https://code.google.com/p/google-guice/wiki/</a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../common/codeOptimization.html" title="代码优化篇"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="annotation.html" title="Java Annotation"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
