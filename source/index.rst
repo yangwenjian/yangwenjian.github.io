@@ -15,7 +15,8 @@ Sulotion of cloud
 
    _templates/cloudbase/CloudOS
    _templates/cloudbase/jclouds
-   _templates/cloudbase/Openstack_Base
+   _templates/cloudbase/OpenStack_Base
+   _templates/cloudbase/OpenStack
 
 Sulotion of autamation
 ======================================

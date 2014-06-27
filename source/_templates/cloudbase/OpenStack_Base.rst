@@ -10,12 +10,22 @@ OpenStack Base 开发总结
 
 Base层的作用
 =======================================
+Base层的主要作用是南北互通，兼容并包。
+向下兼容各种云计算资源池，这里主要使用OpenStack;向上提供SDK与Rest接口，与Portal或者企业的应用对接。
 
+Base层作为我们的核心业务逻辑和控制中心，我们所有的资源控制，业务逻辑等都在这层中，我们保持OpenStack的原生和jclouds原生形态，这样做的目的是将来如果jclouds和OpenStack进行更新的时候我们也能很容易的进行相应更新，之前有很多企业对OpenStack的源码进行修改，由于他们修改的部分没有被社区采纳，就不能追随OpenStack社区的步伐了。
 
+以Base为中心的系统结构如下图所示：
 
-Base层的用法
+.. image:: ../../images/base_architecture.jpg
+
+Base层的开发
 =======================================
-
+Base层分为如下几个工程：
+1.ncloud-sdk-java，base层对外的java SDK，可以通过调用其中的接口对base工程进行连接并调用其中的资源;
+2.ncloud-base，base层核心工程，主要加入我们的身份验证、业务逻辑和控制过程，并向外发布Rest接口;
+3.ncloud-base-rp-api，base调用底层CloudOS的API，由我们团队自行实现，不依赖于任何第三方系统;
+4.ncloud-base-rp-impl，api工程中所有API的实现，也是直接操作JClouds进行OpenStack的资源调用，依赖于JClouds和第三方软件包。
 
 
 
