@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
     <link rel="next" title="Hadoop介绍及基础研究" href="../distribution/hadoop.html" />
-    <link rel="prev" title="OpenStack Base 开发总结" href="../cloudbase/Openstack_Base.html" /> 
+    <link rel="prev" title="Regular Expressions" href="../linux/regularExpressions.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +40,7 @@
           <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../cloudbase/Openstack_Base.html" title="OpenStack Base 开发总结"
+          <a href="../linux/regularExpressions.html" title="Regular Expressions"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -62,8 +62,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../cloudbase/Openstack_Base.html"
-                        title="previous chapter">OpenStack Base 开发总结</a></p>
+  <p class="topless"><a href="../linux/regularExpressions.html"
+                        title="previous chapter">Regular Expressions</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../distribution/hadoop.html"
                         title="next chapter">Hadoop介绍及基础研究</a></p>
@@ -102,6 +102,9 @@ cobbler是redhat公司开发的自动化部署操作系统的工具，使用pyth
 <div class="section" id="pxe">
 <h3>pxe<a class="headerlink" href="#pxe" title="Permalink to this headline">¶</a></h3>
 <p>在cobbler出现之前，操作系统都是使用pxe自动安装的，pxe是preboot excute enviroment，由intel公司进行设计开发的预执行环境，是cpu的特性，pxe的主要原理是在开机的过程进行网卡启动引导，根据TFTP和DHCP协议发出请求，收到应答后可以建立连接进行内核引导文件的传输，这部分数据首先放到网卡的内存当中，再由内存装载，之后根据FTP协议进行大量镜像数据的传输，将安装操作系统的所有文件复制到内存中，进行启动安装。</p>
+<p>被安装的计算机必须有支持PXE启动的网卡，其中包含PXE client，当计算机引导启动时，BIOS把PXE client调入内存中执行，通过远端服务器将文件下载到本地。
+运行PXE client需要设置DHCP服务器和TFTP服务器，DHCP服务器负责分配IP地址，tftp服务器则负责存储相关文件。</p>
+<p>TFTP服务器中存储如下文件：pxelinux.0，镜像下pxeboot中的initrd.img和vmlinux，ioslinux下的所有.msg文件，以及pxelinux.cfg目录下default文件。</p>
 </div>
 <div class="section" id="cobbler">
 <h3>cobbler<a class="headerlink" href="#cobbler" title="Permalink to this headline">¶</a></h3>
@@ -141,7 +144,7 @@ cobbler sync（同步配置）会将现有的cobbler配置导入，</p>
           <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
              >next</a> |</li>
         <li class="right" >
-          <a href="../cloudbase/Openstack_Base.html" title="OpenStack Base 开发总结"
+          <a href="../linux/regularExpressions.html" title="Regular Expressions"
              >previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

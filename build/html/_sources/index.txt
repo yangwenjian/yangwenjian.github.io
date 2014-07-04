@@ -18,6 +18,14 @@ Sulotion of cloud
    _templates/cloudbase/OpenStack_Base
    _templates/cloudbase/OpenStack
 
+Sulotion of Linux&Unix
+======================================
+
+.. toctree::
+   :maxdepth: 1
+   
+   _templates/linux/regularExpressions
+
 Sulotion of autamation
 ======================================
 
@@ -49,6 +57,7 @@ Programming Skill
    _templates/programming/common/codeOptimization
    _templates/programming/common/OpticksAndEnvi
    _templates/programming/common/genetic
+   _templates/programming/java/maven
 
 Indices and tables
 ==================
