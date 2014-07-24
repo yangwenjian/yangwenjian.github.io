@@ -7,7 +7,7 @@ Welcome to Knight's documentation!
 ======================================
 Contents:
 
-Sulotion of cloud
+Sulotion of Cloud
 ======================================
 
 .. toctree::
@@ -25,24 +25,34 @@ Sulotion of Linux&Unix
    :maxdepth: 1
    
    _templates/linux/regularExpressions
+   _templates/linux/vpn
 
-Sulotion of autamation
+Sulotion of Autamation
 ======================================
 
 .. toctree::
    :maxdepth: 1
 
    _templates/automation/cobbler
+   _templates/programming/common/nity
 
-Sulotion of distribution
+Sulotion of Distribution
 ======================================
 
 .. toctree::
    :maxdepth: 1
   
    _templates/distribution/hadoop
+
+Sulotion of SOA
+======================================
+
+.. toctree::
+   :maxdepth: 1
+
    _templates/web/webservice
    _templates/web/restapi
+   _templates/web/spring
 
 Programming Skill
 ======================================
@@ -58,6 +68,14 @@ Programming Skill
    _templates/programming/common/OpticksAndEnvi
    _templates/programming/common/genetic
    _templates/programming/java/maven
+
+Other
+======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/linux/projectManagement
 
 Indices and tables
 ==================

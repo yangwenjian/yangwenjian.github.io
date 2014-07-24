@@ -1,0 +1,189 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Spring &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="设计模式Head First" href="../programming/common/designpatterns.html" />
+    <link rel="prev" title="Rest API 基础" href="restapi.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../programming/common/designpatterns.html" title="设计模式Head First"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="restapi.html" title="Rest API 基础"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Spring</a><ul>
+<li><a class="reference internal" href="#id1">Spring的配置</a><ul>
+<li><a class="reference internal" href="#id2">Spring的数据源管理</a></li>
+<li><a class="reference internal" href="#spring-session">Spring Session工厂</a></li>
+<li><a class="reference internal" href="#transaction">Transaction管理</a></li>
+<li><a class="reference internal" href="#bean">Bean注入</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="restapi.html"
+                        title="previous chapter">Rest API 基础</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../programming/common/designpatterns.html"
+                        title="next chapter">设计模式Head First</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/web/spring.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="spring">
+<h1>Spring<a class="headerlink" href="#spring" title="Permalink to this headline">¶</a></h1>
+<p>Spring是当前最主流的企业应用框架</p>
+<div class="section" id="id1">
+<h2>Spring的配置<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>Spring的数据源管理<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Spring在使用Hibernate的时候需要进行初始化配置，建立数据源：
+&lt;bean id=&#8221;dataSource&#8221; class=&#8221;com.alibaba.druid.pool.DruidDataSource&#8221;&gt;（这里使用阿里的数据库驱动）
+之后进行数据库连接dataSource的各项配置：driverClassName, url(pay attention to encoding), username, password, initialSize, maxActive(最大活跃数), maxIdle(最大空闲值), minIdle(最小空闲值)。</p>
+<p>Spring能自己管理数据连接池，但有时代码不小心也会出现连接泄漏的情况，这里碰到的问题时访问base层一段时间后出现：
+卡在Obtaining JDBC Connection，之后超时连接错误。
+目前的应对方法是在ApplicationContext.xml文件中加入如下配置：</p>
+<blockquote>
+<div>&lt;property name=&#8221;removeAbandoned&#8221; value=&#8221;true&#8221; /&gt;
+&lt;property name=&#8221;removeAbandonedTimeout&#8221; value=&#8221;${jdbc.removeAbandonedTimeout}&#8221; /&gt;</div></blockquote>
+<p>removeAbandoned在Spring中默认为false，即不移除遗弃的链接，这里我们设置为true，再设置超时时间为10,单位为秒，这样超过10s不进行新请求的链接将被释放回收，避免链接泄漏的情况发生。
+目前的Spring 数据连接管理是自动建立和释放链接的，但是你需要使用jdbcTemplate或者使用SessionFactory.getCurrentSession()，其中，Session.getCurrentSession()是将Session绑定到Spring起的当前线程中，之后连接也就自然过度到Spring管理，自动释放；
+但是如果使用SessionFactory.openSession()，是重新打开一链接，不与当前线程与事务绑定，这样如果你不手动close()的话，数据库连接就会泄漏。</p>
+</div>
+<div class="section" id="spring-session">
+<h3>Spring Session工厂<a class="headerlink" href="#spring-session" title="Permalink to this headline">¶</a></h3>
+<p>声明bean工厂：
+&lt;bean id=&#8221;sessionFactory&#8221; class=&#8221;org.springframework.orm.hibernate4.LocalSessionFactoryBean&#8221;&gt;
+将数据源dataSource注入进入SessionFactory：
+&lt;property name=&#8221;dataSource&#8221; ref=&#8221;dataSource&#8221; /&gt;
+命名策略：</p>
+<dl class="docutils">
+<dt>&lt;property name=&#8221;namingStrategy&#8221;&gt;</dt>
+<dd>&lt;bean class=&#8221;org.hibernate.cfg.ImprovedNamingStrategy&#8221; /&gt;</dd>
+</dl>
+<p>&lt;/property&gt;</p>
+<dl class="docutils">
+<dt>&lt;property name=&#8221;hibernateProperties&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;props&gt;</dt>
+<dd>&lt;prop key=&#8221;hibernate.dialect&#8221;&gt;${hibernate.dialect}&lt;/prop&gt;
+&lt;prop key=&#8221;hibernate.show_sql&#8221;&gt;${hibernate.show_sql}&lt;/prop&gt;
+&lt;prop key=&#8221;hibernate.format_sql&#8221;&gt;true&lt;/prop&gt;
+&lt;prop key=&#8221;hibernate.generate_statistics&#8221;&gt;${hibernate.generate_statistics}&lt;/prop&gt;
+&lt;prop key=&#8221;hibernate.hbm2ddl.auto&#8221;&gt;${hibernate.hbm2ddl.auto}&lt;/prop&gt;</dd>
+</dl>
+<p class="last">&lt;/props&gt;</p>
+</dd>
+</dl>
+<p>&lt;/property&gt;</p>
+</div>
+<div class="section" id="transaction">
+<h3>Transaction管理<a class="headerlink" href="#transaction" title="Permalink to this headline">¶</a></h3>
+<p>事务管理也是Spring中的关键属性，首先声明事物：
+&lt;bean id=&#8221;transactionManager&#8221; class=&#8221;org.springframework.orm.hibernate4.HibernateTransactionManager&#8221;&gt;
+将SessionFactory注入到Transaction中：
+&lt;property name=&#8221;sessionFactory&#8221; ref=&#8221;sessionFactory&#8221;&gt;&lt;/property&gt;
+激活Spring注解方式：事务处理
+&lt;tx:annotation-driven transaction-manager=&#8221;transactionManager&#8221; /&gt;</p>
+</div>
+<div class="section" id="bean">
+<h3>Bean注入<a class="headerlink" href="#bean" title="Permalink to this headline">¶</a></h3>
+<p>Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自动扫描，注入bean：
+&lt;context:component-scan base-package=&#8221;com.neunn.cloud.base.*&#8221; /&gt;
+这里是整个扫描一个包进行全初始化，通过Spring的注解&#64;AutoWired直接使用</p>
+<p>启动Spring对&#64;AspectJ注解的支持:
+&lt;aop:aspectj-autoproxy/&gt;</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../programming/common/designpatterns.html" title="设计模式Head First"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="restapi.html" title="Rest API 基础"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

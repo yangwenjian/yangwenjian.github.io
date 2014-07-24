@@ -1,0 +1,131 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>VPN &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="自动化安装操作系统" href="../automation/cobbler.html" />
+    <link rel="prev" title="Regular Expressions" href="regularExpressions.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../automation/cobbler.html" title="自动化安装操作系统"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="regularExpressions.html" title="Regular Expressions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="regularExpressions.html"
+                        title="previous chapter">Regular Expressions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../automation/cobbler.html"
+                        title="next chapter">自动化安装操作系统</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/linux/vpn.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="vpn">
+<h1>VPN<a class="headerlink" href="#vpn" title="Permalink to this headline">¶</a></h1>
+<p>VPN: virtual private network</p>
+<p>xl2tpd客户端
+1.首先安装xl2tp，zypper in xl2tpd ppp (ubuntu和centos使用相应工具)安装。
+2.配置/etc/ppp/peers/testvpn.l2tpd，修改如下两个配置：
+user &#8220;dev&#8221;
+password &#8220;Neunn&#64;)!$&#8221;
+3.配置/etc/xl2tpd/xl2tpd.conf
+[lac client]
+name = ops
+lns =61.161.217.98
+pppoptfile = /etc/ppp/peers/testvpn.l2tpd
+ppp debug = no
+4.启动xl2tp
+/etc/init.d/xl2tpd start
+echo &#8216;c client&#8217; &gt; /var/run/xl2tpd/l2tp-control
+5.添加相应路由（此处酌情考虑）
+6.断开vpn
+echo &#8216;d client&#8217; &gt; /var/run/xl2tpd/l2tp-control
+/etc/init.d/xl2tpd stop&#8217;&#8216;&#8217;&#8216;&#8221;&#8220;&#8221;&#8221;)</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../automation/cobbler.html" title="自动化安装操作系统"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="regularExpressions.html" title="Regular Expressions"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
