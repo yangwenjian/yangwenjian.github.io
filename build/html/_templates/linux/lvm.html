@@ -1,0 +1,181 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LVM &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="自动化安装操作系统" href="../automation/cobbler.html" />
+    <link rel="prev" title="VPN" href="vpn.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../automation/cobbler.html" title="自动化安装操作系统"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vpn.html" title="VPN"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">LVM</a><ul>
+<li><a class="reference internal" href="#id1">LVM的结构</a></li>
+<li><a class="reference internal" href="#id2">常见任务</a></li>
+<li><a class="reference internal" href="#id3">用快照执行备份</a></li>
+<li><a class="reference internal" href="#id4">支持虚拟化功能</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vpn.html"
+                        title="previous chapter">VPN</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../automation/cobbler.html"
+                        title="next chapter">自动化安装操作系统</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/linux/lvm.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="lvm">
+<h1>LVM<a class="headerlink" href="#lvm" title="Permalink to this headline">¶</a></h1>
+<p>Logical Volume Manager(LVM)是Linux下磁盘管理工具，可以进行磁盘管理，动态增缩磁盘空间</p>
+<p>LVM逻辑卷管理指系统将物理卷管理抽象到更高的层次，形成更简单的管理模式，通过LVM，将所有的磁盘和分区作为统一的数据源管理。（例如你有几个80G的硬盘，想创建一个200G的文件系统）</p>
+<p>你可以使用LVM进行一下操作（典型操作）：</p>
+<p>在磁盘池中添加磁盘和分区，对现有的文件系统进行在线扩展；
+用一个 160GB 磁盘替换两个 80GB 磁盘，而不需要让系统离线，也不需要在磁盘之间手工转移数据
+当存储空间超过所需的空间量时，从池中去除磁盘，从而缩小文件系统；
+使用快照（snapshot）执行一致的备份（本文后面会进一步讨论）等。</p>
+<div class="section" id="id1">
+<h2>LVM的结构<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>LVM被组织为三种元素:</p>
+<div class="highlight-python"><pre>*卷(Volume): 物理和逻辑卷和卷组
+*区段(Extent): 物理和逻辑区段
+*设备映射器(Device mapper): Linux内核模块</pre>
+</div>
+<p>物理卷是物理磁盘或者物理分区（例如/dev/hda或/dev/hda1），卷组（VG）是物理卷的集合，卷组可以在逻辑上划分多个逻辑卷。</p>
+<img alt="../../_images/lvm1.gif" src="../../_images/lvm1.gif" />
+<p>之后对LV0进行格式化，之后挂载到/var。</p>
+<img alt="../../_images/lvm2.gif" src="../../_images/lvm2.gif" />
+<p>在做PV与LV的映射中，PV和VG的基本块必须具有相同的大小，这些基本块称为物理区段（PE）和逻辑区段（LE）。尽管是一个n-to-m的映射，但PE与LE是一一对应的。</p>
+<p>这里需要注意几点:</p>
+<div class="highlight-python"><pre>*默认的区段大小是4M；
+*区段的大小不影响磁盘的IO性能，但会影响LVM工具的效率；
+*动态扩展不会丢失数据，但修改区段的大小可能会丢失数据；
+*LVM并非连续的分配PE；</pre>
+</div>
+<p>最后的磁盘区段映射可能为如下所示：</p>
+<img alt="../../_images/lvm3.gif" src="../../_images/lvm3.gif" />
+</div>
+<div class="section" id="id2">
+<h2>常见任务<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>创建新卷：</p>
+<p>可以使用LVM进行新卷的创建，初始化分区(pvcreate)，创建PV和VG(vgcreate)，创建新的逻辑卷(lvcreate)，使用文件系统格式化后可以进行挂载了；</p>
+<p>扩展卷：</p>
+<p>使用物理磁盘创建一个分区，进行初始化(pvcreate)，添加到现有的VG中(vgextend)，扩展逻辑卷(lvextend)，扩展文件系统(resize_resierfs)；</p>
+<p>管理卷：</p>
+<p>虽然大多数文件系统都不支持缩小在线文件系统，lvm还是支持这个功能，首先进行umount，缩小文件系统，缩小逻辑卷(lvreduce)；
+释放前禁止PV的分配(pvchange)，从释放的PV中移出数据(pvmove)，还有其他功能，请参考http://www.ibm.com/developerworks/cn/linux/l-lvm2/。</p>
+</div>
+<div class="section" id="id3">
+<h2>用快照执行备份<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>LVM可以创建磁盘的快照，创建新的快照 LV 也是使用 lvcreate 命令，但是要指定 -s 参数和原来的 LV。在这种情况下，-L size 指定例外列表的大小，这影响快照支持的最大差异量，如果差异超过这个量，就无法保持一致性:</p>
+<div class="highlight-python"><pre>*lvcreate -s -L 2G -n snap/dev/test-volume/test</pre>
+</div>
+<p>对于所有日常操作，快照看起来就是 原 LV 的一个拷贝。如果已经建立了文件系统的话，可以用以下命令挂载它:</p>
+<div class="highlight-python"><pre>*mount -o ro /dev/test-volume/test /mnt/snap</pre>
+</div>
+<p>这里注意，如果数据库建立在 LV 上，并且需要一个一致的备份，那么一定要刷新表并在获得读取锁（read-lock）的情况下建立快照卷。</p>
+</div>
+<div class="section" id="id4">
+<h2>支持虚拟化功能<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>因为流行的虚拟化系统（比如 Xen、VMWare、Qemu 和 KVM）可以将块设备用作 guest 映像，所以可以创建这些映像的完整拷贝，并根据需要使用它们，它们就像是内存占用量很低的虚拟机。这样做的好处是部署迅速（创建快照的时间常常不超过几秒）和节省空间（guest 共享原映像的大多数数据）:
+1.为原映像创建一个逻辑卷；
+2.使用这个 LV 作为磁盘映像安装 guest 虚拟机；
+3.暂停这个虚拟机。内存映像可以是一个常规文件，所有其他快照都放在里面；
+4.为原 LV 创建一个可读写的快照；
+5.使用快照卷作为磁盘映像生成一个新的虚拟机。如果需要的话，要修改网络/控制台设置；
+6.登录已经创建的虚拟机，修改网络设置/主机名。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../automation/cobbler.html" title="自动化安装操作系统"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vpn.html" title="VPN"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

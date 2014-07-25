@@ -26,6 +26,7 @@ Sulotion of Linux&Unix
    
    _templates/linux/regularExpressions
    _templates/linux/vpn
+   _templates/linux/lvm
 
 Sulotion of Autamation
 ======================================
