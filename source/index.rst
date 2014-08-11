@@ -18,6 +18,14 @@ Sulotion of Cloud
    _templates/cloudbase/OpenStack_Base
    _templates/cloudbase/OpenStack
 
+Sulotion of Cloud
+======================================
+
+.. toctree::
+   :maxdepth: 1
+   
+   _templates/openstack/securityGroup
+
 Sulotion of Linux&Unix
 ======================================
 
