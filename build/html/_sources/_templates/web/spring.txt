@@ -170,4 +170,7 @@ Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自�
     
     <aop:aspectj-autoproxy/>
 
+Spring的事务增强
+--------------------------------------
+Spring可以增强public的方法（注意不能增强public static方法）的事务。（暂时未涉及到此处，未研究学习)
 
