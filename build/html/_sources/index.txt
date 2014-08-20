@@ -7,6 +7,7 @@ Welcome to Knight's documentation!
 ======================================
 Contents:
 
+
 Sulotion of Cloud
 ======================================
 
@@ -18,13 +19,16 @@ Sulotion of Cloud
    _templates/cloudbase/OpenStack_Base
    _templates/cloudbase/OpenStack
 
-Sulotion of Cloud
+
+Sulotion of OpenStack
 ======================================
 
 .. toctree::
    :maxdepth: 1
    
    _templates/openstack/securityGroup
+   _templates/openstack/neutron
+
 
 Sulotion of Linux&Unix
 ======================================
@@ -35,6 +39,13 @@ Sulotion of Linux&Unix
    _templates/linux/regularExpressions
    _templates/linux/vpn
    _templates/linux/lvm
+   _templates/linux/memory
+   _templates/linux/network
+   _templates/linux/sdn
+   _templates/linux/firewall
+   _templates/linux/tools/networktool
+   _templates/linux/tools/shell
+
 
 Sulotion of Autamation
 ======================================
@@ -43,7 +54,17 @@ Sulotion of Autamation
    :maxdepth: 1
 
    _templates/automation/cobbler
-   _templates/programming/common/nity
+   _templates/automation/nity
+
+
+Solution of Virtualization
+======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/virtualization/docker
+
 
 Sulotion of Distribution
 ======================================
@@ -52,6 +73,7 @@ Sulotion of Distribution
    :maxdepth: 1
   
    _templates/distribution/hadoop
+
 
 Sulotion of SOA
 ======================================
@@ -62,6 +84,7 @@ Sulotion of SOA
    _templates/web/webservice
    _templates/web/restapi
    _templates/web/spring
+
 
 Programming Skill
 ======================================
@@ -78,13 +101,15 @@ Programming Skill
    _templates/programming/common/genetic
    _templates/programming/java/maven
 
+
 Other
 ======================================
 
 .. toctree::
    :maxdepth: 1
 
-   _templates/linux/projectManagement
+   _templates/other/projectManagement
+
 
 Indices and tables
 ==================

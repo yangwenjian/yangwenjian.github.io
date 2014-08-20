@@ -1,0 +1,132 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Linux Network Tool &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Shell" href="shell.html" />
+    <link rel="prev" title="Linux FireWall" href="../firewall.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="shell.html" title="Shell"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../firewall.html" title="Linux FireWall"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Linux Network Tool</a><ul>
+<li><a class="reference internal" href="#curl">Curl</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../firewall.html"
+                        title="previous chapter">Linux FireWall</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="shell.html"
+                        title="next chapter">Shell</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/linux/tools/networktool.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="linux-network-tool">
+<h1>Linux Network Tool<a class="headerlink" href="#linux-network-tool" title="Permalink to this headline">¶</a></h1>
+<p>Linux has planty of tools of network, I will introduce some of them which are used in my develop work.</p>
+<div class="section" id="curl">
+<h2>Curl<a class="headerlink" href="#curl" title="Permalink to this headline">¶</a></h2>
+<p>Curl stands for command line url viewer.</p>
+<p>Example:</p>
+<p>发送post请求获取openstack的token</p>
+<div class="highlight-python"><pre>curl -X POST  -i -H "Content-Type:application/json" -d '{ "auth" : { "tenantName" : "admin","passwordCredentials" : { "username" : "admin","password" : "admin"}}}' http://192.168.250.222:5000/v2.0/tokens</pre>
+</div>
+<p>发送get请求images信息列表</p>
+<div class="highlight-python"><pre>curl -X GET -H "Content-Type:application/json" -H "X-Auth-Token:..." http://192.168.200.7:9292/v1/images/detail</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="shell.html" title="Shell"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../firewall.html" title="Linux FireWall"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

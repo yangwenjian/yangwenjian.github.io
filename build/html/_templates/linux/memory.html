@@ -1,0 +1,153 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Linux Memory &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Linux Network" href="network.html" />
+    <link rel="prev" title="LVM" href="lvm.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="network.html" title="Linux Network"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lvm.html" title="LVM"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Linux Memory</a><ul>
+<li><a class="reference internal" href="#problem">Problem</a></li>
+<li><a class="reference internal" href="#basic-concept">Basic Concept</a></li>
+<li><a class="reference internal" href="#optimization">Optimization</a><ul>
+<li><a class="reference internal" href="#test">Test</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lvm.html"
+                        title="previous chapter">LVM</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="network.html"
+                        title="next chapter">Linux Network</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/linux/memory.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="linux-memory">
+<h1>Linux Memory<a class="headerlink" href="#linux-memory" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+<p>When I use OpenSuse Linux, I often found that the computer memory is out of use. So I open the Ksysguard(KDE System monitor) and take a look at my memory and swap history.</p>
+<img alt="../../_images/ksysguard.jpeg" src="../../_images/ksysguard.jpeg" />
+<p>But when I run the &#8216;top&#8217; and &#8216;free&#8217; command in terminal, I get this:</p>
+<img alt="../../_images/top1.jpeg" src="../../_images/top1.jpeg" />
+<p>it matches free command, like this:</p>
+<img alt="../../_images/free1.jpeg" src="../../_images/free1.jpeg" />
+<p>Why do command and ksysguard not match eachother?</p>
+</div>
+<div class="section" id="basic-concept">
+<h2>Basic Concept<a class="headerlink" href="#basic-concept" title="Permalink to this headline">¶</a></h2>
+<p>Memory:</p>
+<p>Application Memory: the application memory, you can set limits in /etc/security/limits.conf, and you can check it in /proc/XXXX/limits</p>
+<p>Buffer: Buffers is the size of in-memory block I/O buffers, which policy is first-in, first-out.</p>
+<p>Cache Memory: Cached is the size of the page cache, whick policy is Least Recently Used. Cache memory can easily be several gigabytes. It will shrink only in response to memory pressure.</p>
+<p>After we learn the concept, we can easily surmise that ksysguard does&#8217;t display the cache memory in use. But my litter tool that can show all the memory in use.</p>
+<img alt="../../_images/bubble.jpeg" src="../../_images/bubble.jpeg" />
+</div>
+<div class="section" id="optimization">
+<h2>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h2>
+<p>First comes to my thoughts, is to limit application memeory so that the memory has more space for system and kernel.</p>
+<p>Use Swap as part of the virtual memeory.</p>
+<div class="section" id="test">
+<h3>Test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h3>
+<p>After running some application in opensuse the cache memory is about 700MB. It will increase while the system is running.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="network.html" title="Linux Network"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lvm.html" title="LVM"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

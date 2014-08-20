@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Docker &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Hadoop介绍及基础研究" href="../distribution/hadoop.html" />
+    <link rel="prev" title="Nity" href="../programming/common/nity.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../programming/common/nity.html" title="Nity"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Docker</a><ul>
+<li><a class="reference internal" href="#using-docker">Using Docker</a></li>
+<li><a class="reference internal" href="#reference">reference</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../programming/common/nity.html"
+                        title="previous chapter">Nity</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../distribution/hadoop.html"
+                        title="next chapter">Hadoop介绍及基础研究</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/virtualization/docker.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="docker">
+<h1>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h1>
+<p>Docker is a virtualization tool Based on Linux Container(LXC).
+Useful and easy-to-use.</p>
+<p>Docker is application container, to some extent, like virtual machines.
+But there are a lot of differences:</p>
+<ul class="simple">
+<li>Virtualization is based on physical cpu and memory, while docker is based on OS, using containerization technique, even running on virtual machine.</li>
+<li>Virtualization refers to system image, called &#8216;system&#8217;, while docker is called &#8216;container&#8217;, which is more suitable for light application, such as redis, or memcached.</li>
+<li>Virtualization uses snapshot to save the state. Docker is lower cost and protable. Docker imports code version control, which is more easy to switch between versions.</li>
+<li>Virtualization is more complex at building system. Docker uses dockerfile to build containers, which is faster. Dockerfile can access on the host, which is more convenient.</li>
+</ul>
+<p>Docker&#8217;s features:</p>
+<ul class="simple">
+<li>File system isolation.</li>
+<li>Resource isolation, like cpu and memory.</li>
+<li>Network isolation: every container has its own network interface and ip.</li>
+<li>Writing copy: makes deploy faster, save more disk space and memory space.</li>
+<li>Log system.</li>
+<li>Change management.</li>
+<li>Interactive shell.</li>
+</ul>
+<div class="section" id="using-docker">
+<h2>Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h2>
+<p>Install docker on OpenSuse:</p>
+<div class="highlight-python"><pre>$sudo zypper ar -f http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/ Virtualization
+$sudo rpm --import http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/repodata/repomd.xml.key
+$ssudo zypper in docker
+$sudo systemctl start docker
+$sudo systemctl enable docker(optional)</pre>
+</div>
+<p>Run docker:</p>
+<div class="highlight-python"><pre>$sudo docker run [option] [imagename] [command]
+$sudo docker run -t -i ubuntu:14.04 /bin/bash (-t means create a terminal, -i means we can interact with stdin)
+$sudo docker run -d ubuntu:14.04 /bin/bash (-d means run in deamon process)
+$sudo docker run -t -i -p localhost:8080:80 ubuntu:14.04 /bin/bash(port mapping the container 80 port to host 8080 port)</pre>
+</div>
+<p>Usual command:</p>
+<div class="highlight-python"><pre>Commands:
+   attach    Attach to a running container
+   build     Build an image from a Dockerfile
+   commit    Create a new image from a container's changes
+   cp        Copy files/folders from a container's filesystem to the host path
+   diff      Inspect changes on a container's filesystem
+   events    Get real time events from the server
+   export    Stream the contents of a container as a tar archive
+   history   Show the history of an image
+   images    List images
+   import    Create a new filesystem image from the contents of a tarball
+   info      Display system-wide information
+   inspect   Return low-level information on a container
+   kill      Kill a running container
+   load      Load an image from a tar archive
+   login     Register or log in to the Docker registry server
+   logs      Fetch the logs of a container
+   port      Lookup the public-facing port that is NAT-ed to PRIVATE_PORT
+   pause     Pause all processes within a container
+   ps        List containers
+   pull      Pull an image or a repository from a Docker registry server
+   push      Push an image or a repository to a Docker registry server
+   restart   Restart a running container
+   rm        Remove one or more containers
+   rmi       Remove one or more images
+   run       Run a command in a new container
+   save      Save an image to a tar archive
+   search    Search for an image on the Docker Hub
+   start     Start a stopped container
+   stop      Stop a running container
+   tag       Tag an image into a repository
+   top       Lookup the running processes of a container
+   unpause   Unpause a paused container
+   version   Show the Docker version information
+   wait      Block until a container stops, then print its exit code</pre>
+</div>
+<p>Example:</p>
+<div class="highlight-python"><pre>$docker ps -a
+$docker start [containerId]
+$docker attach [containerId]
+$docker stop [containerId]
+$docker logs [containerId]
+$docker commit [containerId] name/imagename:versionId</pre>
+</div>
+<p>NAT with iptables:</p>
+<div class="highlight-python"><pre>iptables -t nat -A  DOCKER -p tcp --dport   &lt;local port&gt; -j DNAT --to-destination &lt;docker ip&gt;:&lt;docker port&gt;</pre>
+</div>
+</div>
+<div class="section" id="reference">
+<h2>reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://www.widuu.com/chinese_docker/installation/opensuse.html">http://www.widuu.com/chinese_docker/installation/opensuse.html</a>
+<a class="reference external" href="http://www.pchou.info/open-source/2014/03/29/docker-introduction.html">http://www.pchou.info/open-source/2014/03/29/docker-introduction.html</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../programming/common/nity.html" title="Nity"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

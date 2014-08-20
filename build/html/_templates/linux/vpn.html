@@ -82,11 +82,11 @@
   <div class="section" id="vpn">
 <h1>VPN<a class="headerlink" href="#vpn" title="Permalink to this headline">¶</a></h1>
 <p>VPN: virtual private network</p>
-<p>xl2tpd客户端
-1.首先安装xl2tp，zypper in xl2tpd ppp (ubuntu和centos使用相应工具)安装。
+<p>xl2tpd客户端</p>
+<div class="highlight-python"><pre>1.首先安装xl2tp，zypper in xl2tpd ppp (ubuntu和centos使用相应工具)安装。
 2.配置/etc/ppp/peers/testvpn.l2tpd，修改如下两个配置：
-user &#8220;dev&#8221;
-password &#8220;Neunn&#64;)!$&#8221;
+user "dev"
+password "Neunn@)!$"
 3.配置/etc/xl2tpd/xl2tpd.conf
 [lac client]
 name = ops
@@ -95,11 +95,12 @@ pppoptfile = /etc/ppp/peers/testvpn.l2tpd
 ppp debug = no
 4.启动xl2tp
 /etc/init.d/xl2tpd start
-echo &#8216;c client&#8217; &gt; /var/run/xl2tpd/l2tp-control
+echo 'c client' &gt; /var/run/xl2tpd/l2tp-control
 5.添加相应路由（此处酌情考虑）
 6.断开vpn
-echo &#8216;d client&#8217; &gt; /var/run/xl2tpd/l2tp-control
-/etc/init.d/xl2tpd stop&#8217;&#8216;&#8217;&#8216;&#8221;&#8220;&#8221;&#8221;)</p>
+echo 'd client' &gt; /var/run/xl2tpd/l2tp-control
+/etc/init.d/xl2tpd stop</pre>
+</div>
 </div>
 
 

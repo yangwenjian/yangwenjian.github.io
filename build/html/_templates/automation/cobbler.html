@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Nity" href="../programming/common/nity.html" />
-    <link rel="prev" title="LVM" href="../linux/lvm.html" /> 
+    <link rel="next" title="Nity" href="nity.html" />
+    <link rel="prev" title="Linux FireWall" href="../linux/firewall.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../programming/common/nity.html" title="Nity"
+          <a href="nity.html" title="Nity"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../linux/lvm.html" title="LVM"
+          <a href="../linux/firewall.html" title="Linux FireWall"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -62,10 +62,10 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../linux/lvm.html"
-                        title="previous chapter">LVM</a></p>
+  <p class="topless"><a href="../linux/firewall.html"
+                        title="previous chapter">Linux FireWall</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../programming/common/nity.html"
+  <p class="topless"><a href="nity.html"
                         title="next chapter">Nity</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
@@ -124,7 +124,29 @@ cobbler sync（同步配置）会将现有的cobbler配置导入，</p>
 </div>
 <div class="section" id="id4">
 <h2>cobbler源码分析<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
-<p>cobbler的源代码从开始，首先读取conf配置文件。（暂时未实现）</p>
+<p>cobbler的源代码从开始，首先读取conf配置文件。</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">cobbler.cli</span> <span class="kn">as</span> <span class="nn">app</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">PROFILING</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="k">if</span> <span class="n">PROFILING</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&quot;** PROFILING **&quot;</span>
+    <span class="kn">import</span> <span class="nn">hotshot</span>
+    <span class="kn">import</span> <span class="nn">hotshot.stats</span>
+    <span class="n">prof</span> <span class="o">=</span> <span class="n">hotshot</span><span class="o">.</span><span class="n">Profile</span><span class="p">(</span><span class="s">&quot;cobbler.prof&quot;</span><span class="p">)</span>
+    <span class="n">prof</span><span class="o">.</span><span class="n">runcall</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">main</span><span class="p">)</span>
+    <span class="n">prof</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">hotshot</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;cobbler.prof&quot;</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">strip_dirs</span><span class="p">()</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="s">&#39;time&#39;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&quot;** REPORT **&quot;</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">print_stats</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -141,10 +163,10 @@ cobbler sync（同步配置）会将现有的cobbler配置导入，</p>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../programming/common/nity.html" title="Nity"
+          <a href="nity.html" title="Nity"
              >next</a> |</li>
         <li class="right" >
-          <a href="../linux/lvm.html" title="LVM"
+          <a href="../linux/firewall.html" title="Linux FireWall"
              >previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

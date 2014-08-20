@@ -44,4 +44,27 @@ cobbler sync（同步配置）会将现有的cobbler配置导入，
 
 cobbler源码分析
 =============================================
-cobbler的源代码从开始，首先读取conf配置文件。（暂时未实现）
+cobbler的源代码从开始，首先读取conf配置文件。
+
+.. code:: python
+
+    import cobbler.cli as app
+    import sys
+
+    PROFILING = False
+
+    if PROFILING:
+        print "** PROFILING **"
+        import hotshot
+        import hotshot.stats
+        prof = hotshot.Profile("cobbler.prof")
+        prof.runcall(app.main)
+        prof.close()
+        stats = hotshot.stats.load("cobbler.prof")
+        stats.strip_dirs()
+        stats.sort_stats('time')
+        print "** REPORT **"
+        stats.print_stats(100)
+        sys.exit(0)
+    else:
+        sys.exit(app.main())

@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Linux Network &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Linux FireWall" href="firewall.html" />
+    <link rel="prev" title="Linux Memory" href="memory.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="firewall.html" title="Linux FireWall"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="memory.html" title="Linux Memory"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Linux Network</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#bridge">Bridge</a></li>
+<li><a class="reference internal" href="#vlan-device-for-802-1-q">Vlan device for 802.1.q</a></li>
+<li><a class="reference internal" href="#tap-device-and-veth-device">TAP device and VETH device</a></li>
+<li><a class="reference internal" href="#network-configuration">Network Configuration</a><ul>
+<li><a class="reference internal" href="#sending-package-from-vlan-100-device">Sending package from vlan 100 device</a></li>
+<li><a class="reference internal" href="#seding-package-from-vlan-200-device">Seding package from vlan 200 device</a></li>
+<li><a class="reference internal" href="#sending-package-from-center-bridge">Sending package from center bridge</a></li>
+<li><a class="reference internal" href="#sending-package-arp-vlan200-from-external-network-to-eth0">Sending package &#8216;ARP&#64;vlan200&#8216; from external network to eth0</a></li>
+<li><a class="reference internal" href="#sending-arp-request-from-tap-device">Sending arp request from tap device</a></li>
+<li><a class="reference internal" href="#sending-package-from-tap-by-file-operation">Sending package from tap by file operation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dirver-development">Dirver development</a><ul>
+<li><a class="reference internal" href="#dma">DMA</a><ul>
+<li><a class="reference internal" href="#optimization">Optimization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cache">Cache</a></li>
+<li><a class="reference internal" href="#device-interface-mode">Device interface mode</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="memory.html"
+                        title="previous chapter">Linux Memory</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="firewall.html"
+                        title="next chapter">Linux FireWall</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/linux/network.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="linux-network">
+<h1>Linux Network<a class="headerlink" href="#linux-network" title="Permalink to this headline">¶</a></h1>
+<p>Network virtulization is an import part of cloud computing. We can use Linux network device to meet our request. We can manage them, use them to help us find the problem.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>We know the when we use a network device such as the nic, we have an network instance like &#8216;eth0&#8217;. These instances are the mapping of the nic device.
+In Linux, we use more abstract type of device, which are: bridge, 802.1.q vlan device, veth, tap. With these instances and ip table, route table we can create virtual network.</p>
+</div>
+<div class="section" id="bridge">
+<h2>Bridge<a class="headerlink" href="#bridge" title="Permalink to this headline">¶</a></h2>
+<p>Bridge is a virtual device used for TCP/IP second layer(ip protocol) transmission. It is like a virtual switch. When package recieved in bridge, it will forward, broadcast or drop the packages by the information of mac. Bridge is in Linux kernel.</p>
+<img alt="../../_images/bridge.jpg" src="../../_images/bridge.jpg" />
+<p>When a device is attached to bridge, it is like that a switch is connect to a cable.
+In kernel, netdev_rx_handler_register() is called, and then a callback function is regestered, which can forward the data package to bridge.
+Something different from the actual switch, packages are sent to bridge directly, not from a port in bridge. We can asumme that bridge is directly attached to eth0. So when a bridge joins eth0, actually this bridge has two valiad mac address, one is the bridge mac address, the other is eth0 mac address.
+Bridge can be set with an ip address, so that we can discover this bridge in the third layer.</p>
+<p>One thing to notice, when a network interface is attached to a bridge, the ip address of that network interface will become invaliad.
+For example, eth0&#8217;s ip is 192.168.1.2, then it is attached to bridge0, we should make bridge0&#8217;s ip 192.168.1.2.</p>
+<p>Another thing to notice is the data direction. For example, when a network interface is attached to a bridge, if a reqeust is send type, it will sent to sending exit.</p>
+</div>
+<div class="section" id="vlan-device-for-802-1-q">
+<h2>Vlan device for 802.1.q<a class="headerlink" href="#vlan-device-for-802-1-q" title="Permalink to this headline">¶</a></h2>
+<p>Vlan stands for virtual lan, which is use to isolate the networks in layer 2(data link layer).</p>
+<img alt="../../_images/vlan.jpg" src="../../_images/vlan.jpg" />
+<p>Vlan device for 802.1.q in Linux network appears in pair of mother device and son device. Mother device is just like the trunk port in switch, which is connected to uppper level network; son device is just like access port in switch, which is conneted to virtual machine. To host machine, mother device is used to recieve package, son device is used to send package.
+When a package with 100 vlan tag is recive to mother device, mother device will take off the vlan tag and send the package to approprate son device.</p>
+<p>One thing to notice is that mother device and son device has the same mac address. We can assume that it is a 802.1.q switch. But vlan device in Linux can only support the function of isolation, not transmission.
+We can use both vlan device and bridge in Linux, then we will get all the functions we need.</p>
+<p>Linux supports optimization by hardware, the vlan device can be moved to hardware to optimize the network.</p>
+</div>
+<div class="section" id="tap-device-and-veth-device">
+<h2>TAP device and VETH device<a class="headerlink" href="#tap-device-and-veth-device" title="Permalink to this headline">¶</a></h2>
+<p>TUN/TAP device is a tool that let users programm send package to kernel.</p>
+<img alt="../../_images/tap.jpg" src="../../_images/tap.jpg" />
+<p>When a tap device is created, a char device will be created in linux device catagory. Users can write the char file.
+When doing this, it is as the data is sent to the tap device. Linux network will get the package by tap device. Then Linux will request the kernel to accept the package, just like the network interface get the package.
+When users application do &#8216;read()&#8217; actions, it is just like asking the kernel has data package to send by the tap device.</p>
+<p>Veth device come in pairs. Data comes into one end and comes out to the other end.</p>
+</div>
+<div class="section" id="network-configuration">
+<h2>Network Configuration<a class="headerlink" href="#network-configuration" title="Permalink to this headline">¶</a></h2>
+<p>Here is an example of Linux network device:
+A center bridge, which is attached by 4 devices, including 2 pair veth device, 1 tap device tap0, 1 network device eth0.
+There are vlan devices attached to veth device, including 2 vlan tag, vlan 100 and vlan 200.
+Network device eth0 is connected to outer network, and a son vlan device with tag 200 is created under eth0.</p>
+<div class="section" id="sending-package-from-vlan-100-device">
+<h3>Sending package from vlan 100 device<a class="headerlink" href="#sending-package-from-vlan-100-device" title="Permalink to this headline">¶</a></h3>
+<img alt="../../_images/network1.jpg" src="../../_images/network1.jpg" />
+<p>In this case, when user ping 192.168.100.3, Linux send arp request to vlan 100 device, the request <a class="reference external" href="mailto:'APR&#37;&#52;&#48;vlan100">'APR<span>&#64;</span>vlan100</a>&#8216; go through veth device and broadcast on bridge0.
+The request go into the other veth device and handled by vlan logic and go into vlan 100 device. The vlan device will drop the vlan tag and change the package to normal arp request &#8216;ARP&#8217;, and bridge1 broadcast the arp package again.
+The request go into tap0. User can read this arp reqeust <a class="reference external" href="mailto:'ARP&#37;&#52;&#48;vlan100">'ARP<span>&#64;</span>vlan100</a>&#8216;
+The request go into eth0, but the son vlan device does not get this request because it is request sent package.</p>
+</div>
+<div class="section" id="seding-package-from-vlan-200-device">
+<h3>Seding package from vlan 200 device<a class="headerlink" href="#seding-package-from-vlan-200-device" title="Permalink to this headline">¶</a></h3>
+<img alt="../../_images/network2.jpg" src="../../_images/network2.jpg" />
+<p>It is the same with sending package from vlan 100. The difference is that the other vlan 200 device is set reorder_hdr = 0(keep the vlan tag of package recieved), the son device will get arp package with vlan tag(<a class="reference external" href="mailto:'ARP&#37;&#52;&#48;vlan200">'ARP<span>&#64;</span>vlan200</a>&#8216;).</p>
+</div>
+<div class="section" id="sending-package-from-center-bridge">
+<h3>Sending package from center bridge<a class="headerlink" href="#sending-package-from-center-bridge" title="Permalink to this headline">¶</a></h3>
+<img alt="../../_images/network3.jpg" src="../../_images/network3.jpg" />
+<p>If bridge0 has an ip, user application can send arp package to bridge0 by router table.
+Tap device and external network can recive the package, but vlan device cant not.</p>
+</div>
+<div class="section" id="sending-package-arp-vlan200-from-external-network-to-eth0">
+<h3>Sending package <a class="reference external" href="mailto:'ARP&#37;&#52;&#48;vlan200">'ARP<span>&#64;</span>vlan200</a>&#8216; from external network to eth0<a class="headerlink" href="#sending-package-arp-vlan200-from-external-network-to-eth0" title="Permalink to this headline">¶</a></h3>
+<img alt="../../_images/network4.jpg" src="../../_images/network4.jpg" />
+<p>When this happens, all vlan device with tag vlan200 will recieve the package, and the tap device will also recieve the package as <a class="reference external" href="mailto:'ARP&#37;&#52;&#48;vlan200">'ARP<span>&#64;</span>vlan200</a>&#8216;.</p>
+</div>
+<div class="section" id="sending-arp-request-from-tap-device">
+<h3>Sending arp request from tap device<a class="headerlink" href="#sending-arp-request-from-tap-device" title="Permalink to this headline">¶</a></h3>
+<img alt="../../_images/network5.jpg" src="../../_images/network5.jpg" />
+<p>Create an ip fro tap0, and add it to router table. Send ping arp package from tap0.
+Because the package from tap0 is sending request, so the package does not go into bridge0, and nothing happens.
+If we ping from vlan 200 son device, as there is no veth device to revert the request direction, this package will go directly to network interface eth0.</p>
+</div>
+<div class="section" id="sending-package-from-tap-by-file-operation">
+<h3>Sending package from tap by file operation<a class="headerlink" href="#sending-package-from-tap-by-file-operation" title="Permalink to this headline">¶</a></h3>
+<img alt="../../_images/network6.jpg" src="../../_images/network6.jpg" />
+<p>user application can use tap device by two ways: socket and file operation. When user use socket, the situation will be the same from ping from tap devivce.
+But when we open the tap file and write to it, it will touch off forwarding action. The bridge will recieve and broadcast the package.</p>
+</div>
+</div>
+<div class="section" id="dirver-development">
+<h2>Dirver development<a class="headerlink" href="#dirver-development" title="Permalink to this headline">¶</a></h2>
+<p>In this time, I aim to the MAC(Media Access Control ) layer.</p>
+<div class="section" id="dma">
+<h3>DMA<a class="headerlink" href="#dma" title="Permalink to this headline">¶</a></h3>
+<p>DMA(Direct Memory Access) can assist the processer with recieving and sending package.
+It can send the packages without processer processing.
+When recieving message, it can notify the processer and wait for the processing.</p>
+<p>DMA using BD(Buffer Description) as sending and reciving unit.
+Each package will divide into some frame. Every frame is stored in one BD, like this:</p>
+<div class="code highlight-python"><pre>typedef struct{
+     void \*bufprt;  //save the start address of BD
+     int length;     //save length of package stored
+     int sc;         //save the state of BD
+}BD_STRUCT;</pre>
+</div>
+<div class="section" id="optimization">
+<h4>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h4>
+<p>With network device is improving, the network speed doesn&#8217;t match, because the speed is also limited by the processor.</p>
+</div>
+</div>
+<div class="section" id="cache">
+<h3>Cache<a class="headerlink" href="#cache" title="Permalink to this headline">¶</a></h3>
+<p>Cache is more faster than the memnory. If we use the &#8216;wirte back&#8217; mode, the package is stored in cache not writen to memory, until other data need to updated into cache.
+It is more efficient than &#8216;write through&#8217; mode, which is, the data is writen to memory right after it is updated into cache.</p>
+</div>
+<div class="section" id="device-interface-mode">
+<h3>Device interface mode<a class="headerlink" href="#device-interface-mode" title="Permalink to this headline">¶</a></h3>
+<p>PHY module has two mode: mandatory and auto-negotiation. It depends on the other side of network.</p>
+<p>MAC module must be set the mode match to the PHY mode.</p>
+</div>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/">http://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="firewall.html" title="Linux FireWall"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="memory.html" title="Linux Memory"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
