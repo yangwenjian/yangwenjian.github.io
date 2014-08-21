@@ -1,22 +1,38 @@
 
 
 
-======================================
+==================================
 Neutron
-======================================
+==================================
 Neutron is the network controller in openstack.
 
-Concept and Relationship
---------------------------------------
-First, let me introduce some concepts I learned.
 
-Network:    container of subnets, controll by tenant.
+Concpet and Relationship
+----------------------------------
+First, I will introduce some concept I have learned.
 
-Subnet:     virtual network, including gateway, dhcp server, cidr, etc.
+Network:    container of subnets.
 
-Port:       interface of subnet, router, or virutal machine.
+Subnet:     virtual network including gateway, dns server, cidr.
 
-Router:     Connection between subnets.
+Port:       virtual interface of router, subnet, virtual machines.
 
-A network is ruled by tenant, and contains many subnets if needed.
+Router:     connector between subnets.
+
+Adminstate: true if the administrator can control.
+
+SegmentId:  use to add vlan tag or vxlan tag in network.
+
+一个租户可以有多个Network，一个Network可以包含多个subnet，多个port，虚拟机通过port与subnet相连，subnet通过port和router进行相连，再连接到外部网络进行上网。
+
+
+
+Neutron Network Type
+-----------------------------------
+There is several types in neutron network, 'FLAT', 'VLAN', 'GRE', 'VXLAN', 'LOCAL'.
+
+Local is local network without any configuration.
+
+Flat is flat network like all instances are in the same network plane.
+
 

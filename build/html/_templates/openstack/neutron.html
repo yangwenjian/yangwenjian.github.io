@@ -50,7 +50,8 @@
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Neutron</a><ul>
-<li><a class="reference internal" href="#concept-and-relationship">Concept and Relationship</a></li>
+<li><a class="reference internal" href="#concpet-and-relationship">Concpet and Relationship</a></li>
+<li><a class="reference internal" href="#neutron-network-type">Neutron Network Type</a></li>
 </ul>
 </li>
 </ul>
@@ -90,14 +91,22 @@
   <div class="section" id="neutron">
 <h1>Neutron<a class="headerlink" href="#neutron" title="Permalink to this headline">¶</a></h1>
 <p>Neutron is the network controller in openstack.</p>
-<div class="section" id="concept-and-relationship">
-<h2>Concept and Relationship<a class="headerlink" href="#concept-and-relationship" title="Permalink to this headline">¶</a></h2>
-<p>First, let me introduce some concepts I learned.</p>
-<p>Network:    container of subnets, controll by tenant.</p>
-<p>Subnet:     virtual network, including gateway, dhcp server, cidr, etc.</p>
-<p>Port:       interface of subnet, router, or virutal machine.</p>
-<p>Router:     Connection between subnets.</p>
-<p>A network is ruled by tenant, and contains many subnets if needed.</p>
+<div class="section" id="concpet-and-relationship">
+<h2>Concpet and Relationship<a class="headerlink" href="#concpet-and-relationship" title="Permalink to this headline">¶</a></h2>
+<p>First, I will introduce some concept I have learned.</p>
+<p>Network:    container of subnets.</p>
+<p>Subnet:     virtual network including gateway, dns server, cidr.</p>
+<p>Port:       virtual interface of router, subnet, virtual machines.</p>
+<p>Router:     connector between subnets.</p>
+<p>Adminstate: true if the administrator can control.</p>
+<p>SegmentId:  use to add vlan tag or vxlan tag in network.</p>
+<p>一个租户可以有多个Network，一个Network可以包含多个subnet，多个port，虚拟机通过port与subnet相连，subnet通过port和router进行相连，再连接到外部网络进行上网。</p>
+</div>
+<div class="section" id="neutron-network-type">
+<h2>Neutron Network Type<a class="headerlink" href="#neutron-network-type" title="Permalink to this headline">¶</a></h2>
+<p>There is several types in neutron network, &#8216;FLAT&#8217;, &#8216;VLAN&#8217;, &#8216;GRE&#8217;, &#8216;VXLAN&#8217;, &#8216;LOCAL&#8217;.</p>
+<p>Local is local network without any configuration.</p>
+<p>Flat is flat network like all instances are in the same network plane.</p>
 </div>
 </div>
 

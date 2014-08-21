@@ -15,5 +15,9 @@ Mininet is light software defined network and test platform. It can be simply re
 Mininet features:
 
 * Support OpenFlow, OpenvSwitch network component.
-  Support reduction test, complex topotology, self defined network.
+* Support reduction test, complex topotology, self defined network.
+* Python API.
+* Portability and scalability.
+* Support thousands of servers' network.
+
 
