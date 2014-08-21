@@ -73,6 +73,7 @@ Sulotion of Distribution
    :maxdepth: 1
   
    _templates/distribution/hadoop
+   _templates/distribution/storage
 
 
 Sulotion of SOA
