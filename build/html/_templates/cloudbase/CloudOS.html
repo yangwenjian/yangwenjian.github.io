@@ -55,6 +55,7 @@
 <li><a class="reference internal" href="#aclome">东信Aclome</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#id3">总结</a></li>
 </ul>
 
   <h4>Previous topic</h4>
@@ -120,6 +121,23 @@ IT服务管理平台
 <p>Aclome平台是由CloudStack+XenServer搭建的一套虚拟化平台，东信主要是修改前台并加入了动环的监控，并能与施耐德的设备进行集成（意味着动环管理不能集成其他厂商），具有良好的界面及动环监控能力。
 但东信本身的实质还是简单的开源产品，并没有经过仔细的改造和测试，类似这样的东西是不能进行商用的。并且重启后很多服务要手动重新调试，增加了部署和调试的难度。</p>
 </div>
+</div>
+<div class="section" id="id3">
+<h1>总结<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
+<p>经过几轮的测试和学习，总结下云平台的几个要素：</p>
+<ol class="arabic simple">
+<li>资源的监控能力</li>
+<li>虚拟机的管理能力</li>
+<li>弹性扩展和收缩能力（autoscaling）</li>
+<li>网络的管理能力（SDN）</li>
+<li>租户的管理与隔离（VPC业务）</li>
+<li>块的动态挂载和扩展</li>
+<li>镜像的管理能力</li>
+<li>网络安全与虚拟机安全防护能力</li>
+</ol>
+<p>9) 负载均衡能力
+a) 对象存储（云盘业务）
+b) 强大的API机制及相应的SDK</p>
 </div>
 
 

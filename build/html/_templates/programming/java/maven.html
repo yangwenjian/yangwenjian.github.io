@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="Project Management Tools in Linux" href="../../linux/projectManagement.html" />
+    <link rel="next" title="Project Management Tools" href="../../other/projectManagement.html" />
     <link rel="prev" title="高级算法研究" href="../common/genetic.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../linux/projectManagement.html" title="Project Management Tools in Linux"
+          <a href="../../other/projectManagement.html" title="Project Management Tools"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../common/genetic.html" title="高级算法研究"
@@ -51,7 +51,8 @@
   <ul>
 <li><a class="reference internal" href="#">Maven</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a><ul>
-<li><a class="reference internal" href="#how-we-use-maven">How we use maven</a></li>
+<li><a class="reference internal" href="#how-we-use-maven">How We Use Maven</a></li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
 </ul>
 </li>
 </ul>
@@ -62,8 +63,8 @@
   <p class="topless"><a href="../common/genetic.html"
                         title="previous chapter">高级算法研究</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../../linux/projectManagement.html"
-                        title="next chapter">Project Management Tools in Linux</a></p>
+  <p class="topless"><a href="../../other/projectManagement.html"
+                        title="next chapter">Project Management Tools</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/java/maven.txt"
@@ -96,7 +97,7 @@
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Maven is a wildly used project builder tool in programming.</p>
 <div class="section" id="how-we-use-maven">
-<h3>How we use maven<a class="headerlink" href="#how-we-use-maven" title="Permalink to this headline">¶</a></h3>
+<h3>How We Use Maven<a class="headerlink" href="#how-we-use-maven" title="Permalink to this headline">¶</a></h3>
 <p>we can test, install, deploy the project by maven.
 When we use maven, we must config the settings.xml in maven&#8217;s configuration.We can use it as its defualt settings, it will download the dependencies from maven website.
 But if we use nexus or other maven server, we must add repository{id, url, release, snapshot} into the settings file.
@@ -105,6 +106,82 @@ In the pom file, we add project information like {parent{groupeId, artifactId, v
 <p>When we change pom file(we change dependencies),we have to maven update project to download the denpendencies.
 Then we make test of maven, make install to build the project and create jar or war package.
 And we maven deploy to upload the builded package to nexus.</p>
+</div>
+<div class="section" id="best-practices">
+<h3>Best Practices<a class="headerlink" href="#best-practices" title="Permalink to this headline">¶</a></h3>
+<p>The best teacher is practice. So I try to build a maven project.</p>
+<ol class="arabic simple">
+<li>Create a maven project in eclipse. Before this, you need to install the maven plugin in eclipse.</li>
+<li>Enter the group id, artifact id of the project, and click finish.</li>
+<li>We can see the pom file has been created in the project directory.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;groupId&gt;com.neunn.neunnmanager-sdk-java&lt;/groupId&gt;
+&lt;artifactId&gt;NeunnManager-sdk-java&lt;/artifactId&gt;
+&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+&lt;packaging&gt;jar&lt;/packaging&gt;
+&lt;name&gt;NeunnManager-sdk-java&lt;/name&gt;
+&lt;url&gt;http://maven.apache.org&lt;/ur</pre>
+</div>
+<ol class="arabic simple" start="4">
+<li>Add some properties in the pom file, so we can manage it more conveniently.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;properties&gt;
+   &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+   &lt;jersey-version&gt;1.17&lt;/jersey-version&gt;
+&lt;/properties&gt;</pre>
+</div>
+<ol class="arabic simple" start="5">
+<li>Add dependencies.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;dependency&gt;
+   &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+   &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+   &lt;version&gt;${spring.version}&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+   &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+   &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+   &lt;version&gt;${spring.version}&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+</div>
+<ol class="arabic simple" start="6">
+<li>Add repositories.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;repositories&gt;
+   &lt;repository&gt;
+       &lt;snapshots&gt;
+           &lt;enabled&gt;true&lt;/enabled&gt;
+       &lt;/snapshots&gt;
+       &lt;id&gt;public&lt;/id&gt;
+       &lt;name&gt;Public Repositories&lt;/name&gt;
+       &lt;url&gt;http://192.168.250.3:8686/nexus/content/groups/public/&lt;/url&gt;
+   &lt;/repository&gt;
+&lt;/repositories&gt;</pre>
+</div>
+<ol class="arabic simple" start="7">
+<li>Add deployment.(maven deploy)</li>
+</ol>
+<div class="highlight-python"><pre>&lt;distributionManagement&gt;
+   &lt;repository&gt;
+       &lt;id&gt;releases&lt;/id&gt;
+       &lt;name&gt;Local Nexus Repository&lt;/name&gt;
+       &lt;url&gt;http://192.168.250.3:8686/nexus/content/repositories/releases/&lt;/url&gt;
+   &lt;/repository&gt;
+   &lt;snapshotRepository&gt;
+       &lt;id&gt;Snapshots&lt;/id&gt;
+       &lt;name&gt;Local Nexus Repository&lt;/name&gt;
+       &lt;url&gt;http://192.168.250.3:8686/nexus/content/repositories/snapshots&lt;/url&gt;
+   &lt;/snapshotRepository&gt;
+&lt;/distributionManagement&gt;</pre>
+</div>
+<ol class="arabic simple" start="8">
+<li>Add modules to manage other projects.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;modules&gt;
+   &lt;module&gt;../com.dugeng.project1&lt;/module&gt;
+   &lt;module&gt;../com.dugeng.project2&lt;/module&gt;
+&lt;/modules&gt;</pre>
+</div>
 </div>
 </div>
 </div>
@@ -122,7 +199,7 @@ And we maven deploy to upload the builded package to nexus.</p>
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../linux/projectManagement.html" title="Project Management Tools in Linux"
+          <a href="../../other/projectManagement.html" title="Project Management Tools"
              >next</a> |</li>
         <li class="right" >
           <a href="../common/genetic.html" title="高级算法研究"
