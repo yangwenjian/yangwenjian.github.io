@@ -31,3 +31,53 @@ This is a shell use awk to start all the docker container when the power is on. 
      do
      docker start $container
      done
+
+This is a shell check gmail.
+
+::
+    
+    #!/bin/bash
+
+    curl -u yangwenjian99@gmail.com --silent "https://mail.google.com/mail/feed/atom" | perl -ne \
+        '
+    print "Subject: $1 " if /<title>(.+?)<\/title>/ && $title++;
+    print "(from $1)\n" if /<email>(.+?)<\/email>/
+        '
+
+This is an example to check network.
+
+::
+
+    #!/bin/bash
+
+    for((i=1;i<=255;i++));do
+        ping -c 5 192.168.1.$i
+        done
+Here is a pit in my work. I want to count the first line of one file, but it doesn't work.
+
+::
+
+    count=0
+    sum=0
+    awk '{print $1}' public/shell/testfile | while read onehelloline
+    do
+        echo $onehelloline
+        ((count= count+1))
+        echo $count
+        ((sum= sum+onehelloline))
+        echo $sum
+    done
+    echo $count
+    echo $sum
+    averagetime=`expr $(($sum/$count))`
+    echo $averagetime
+     
+最后发现count和sum都是0,原因是那块循环中并没有影响到全局变量。修改循环变量如下：
+
+::
+
+    data1=`awk '{print $1}' public/shell/testfile`
+    for data in $data1;do
+        ((count= count+1))
+        ((sum= sum+data))
+    done

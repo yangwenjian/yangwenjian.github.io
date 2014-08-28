@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Openstack Base Prototype Design &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="OpenStack Learning" href="../openstack/openstack.html" />
+    <link rel="prev" title="OpenStack SDK – JClouds" href="jclouds.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../openstack/openstack.html" title="OpenStack Learning"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="jclouds.html" title="OpenStack SDK – JClouds"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Openstack Base Prototype Design</a><ul>
+<li><a class="reference internal" href="#neunnmanager">运维管理系统NeunnManager</a><ul>
+<li><a class="reference internal" href="#id1">资源管理页面设计</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="jclouds.html"
+                        title="previous chapter">OpenStack SDK &#8211; JClouds</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../openstack/openstack.html"
+                        title="next chapter">OpenStack Learning</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/cloudbase/openstack_base_prototype.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="openstack-base-prototype-design">
+<h1>Openstack Base Prototype Design<a class="headerlink" href="#openstack-base-prototype-design" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="neunnmanager">
+<h2>运维管理系统NeunnManager<a class="headerlink" href="#neunnmanager" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>资源管理页面设计<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>管理员对整个云资源进行管理，资源管理界面的基础设计如下：</p>
+<p>分为五个标签，分别是资源申请，资源管理，资源监控，租户管理，系统配置。</p>
+<p>资源申请：查看待处理的申请，进行审批或者拒绝，查看审批记录。</p>
+<img alt="../../_images/resource_management_admin_application.jpg" src="../../_images/resource_management_admin_application.jpg" />
+<p>资源管理：查看所有资源的使用和分配情况，对主机进行可用域划分，收回等。</p>
+<img alt="../../_images/resource_management_admin_control.jpg" src="../../_images/resource_management_admin_control.jpg" />
+<p>资源监控：对于所有资源的监控，将未利用的资源下电。</p>
+<img alt="../../_images/resource_management_admin_monitor.jpg" src="../../_images/resource_management_admin_monitor.jpg" />
+<p>租户管理： 对于所有租户的增删改查，以及对于每个租户配额的管理。</p>
+<img alt="../../_images/resource_management_admin_tenant.jpg" src="../../_images/resource_management_admin_tenant.jpg" />
+<p>最后经过base组的讨论，得出如下结论：</p>
+<p>运营管理分为四大块，分别为租户管理，资源管理，合同管理，容量管理。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">项目</th>
+<th class="head">内容</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>租户管理</td>
+<td><ul class="first last simple">
+<li>用户列表</li>
+<li>合同列表</li>
+<li>可用域列表</li>
+<li>配额</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>资源管理</td>
+<td><ul class="first last simple">
+<li>可用域管理</li>
+<li>计算节点管理</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>合同管理</td>
+<td><ul class="first last simple">
+<li>合同列表</li>
+<li>合同扫描件</li>
+<li>合同内容</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>容量管理</td>
+<td><ul class="first last simple">
+<li>可用域容量管理</li>
+<li>计算节点容量管理</li>
+<li>cpu容量管理</li>
+<li>内存容量管理</li>
+<li>EBS容量管理</li>
+<li>IP容量管理</li>
+<li>带宽容量管理</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>资源管理分为AZ管理和计算节点管理。</strong></p>
+<p>AZ管理包括AZ列表，表项目为：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="23%" />
+<col width="27%" />
+<col width="27%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">available state</th>
+<th class="head">hosts (node linke)</th>
+<th class="head">metadata</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>nova</td>
+<td>true</td>
+<td>node1</td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<p>计算节点管理包括计算节点类表，表项目为：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="12%" />
+<col width="17%" />
+<col width="11%" />
+<col width="17%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">free state</th>
+<th class="head">availability zone</th>
+<th class="head">ip</th>
+<th class="head">configuration</th>
+<th class="head">power</th>
+<th class="head">metadata</th>
+<th class="head">action</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>node1</td>
+<td>true</td>
+<td>null</td>
+<td>192.168.1.2</td>
+<td>32cpus,128G mem,</td>
+<td>off</td>
+<td>save</td>
+<td><em>action</em></td>
+</tr>
+<tr class="row-odd"><td>node2</td>
+<td>false</td>
+<td>nova</td>
+<td>192.168.1.3</td>
+<td>32cpus,128G mem,</td>
+<td>on</td>
+<td>save</td>
+<td><em>action</em></td>
+</tr>
+</tbody>
+</table>
+<p>action包括如下几项操作：</p>
+<p><em>添加到可用域</em>
+<em>从可用域释放</em>
+<em>手动上电</em>
+<em>手动下电</em>
+<em>强制重启</em></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../openstack/openstack.html" title="OpenStack Learning"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="jclouds.html" title="OpenStack SDK – JClouds"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

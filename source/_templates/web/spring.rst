@@ -4,16 +4,22 @@
 =====================================
 Spring
 =====================================
-Spring是当前最主流的企业应用框架
+Spring是当前最主流的企业应用框架。
+Spring解决企业级开发的复杂性问题，利用简单的JavaBean完成之前EJB所完成的工作。
+简单来说，Spring是一个轻量级的控制反转（IOC）和面向且面编程（AOP）的框架。是每一个Java程序员必须学得的框架。
 
 Spring的配置
 ====================================
+在我们所开发的Openstack Base的工程中，利用Spring的诸多特性。
+包括：AOP, Security, JavaBean, context, orm, mvc, oauth, etc.
+
 
 Spring的数据源管理
 -------------------------------------
 Spring在使用Hibernate的时候需要进行初始化配置，建立数据源::
 
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">（这里使用阿里的数据库驱动）
+
 
 之后进行数据库连接dataSource的各项配置：driverClassName, url(pay attention to encoding), username, password, initialSize, maxActive(最大活跃数), maxIdle(最大空闲值), minIdle(最小空闲值)。
 
@@ -164,7 +170,8 @@ Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自�
     
     <context:component-scan base-package="com.neunn.cloud.base.*" />
 
-这里是整个扫描一个包进行全初始化，通过Spring的注解@AutoWired直接使用
+这里是整个扫描一个包进行全初始化，通过Spring的注解@AutoWired直接使用。
+上述包中的所有bean类都会被自动初始化并注入到容器中，这里bean的要求是提供无参的构造函数以及相应的get和set方法。
 
 启动Spring对@AspectJ注解的支持::
     
@@ -173,4 +180,64 @@ Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自�
 Spring的事务增强
 --------------------------------------
 Spring可以增强public的方法（注意不能增强public static方法）的事务。（暂时未涉及到此处，未研究学习)
+
+
+Spring的作用
+=======================================
+Spring框架可以帮程序员快速搭建服务框架。
+
+Inversion of Control（IOC）
+---------------------------------------
+控制反转（IOC）就是由容器控制程序之间的依赖（调用）关系，传统是由程序自己控制的。
+就像设计模式中的模板方式和好莱坞原则：Don't call us, we will call you.
+
+依赖注入（DI）更准确的描述了这种模式，组件之间的依赖关系由容器运行时决定，即由容器动态将依赖注入到组件之中。
+例如UserRegister依赖于UserDao的实现类，UserRegister不关心USerDao的实现，由容器完成依赖。
+
+IOC分为三种形式：
+
+1.接口注入
+```````````````````````````````````````
+我们开发一个injectUserDAo接口，将一个UserDAO注入到该接口的实现类中，然后UserRegister实现该接口。如：
+
+::
+
+    public interface InjectUserDao(){
+        public void setUserDao(UserDao userDao);
+    }
+
+    public class UserRegister implements InjectUserDao{
+        private UserDao userDao = null;
+        public void setUserDao(UserDao userDao){
+            this.userDao = userDao;
+        }
+    }
+
+同时，我们需要配置框架，这样实现接口后便可完成依赖注入了：
+
+::
+
+    <component> 
+        <scope>request</scope> 
+        <class>com.dev.spring.simple.MemoryUserDao</class> 
+        <enabler>com.dev.spring.simple.InjectUserDao</enabler> 
+    </component> 
+
+2.设值注入
+``````````````````````````````````````````
+通过实现setter方法而进行依赖注入，是最常用的注入方式。
+
+3.构造子注入
+``````````````````````````````````````````
+通过构造函数完成依赖注入，如：
+
+:: 
+
+    public class UserRegister{
+        private UserDao userDao;
+        public UserRegister(UserDao userDao){
+            this.userDao = userDao;
+        }
+    }
+
 

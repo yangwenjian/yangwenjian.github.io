@@ -1,0 +1,166 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>OpenStack Base 开发总结 &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="OpenStack SDK – JClouds" href="jclouds.html" />
+    <link rel="prev" title="Cloud OS 总结" href="cloudOS.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="jclouds.html" title="OpenStack SDK – JClouds"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cloudOS.html" title="Cloud OS 总结"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">OpenStack Base 开发总结</a><ul>
+<li><a class="reference internal" href="#base">Base层的作用</a></li>
+<li><a class="reference internal" href="#id1">Base层的开发</a><ul>
+<li><a class="reference internal" href="#id2">计费模块</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#jbilling">JBilling</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cloudOS.html"
+                        title="previous chapter">Cloud OS 总结</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="jclouds.html"
+                        title="next chapter">OpenStack SDK &#8211; JClouds</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/cloudbase/openstack_base.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="openstack-base">
+<h1>OpenStack Base 开发总结<a class="headerlink" href="#openstack-base" title="Permalink to this headline">¶</a></h1>
+<p>东网云平台的架构和设计</p>
+<div class="section" id="base">
+<h2>Base层的作用<a class="headerlink" href="#base" title="Permalink to this headline">¶</a></h2>
+<p>Base层的主要作用是南北互通，兼容并包。
+向下兼容各种云计算资源池，这里主要使用OpenStack;向上提供SDK与Rest接口，与Portal或者企业的应用对接。</p>
+<p>Base层作为我们的核心业务逻辑和控制中心，我们所有的资源控制，业务逻辑等都在这层中，我们保持OpenStack的原生和jclouds原生形态，这样做的目的是将来如果jclouds和OpenStack进行更新的时候我们也能很容易的进行相应更新，之前有很多企业对OpenStack的源码进行修改，由于他们修改的部分没有被社区采纳，就不能追随OpenStack社区的步伐了。</p>
+<p>以Base为中心的系统结构如下图所示：</p>
+<img alt="../../_images/base_architecture.jpg" src="../../_images/base_architecture.jpg" />
+</div>
+<div class="section" id="id1">
+<h2>Base层的开发<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Base层分为如下几个工程：
+1.ncloud-sdk-java，base层对外的java SDK，可以通过调用其中的接口对base工程进行连接并调用其中的资源;
+2.ncloud-base，base层核心工程，主要加入我们的身份验证、业务逻辑和控制过程，并向外发布Rest接口;
+3.ncloud-base-rp-api，base调用底层CloudOS的API，由我们团队自行实现，不依赖于任何第三方系统;
+4.ncloud-base-rp-impl，api工程中所有API的实现，也是直接操作JClouds进行OpenStack的资源调用，依赖于JClouds和第三方软件包。</p>
+<div class="section" id="id2">
+<h3>计费模块<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>计费功能在模板中主要实现，虚拟机，网络，块存储单独计费，其中虚拟机计费是首要需求，虚拟机计费可以根据模板费用×晕新时间进行计费。
+首先实现整个的费用平台，加入充值接口，实现扣费模块，固定套餐计费等组件。</p>
+<p>首先计算模板的费用，每个模板含有的cpu数目，内存大小，网络带宽作为模板费用的
+之后可以进行虚拟机运行时间的统计，可以利用openstack自带的组件ceilometer或者使用nova进行虚拟机运行时间的统计。
+如果能有信息实时推送到base层，这样就可以实现实时计费，不能采取base轮询的策略，这样比较耗费资源。最好是nova或者ceilometer或者我们自己的监控平台进行推送到base层实现实时计费。
+如果调用ceilometer查询主机的运行时间，只能实现事后计费，固定实际（进行计费统计并扣费）。
+autocaling的计费和负载均衡的计费暂时先不考虑。</p>
+<p>快照也需要收钱，按照快照的次数和快照大小进行计费。</p>
+<p>网络的计费模式主要取决于路由器，按照路由器的个数进行计费（青云）。neutron是否有配额功能？</p>
+<p>块存储也有相应的模板进行计费，高性能的存储和地性能的存储分开计费，按照大小和使用时间进行计费，暂时不实现回收站机制。</p>
+<p>消费记录也是用户的需求点之一，我们从ceilometer中获取log进行解析后存储在base层，然后发送给用户。</p>
+<img alt="../../_images/cloud_billing_mapreduce.jpg" src="../../_images/cloud_billing_mapreduce.jpg" />
+<p>整体的架构如下图所示：</p>
+<img alt="../../_images/cloud_billing_arcitecher.jpg" src="../../_images/cloud_billing_arcitecher.jpg" />
+</div>
+</div>
+<div class="section" id="jbilling">
+<h2>JBilling<a class="headerlink" href="#jbilling" title="Permalink to this headline">¶</a></h2>
+<p>JBilling is an enterprise billing system base on spring, web server.
+It has four edition: Community, Enterprise, Telco, Telco Hosted. Each after is more functional.</p>
+<p>JBilling is a seperated system of billing which contains functions like: Core, Accounts, Invoices, Payments, Intergrations, Product Management, Mediation, Support, Deployment.</p>
+<p>so yet, I can not find a way to intergrate JBilling in our system. But JBilling(Community) is an opensource project, we can add some of its componets.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="jclouds.html" title="OpenStack SDK – JClouds"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cloudOS.html" title="Cloud OS 总结"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

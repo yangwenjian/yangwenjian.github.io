@@ -8,16 +8,16 @@ Welcome to Knight's documentation!
 Contents:
 
 
-Sulotion of Cloud
+Sulotion of Cloud Base Layer
 ======================================
 
 .. toctree::
    :maxdepth: 1
 
-   _templates/cloudbase/CloudOS
+   _templates/cloudbase/cloudOS
+   _templates/cloudbase/openstack_base
    _templates/cloudbase/jclouds
-   _templates/cloudbase/OpenStack_Base
-   _templates/cloudbase/OpenStack
+   _templates/cloudbase/openstack_base_prototype
 
 
 Sulotion of OpenStack
@@ -26,6 +26,7 @@ Sulotion of OpenStack
 .. toctree::
    :maxdepth: 1
    
+   _templates/openstack/openstack
    _templates/openstack/securityGroup
    _templates/openstack/neutron
 
@@ -54,7 +55,7 @@ Sulotion of Autamation
    :maxdepth: 1
 
    _templates/automation/cobbler
-   _templates/automation/nity
+   _templates/automation/knight
 
 
 Solution of Virtualization
@@ -96,9 +97,7 @@ Programming Skill
    _templates/programming/common/designpatterns
    _templates/programming/java/annotation
    _templates/programming/java/guice
-   _templates/programming/java/spring
    _templates/programming/common/codeOptimization
-   _templates/programming/common/OpticksAndEnvi
    _templates/programming/common/genetic
    _templates/programming/java/maven
 
@@ -110,6 +109,7 @@ Other
    :maxdepth: 1
 
    _templates/other/projectManagement
+   _templates/other/opticksandenvi
 
 
 Indices and tables

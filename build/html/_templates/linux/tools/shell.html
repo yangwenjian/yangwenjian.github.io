@@ -108,6 +108,45 @@ for container in $list
     docker start $container
     done</pre>
 </div>
+<p>This is a shell check gmail.</p>
+<div class="highlight-python"><pre>#!/bin/bash
+
+curl -u yangwenjian99@gmail.com --silent "https://mail.google.com/mail/feed/atom" | perl -ne \
+    '
+print "Subject: $1 " if /&lt;title&gt;(.+?)&lt;\/title&gt;/ &amp;&amp; $title++;
+print "(from $1)\n" if /&lt;email&gt;(.+?)&lt;\/email&gt;/
+    '</pre>
+</div>
+<p>This is an example to check network.</p>
+<div class="highlight-python"><pre>#!/bin/bash
+
+for((i=1;i&lt;=255;i++));do
+    ping -c 5 192.168.1.$i
+    done</pre>
+</div>
+<p>Here is a pit in my work. I want to count the first line of one file, but it doesn&#8217;t work.</p>
+<div class="highlight-python"><pre>count=0
+sum=0
+awk '{print $1}' public/shell/testfile | while read onehelloline
+do
+    echo $onehelloline
+    ((count= count+1))
+    echo $count
+    ((sum= sum+onehelloline))
+    echo $sum
+done
+echo $count
+echo $sum
+averagetime=`expr $(($sum/$count))`
+echo $averagetime</pre>
+</div>
+<p>最后发现count和sum都是0,原因是那块循环中并没有影响到全局变量。修改循环变量如下：</p>
+<div class="highlight-python"><pre>data1=`awk '{print $1}' public/shell/testfile`
+for data in $data1;do
+    ((count= count+1))
+    ((sum= sum+data))
+done</pre>
+</div>
 </div>
 </div>
 
