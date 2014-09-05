@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="OpenStack Base 开发总结" href="OpenStack_Base.html" />
-    <link rel="prev" title="Cloud OS 总结" href="CloudOS.html" /> 
+    <link rel="next" title="Openstack Base Prototype Design" href="openstack_base_prototype.html" />
+    <link rel="prev" title="OpenStack Base 开发总结" href="openstack_base.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,22 +37,35 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="OpenStack_Base.html" title="OpenStack Base 开发总结"
+          <a href="openstack_base_prototype.html" title="Openstack Base Prototype Design"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="CloudOS.html" title="Cloud OS 总结"
+          <a href="openstack_base.html" title="OpenStack Base 开发总结"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">OpenStack SDK &#8211; JClouds</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#excercise">Excercise</a><ul>
+<li><a class="reference internal" href="#jclouds">JClouds中的请求</a></li>
+<li><a class="reference internal" href="#jcloudstoken">JClouds中的token缓存机制</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="CloudOS.html"
-                        title="previous chapter">Cloud OS 总结</a></p>
+  <p class="topless"><a href="openstack_base.html"
+                        title="previous chapter">OpenStack Base 开发总结</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="OpenStack_Base.html"
-                        title="next chapter">OpenStack Base 开发总结</a></p>
+  <p class="topless"><a href="openstack_base_prototype.html"
+                        title="next chapter">Openstack Base Prototype Design</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/cloudbase/jclouds.txt"
@@ -81,6 +94,75 @@
             
   <div class="section" id="openstack-sdk-jclouds">
 <h1>OpenStack SDK &#8211; JClouds<a class="headerlink" href="#openstack-sdk-jclouds" title="Permalink to this headline">¶</a></h1>
+<p>JClouds is an SDK of common clouds platform.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>JClouds是一个开源框架，它可帮你在云计算中起步并重用你的Java和Clojure开发技能。
+JClouds的API允许你自由的使用可迁移的抽象或特定的云特性。我们支持多种云环境：Amazon, VMWare, Azure 和 Rackspace</p>
+</div>
+<div class="section" id="excercise">
+<h2>Excercise<a class="headerlink" href="#excercise" title="Permalink to this headline">¶</a></h2>
+<p>We use jclouds as our SDK to build our own cloud system.</p>
+<div class="section" id="jclouds">
+<h3>JClouds中的请求<a class="headerlink" href="#jclouds" title="Permalink to this headline">¶</a></h3>
+<p>JClouds作为Openstack的sdk，不外乎的作用就是将用户请求的接口转换为http的请求，然后将返回的json结果转换为结构化的对象。</p>
+</div>
+<div class="section" id="jcloudstoken">
+<h3>JClouds中的token缓存机制<a class="headerlink" href="#jcloudstoken" title="Permalink to this headline">¶</a></h3>
+<p>JClouds还有一个重要作用，就是将请求的token进行状态缓存。这是为了充分利用token的有效期，并能有效的减少请求次数。</p>
+<p>将token请求后进行有效的存储。</p>
+<div class="highlight-python"><pre>V value = null;
+try {
+    value = getUninterruptibly(newValue);
+    if (value == null) {
+        throw new InvalidCacheLoadException("CacheLoader returned null for key " + key + ".");
+    }
+    statsCounter.recordLoadSuccess(loadingValueReference.elapsedNanos());
+    storeLoadedValue(key, hash, loadingValueReference, value);
+    return value;
+} finally {
+    if (value == null) {
+        statsCounter.recordLoadException(loadingValueReference.elapsedNanos());
+        removeLoadingValue(key, hash, loadingValueReference);
+    }
+}</pre>
+</div>
+<p>同时还写了自动刷新token的代码，当请求token的时候，就请求scheduleRefresh方法，这个方法会返回一个有效的token。
+这里使用一个时间记录标记now获得当前时间，然后将now值传入scheduleRfresh中，得到一个现在有效的token。</p>
+<div class="highlight-python"><pre>if (count != 0) {
+// read-volatile
+// don't call getLiveEntry, which would ignore loading values
+    ReferenceEntry&lt;K, V&gt; e = getEntry(key, hash);
+    if (e != null) {
+        long now = map.ticker.read();
+        V value = getLiveValue(e, now);
+        if (value != null) {
+            recordRead(e, now);
+            statsCounter.recordHits(1);
+            return scheduleRefresh(e, key, hash, value, now, loader);
+        }
+        ValueReference&lt;K, V&gt; valueReference = e.getValueReference();
+        if (valueReference.isLoading()) {
+            return waitForLoadingValue(e, key, valueReference);
+        }
+    }
+}</pre>
+</div>
+<p>JClouds将值存储之后进行定时刷新，如果时间超过定时刷新时间，就重新获取value并且返回，如果不是，那么就会返回oldValue。</p>
+<div class="highlight-python"><pre>V scheduleRefresh(ReferenceEntry&lt;K, V&gt; entry, K key, int hash, V oldValue, long now,
+    CacheLoader&lt;? super K, V&gt; loader) {
+    if (map.refreshes() &amp;&amp; (now - entry.getWriteTime() &gt; map.refreshNanos)
+        &amp;&amp; !entry.getValueReference().isLoading()) {
+        V newValue = refresh(key, hash, loader, true);
+        if (newValue != null) {
+            return newValue;
+        }
+    }
+    return oldValue;
+}</pre>
+</div>
+</div>
+</div>
 </div>
 
 
@@ -96,10 +178,10 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="OpenStack_Base.html" title="OpenStack Base 开发总结"
+          <a href="openstack_base_prototype.html" title="Openstack Base Prototype Design"
              >next</a> |</li>
         <li class="right" >
-          <a href="CloudOS.html" title="Cloud OS 总结"
+          <a href="openstack_base.html" title="OpenStack Base 开发总结"
              >previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

@@ -2,7 +2,7 @@
 
 
 ============================================
-Lancelot
+Knight Lancelot
 ============================================
 I want to build an artifical intelligence software system in ten years.
 Platform: linux;

@@ -22,7 +22,7 @@ Example:
 
 ::
 
-    curl -X GET -H "Content-Type:application/json" -H "X-Auth-Token:..." http://192.168.200.7:9292/v1/images/detail
+    curl -X GET -H "Content-Type:application/json" -H "X-Auth-Token:..." http://192.168.250.222:9696/v2.0/subnets
 
 curl 对于http请求默认的方法是get，利用-X可以显示的指定相应方法，像上述两个例子可以省略-X参数，第一个例子中，加上-d表示为post。
 

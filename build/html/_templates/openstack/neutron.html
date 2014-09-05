@@ -101,12 +101,14 @@
 <p>Adminstate: true if the administrator can control.</p>
 <p>SegmentId:  use to add vlan tag or vxlan tag in network.</p>
 <p>一个租户可以有多个Network，一个Network可以包含多个subnet，多个port，虚拟机通过port与subnet相连，subnet通过port和router进行相连，再连接到外部网络进行上网。</p>
+<p><em>一个network是一个vlan，带有一个vlan tag，这个vlan tage为segment id，一个租户可以有多个network，即可以有多个vlan，一个network可以有多个subnet，这些subnet属于同一个vlan。</em></p>
 </div>
 <div class="section" id="neutron-network-type">
 <h2>Neutron Network Type<a class="headerlink" href="#neutron-network-type" title="Permalink to this headline">¶</a></h2>
 <p>There is several types in neutron network, &#8216;FLAT&#8217;, &#8216;VLAN&#8217;, &#8216;GRE&#8217;, &#8216;VXLAN&#8217;, &#8216;LOCAL&#8217;.</p>
 <p>Local is local network without any configuration.</p>
 <p>Flat is flat network like all instances are in the same network plane.</p>
+<p>Openstack允许可以多种网络类型共存，Vlan，Vxlan，GRE可以共存。</p>
 </div>
 </div>
 

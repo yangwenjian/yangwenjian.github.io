@@ -100,7 +100,7 @@
 <div class="highlight-python"><pre>curl -X POST  -i -H "Content-Type:application/json" -d '{ "auth" : { "tenantName" : "admin","passwordCredentials" : { "username" : "admin","password" : "admin"}}}' http://192.168.250.222:5000/v2.0/tokens</pre>
 </div>
 <p>发送get请求images信息列表</p>
-<div class="highlight-python"><pre>curl -X GET -H "Content-Type:application/json" -H "X-Auth-Token:..." http://192.168.200.7:9292/v1/images/detail</pre>
+<div class="highlight-python"><pre>curl -X GET -H "Content-Type:application/json" -H "X-Auth-Token:..." http://192.168.250.222:9696/v2.0/subnets</pre>
 </div>
 <p>curl 对于http请求默认的方法是get，利用-X可以显示的指定相应方法，像上述两个例子可以省略-X参数，第一个例子中，加上-d表示为post。</p>
 <p>下载图片</p>

@@ -29,6 +29,7 @@ Sulotion of OpenStack
    _templates/openstack/openstack
    _templates/openstack/securityGroup
    _templates/openstack/neutron
+   _templates/openstack/oslo
 
 
 Sulotion of Linux&Unix
@@ -77,7 +78,7 @@ Sulotion of Distribution
    _templates/distribution/storage
 
 
-Sulotion of SOA
+Sulotion of Web Service
 ======================================
 
 .. toctree::
@@ -86,6 +87,7 @@ Sulotion of SOA
    _templates/web/webservice
    _templates/web/restapi
    _templates/web/spring
+   _templates/web/webpage
 
 
 Programming Skill
@@ -100,6 +102,7 @@ Programming Skill
    _templates/programming/common/codeOptimization
    _templates/programming/common/genetic
    _templates/programming/java/maven
+   _templates/programming/common/debug
 
 
 Other
