@@ -43,12 +43,6 @@ Nova的安全組默認只支持入口规则创建，而Neutron可以双向控制
 
 SecurityGroupRule
 ------------------------------------------------------------
-最近看了下nuetron和nova network对securitygroup的差异，总结如下：分离
-
-
-
-SecurityGroupRule
-------------------------------------------------------------
 最近看了下nuetron和nova network对securitygroup的差异，总结如下：
 
 总体功能和界面体现并误差，实现上完全从nova分离，转到neutron的管理中，nova则更关注与compute相关的信息。

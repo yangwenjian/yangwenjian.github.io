@@ -52,7 +52,6 @@
 <li><a class="reference internal" href="#">SecurityGroup</a><ul>
 <li><a class="reference internal" href="#id1">SecurityGroup属性</a></li>
 <li><a class="reference internal" href="#securitygrouprule">SecurityGroupRule</a></li>
-<li><a class="reference internal" href="#id2">SecurityGroupRule</a></li>
 </ul>
 </li>
 </ul>
@@ -135,10 +134,6 @@ Nova的安全組默認只支持入口规则创建，而Neutron可以双向控制
 </div>
 <div class="section" id="securitygrouprule">
 <h2>SecurityGroupRule<a class="headerlink" href="#securitygrouprule" title="Permalink to this headline">¶</a></h2>
-<p>最近看了下nuetron和nova network对securitygroup的差异，总结如下：分离</p>
-</div>
-<div class="section" id="id2">
-<h2>SecurityGroupRule<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>最近看了下nuetron和nova network对securitygroup的差异，总结如下：</p>
 <p>总体功能和界面体现并误差，实现上完全从nova分离，转到neutron的管理中，nova则更关注与compute相关的信息。
 但在rest api返回上，字段发生了比较明显的变化。</p>
