@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
     <link rel="next" title="Hadoop介绍及基础研究" href="../distribution/hadoop.html" />
-    <link rel="prev" title="Nity" href="../programming/common/nity.html" /> 
+    <link rel="prev" title="Knight Lancelot" href="../automation/knight.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +40,7 @@
           <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../programming/common/nity.html" title="Nity"
+          <a href="../automation/knight.html" title="Knight Lancelot"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -50,15 +50,36 @@
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Docker</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
 <li><a class="reference internal" href="#using-docker">Using Docker</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#docker-design">Docker Design</a><ul>
+<li><a class="reference internal" href="#the-docker-daemon">The Docker Daemon</a></li>
+<li><a class="reference internal" href="#the-docker-client">The Docker client</a></li>
+<li><a class="reference internal" href="#inside-docker">Inside Docker</a><ul>
+<li><a class="reference internal" href="#docker-images">Docker Images</a></li>
+<li><a class="reference internal" href="#docker-registries">Docker Registries</a></li>
+<li><a class="reference internal" href="#docker-containers">Docker Containers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-underlying-technology">The Underlying Technology</a><ul>
+<li><a class="reference internal" href="#namespace">Namespace</a></li>
+<li><a class="reference internal" href="#control-groups">Control Groups</a></li>
+<li><a class="reference internal" href="#union-file-system">Union File System</a></li>
+<li><a class="reference internal" href="#container-format">Container Format</a></li>
 <li><a class="reference internal" href="#reference">reference</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../programming/common/nity.html"
-                        title="previous chapter">Nity</a></p>
+  <p class="topless"><a href="../automation/knight.html"
+                        title="previous chapter">Knight Lancelot</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../distribution/hadoop.html"
                         title="next chapter">Hadoop介绍及基础研究</a></p>
@@ -92,6 +113,8 @@
 <h1>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h1>
 <p>Docker is a virtualization tool Based on Linux Container(LXC).
 Useful and easy-to-use.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Docker is application container, to some extent, like virtual machines.
 But there are a lot of differences:</p>
 <ul class="simple">
@@ -111,7 +134,7 @@ But there are a lot of differences:</p>
 <li>Interactive shell.</li>
 </ul>
 <div class="section" id="using-docker">
-<h2>Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h2>
+<h3>Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h3>
 <p>Install docker on OpenSuse:</p>
 <div class="highlight-python"><pre>$sudo zypper ar -f http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/ Virtualization
 $sudo rpm --import http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/repodata/repomd.xml.key
@@ -174,10 +197,89 @@ $docker commit [containerId] name/imagename:versionId</pre>
 <div class="highlight-python"><pre>iptables -t nat -A  DOCKER -p tcp --dport   &lt;local port&gt; -j DNAT --to-destination &lt;docker ip&gt;:&lt;docker port&gt;</pre>
 </div>
 </div>
+</div>
+<div class="section" id="docker-design">
+<h2>Docker Design<a class="headerlink" href="#docker-design" title="Permalink to this headline">¶</a></h2>
+<p>Docker uses a client-server architecture.
+The docker client and daemon communicate via sockets or through restful api.</p>
+<div class="section" id="the-docker-daemon">
+<h3>The Docker Daemon<a class="headerlink" href="#the-docker-daemon" title="Permalink to this headline">¶</a></h3>
+<p>The docker daemon runs on a host machine. The user does not directly interact with the daemon, but instead through the Docker client.</p>
+</div>
+<div class="section" id="the-docker-client">
+<h3>The Docker client<a class="headerlink" href="#the-docker-client" title="Permalink to this headline">¶</a></h3>
+<p>The Docker client, in the form of the docker binary, is the primary user interface to Docker.
+It accepts commands from the user and communicates back and forth with a Docker daemon.</p>
+</div>
+<div class="section" id="inside-docker">
+<h3>Inside Docker<a class="headerlink" href="#inside-docker" title="Permalink to this headline">¶</a></h3>
+<p>Docker contains these parts:</p>
+<ol class="arabic simple">
+<li>Docker images. Docker images are the build components of docker. It can easily created, downloaded, updated.</li>
+<li>Docker registries. Docker registries hold images, like public or private stores.</li>
+<li>Docker containers. Docker containers are the run compontes of docker, like directory, but are isolated and secure application platform.</li>
+</ol>
+<div class="section" id="docker-images">
+<h4>Docker Images<a class="headerlink" href="#docker-images" title="Permalink to this headline">¶</a></h4>
+<p>Each docker images consists of a series of layes.
+Docker makes use of union file system to combine these layers into a single image.
+Union file systems allow files and directories of separate file system, known as branches, to be transparently overlaid, forming a single coherent file system.</p>
+<p>One of the reasons docker is so lightweight is because of these layers. When we change a docker image&#8211;for example, update an application to a new version&#8211;a new layer was built.
+With only that layer built, docker is faster than virtual machines.</p>
+</div>
+<div class="section" id="docker-registries">
+<h4>Docker Registries<a class="headerlink" href="#docker-registries" title="Permalink to this headline">¶</a></h4>
+<p>Docker Hub provides both public and private storage for images. Public storage is searchable and can be downloaded by anyone. Private storage is excluded from search results and only you and your users can pull images down and use them to build containers.</p>
+</div>
+<div class="section" id="docker-containers">
+<h4>Docker Containers<a class="headerlink" href="#docker-containers" title="Permalink to this headline">¶</a></h4>
+<p>A container consists of an operating system, user-added files, and meta-data.
+When we run <em>docker run -i -t ubuntu /bin/bash</em> , docker does the following:</p>
+<div class="highlight-python"><pre>1) pulls the ubuntu image;
+2) create a new container;
+3) Allocate a file system and mounts a read-write layer;
+4) Allocate a network/bridge interface, allowing docker containers talk to the host;
+5) Sets up an IP address;
+6) Excutes a process that you specify;
+7) Captures and provides application output.</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-underlying-technology">
+<h2>The Underlying Technology<a class="headerlink" href="#the-underlying-technology" title="Permalink to this headline">¶</a></h2>
+<p>Docker is written in Go and makes use of serveral Linux kernel features to deliver the functionality we have seen.</p>
+<div class="section" id="namespace">
+<h3>Namespace<a class="headerlink" href="#namespace" title="Permalink to this headline">¶</a></h3>
+<p>Docker use namespace to isolate the workspace.</p>
+<p>Some of the namespaces that docker uses are:</p>
+<div class="highlight-python"><pre>1) The pid namespace: used for process isolation;
+2) The net namespace: used for managing network interfaces;
+3) The ipc namespace: used for managing access to IPC resources;
+4) The mnt namespace: used for managing mounting point;
+5) The uts namespace: used for isolating kernel and version identifiers.</pre>
+</div>
+</div>
+<div class="section" id="control-groups">
+<h3>Control Groups<a class="headerlink" href="#control-groups" title="Permalink to this headline">¶</a></h3>
+<p>Control groups allow Docker to share available hardware resources to containers and, if required, set up limits and constraints.
+For example, limiting the memory available to a specific container.</p>
+</div>
+<div class="section" id="union-file-system">
+<h3>Union File System<a class="headerlink" href="#union-file-system" title="Permalink to this headline">¶</a></h3>
+<p>Docker can make use of several union file system variants including: AUFS, btrfs, vfs, and DeviceMapper.</p>
+</div>
+<div class="section" id="container-format">
+<h3>Container Format<a class="headerlink" href="#container-format" title="Permalink to this headline">¶</a></h3>
+<p>Docker combines these components into a wrapper we call a container format. The default container format is called libcontainer.
+Docker also supports traditional Linux containers using LXC.
+In the future, Docker may support other container formats, for example, by integrating with BSD Jails or Solaris Zones</p>
+</div>
 <div class="section" id="reference">
-<h2>reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<h3>reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="http://www.widuu.com/chinese_docker/installation/opensuse.html">http://www.widuu.com/chinese_docker/installation/opensuse.html</a>
 <a class="reference external" href="http://www.pchou.info/open-source/2014/03/29/docker-introduction.html">http://www.pchou.info/open-source/2014/03/29/docker-introduction.html</a></p>
+</div>
 </div>
 </div>
 
@@ -197,7 +299,7 @@ $docker commit [containerId] name/imagename:versionId</pre>
           <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
              >next</a> |</li>
         <li class="right" >
-          <a href="../programming/common/nity.html" title="Nity"
+          <a href="../automation/knight.html" title="Knight Lancelot"
              >previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

@@ -82,23 +82,32 @@
   <div class="section" id="vpn">
 <h1>VPN<a class="headerlink" href="#vpn" title="Permalink to this headline">¶</a></h1>
 <p>VPN: virtual private network</p>
-<p>xl2tpd客户端</p>
-<div class="highlight-python"><pre>1.首先安装xl2tp，zypper in xl2tpd ppp (ubuntu和centos使用相应工具)安装。
-2.配置/etc/ppp/peers/testvpn.l2tpd，修改如下两个配置：
-user "dev"
-password "Neunn@)!$"
-3.配置/etc/xl2tpd/xl2tpd.conf
-[lac client]
-name = ops
-lns =61.161.217.98
-pppoptfile = /etc/ppp/peers/testvpn.l2tpd
-ppp debug = no
-4.启动xl2tp
-/etc/init.d/xl2tpd start
-echo 'c client' &gt; /var/run/xl2tpd/l2tp-control
-5.添加相应路由（此处酌情考虑）
-6.断开vpn
-echo 'd client' &gt; /var/run/xl2tpd/l2tp-control
+<p>xl2tpd客户端配置，适用于各种Linux发行版。</p>
+<ol class="arabic simple">
+<li>首先安装xl2tp，zypper in xl2tpd ppp (ubuntu和centos使用相应工具)安装。</li>
+<li>配置/etc/ppp/peers/testvpn.l2tpd，修改如下两个配置：</li>
+</ol>
+<div class="highlight-python"><pre>[global]
+access control = no
+port = 1701
+[lac neunnvpn]
+name = dev
+lns = 61.161.217.98
+pppoptfile = /etc/ppp/peers/neunnvpn.l2tpd
+ppp debug = no</pre>
+</div>
+<ol class="arabic simple" start="3">
+<li>配置/etc/xl2tpd/xl2tpd.conf</li>
+<li>启动xl2tp</li>
+</ol>
+<div class="highlight-python"><pre>/etc/init.d/xl2tpd start
+echo 'c client' &gt; /var/run/xl2tpd/l2tp-control</pre>
+</div>
+<ol class="arabic simple" start="5">
+<li>添加相应路由表</li>
+<li>断开vpn</li>
+</ol>
+<div class="highlight-python"><pre>echo 'd client' &gt; /var/run/xl2tpd/l2tp-control
 /etc/init.d/xl2tpd stop</pre>
 </div>
 </div>

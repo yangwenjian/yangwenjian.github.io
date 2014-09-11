@@ -25,7 +25,9 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" /> 
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Regular Expressions" href="../linux/regularExpressions.html" />
+    <link rel="prev" title="Neutron" href="neutron.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,11 +36,23 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../linux/regularExpressions.html" title="Regular Expressions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="neutron.html" title="Neutron"
+             accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="neutron.html"
+                        title="previous chapter">Neutron</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../linux/regularExpressions.html"
+                        title="next chapter">Regular Expressions</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/openstack/oslo.txt"
@@ -67,6 +81,25 @@
             
   <div class="section" id="oslo">
 <h1>OSLO<a class="headerlink" href="#oslo" title="Permalink to this headline">¶</a></h1>
+<p>在Oslo项目出现之前，Openstack的每个组件都要自己实现处理配置文件的代码，这样就导致了一系列重复代码的产生，这是程序员所不能忍受的，因此Oslo就解决这类问题。</p>
+<p>Oslo需要解决的几点问题：</p>
+<ol class="arabic simple">
+<li>command line option parsing;</li>
+<li>common command line options;</li>
+<li>configuration file parsing;</li>
+<li>option value lookup.</li>
+</ol>
+<p>Oslo.conf在使用时，需要先声明配置项的名称、定义类型、帮助文字、缺省值等，然后再按照事先声明的配置项，对CLI或conf中的内容进行解析。</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">common_opts</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">StrOpt</span><span class="p">(</span><span class="s">&#39;bind_host&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s">&#39;0.0.0.0&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;IP address to listen on&#39;</span><span class="p">),</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">IntOpt</span><span class="p">(</span><span class="s">&#39;bind_port&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">9292</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;Port number to listen on&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
 </div>
 
 
@@ -81,6 +114,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../linux/regularExpressions.html" title="Regular Expressions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="neutron.html" title="Neutron"
+             >previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>

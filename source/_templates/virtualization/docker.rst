@@ -7,6 +7,8 @@ Docker
 Docker is a virtualization tool Based on Linux Container(LXC).
 Useful and easy-to-use.
 
+Introduction
+=====================================
 Docker is application container, to some extent, like virtual machines.
 But there are a lot of differences:
 
@@ -104,6 +106,88 @@ NAT with iptables:
 
     iptables -t nat -A  DOCKER -p tcp --dport   <local port> -j DNAT --to-destination <docker ip>:<docker port>
 
+Docker Design
+===================================
+Docker uses a client-server architecture.
+The docker client and daemon communicate via sockets or through restful api.
+
+The Docker Daemon
+-----------------------------------
+The docker daemon runs on a host machine. The user does not directly interact with the daemon, but instead through the Docker client.
+
+The Docker client
+-----------------------------------
+The Docker client, in the form of the docker binary, is the primary user interface to Docker. 
+It accepts commands from the user and communicates back and forth with a Docker daemon.
+
+Inside Docker
+-----------------------------------
+Docker contains these parts:
+
+1) Docker images. Docker images are the build components of docker. It can easily created, downloaded, updated.
+2) Docker registries. Docker registries hold images, like public or private stores.
+3) Docker containers. Docker containers are the run compontes of docker, like directory, but are isolated and secure application platform.
+
+Docker Images
+```````````````````````````````````
+Each docker images consists of a series of layes.
+Docker makes use of union file system to combine these layers into a single image.
+Union file systems allow files and directories of separate file system, known as branches, to be transparently overlaid, forming a single coherent file system.
+
+One of the reasons docker is so lightweight is because of these layers. When we change a docker image--for example, update an application to a new version--a new layer was built. 
+With only that layer built, docker is faster than virtual machines.
+
+Docker Registries
+```````````````````````````````````
+Docker Hub provides both public and private storage for images. Public storage is searchable and can be downloaded by anyone. Private storage is excluded from search results and only you and your users can pull images down and use them to build containers.
+
+Docker Containers
+```````````````````````````````````
+A container consists of an operating system, user-added files, and meta-data.
+When we run *docker run -i -t ubuntu /bin/bash* , docker does the following:
+
+::
+
+    1) pulls the ubuntu image;
+    2) create a new container;
+    3) Allocate a file system and mounts a read-write layer;
+    4) Allocate a network/bridge interface, allowing docker containers talk to the host;
+    5) Sets up an IP address;
+    6) Excutes a process that you specify;
+    7) Captures and provides application output.
+
+The Underlying Technology
+====================================
+Docker is written in Go and makes use of serveral Linux kernel features to deliver the functionality we have seen.
+
+Namespace
+------------------------------------
+Docker use namespace to isolate the workspace.
+
+Some of the namespaces that docker uses are:
+
+::
+
+    1) The pid namespace: used for process isolation;
+    2) The net namespace: used for managing network interfaces;
+    3) The ipc namespace: used for managing access to IPC resources;
+    4) The mnt namespace: used for managing mounting point;
+    5) The uts namespace: used for isolating kernel and version identifiers.
+
+Control Groups
+-------------------------------------
+Control groups allow Docker to share available hardware resources to containers and, if required, set up limits and constraints. 
+For example, limiting the memory available to a specific container.
+
+Union File System
+-------------------------------------
+Docker can make use of several union file system variants including: AUFS, btrfs, vfs, and DeviceMapper.
+
+Container Format
+-------------------------------------
+Docker combines these components into a wrapper we call a container format. The default container format is called libcontainer.
+Docker also supports traditional Linux containers using LXC. 
+In the future, Docker may support other container formats, for example, by integrating with BSD Jails or Solaris Zones
 
 reference
 -----------------------------------

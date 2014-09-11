@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Regular Expressions" href="../linux/regularExpressions.html" />
-    <link rel="prev" title="OpenStack Learning Path" href="../cloudbase/OpenStack.html" /> 
+    <link rel="next" title="Neutron" href="neutron.html" />
+    <link rel="prev" title="OpenStack Learning" href="openstack.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../linux/regularExpressions.html" title="Regular Expressions"
+          <a href="neutron.html" title="Neutron"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../cloudbase/OpenStack.html" title="OpenStack Learning Path"
+          <a href="openstack.html" title="OpenStack Learning"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -51,16 +51,18 @@
   <ul>
 <li><a class="reference internal" href="#">SecurityGroup</a><ul>
 <li><a class="reference internal" href="#id1">SecurityGroup属性</a></li>
+<li><a class="reference internal" href="#securitygrouprule">SecurityGroupRule</a></li>
+<li><a class="reference internal" href="#id2">SecurityGroupRule</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../cloudbase/OpenStack.html"
-                        title="previous chapter">OpenStack Learning Path</a></p>
+  <p class="topless"><a href="openstack.html"
+                        title="previous chapter">OpenStack Learning</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../linux/regularExpressions.html"
-                        title="next chapter">Regular Expressions</a></p>
+  <p class="topless"><a href="neutron.html"
+                        title="next chapter">Neutron</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/openstack/securityGroup.txt"
@@ -128,8 +130,48 @@ ComputerManager中有一个driver，都知道这个driver默认的就是libvirt�
 </tr>
 </tbody>
 </table>
-<p>目前Openstack社區將Neutron分離出來，Neutron的安全組更便於使用。
-Nova的安全組默認只支持入口規則創建，而Neutron可以雙向控制。</p>
+<p>目前Openstack社區將Neutron分离出來，Neutron的安全組更便於使用。
+Nova的安全組默認只支持入口规则创建，而Neutron可以双向控制。</p>
+</div>
+<div class="section" id="securitygrouprule">
+<h2>SecurityGroupRule<a class="headerlink" href="#securitygrouprule" title="Permalink to this headline">¶</a></h2>
+<p>最近看了下nuetron和nova network对securitygroup的差异，总结如下：分离</p>
+</div>
+<div class="section" id="id2">
+<h2>SecurityGroupRule<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>最近看了下nuetron和nova network对securitygroup的差异，总结如下：</p>
+<p>总体功能和界面体现并误差，实现上完全从nova分离，转到neutron的管理中，nova则更关注与compute相关的信息。
+但在rest api返回上，字段发生了比较明显的变化。</p>
+<p>nova返回的security group rule的json格式：</p>
+<div class="highlight-python"><pre>"rules": [
+    {
+        "from_port": 99,                                            #端口起始地址，与toPort构成集合
+        "group": {                                                  #允许被另一个租户的安全组为aaa的机器访问
+            "tenant_id": "51b1873935554545bb9b953e4055a997",        #自身租户ID或者另一安全组的所属租户ID（待查）
+            "name": "aaaaaaaaaaaaaaaaa"                             #允许被另一安全组访问的安全组名称
+        },
+        "ip_protocol": "tcp",                                       #访问协议
+        "to_port": 99,                                              #
+        "parent_group_id": "2b430fbb-656f-4c56-a863-786bb8f97b0b",  #所属安全组ID
+        "ip_range": {},                                             #允许被访问的网络cidr，与group之间是二取一的关系
+        "id": "09245bbd-6e03-4264-9c19-27a534702c3d"                #自身ID
+    }
+}</pre>
+</div>
+<p>neutron返回的security group rule的json格式：</p>
+<div class="highlight-python"><pre>"security_group_rule": {
+    "remote_group_id": "f7518f66-9f50-4568-b42d-5577f6899ad9",      #可访问的远程安全组id
+    "direction": "ingress",                                         #访问方向，ingress表示从外部访问虚拟机
+    "remote_ip_prefix": null,                                       #可访问的远程cidr，与remote_group_id之间是二取一的关系
+    "protocol": null,                                               #可访问的网络协议
+    "tenant_id": "dc3c2f4fd2a84ddbba087360d10461db",                #所属租户ID
+    "port_range_max": null,                                         #端口范围最大值（同上面的toPort）
+    "security_group_id": "f7518f66-9f50-4568-b42d-5577f6899ad9",    #所属安全组的ID
+    "port_range_min": null,                                         #端口范围最小值（同上面的fromPort）
+    "ethertype": "IPv4",                                            #网络类型（ipv4/ipv6)
+    "id": "0bd5a998-c392-4da2-8450-14219883e515"                    #自身ID
+}</pre>
+</div>
 </div>
 </div>
 
@@ -146,10 +188,10 @@ Nova的安全組默認只支持入口規則創建，而Neutron可以雙向控制
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../linux/regularExpressions.html" title="Regular Expressions"
+          <a href="neutron.html" title="Neutron"
              >next</a> |</li>
         <li class="right" >
-          <a href="../cloudbase/OpenStack.html" title="OpenStack Learning Path"
+          <a href="openstack.html" title="OpenStack Learning"
              >previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
