@@ -20,6 +20,21 @@ JClouds中的请求
 -------------------------------------
 JClouds作为Openstack的sdk，不外乎的作用就是将用户请求的接口转换为http的请求，然后将返回的json结果转换为结构化的对象。
 
+首先jclouds会以用户名和密码请求相应权限的token，这些是是现在getapi请求中。
+之后再利用token请求相应接口，我们看一个示例：
+
+::
+
+    @Named("security-groups:list")                          #方法名称
+    @GET                                                    #向发送的http请求类型
+    @Path("/security-groups")                               #发送http请求的路径，一般附在endpoint后
+    @SelectJson("security_groups")                          #返回数据的首元素标志
+    @Consumes(MediaType.APPLICATION_JSON)                   #返回类型的解析方式
+    @Fallback(EmptyFluentIterableOnNotFoundOr404.class)     #返回失败后的处理方式及jclouds的返回结果
+    FluentIterable<? extends SecurityGroup> list();         #接口方法
+
+这里就是整个接口的调用方式，利用java的annotation，使用一套调用模板，可以在切面中加入任意的接口，而不会影响之前的任何代码实现。
+
 JClouds中的token缓存机制
 -------------------------------------
 JClouds还有一个重要作用，就是将请求的token进行状态缓存。这是为了充分利用token的有效期，并能有效的减少请求次数。
@@ -85,3 +100,62 @@ JClouds将值存储之后进行定时刷新，如果时间超过定时刷新时�
         return oldValue;
     }
 
+JClouds源代码修改
+=========================================
+明白了JClouds的工作原理后，我们就可以自己添加相应的openstack接口的java sdk（因为jclouds漏了很多，提bug的页面经常不好使，我们期望它在下一个版本修复）
+
+绑定浮动IP
+-----------------------------------------
+浮动IP的绑定就是将虚拟机赋予一个外网IP，从而在公网上就可以访问，并且可以提供相应服务了。
+
+从网络逻辑上是将外部网络（这里是exnet）中的一个IP赋予与之相连的某个子网中的虚拟机，通过路由器将这个IP的包直接送到虚拟机主机所在网卡，进而送到该虚拟机中。
+
+通过命令：
+
+::
+
+    neutron --debug floatingip-associate FLOATING_IP_ID PORT_ID
+
+显示结果为：
+
+::
+
+    DEBUG: neutronclient.client 
+    REQ: 
+    curl -i http://192.168.250.222:9696/v2.0/floatingips/10813711-a7ab-4aea-92d6-554dd4f7082b.json
+        -X PUT -H "X-Auth-Token:"......" 
+        -H "Content-Type: application/json" -H "Accept: application/json" 
+        -H "User-Agent: python-neutronclient" 
+        -d '{
+                "floatingip": {
+                    "port_id": "94da9cf4-1948-44ae-b2ae-8fba464aada8"
+                }
+            }
+
+则相应的API为：
+
+::
+    
+    /**
+    * 为虚拟机绑定浮动IP
+    * @parm floatingip_id, port_id
+    */
+    @Named("floatingip:associate")
+    @PUT
+    @PATH("/floatingips/{floatingip_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Payload("%7B\"floatingip\":%7B\"port_id\":\"{port_id}\"%7D%7D")
+    FloatingIP associateIp(@PathParam(floatingip_id) String floatingip_id, @PayloadParam(port_id) String port_id)
+
+    /**
+    * 为虚拟机解绑浮动IP
+    * @parm floatingip_id, port_id
+    */
+    @Named("floatingip:disassociate")
+    @PUT
+    @PATH("/floatingips/{floatingip_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Payload("%7B\"floatingip\":%7B\"port_id\":null%7D%7D")
+    FloatingIP disassociateIp(@PathParam(floatingip_id) String floatingip_id)

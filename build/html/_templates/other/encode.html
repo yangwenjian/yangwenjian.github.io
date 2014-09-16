@@ -1,0 +1,133 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Encoding and Decoding &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="prev" title="Opticks and Envi(IDL)" href="opticksandenvi.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="opticksandenvi.html" title="Opticks and Envi(IDL)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Encoding and Decoding</a><ul>
+<li><a class="reference internal" href="#id1">最佳实践</a><ul>
+<li><a class="reference internal" href="#id2">零宽字符</a></li>
+<li><a class="reference internal" href="#id3">回车转移</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="opticksandenvi.html"
+                        title="previous chapter">Opticks and Envi(IDL)</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/other/encode.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="encoding-and-decoding">
+<h1>Encoding and Decoding<a class="headerlink" href="#encoding-and-decoding" title="Permalink to this headline">¶</a></h1>
+<p>编码与解码在编程中参数传递中十分有用，如不小心处理，将会吃大亏。</p>
+<div class="section" id="id1">
+<h2>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>来看下我遇到的几个问题。</p>
+<div class="section" id="id2">
+<h3>零宽字符<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>第一个碰到的问题就是个大坑，著名的零宽字符&#8211;&#8217;/u200B&#8217;。</p>
+<p>怎么碰到的呢，我们做restapi，client端做请求时，url中混进了零宽字符。
+怎么发现的呢，这个问题是一个同事碰到的，说怎么访问也访问不到服务端的代码，另一个同事就开始帮忙调试，调试几个来回也没发现，最后他意外的重新手打了一遍那个url就好使了。
+这引起了我的注意，同事把那段url放到编码工具上查看，发现最后一段多了&#8217;/u200B&#8217;，上网一查一看是零宽字符，在某些场合是很有用处的，在我们这里就是个大坑了。</p>
+<p>罪魁祸首是Openstack官网上的api，我们是从那里复制粘贴到自己的代码中，上面的url中就混进了零宽字符。</p>
+</div>
+<div class="section" id="id3">
+<h3>回车转移<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>大家都知道回车符是&#8217;/n&#8217;，其实在windows平台上，文本的回车符是&#8217;/t/n&#8217;，在linux平台上，回车符才是&#8217;/n&#8217;，</p>
+<p>其实linux上有工具将windows的文本转意为linux的文本，<strong>dos2unix</strong>。
+将要被转意的文本作为参数即可，就可以很轻松得到unix的文本了。</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="opticksandenvi.html" title="Opticks and Envi(IDL)"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

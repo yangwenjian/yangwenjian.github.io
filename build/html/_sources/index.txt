@@ -113,6 +113,7 @@ Other
 
    _templates/other/projectManagement
    _templates/other/opticksandenvi
+   _templates/other/encode
 
 
 Indices and tables

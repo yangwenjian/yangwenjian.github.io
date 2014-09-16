@@ -6,6 +6,8 @@ Neutron
 ==================================
 Neutron is the network controller in openstack.
 
+Introduction
+==================================
 
 Concpet and Relationship
 ----------------------------------
@@ -28,6 +30,8 @@ SegmentId:  use to add vlan tag or vxlan tag in network.
 *一个network是一个vlan，带有一个vlan tag，这个vlan tage为segment id，一个租户可以有多个network，即可以有多个vlan，一个network可以有多个subnet，这些subnet属于同一个vlan。*
 
 
+Network
+===================================
 
 Neutron Network Type
 -----------------------------------
@@ -39,3 +43,6 @@ Flat is flat network like all instances are in the same network plane.
 
 Openstack允许可以多种网络类型共存，Vlan，Vxlan，GRE可以共存。
 
+Router
+===================================
+router的重要作用是绑定虚拟机和浮动IP。
