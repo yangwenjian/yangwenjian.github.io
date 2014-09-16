@@ -199,32 +199,58 @@ curl -i http://192.168.250.222:9696/v2.0/floatingips/10813711-a7ab-4aea-92d6-554
             "floatingip": {
                 "port_id": "94da9cf4-1948-44ae-b2ae-8fba464aada8"
             }
-        }</pre>
-</div>
-<p>则相应的API为：</p>
-<div class="highlight-python"><pre>/**
-* 为虚拟机绑定浮动IP
-* @parm floatingip_id, port_id
-*/
-@Named("floatingip:associate")
-@PUT
-@PATH("/floatingips/{floatingip_id}")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Payload("%7B\"floatingip\":%7B\"port_id\":\"{port_id}\"%7D%7D")
-FloatingIP associateIp(@PathParam(floatingip_id) String floatingip_id, @PayloadParam(port_id) String port_id)
+        }
 
-/**
-* 为虚拟机解绑浮动IP
-* @parm floatingip_id, port_id
-*/
-@Named("floatingip:disassociate")
-@PUT
-@PATH("/floatingips/{floatingip_id}")
+RESP:
+    {
+        'date': 'Tue,
+        16Sep201407: 16: 58GMT',
+        'status': '200',
+        'content-length': '376',
+        'content-type': 'application/json;charset=UTF-8'
+    }{
+     "floatingip": {
+        "router_id": "cbd8cebf-6688-44cb-a4f6-ece233af0108",
+        "status": "DOWN",
+        "tenant_id": "51b1873935554545bb9b953e4055a997",
+        "floating_network_id": "ec8b7335-ee0f-45b1-add5-9b6cafb72660",
+        "fixed_ip_address": "192.168.20.200",
+        "floating_ip_address": "192.168.252.192",
+        "port_id": "94da9cf4-1948-44ae-b2ae-8fba464aada8",
+        "id": "10813711-a7ab-4aea-92d6-554dd4f7082b"
+    }</pre>
+</div>
+<p>根据debug的结果，则相应的API为：</p>
+<div class="highlight-python"><pre>@Path("/v2.0/floatingips")
+@RequestFilters(AuthenticateRequest.class)
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Payload("%7B\"floatingip\":%7B\"port_id\":null%7D%7D")
-FloatingIP disassociateIp(@PathParam(floatingip_id) String floatingip_id)</pre>
+public interface FloatingIPApi {
+
+    /**
+    * 为虚拟机绑定浮动IP
+    * @parm floatingip_id, port_id
+    */
+    @Named("floatingip:associate")
+    @PUT
+    @PATH("/{floatingip_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Payload("%7B\"floatingip\":%7B\"port_id\":\"{port_id}\"%7D%7D")
+    FloatingIP associateIp(@PathParam(floatingip_id) String floatingip_id, @PayloadParam(port_id) String port_id)
+
+    /**
+    * 为虚拟机解绑浮动IP
+    * @parm floatingip_id
+    */
+    @Named("floatingip:disassociate")
+    @PUT
+    @PATH("/{floatingip_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Payload("%7B\"floatingip\":%7B\"port_id\":null%7D%7D")
+    FloatingIP disassociateIp(@PathParam(floatingip_id) String floatingip_id)
+
+}</pre>
 </div>
 </div>
 </div>
