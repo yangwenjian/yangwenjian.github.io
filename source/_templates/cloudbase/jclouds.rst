@@ -25,15 +25,69 @@ JClouds作为Openstack的sdk，不外乎的作用就是将用户请求的接口�
 
 ::
 
-    @Named("security-groups:list")                          #方法名称
-    @GET                                                    #向发送的http请求类型
-    @Path("/security-groups")                               #发送http请求的路径，一般附在endpoint后
-    @SelectJson("security_groups")                          #返回数据的首元素标志
-    @Consumes(MediaType.APPLICATION_JSON)                   #返回类型的解析方式
-    @Fallback(EmptyFluentIterableOnNotFoundOr404.class)     #返回失败后的处理方式及jclouds的返回结果
-    FluentIterable<? extends SecurityGroup> list();         #接口方法
+    @Named("security-groups:create")                                #方法名称
+    @POST                                                           #向发送的http请求类型
+    @Path("/ecurity-group-rules")                                   #发送http请求的路径，一般附在endpoint后
+    @SelectJson("security_group_rule")                              #返回数据的首元素标志
+    @Fallback(NullOnNotFoundOr404.class)                            #返回失败后的处理方式及jclouds的返回结果
+    @Consumes(MediaType.APPLICATION_JSON)                           #request接受类型的格式
+    @Produces(MediaType.APPLICATION_JSON)                           #response的格式
+    @MapBinder(BindSecurityGroupRuleToJsonPayload.class)            #将参数转化为json的类名称
+    SecurityGroupRule createSecurityGroupRule(Ingress groupRule);   #接口方法
 
 这里就是整个接口的调用方式，利用java的annotation，使用一套调用模板，可以在切面中加入任意的接口，而不会影响之前的任何代码实现。
+
+这里面，有个地方需要注意，MapBinder是一个接口，是：
+
+  <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams);
+
+转换的类必须实现这个接口，如：
+
+::
+
+    @Singleton
+    public class BindSecurityGroupRuleToJsonPayload extends BindToJsonPayload implements MapBinder{
+        @Override
+        public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams){
+            //获取request，得到参数对象
+            Builder<String, Object> payload = ImmutableMap.builder();
+            payload.putAll(postParams);
+            checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
+                "this binder is only valid for GeneratedHttpRequests!");
+            GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
+                                             
+            Ingress ingress = Ingress.class.cast(find(gRequest.getInvocation().getArgs(), instanceOf(Ingress.class)));
+            //之后将所有的属性名称和值放入payload中，这里省略很多重复代码
+            if(isNotEmpty(ingress.getProtocol())) {
+                payload.put("protocol", ingress.getProtocol());
+            }
+            return super.bindToRequest(request, ImmutableMap.of("security_group_rule", payload.build()));
+        }
+    }
+
+具体请求方法
+`````````````````````````````````````
+具体请求方法在InvokeSyncToAsyncHttpMethod类中，具体方法为：
+
+::
+
+    public Object invoke(Invocation invocation) {
+        String commandName = config.getCommandName(invocation);
+        HttpCommand command = toCommand(commandName, invocation);
+        Function<HttpResponse, ?> transformer = getTransformer(commandName, command);
+        org.jclouds.Fallback<?> fallback = getFallback(commandName, invocation, command);
+        logger.debug(">> invoking %s", commandName);
+        try {
+            return transformer.apply(http.invoke(command));
+        } catch (Throwable t) {
+            try {
+                return fallback.createOrPropagate(t);
+            } catch (Exception e) {
+                throw propagate(e);
+            }
+        }
+    }
+
 
 JClouds中的token缓存机制
 -------------------------------------
