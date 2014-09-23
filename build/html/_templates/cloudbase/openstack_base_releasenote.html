@@ -1,0 +1,200 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Neunn XCloud Base Release Note(Version 0.6) &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="OpenStack Learning" href="../openstack/openstack.html" />
+    <link rel="prev" title="Openstack Base Prototype Design" href="openstack_base_prototype.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../openstack/openstack.html" title="OpenStack Learning"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="openstack_base_prototype.html" title="Openstack Base Prototype Design"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Neunn XCloud Base Release Note(Version 0.6)</a><ul>
+<li><a class="reference internal" href="#id1">目录</a></li>
+<li><a class="reference internal" href="#id2">综合说明</a><ul>
+<li><a class="reference internal" href="#id3">主要内容</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#nova">计算服务（Nova）</a><ul>
+<li><a class="reference internal" href="#id4">主要新特性</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#neutron">网络服务（Neutron）</a></li>
+<li><a class="reference internal" href="#glance">镜像服务（glance）</a></li>
+<li><a class="reference internal" href="#cinder">块存储服务（cinder）</a></li>
+<li><a class="reference internal" href="#keystone">认证服务（keystone）</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="openstack_base_prototype.html"
+                        title="previous chapter">Openstack Base Prototype Design</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../openstack/openstack.html"
+                        title="next chapter">OpenStack Learning</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/cloudbase/openstack_base_releasenote.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="neunn-xcloud-base-release-note-version-0-6">
+<h1>Neunn XCloud Base Release Note(Version 0.6)<a class="headerlink" href="#neunn-xcloud-base-release-note-version-0-6" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>目录<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>综合说明</li>
+<li>计算服务（Nova）</li>
+<li>网络服务（Neutron）</li>
+<li>镜像服务（glance）</li>
+<li>块存储服务（cinder）</li>
+<li>认证服务（keystone）</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>综合说明<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>基础信息：</p>
+<ul class="simple">
+<li>版本名称：NEUNN XCLOUD</li>
+<li>发布时间：2014年9月21日</li>
+<li>版本号：0.6</li>
+<li>主要贡献者：黄金龙，李骏骋，杨文剑</li>
+</ul>
+<div class="section" id="id3">
+<h3>主要内容<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>本次发布的是东网科技的第一个版本，主要的新特性包括一下几个部分：</p>
+<ul class="simple">
+<li>计算服务：提供虚拟机相关的各种操作restful接口及Java SDK。</li>
+<li>网络服务：提供网络相关的各种操作的restful接口及Java SDK。</li>
+<li>镜像服务：提供镜像相关的各种操作的restful接口及Java SDK。</li>
+<li>块存储服务：提供块存储相关的各种操作的restful接口及Java SDK。</li>
+<li>认证服务：提供认证相关的各种操作的restful接口及Java SDK。</li>
+</ul>
+</div>
+</div>
+<div class="section" id="nova">
+<h2>计算服务（Nova）<a class="headerlink" href="#nova" title="Permalink to this headline">¶</a></h2>
+<p>提供所有虚拟机相关的操作接口及Java SDK。</p>
+<div class="section" id="id4">
+<h3>主要新特性<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>主机的相关操作，包括增删改查启动、关闭</li>
+<li>主机分组的相关操作，包括创建、删除、</li>
+<li>模板的相关操作，包括增加、</li>
+</ol>
+</div>
+</div>
+<div class="section" id="neutron">
+<h2>网络服务（Neutron）<a class="headerlink" href="#neutron" title="Permalink to this headline">¶</a></h2>
+<p>提供所有网络相关的操作接口及Java SDK，包括网络、子网、端口、安全组、键值对等。</p>
+<p>(1)
+(2)
+(3)
+(4)
+(5)</p>
+</div>
+<div class="section" id="glance">
+<h2>镜像服务（glance）<a class="headerlink" href="#glance" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li></li>
+</ol>
+</div>
+<div class="section" id="cinder">
+<h2>块存储服务（cinder）<a class="headerlink" href="#cinder" title="Permalink to this headline">¶</a></h2>
+<p>(1)
+(2)
+(3)</p>
+</div>
+<div class="section" id="keystone">
+<h2>认证服务（keystone）<a class="headerlink" href="#keystone" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../openstack/openstack.html" title="OpenStack Learning"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="openstack_base_prototype.html" title="Openstack Base Prototype Design"
+             >previous</a> |</li>
+        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

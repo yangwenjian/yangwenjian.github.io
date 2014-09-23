@@ -27,6 +27,13 @@ Base层分为如下几个工程：
 3.ncloud-base-rp-api，base调用底层CloudOS的API，由我们团队自行实现，不依赖于任何第三方系统;
 4.ncloud-base-rp-impl，api工程中所有API的实现，也是直接操作JClouds进行OpenStack的资源调用，依赖于JClouds和第三方软件包。
 
+Base层设计理念
+---------------------------------------
+对于base层的设计理念，这里我的看法是，增强OpenStack的固有功能，加入自己的业务逻辑，减少访问时间，融合多种云平台。
+
+这里首先说一下OpenStack中的portal与各组件之间的访问逻辑。Horizon作为portal层，不仅仅是一个展示页面，更有自己的逻辑和规则。比如：
+
+Horizon与各组件通讯是利用rest api进行访问，任何操作前都需要请求keystone得到admin token（这里以admin用户为例），之后再利用这个admin token进行各种组件服务的请求。
 
 
 计费模块

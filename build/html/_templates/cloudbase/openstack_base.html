@@ -52,7 +52,8 @@
 <li><a class="reference internal" href="#">OpenStack Base 开发总结</a><ul>
 <li><a class="reference internal" href="#base">Base层的作用</a></li>
 <li><a class="reference internal" href="#id1">Base层的开发</a><ul>
-<li><a class="reference internal" href="#id2">计费模块</a></li>
+<li><a class="reference internal" href="#id2">Base层设计理念</a></li>
+<li><a class="reference internal" href="#id3">计费模块</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#jbilling">JBilling</a></li>
@@ -111,7 +112,13 @@
 3.ncloud-base-rp-api，base调用底层CloudOS的API，由我们团队自行实现，不依赖于任何第三方系统;
 4.ncloud-base-rp-impl，api工程中所有API的实现，也是直接操作JClouds进行OpenStack的资源调用，依赖于JClouds和第三方软件包。</p>
 <div class="section" id="id2">
-<h3>计费模块<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<h3>Base层设计理念<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>对于base层的设计理念，这里我的看法是，增强OpenStack的固有功能，加入自己的业务逻辑，减少访问时间，融合多种云平台。</p>
+<p>这里首先说一下OpenStack中的portal与各组件之间的访问逻辑。Horizon作为portal层，不仅仅是一个展示页面，更有自己的逻辑和规则。比如：</p>
+<p>Horizon与各组件通讯是利用rest api进行访问，任何操作前都需要请求keystone得到admin token（这里以admin用户为例），之后再利用这个admin token进行各种组件服务的请求。</p>
+</div>
+<div class="section" id="id3">
+<h3>计费模块<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p>计费功能在模板中主要实现，虚拟机，网络，块存储单独计费，其中虚拟机计费是首要需求，虚拟机计费可以根据模板费用×晕新时间进行计费。
 首先实现整个的费用平台，加入充值接口，实现扣费模块，固定套餐计费等组件。</p>
 <p>首先计算模板的费用，每个模板含有的cpu数目，内存大小，网络带宽作为模板费用的

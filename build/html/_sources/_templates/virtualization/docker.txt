@@ -189,6 +189,47 @@ Docker combines these components into a wrapper we call a container format. The 
 Docker also supports traditional Linux containers using LXC. 
 In the future, Docker may support other container formats, for example, by integrating with BSD Jails or Solaris Zones
 
+Exersice
+=====================================
+今天将base层接口迁移到新的更大的openstack环境中，这个环境下，所有的endpoint都是用主机名表示的，这样的好处是便于维护和区分各个主机的作用。
+
+但引发一个问题，base层是部在dokcer容器中，docker不支持/etc/hosts主机名解析，这个文件根本就是readonly的。于是我请教我的同事。
+可以在docker启动的时候加入参数
+
+::
+
+    docker start DOCKER_ID -v /etc/hosts:/etc/hosts:ro
+
+今天（2014.09.17）Docker1.2版本发布，支持/etc/hosts文件解析主机名IP，这正好满足了我今天的需求。
+由于ubuntu官方的源daocker不是最新版的，只能将docker官方源加入到源中：
+
+::
+
+    echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list
+
+重新安装后，docker进程重新启动，所有的容器都停止了（之前应该做些备份处理的）。
+
+这里有个小插曲：
+
+Docker每次重启的时候都会DHCP一个新的IP，这次升级后它的ssh私钥发生了变化，原来的免密码登陆失效了，而且直接报错。
+这里是这样的，ssh在连接的时候将server端的public key保存到本地的~/.ssh/know_hosts文件中，只要删除这个文件中的相应内容，就可以重新密码连接了。
+
+其实完全可以用其他工具进行连接容器，这里推荐使用nsenter，轻量级连接docker工具，简单易用。
+安装（这里暂不推荐最新版2.25,编译的时候有问题，没解决）：
+
+::
+
+    curl https://www.kernel.org/pub/linux/utils/util-linux/v2.24/util-linux-2.24.tar.gz | tar -zxf-
+    cd ../util-linux-2.24/
+    ./configure --without-ncurses
+    make nsenter
+    cp nsenter /usr/local/bin
+    docker ps -a
+    PID=$(docker inspect --format '{{.State.Pid}}' bfcd9910faee)
+    nsenter --target $PID --mount --uts --ipc --net --pid
+
+之后就跟ssh上去一样，可以操作容器了。
+
 reference
 -----------------------------------
 http://www.widuu.com/chinese_docker/installation/opensuse.html

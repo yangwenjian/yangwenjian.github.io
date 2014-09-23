@@ -18,6 +18,7 @@ Sulotion of Cloud Base Layer
    _templates/cloudbase/openstack_base
    _templates/cloudbase/jclouds
    _templates/cloudbase/openstack_base_prototype
+   _templates/cloudbase/openstack_base_releasenote
 
 
 Sulotion of OpenStack
@@ -114,7 +115,13 @@ Other
    _templates/other/projectManagement
    _templates/other/opticksandenvi
    _templates/other/encode
+   _templates/other/invitation
 
+
+鸣谢
+======================================
+
+感谢东网科技提供良好的工作学习环境，感谢杨保卫、胡许冰、赵永生、崔远智的提携，感谢黄金龙、李骏骋等云计算团队的兄弟给予我的大力支持，感谢在张智博技术文档的路上给予我诸多帮助。
 
 Indices and tables
 ==================
