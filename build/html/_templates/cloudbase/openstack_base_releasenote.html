@@ -59,10 +59,22 @@
 <li><a class="reference internal" href="#id4">主要新特性</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#neutron">网络服务（Neutron）</a></li>
-<li><a class="reference internal" href="#glance">镜像服务（glance）</a></li>
-<li><a class="reference internal" href="#cinder">块存储服务（cinder）</a></li>
-<li><a class="reference internal" href="#keystone">认证服务（keystone）</a></li>
+<li><a class="reference internal" href="#neutron">网络服务（Neutron）</a><ul>
+<li><a class="reference internal" href="#id5">主要新特性</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#glance">镜像服务（glance）</a><ul>
+<li><a class="reference internal" href="#id6">主要新特性</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cinder">块存储服务（cinder）</a><ul>
+<li><a class="reference internal" href="#id7">主要新特性</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#keystone">认证服务（keystone）</a><ul>
+<li><a class="reference internal" href="#id8">主要新特性</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -101,6 +113,7 @@
             
   <div class="section" id="neunn-xcloud-base-release-note-version-0-6">
 <h1>Neunn XCloud Base Release Note(Version 0.6)<a class="headerlink" href="#neunn-xcloud-base-release-note-version-0-6" title="Permalink to this headline">¶</a></h1>
+<p>东网科技云计算平台base层发布说明</p>
 <div class="section" id="id1">
 <h2>目录<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
@@ -120,10 +133,15 @@
 <li>发布时间：2014年9月21日</li>
 <li>版本号：0.6</li>
 <li>主要贡献者：黄金龙，李骏骋，杨文剑</li>
+<li>发布产品：nlcoud.war（核心能力服务提供）， ncloud-sdk-java.jar（java SDK）</li>
+<li>部署硬件要求：两台服务器，内存128G，32核CPU</li>
+<li>部署软件要求：tomcat7</li>
 </ul>
 <div class="section" id="id3">
 <h3>主要内容<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>本次发布的是东网科技的第一个版本，主要的新特性包括一下几个部分：</p>
+<p>本次发布的是东网科技的第一个版本，主要有两个产品：</p>
+<p>一是部署在tomcat上的war包，向外提供rest服务，另一个是用于客户端开发的java SDK，提供相应服务的java api。</p>
+<p>其中核心服务的主要新特性包括以下几个部分：</p>
 <ul class="simple">
 <li>计算服务：提供虚拟机相关的各种操作restful接口及Java SDK。</li>
 <li>网络服务：提供网络相关的各种操作的restful接口及Java SDK。</li>
@@ -139,35 +157,61 @@
 <div class="section" id="id4">
 <h3>主要新特性<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li>主机的相关操作，包括增删改查启动、关闭</li>
-<li>主机分组的相关操作，包括创建、删除、</li>
-<li>模板的相关操作，包括增加、</li>
+<li>主机的相关操作，包括创建、查询、删除、启动、关闭、重启、重构、重命名、绑定浮动IP，锁定、解锁、迁移等；</li>
+<li>主机分组的相关操作，包括创建、查询、删除、添加主机、移除主机等；</li>
+<li>模板的相关操作，包括创建、查询、删除、更新等；</li>
+<li>配额的相关操作，包括修改、查询等；</li>
+<li>主机及主机用量的相关操作，包括查询等。</li>
+<li>键值对的创建、查询、删除</li>
 </ol>
 </div>
 </div>
 <div class="section" id="neutron">
 <h2>网络服务（Neutron）<a class="headerlink" href="#neutron" title="Permalink to this headline">¶</a></h2>
 <p>提供所有网络相关的操作接口及Java SDK，包括网络、子网、端口、安全组、键值对等。</p>
-<p>(1)
-(2)
-(3)
-(4)
-(5)</p>
+<div class="section" id="id5">
+<h3>主要新特性<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>网络的创建、查询、删除等；</li>
+<li>子网的创建、查询、删除等；</li>
+<li>端口的创建、查询、删除等；</li>
+<li>路由的创建、查询、删除、连接、断开等；</li>
+<li>浮动IP的创建、查询、删除、绑定、解绑定等；</li>
+<li>安全组及安全组规则的创建、查询、删除等</li>
+</ol>
+</div>
 </div>
 <div class="section" id="glance">
 <h2>镜像服务（glance）<a class="headerlink" href="#glance" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h3>主要新特性<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
-<li></li>
+<li>镜像的创建、查询、删除、更新、上传等。</li>
 </ol>
+</div>
 </div>
 <div class="section" id="cinder">
 <h2>块存储服务（cinder）<a class="headerlink" href="#cinder" title="Permalink to this headline">¶</a></h2>
-<p>(1)
-(2)
-(3)</p>
+<p>提供快存储相关操作的接口及Java SDK。</p>
+<div class="section" id="id7">
+<h3>主要新特性<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>块存储的创建、查询、删除；</li>
+<li>快照的创建、查询、删除；</li>
+</ol>
+</div>
 </div>
 <div class="section" id="keystone">
 <h2>认证服务（keystone）<a class="headerlink" href="#keystone" title="Permalink to this headline">¶</a></h2>
+<p>提供认证相关的操作接口及Java SDK。</p>
+<div class="section" id="id8">
+<h3>主要新特性<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>查询所有region；</li>
+<li>查询ceilometer服务的endpoint及token；</li>
+<li>租户和用户的创建、查询、删除等。</li>
+</ol>
+</div>
 </div>
 </div>
 
