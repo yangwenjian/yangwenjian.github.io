@@ -50,8 +50,15 @@
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">SecurityGroup</a><ul>
-<li><a class="reference internal" href="#id1">SecurityGroup属性</a></li>
-<li><a class="reference internal" href="#securitygrouprule">SecurityGroupRule</a></li>
+<li><a class="reference internal" href="#id1">SecurityGroup</a><ul>
+<li><a class="reference internal" href="#id2">SecurityGroup属性</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#securitygrouprule">SecurityGroupRule</a><ul>
+<li><a class="reference internal" href="#id3">SecurityGroupRule的属性</a></li>
+<li><a class="reference internal" href="#id4">SecurityGroupRule的创建</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -92,14 +99,16 @@
 <h1>SecurityGroup<a class="headerlink" href="#securitygroup" title="Permalink to this headline">¶</a></h1>
 <p>Security Group（安全组）是虚拟机网络中的重要组成部分，可以用来控制虚拟机之间的网络流量。
 反映到底层,就是利用iptables给宿主机添加iptables规则。</p>
+<div class="section" id="id1">
+<h2>SecurityGroup<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>Openstack中nova有一个默认的安全组，如果不进行指定，nova就给寻及分配这个默认的安全组。
 nova中有两个非常重要的组件，一个是db，一个是message queue，db用来记录各种状态，message queue用来在各个服务和各个节点之间传递消息，这种机制，在这里可以得到非常好的体现。</p>
 <img alt="../../_images/securitygroup1.png" src="../../_images/securitygroup1.png" />
 <p>API层进行rpc后，就交给compute.ComputeManager，进行依次调用。
 ComputerManager中有一个driver，都知道这个driver默认的就是libvirt，还有就是init_host()方法比较重要，每个Manager都有这样一个方法，是相对应的服务在启动的时候调用的，用来进行一些初始化，主要做的工作是对网络进行初始化，建立一些初始的chain和rule。</p>
 <img alt="../../_images/securitygroup2.png" src="../../_images/securitygroup2.png" />
-<div class="section" id="id1">
-<h2>SecurityGroup属性<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>SecurityGroup属性<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>每个安全组可以有多个规则，每个规则的属性如下：</p>
 <p>ipProtocol: means the ip protocol of the security group, like ICMP, TCP, UDP, and so on.</p>
 <p>fromport, toport: 这条安全组规则的影响端口范围，例如22就表示ssh，443表示http与https. To be noticed, fromport=-1 and toport=-1 means all port will be affated.</p>
@@ -132,8 +141,11 @@ ComputerManager中有一个driver，都知道这个driver默认的就是libvirt�
 <p>目前Openstack社區將Neutron分离出來，Neutron的安全組更便於使用。
 Nova的安全組默認只支持入口规则创建，而Neutron可以双向控制。</p>
 </div>
+</div>
 <div class="section" id="securitygrouprule">
 <h2>SecurityGroupRule<a class="headerlink" href="#securitygrouprule" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h3>SecurityGroupRule的属性<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p>最近看了下nuetron和nova network对securitygroup的差异，总结如下：</p>
 <p>总体功能和界面体现并误差，实现上完全从nova分离，转到neutron的管理中，nova则更关注与compute相关的信息。
 但在rest api返回上，字段发生了比较明显的变化。</p>
@@ -166,6 +178,108 @@ Nova的安全組默認只支持入口规则创建，而Neutron可以双向控制
     "ethertype": "IPv4",                                            #网络类型（ipv4/ipv6)
     "id": "0bd5a998-c392-4da2-8450-14219883e515"                    #自身ID
 }</pre>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>SecurityGroupRule的创建<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>OpenStack创建安全组规则的时候会提供很多定义好的安全组模板，可以大大简化用户的操作量，这里就解释下所有定义好的规则所对应的协议和端口。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="17%" />
+<col width="23%" />
+<col width="21%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">序号</th>
+<th class="head">安全组规则名称</th>
+<th class="head">协议（Protocol）</th>
+<th class="head">端口</th>
+<th class="head">说明</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>DNS</td>
+<td>TCP</td>
+<td>53</td>
+<td>域名系统协议</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>HTTP</td>
+<td>TCP</td>
+<td>80</td>
+<td>超文本传输协议</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>HTTPS</td>
+<td>TCP</td>
+<td>443</td>
+<td>加密的超文本传输协议</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>IMAP</td>
+<td>TCP</td>
+<td>143</td>
+<td>互联网消息存取协议</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>IMAPS</td>
+<td>TCP</td>
+<td>993</td>
+<td>加密的互联网消息存取协议</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>LDAP</td>
+<td>TCP</td>
+<td>389</td>
+<td>轻量目录访问协议</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>MS SQL</td>
+<td>TCP</td>
+<td>1433</td>
+<td>SQL Server数据库协议</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>MYSQL</td>
+<td>TCP</td>
+<td>3306</td>
+<td>MYSQL数据库协议</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>POP3</td>
+<td>TCP</td>
+<td>110</td>
+<td>邮局协议</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>POP3S</td>
+<td>TCP</td>
+<td>995</td>
+<td>加密的邮局协议</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>RDP</td>
+<td>TCP</td>
+<td>3389</td>
+<td>远程显示协议</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>SMTP</td>
+<td>TCP</td>
+<td>25</td>
+<td>简单邮件传输协议</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>SMTPS</td>
+<td>TCP</td>
+<td>465</td>
+<td>加密的简单邮件传输协议</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
