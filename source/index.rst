@@ -5,6 +5,9 @@
 
 Welcome to Knight's documentation!
 ======================================
+
+.. image:: images/other/wedding1.jpg
+
 Contents:
 
 
@@ -48,6 +51,7 @@ Sulotion of Linux&Unix
    _templates/linux/firewall
    _templates/linux/tools/networktool
    _templates/linux/tools/shell
+   _templates/linux/tools/git
 
 
 Sulotion of Autamation

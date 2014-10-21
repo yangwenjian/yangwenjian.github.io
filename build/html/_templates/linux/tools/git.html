@@ -1,0 +1,169 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Git &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="自动化安装操作系统" href="../../automation/cobbler.html" />
+    <link rel="prev" title="Shell" href="shell.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../automation/cobbler.html" title="自动化安装操作系统"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="shell.html" title="Shell"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Git</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#git-exercise">Git Exercise</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="shell.html"
+                        title="previous chapter">Shell</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../automation/cobbler.html"
+                        title="next chapter">自动化安装操作系统</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/linux/tools/git.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="git">
+<h1>Git<a class="headerlink" href="#git" title="Permalink to this headline">¶</a></h1>
+<p>Git是当前最火的版本管理工具，GitHub也成为程序员最喜欢的代码仓库管理网站。</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Git是一种分布式代码管理工具，其特点是本地有一份远程仓库的clone，即使远程服务器挂了也不会丢失代码。</p>
+<p>Git是直接记录所有文件的快照，并非比较差异进行记录。</p>
+<p>Git有三种状态：已提交，已修改，已暂存。</p>
+<p>常用命令：</p>
+<div class="highlight-python"><pre>add        Add file contents to the index
+bisect     Find by binary search the change that introduced a bug
+branch     List, create, or delete branches
+checkout   Checkout a branch or paths to the working tree
+clone      Clone a repository into a new directory
+commit     Record changes to the repository
+diff       Show changes between commits, commit and working tree, etc
+fetch      Download objects and refs from another repository
+grep       Print lines matching a pattern
+init       Create an empty Git repository or reinitialize an existing one
+log        Show commit logs
+merge      Join two or more development histories together
+mv         Move or rename a file, a directory, or a symlink
+pull       Fetch from and integrate with another repository or a local branch
+push       Update remote refs along with associated objects
+rebase     Forward-port local commits to the updated upstream head
+reset      Reset current HEAD to the specified state
+rm         Remove files from the working tree and from the index
+show       Show various types of objects
+status     Show the working tree status
+tag        Create, list, delete or verify a tag object signed with GPG</pre>
+</div>
+</div>
+<div class="section" id="git-exercise">
+<h2>Git Exercise<a class="headerlink" href="#git-exercise" title="Permalink to this headline">¶</a></h2>
+<p>Git ignore文件的写法：</p>
+<div class="highlight-python"><pre># 此为注释 – 将被 Git 忽略
+# 忽略所有 .a 结尾的文件
+*.a
+# 但 lib.a 除外
+!lib.a
+# 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir/TODO
+/TODO
+# 忽略 build/ 目录下的所有文件
+build/
+# 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt
+doc/*.txt
+# ignore all .txt files in the doc/ directory
+doc/**/*.txt</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../automation/cobbler.html" title="自动化安装操作系统"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="shell.html" title="Shell"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

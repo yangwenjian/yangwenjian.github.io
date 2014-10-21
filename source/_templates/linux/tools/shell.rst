@@ -6,6 +6,29 @@ Shell
 ===========================================
 Shell is the most powerfull tool in linux, no one of them.(最强工具，没有之一^-^)
 
+Shell
+===========================================
+密码的艺术
+
+我们在使用服务器时经常喜欢用带有!@#$的某些字符作为密码，这带来一个问题，shell中!是有意义的，表示上一条命令。
+这里有两种方式解决这个问题：
+
+进行转意，例如：
+
+::
+
+    mysqldump -uroot -p"Hello@"\!"$" -A > dump.sql
+
+或者使用脚本进行变量转换，例如：
+
+::
+
+    dumpfile=$(date +%Y%m%d%H%M).sql
+    dbuser=root
+    dbpassword='Hello@!$'
+    mysqldump -u${dbuser} -p${dbpassword} -A > ${dumpfile}
+
+
 Awk
 ===========================================
 Awk is very popular in linux operation. Awk process with text in architecutre. 
@@ -53,6 +76,7 @@ This is an example to check network.
     for((i=1;i<=255;i++));do
         ping -c 5 192.168.1.$i
         done
+
 Here is a pit in my work. I want to count the first line of one file, but it doesn't work.
 
 ::
@@ -81,3 +105,4 @@ Here is a pit in my work. I want to count the first line of one file, but it doe
         ((count= count+1))
         ((sum= sum+data))
     done
+

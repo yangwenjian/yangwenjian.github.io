@@ -230,6 +230,73 @@ Docker每次重启的时候都会DHCP一个新的IP，这次升级后它的ssh�
 
 之后就跟ssh上去一样，可以操作容器了。
 
+Docker实践
+-----------------------------------
+今天base和portal第一个版本发布，我将部署docker容器作为发布的运行容器。
+第一次写dockerfile，参考了同事的资料：
+
+::
+    
+    FROM ubuntu
+    MAINTAINER yangwenjian <yangwj@neunn.com>
+
+    RUN apt-get update 
+    ADD tomcat7 /usr/local/
+    ADD jdk1.7.0_55 /usr/lib/
+    ADD profile /etc/
+    EXPOSE 8888 22
+
+build后产生新的镜像，结果怎么run这个镜像也跑不起来，直接镜像就推出，通过docker logs也看不出什么。
+
+运行我镜像列表的里的所有镜像，发现都是同一个毛病，求助于同事，同事查看了一通后也没发现明显的问题。他只是觉得镜像有问题，最后发现是我在构建的时候下载镜像的过程中断网了，结果镜像没有下去，有问题，当时就被公司的网络耍了一把。
+
+用了新的镜像后发现docker file有些内容没有写进去，profile是写进去了，但是tomcat和jdk都没有进入文件系统中，其实是我的dockerfile写法有问题，ADD添加文件夹的时候和我们观念上的添加文件夹不同，需要给文件夹指定名称。正确的写法如下：
+
+::
+
+    #his is a docker file to create container for base/portal deployment
+    FROM ubuntu:neunn
+    MAINTAINER yangwenjian <yangwj@neunn.com>
+
+    RUN apt-get update 
+    ADD tomcat7/ /usr/local/tomcat7
+    ADD jdk1.7.0_55/ /usr/lib/jdk1.7.0_55
+    ADD profile /etc/
+    EXPOSE 8888 22 
+
+这里启动后会自动加载/etc/profile文件，就想linux系统启动一样。
+
+某天突然停电，重新启动服务器后，再启动所有docker容器，发现base层服务出现连接超时！
+原因是docker容器再重新启动后会覆写/etc/hosts文件，之前加的host与IP的对应表都消失了！
+这是docker的一种特性吧，这里推荐在启动时加入-v挂载本地文件到docker容器中，这样就会永久生效。
+
+Docker 开机自启动tomcat服务
+-----------------------------------
+这里的镜像是从tumtu下载的带有ssh服务的ubuntu镜像，他的dockerfile如下：
+
+::
+
+    FROM ubuntu:latest
+    MAINTAINER Knight/basic:0.1<yangwj@neunn.com> 
+
+    # Install packages
+    RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server pwgen
+    RUN mkdir -p /var/run/sshd && sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_config && sed -i "s/UsePAM.*/UsePAM no/g" /etc/ssh/sshd_config && sed -i "s/PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config
+    ADD jdk1.7.0_55 /usr/lib/jdk1.7.0_55
+    ADD tomcat7 /usr/local/tomcat7
+    ADD profile /etc/profile
+    ADD hosts /etc/hosts
+    ADD set_root_pw.sh /set_root_pw.sh
+    ADD run.sh /run.sh
+    ENV JAVA_HOME /usr/lib/jdk1.7.0_55
+    RUN chmod +x /*.sh
+
+    EXPOSE 22 8888
+    CMD ["/run.sh"]
+
+
+
+
 reference
 -----------------------------------
 http://www.widuu.com/chinese_docker/installation/opensuse.html
