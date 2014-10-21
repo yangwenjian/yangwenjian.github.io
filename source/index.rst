@@ -8,7 +8,6 @@ Welcome to Knight's documentation!
 
 .. image:: images/other/wedding1.jpg
 
-Contents:
 
 
 Sulotion of Cloud Base Layer
