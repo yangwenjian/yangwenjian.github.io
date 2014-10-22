@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="OpenStack Learning" href="../openstack/openstack.html" />
+    <link rel="next" title="Neunn XCloud Base Release Note(Version 0.6)" href="openstack_base_releasenote.html" />
     <link rel="prev" title="OpenStack SDK – JClouds" href="jclouds.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../openstack/openstack.html" title="OpenStack Learning"
+          <a href="openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="jclouds.html" title="OpenStack SDK – JClouds"
@@ -54,6 +54,11 @@
 <li><a class="reference internal" href="#id1">资源管理页面设计</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#base">Base层-统一云计算平台设计</a><ul>
+<li><a class="reference internal" href="#id2">Base层操作日志设计</a></li>
+<li><a class="reference internal" href="#id3">表单设计</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -62,8 +67,8 @@
   <p class="topless"><a href="jclouds.html"
                         title="previous chapter">OpenStack SDK &#8211; JClouds</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../openstack/openstack.html"
-                        title="next chapter">OpenStack Learning</a></p>
+  <p class="topless"><a href="openstack_base_releasenote.html"
+                        title="next chapter">Neunn XCloud Base Release Note(Version 0.6)</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/cloudbase/openstack_base_prototype.txt"
@@ -234,6 +239,60 @@
 <em>强制重启</em></p>
 </div>
 </div>
+<div class="section" id="base">
+<h2>Base层-统一云计算平台设计<a class="headerlink" href="#base" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>Base层操作日志设计<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Base层建立基本完成后，需要进行用户操作日志系统的设计，这里为了保持代码不动和高可维护性，采用Spring AOP框架进行日志系统的代码构建，具体采用Spring自带AOP接口进行AOP的实现。</p>
+</div>
+<div class="section" id="id3">
+<h3>表单设计<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>用户的每一条动作，进行详细记录。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="12%" />
+<col width="18%" />
+<col width="14%" />
+<col width="13%" />
+<col width="12%" />
+<col width="12%" />
+<col width="12%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">序号</th>
+<th class="head">用户</th>
+<th class="head">所属租户</th>
+<th class="head">时间</th>
+<th class="head">操作</th>
+<th class="head">参数</th>
+<th class="head">结果</th>
+<th class="head">原因</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>user1</td>
+<td>tenant1</td>
+<td>2014.10.10 12:00</td>
+<td>查询云主机</td>
+<td>id:</td>
+<td>成功</td>
+<td>无</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>user2</td>
+<td>tenant2</td>
+<td>2014.10.11 13:00</td>
+<td>创建云主机</td>
+<td>flavor:</td>
+<td>失败</td>
+<td>资源不足</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 
 
@@ -249,7 +308,7 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../openstack/openstack.html" title="OpenStack Learning"
+          <a href="openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
              >next</a> |</li>
         <li class="right" >
           <a href="jclouds.html" title="OpenStack SDK – JClouds"
