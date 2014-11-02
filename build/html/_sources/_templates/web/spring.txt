@@ -240,4 +240,57 @@ IOC分为三种形式：
         }
     }
 
+Spring AOP
+=========================================
+Spring AOP可以有如下几种实现形式：
 
+1.经典的基于代理的AOP；
+2.@AspectJ注解驱动的切面；
+3.纯POJO切面；
+4.注入式AspectJ切面。
+
+
+在base这个项目中，我使用aspectj进行aop代码的插入，这个配置起来比较方便，而且效率也很高。
+
+配置文件：
+
+:: 
+
+    <!--启动Spring对@AspectJ注解的支持 -->
+    <aop:aspectj-autoproxy/>
+
+这样就开启spring的aspectj的功能，我们就可以使用代码实现AOP编程了。
+
+代码实例：
+
+::
+
+    @Component
+    @Aspect
+    public class NovaAspectAdvice {
+        @Before(value ="execution(* com.neunn.cloud.*.*(..))")
+        public void doBefore(JoinPoint jp) {
+            
+        }
+        @After(value ="execution(* com.neunn.cloud.*.*(..))")
+        public void doAfter(JoinPoint jp) {
+            
+        }
+        @AfterReturning(value = "execution(* com.neunn.*.create*(..))", returning = "result")
+        public void doAfter(JoinPoint jp, Object result) {
+            
+        }
+        @Around(value = "execution(* com.neunn.*.create*(..))")
+        public void doAround(ProceedingJoinPoint pjp) throws Throwable {
+
+        }
+        @AfterThrowing(value = "execution(* com.neunn.*.create*(..))", throwing = "e")
+        public void doThrow(JoinPoint jp, Throwable e) {
+
+        }
+    }
+
+这里简单解释下，aspectj只是其中一种实现方法，包括五种方法，before，after，afterreturn，around，afterthrow分别作用在截获方法的开始，之后，返回后，整个执行过程，抛出异常后。
+网上有个参考资料把after return中的参数写成了String类型，导致我开始运行的时候怎么也截获不到AfterReturning方法之内，差点就换其他方式进行截获了。
+
+这里around方式没有执行成功，返回的对象jersyclient解析不了，暂时还未解决这个问题。
