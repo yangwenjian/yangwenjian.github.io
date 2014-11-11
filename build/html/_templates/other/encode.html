@@ -26,6 +26,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="婚礼请柬" href="invitation.html" />
     <link rel="prev" title="Opticks and Envi(IDL)" href="opticksandenvi.html" /> 
   </head>
   <body>
@@ -35,6 +36,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="invitation.html" title="婚礼请柬"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="opticksandenvi.html" title="Opticks and Envi(IDL)"
              accesskey="P">previous</a> |</li>
@@ -51,6 +55,10 @@
 <li><a class="reference internal" href="#id3">回车转移</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#id4">乱码转换问题</a><ul>
+<li><a class="reference internal" href="#gbk-utf-8">gbk-utf-8</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -58,6 +66,9 @@
   <h4>Previous topic</h4>
   <p class="topless"><a href="opticksandenvi.html"
                         title="previous chapter">Opticks and Envi(IDL)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="invitation.html"
+                        title="next chapter">婚礼请柬</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/other/encode.txt"
@@ -105,6 +116,19 @@
 将要被转意的文本作为参数即可，就可以很轻松得到unix的文本了。</p>
 </div>
 </div>
+<div class="section" id="id4">
+<h2>乱码转换问题<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="gbk-utf-8">
+<h3>gbk-utf-8<a class="headerlink" href="#gbk-utf-8" title="Permalink to this headline">¶</a></h3>
+<p>前两天把windows的内容导入到linux服务器上，发现所有中文内容都变成乱码了，原因是windows使用gbk进行编码，linux使用utf-8编码，这样就出现乱码，可以通过如下方式解决：</p>
+<ol class="arabic simple">
+<li>使用dos2unix工具；</li>
+<li>convmv -f gbk -t utf-8 &#8211;notest files 解决名称乱码；</li>
+<li>iconv -f gdb -t utf-8 filename 解决内容乱码；</li>
+<li>mid3iconv -e gdk *.mp3 解决MP3标签乱码。</li>
+</ol>
+</div>
+</div>
 </div>
 
 
@@ -119,6 +143,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="invitation.html" title="婚礼请柬"
+             >next</a> |</li>
         <li class="right" >
           <a href="opticksandenvi.html" title="Opticks and Envi(IDL)"
              >previous</a> |</li>

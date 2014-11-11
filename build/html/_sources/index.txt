@@ -21,6 +21,7 @@ Sulotion of Cloud Base Layer
    _templates/cloudbase/jclouds
    _templates/cloudbase/openstack_base_prototype
    _templates/cloudbase/openstack_base_releasenote
+   _templates/cloudbase/openstack_base_manager
 
 
 Sulotion of OpenStack
@@ -61,6 +62,8 @@ Sulotion of Autamation
 
    _templates/automation/cobbler
    _templates/automation/knight
+   _templates/automation/automation
+   _templates/automation/energy_saving_plan
 
 
 Solution of Virtualization

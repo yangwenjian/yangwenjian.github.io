@@ -26,3 +26,16 @@ Encoding and Decoding
 
 其实linux上有工具将windows的文本转意为linux的文本，**dos2unix**。
 将要被转意的文本作为参数即可，就可以很轻松得到unix的文本了。
+
+
+乱码转换问题
+==========================================
+
+gbk-utf-8
+------------------------------------------
+前两天把windows的内容导入到linux服务器上，发现所有中文内容都变成乱码了，原因是windows使用gbk进行编码，linux使用utf-8编码，这样就出现乱码，可以通过如下方式解决：
+
+1. 使用dos2unix工具；
+2. convmv -f gbk -t utf-8 --notest files 解决名称乱码；
+3. iconv -f gdb -t utf-8 filename 解决内容乱码；
+4. mid3iconv -e gdk \*.mp3 解决MP3标签乱码。
