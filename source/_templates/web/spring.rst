@@ -73,6 +73,15 @@ Spring Session工厂
         </props>
     </property>
 
+Spring事务
+=====================================
+Sping提供了一致的事务管理抽象，是Spring重要的抽象之一。优点如下：
+
+* 为不同事务API提供一致的编程模型，如JTA，JDBC，Hibernate，iBATIS数据库层和JDO；
+* 提供易于使用的编程事务API；
+* 整合Spring数据访问抽象；
+* 支持Spring声明事务管理。
+
 Transaction管理
 -------------------------------------
 事务管理也是Spring中的关键属性，首先声明事物::
@@ -180,6 +189,41 @@ Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自�
 Spring的事务增强
 --------------------------------------
 Spring可以增强public的方法（注意不能增强public static方法）的事务。（暂时未涉及到此处，未研究学习)
+
+最佳实践
+---------------------------------------
+通过Base层代码编写，使我对Spring事务有了新的认识。
+
+先阐述一下这次我碰到的几个问题，首先对于Hibernate更新时碰到的问题，
+
+在Hibernate的操作时，我使用了一个危险的操作--session.clear()方法，代码如下（代码已经被我注释掉）：
+
+::
+
+    Assert.notNull(entity, NO_TEXT);
+    entity.setLastUpdateTime(new Date());// 最后一次修改时间
+    Session session = getXSession();
+    // 这是一个一棍子打死的操作，慎用！
+    // session.clear();
+    session.update(entity);
+    logger.debug("update entity: {}", entity);
+    eturn getXSession().get(entity.getClass(), entity.getId());
+
+这里我使用了session.clear()方法，但是带来的后果是所有事务的操作只有最后一个对数据库的操作是有效的，其余都被clear掉了！（调试了好几天）
+
+如果是单纯想清空之前的缓存对象，可以用如下方法：
+
+::
+
+    //清空之前的缓存对象
+    Object cache = session.load(Host.class, entity.getId());
+    if (cache != null) {
+        session.evict(cache);
+    }
+    session.update(entity);
+
+由于base层的设计，增删改查这些基础操作放入基类之中，不变使用上述方法。
+我用如下方法进行解决，在更新任何bean的时候首先进行查找当前活动的bean，之后进行修改后保存，可以避免两个bean冲突的问题。
 
 
 Spring的作用

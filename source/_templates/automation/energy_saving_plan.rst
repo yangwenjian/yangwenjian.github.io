@@ -17,5 +17,6 @@ Our department would like to start an energy saving plan named Valithria.
 
 This project has three parts:
     
-    1. （统计所有服务器使用频率及使用时间）
-    #. （完成将所有需要停机服务器的启动的脚本）
+    1. （统计所有服务器使用频率及使用时间，及耗电量）
+    #. （利用现有的配置工具完成将所有需要停机服务器的启动的脚本）
+    #. （实现手机客户端）

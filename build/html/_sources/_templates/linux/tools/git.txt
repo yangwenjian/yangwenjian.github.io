@@ -67,3 +67,14 @@ Git ignore文件的写法：
     doc/*.txt
     # ignore all .txt files in the doc/ directory
     doc/**/*.txt
+
+
+Git Branch
+==========================================
+使用Git可以创建一个新的分支，并且可以通过checkout命令在新分支与master进行来回切换。
+同时你可以提交到新的分支，测试通过后再与master合并。
+
+当合并分支遇到冲突后，git就会在合并处停止，等你解决冲突。
+注意标记表示，HEAD部分表示你当前指针所在部分，其余比较表示拉取过来的部分。
+可以用git status查看冲突，之后一旦进行git add操作进行暂存，Git就会认为你解决好了冲突并准备重新提交了。
+

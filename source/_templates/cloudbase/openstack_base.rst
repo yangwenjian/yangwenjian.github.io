@@ -17,7 +17,7 @@ Base层作为我们的核心业务逻辑和控制中心，我们所有的资源�
 
 以Base为中心的系统结构如下图所示：
 
-.. image:: ../../images/base_architecture.jpg
+.. image:: ../../images/cloudbase/base_architecture.jpg
 
 Base层的开发
 =======================================
@@ -34,6 +34,16 @@ Base层设计理念
 这里首先说一下OpenStack中的portal与各组件之间的访问逻辑。Horizon作为portal层，不仅仅是一个展示页面，更有自己的逻辑和规则。比如：
 
 Horizon与各组件通讯是利用rest api进行访问，任何操作前都需要请求keystone得到admin token（这里以admin用户为例），之后再利用这个admin token进行各种组件服务的请求。
+
+Base层代码的优化
+=======================================
+Base层系统主要承载业务逻辑和控制逻辑，将用户的请求转向请求OpenStack，这里需要做一些优化工作：
+
+1. 将日志的级别设为SERVERE LEVEL。原因是Java对于计算密集型的程序可以达到与C++相同的速度级别，但是对于I/O密集型的程序就没那么高效了，因为Java不能像C++那样直接访问底层存储设备。
+2. 针对对象转换的优化。Base层由于不想依赖JClouds而使用自己的对象，这里对象转化花费了大量的时间，尤其是嵌套的对象之间转换，将不必要的信息隐藏不转换也是优化的一种方法。
+3. 针对数据库的优化。共享数据库的连接，使用数据库连接池进行管理数据库的连接，使用预编译SQL语句，批量处理SQL（Spring Hibernat已经实现）。
+4. 使用多线程进行并发/并行。Spring已经做好了。
+5. 针对设计模式的优化。使用DAO模式抽象出数据访问层，提高代码的可读性。
 
 
 计费模块
@@ -55,12 +65,11 @@ autocaling的计费和负载均衡的计费暂时先不考虑。
 
 消费记录也是用户的需求点之一，我们从ceilometer中获取log进行解析后存储在base层，然后发送给用户。
 
-.. image:: ../../images/cloud_billing_mapreduce.jpg
+.. image:: ../../images/cloudbase/cloud_billing_mapreduce.jpg
 
 整体的架构如下图所示：
 
-.. image:: ../../images/cloud_billing_arcitecher.jpg
-
+.. image:: ../../images/cloudbase/cloud_billing_arcitecher.jpg
 
 JBilling
 =======================================
