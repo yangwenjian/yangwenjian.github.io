@@ -52,11 +52,12 @@
 <li><a class="reference internal" href="#">Encoding and Decoding</a><ul>
 <li><a class="reference internal" href="#id1">最佳实践</a><ul>
 <li><a class="reference internal" href="#id2">零宽字符</a></li>
-<li><a class="reference internal" href="#id3">回车转移</a></li>
+<li><a class="reference internal" href="#id3">回车转意</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#id4">乱码转换问题</a><ul>
 <li><a class="reference internal" href="#gbk-utf-8">gbk-utf-8</a></li>
+<li><a class="reference internal" href="#tomcat">Tomcat服务端打印日志乱码及返回数据乱码问题</a></li>
 </ul>
 </li>
 </ul>
@@ -110,7 +111,7 @@
 <p>罪魁祸首是Openstack官网上的api，我们是从那里复制粘贴到自己的代码中，上面的url中就混进了零宽字符。</p>
 </div>
 <div class="section" id="id3">
-<h3>回车转移<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<h3>回车转意<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p>大家都知道回车符是&#8217;/n&#8217;，其实在windows平台上，文本的回车符是&#8217;/t/n&#8217;，在linux平台上，回车符才是&#8217;/n&#8217;，</p>
 <p>其实linux上有工具将windows的文本转意为linux的文本，<strong>dos2unix</strong>。
 将要被转意的文本作为参数即可，就可以很轻松得到unix的文本了。</p>
@@ -127,6 +128,16 @@
 <li>iconv -f gdb -t utf-8 filename 解决内容乱码；</li>
 <li>mid3iconv -e gdk *.mp3 解决MP3标签乱码。</li>
 </ol>
+</div>
+<div class="section" id="tomcat">
+<h3>Tomcat服务端打印日志乱码及返回数据乱码问题<a class="headerlink" href="#tomcat" title="Permalink to this headline">¶</a></h3>
+<p>这两天发现新开饭的计费管理项目NeunnManager上面的中文都是乱码，从服务端log日志来看，打印出来的中文也都是乱码，这是问题的开始。</p>
+<p>首先介绍下项目结构，NeunnManager是服务的portal端，具体数据还是从Base端请求，我们将Base端部署在一个docker容器中的tomcat上，NeunnManager也部署在这个tomcat上。</p>
+<p>奇怪的是如果将NeunnManger部署在自己的机器上（Base层还是在docker的tomcat上），无论是Linux或者是Windows，都没有乱码问题，打印log也是正常的，但是一将项目都部署在服务器上就会乱码，这个问题我们小组搞了一个下午也没有结果，争论不休。</p>
+<p>我认为问题处在docker容器的编码方式上，而牛晓楠则认为问题出在tomcat的配置上，引发了很大的赌注。</p>
+<p>第二天，另一个同事将问题解决，修改了catalina.sh中的一行代码：</p>
+<p>JAVA_OPTS=&#8221;-Dfile.endoding=UTF-8 -Dsun.jnu.encoding=UTF-8&#8221;</p>
+<p>这是JDK的编码方式不同导致的错误。</p>
 </div>
 </div>
 </div>

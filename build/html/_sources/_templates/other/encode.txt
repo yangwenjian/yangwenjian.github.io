@@ -20,7 +20,7 @@ Encoding and Decoding
 
 罪魁祸首是Openstack官网上的api，我们是从那里复制粘贴到自己的代码中，上面的url中就混进了零宽字符。
 
-回车转移
+回车转意
 -----------------------------------------
 大家都知道回车符是'/n'，其实在windows平台上，文本的回车符是'/t/n'，在linux平台上，回车符才是'/n'，
 
@@ -39,3 +39,19 @@ gbk-utf-8
 2. convmv -f gbk -t utf-8 --notest files 解决名称乱码；
 3. iconv -f gdb -t utf-8 filename 解决内容乱码；
 4. mid3iconv -e gdk \*.mp3 解决MP3标签乱码。
+
+Tomcat服务端打印日志乱码及返回数据乱码问题
+------------------------------------------
+这两天发现新开饭的计费管理项目NeunnManager上面的中文都是乱码，从服务端log日志来看，打印出来的中文也都是乱码，这是问题的开始。
+
+首先介绍下项目结构，NeunnManager是服务的portal端，具体数据还是从Base端请求，我们将Base端部署在一个docker容器中的tomcat上，NeunnManager也部署在这个tomcat上。
+
+奇怪的是如果将NeunnManger部署在自己的机器上（Base层还是在docker的tomcat上），无论是Linux或者是Windows，都没有乱码问题，打印log也是正常的，但是一将项目都部署在服务器上就会乱码，这个问题我们小组搞了一个下午也没有结果，争论不休。
+
+我认为问题处在docker容器的编码方式上，而牛晓楠则认为问题出在tomcat的配置上，引发了很大的赌注。
+
+第二天，另一个同事将问题解决，修改了catalina.sh中的一行代码：
+
+JAVA_OPTS="-Dfile.endoding=UTF-8 -Dsun.jnu.encoding=UTF-8"
+
+这是JDK的编码方式不同导致的错误。

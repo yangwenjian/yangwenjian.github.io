@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
     <link rel="next" title="VPN" href="vpn.html" />
-    <link rel="prev" title="OpenStack Learning Path" href="../cloudbase/OpenStack.html" /> 
+    <link rel="prev" title="OSLO" href="../openstack/oslo.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +40,7 @@
           <a href="vpn.html" title="VPN"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../cloudbase/OpenStack.html" title="OpenStack Learning Path"
+          <a href="../openstack/oslo.html" title="OSLO"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -52,6 +52,8 @@
 <li><a class="reference internal" href="#">Regular Expressions</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a><ul>
 <li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#exercise">Exercise</a></li>
+<li><a class="reference internal" href="#id1">参考资料</a></li>
 </ul>
 </li>
 </ul>
@@ -59,8 +61,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../cloudbase/OpenStack.html"
-                        title="previous chapter">OpenStack Learning Path</a></p>
+  <p class="topless"><a href="../openstack/oslo.html"
+                        title="previous chapter">OSLO</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="vpn.html"
                         title="next chapter">VPN</a></p>
@@ -95,8 +97,7 @@
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Regular expressions are wildly used in linux&amp;unix programming. With this, we can easily process string and other stuff.</p>
-<p>If you want to test something with regular expressions, try this website:</p>
-<p><a class="reference external" href="http://www.regexr.com/">http://www.regexr.com/</a></p>
+<p>同样的匹配可以用不同的正则表达式实现，但是需要注意匹配的效率。</p>
 <div class="section" id="usage">
 <h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
 <p>/[A-Z]+(abc|xyz)*/i</p>
@@ -107,6 +108,22 @@ a &#8216;+&#8217; means match one or more expression before this charactor;
 * means match zero or more expression before this charactor;
 character &#8216;/&#8217; means an end;
 last, the letter after end character means option of this regular expression, in this case, &#8216;i&#8217; means case insensitive.</p>
+</div>
+<div class="section" id="exercise">
+<h3>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>IP地址的正则表达式：</p>
+<div class="highlight-python"><pre>/\b(([01]?\d?\d|2[0-4]\d|25[0-5])\.){3}([01]?\d?\d|2[0-4]\d|25[0-5])\b/g</pre>
+</div>
+<p>也有其他的表达方式，这里只列举一种，b表示开始和结束，?表示0或者1个。如果要剔除0开头和结尾的IP，写得就复杂一些：</p>
+<div class="highlight-python"><pre>/\b(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\.((1\d?\d?|[1-9]\d|\d|2[0-4]\d|25[0-5])\.){2}(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\b/g</pre>
+</div>
+<p>这里从网上找一些典型的正则表达式：</p>
+<div class="highlight-python"><pre>匹配HTML标记：&lt;\s*(\S+)(\s[^&gt;]*)?&gt;[\s\S]*&lt;\s*\/\1\s*&gt;</pre>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>参考资料<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://www.regexr.com/">http://www.regexr.com/</a></p>
 </div>
 </div>
 </div>
@@ -127,7 +144,7 @@ last, the letter after end character means option of this regular expression, in
           <a href="vpn.html" title="VPN"
              >next</a> |</li>
         <li class="right" >
-          <a href="../cloudbase/OpenStack.html" title="OpenStack Learning Path"
+          <a href="../openstack/oslo.html" title="OSLO"
              >previous</a> |</li>
         <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

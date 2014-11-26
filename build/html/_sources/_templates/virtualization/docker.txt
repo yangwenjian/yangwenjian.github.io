@@ -28,84 +28,6 @@ Docker's features:
 * Change management.
 * Interactive shell.
 
-Using Docker
------------------------------------
-Install docker on OpenSuse:
-
-::
-
- $sudo zypper ar -f http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/ Virtualization
- $sudo rpm --import http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/repodata/repomd.xml.key
- $ssudo zypper in docker
- $sudo systemctl start docker
- $sudo systemctl enable docker(optional)
-
-Run docker:
-
-::
- 
- $sudo docker run [option] [imagename] [command]
- $sudo docker run -t -i ubuntu:14.04 /bin/bash (-t means create a terminal, -i means we can interact with stdin)
- $sudo docker run -d ubuntu:14.04 /bin/bash (-d means run in deamon process)
- $sudo docker run -t -i -p localhost:8080:80 ubuntu:14.04 /bin/bash(port mapping the container 80 port to host 8080 port)
-
-Usual command:
-
-::
-
- Commands:
-    attach    Attach to a running container
-    build     Build an image from a Dockerfile
-    commit    Create a new image from a container's changes
-    cp        Copy files/folders from a container's filesystem to the host path
-    diff      Inspect changes on a container's filesystem
-    events    Get real time events from the server
-    export    Stream the contents of a container as a tar archive
-    history   Show the history of an image
-    images    List images
-    import    Create a new filesystem image from the contents of a tarball
-    info      Display system-wide information
-    inspect   Return low-level information on a container
-    kill      Kill a running container
-    load      Load an image from a tar archive
-    login     Register or log in to the Docker registry server
-    logs      Fetch the logs of a container
-    port      Lookup the public-facing port that is NAT-ed to PRIVATE_PORT
-    pause     Pause all processes within a container
-    ps        List containers
-    pull      Pull an image or a repository from a Docker registry server
-    push      Push an image or a repository to a Docker registry server
-    restart   Restart a running container
-    rm        Remove one or more containers
-    rmi       Remove one or more images
-    run       Run a command in a new container
-    save      Save an image to a tar archive
-    search    Search for an image on the Docker Hub
-    start     Start a stopped container
-    stop      Stop a running container
-    tag       Tag an image into a repository
-    top       Lookup the running processes of a container
-    unpause   Unpause a paused container
-    version   Show the Docker version information
-    wait      Block until a container stops, then print its exit code
-    
-Example:
-
-::
-
-    $docker ps -a
-    $docker start [containerId]
-    $docker attach [containerId]
-    $docker stop [containerId]
-    $docker logs [containerId]
-    $docker commit [containerId] name/imagename:versionId
-
-NAT with iptables:
-
-::
-
-    iptables -t nat -A  DOCKER -p tcp --dport   <local port> -j DNAT --to-destination <docker ip>:<docker port>
-
 Docker Design
 ===================================
 Docker uses a client-server architecture.
@@ -269,6 +191,95 @@ build后产生新的镜像，结果怎么run这个镜像也跑不起来，直接
 某天突然停电，重新启动服务器后，再启动所有docker容器，发现base层服务出现连接超时！
 原因是docker容器再重新启动后会覆写/etc/hosts文件，之前加的host与IP的对应表都消失了！
 这是docker的一种特性吧，这里推荐在启动时加入-v挂载本地文件到docker容器中，这样就会永久生效。
+
+Docker容器调优
+-----------------------------------
+我先抛出问题，我们Base组利用docker进行部署几个服务，包括Base服务，NeunnManager服务，NeunnPortal服务，但是问题是经常发现docker中的tomcat无缘无故的自动退出，当然，这里也有OutOfMemory和OutOfPermgenSpace，但是这两个问题可以通过Tomcat参数调优进行解决，也可以进行Docker的参数调优。
+
+但是自动退出这个问题，由于没有合适的监控，没有任何日志信息，这里没有任何解决办法，目前的策略是将每个服务进行彻底分离，并将Bamboo的Agent与服务部署的容器进行分离，避免相互干扰。
+
+
+Docker参考手册
+===================================
+这里填写一些命令参考，供翻阅。
+
+Using Docker
+-----------------------------------
+Install docker on OpenSuse:
+
+::
+
+ $sudo zypper ar -f http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/ Virtualization
+ $sudo rpm --import http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/repodata/repomd.xml.key
+ $ssudo zypper in docker
+ $sudo systemctl start docker
+ $sudo systemctl enable docker(optional)
+
+Run docker:
+
+::
+ 
+ $sudo docker run [option] [imagename] [command]
+ $sudo docker run -t -i ubuntu:14.04 /bin/bash (-t means create a terminal, -i means we can interact with stdin)
+ $sudo docker run -d ubuntu:14.04 /bin/bash (-d means run in deamon process)
+ $sudo docker run -t -i -p localhost:8080:80 ubuntu:14.04 /bin/bash(port mapping the container 80 port to host 8080 port)
+
+Usual command:
+
+::
+
+ Commands:
+    attach    Attach to a running container
+    build     Build an image from a Dockerfile
+    commit    Create a new image from a container's changes
+    cp        Copy files/folders from a container's filesystem to the host path
+    diff      Inspect changes on a container's filesystem
+    events    Get real time events from the server
+    export    Stream the contents of a container as a tar archive
+    history   Show the history of an image
+    images    List images
+    import    Create a new filesystem image from the contents of a tarball
+    info      Display system-wide information
+    inspect   Return low-level information on a container
+    kill      Kill a running container
+    load      Load an image from a tar archive
+    login     Register or log in to the Docker registry server
+    logs      Fetch the logs of a container
+    port      Lookup the public-facing port that is NAT-ed to PRIVATE_PORT
+    pause     Pause all processes within a container
+    ps        List containers
+    pull      Pull an image or a repository from a Docker registry server
+    push      Push an image or a repository to a Docker registry server
+    restart   Restart a running container
+    rm        Remove one or more containers
+    rmi       Remove one or more images
+    run       Run a command in a new container
+    save      Save an image to a tar archive
+    search    Search for an image on the Docker Hub
+    start     Start a stopped container
+    stop      Stop a running container
+    tag       Tag an image into a repository
+    top       Lookup the running processes of a container
+    unpause   Unpause a paused container
+    version   Show the Docker version information
+    wait      Block until a container stops, then print its exit code
+    
+Example:
+
+::
+
+    $docker ps -a
+    $docker start [containerId]
+    $docker attach [containerId]
+    $docker stop [containerId]
+    $docker logs [containerId]
+    $docker commit [containerId] name/imagename:versionId
+
+NAT with iptables:
+
+::
+
+    iptables -t nat -A  DOCKER -p tcp --dport   <local port> -j DNAT --to-destination <docker ip>:<docker port>
 
 Docker 开机自启动tomcat服务
 -----------------------------------
