@@ -31,6 +31,7 @@ Sulotion of OpenStack
    :maxdepth: 1
    
    _templates/openstack/openstack
+   _templates/openstack/nova
    _templates/openstack/securityGroup
    _templates/openstack/neutron
    _templates/openstack/oslo

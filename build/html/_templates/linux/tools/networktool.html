@@ -52,6 +52,7 @@
 <li><a class="reference internal" href="#">Linux Network Tool</a><ul>
 <li><a class="reference internal" href="#curl">Curl</a></li>
 <li><a class="reference internal" href="#ping">Ping</a></li>
+<li><a class="reference internal" href="#netstat">Netstat</a></li>
 <li><a class="reference internal" href="#tcpdump">Tcpdump</a></li>
 </ul>
 </li>
@@ -129,6 +130,20 @@ PING 192.168.250.3 (192.168.250.3) 56(84) bytes of data.
 <li>time=0.387ms 回应时间，越小说明网络环境越好。</li>
 </ol>
 </div>
+<div class="section" id="netstat">
+<h2>Netstat<a class="headerlink" href="#netstat" title="Permalink to this headline">¶</a></h2>
+<p>例如：</p>
+<div class="highlight-python"><pre>Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+tcp6       0      0 :::22                   :::*                    LISTEN      -</pre>
+</div>
+<ul class="simple">
+<li>如果Local Address写为0.0.0.0:3306表示任何网卡的3306端口都能被其他服务器访问；</li>
+<li>如果Local Address写为192.168.250.3,表示只有这个IP所在网卡能被外部服务器访问；</li>
+<li>如果Local Address写为127.0.0.1:3306，表示只有本机可以访问这个端口。</li>
+</ul>
+</div>
 <div class="section" id="tcpdump">
 <h2>Tcpdump<a class="headerlink" href="#tcpdump" title="Permalink to this headline">¶</a></h2>
 <p>Tcpdump能截获当前所有通过本机网卡的数据包，有着灵活的过滤机制。由于只能截获本机网卡数据，只能用于自检或者在网关的服务器上。</p>
@@ -148,18 +163,7 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
 16:16:45.421960 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 3223, win 20272, options [nop,nop,TS val 1276140097 ecr 4153792943], length 0
 16:16:45.594158 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 4671, win 23168, options [nop,nop,TS val 1276140140 ecr 4153793115], length 0
 16:16:45.594255 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 6119, win 26064, options [nop,nop,TS val 1276140140 ecr 4153793115], length 0
-16:16:45.594344 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 7567, win 28960, options [nop,nop,TS val 1276140140 ecr 4153793115], length 0
-16:16:45.594454 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 9015, win 31856, options [nop,nop,TS val 1276140140 ecr 4153793116], length 0
-16:16:45.594607 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 10463, win 34752, options [nop,nop,TS val 1276140140 ecr 4153793116], length 0
-16:16:45.766313 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 11911, win 37648, options [nop,nop,TS val 1276140183 ecr 4153793288], length 0
-16:16:45.766477 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 13359, win 40544, options [nop,nop,TS val 1276140183 ecr 4153793288], length 0
-16:16:45.766567 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 14807, win 41992, options [nop,nop,TS val 1276140183 ecr 4153793288], length 0
-16:16:45.766718 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 16255, win 41992, options [nop,nop,TS val 1276140184 ecr 4153793288], length 0
-16:16:45.766855 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 17703, win 41992, options [nop,nop,TS val 1276140184 ecr 4153793288], length 0
-16:16:45.766964 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 19151, win 41992, options [nop,nop,TS val 1276140184 ecr 4153793288], length 0
-16:16:45.767176 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 20172, win 41992, options [nop,nop,TS val 1276140184 ecr 4153793288], length 0
-16:16:45.767290 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [F.], seq 76, ack 20172, win 41992, options [nop,nop,TS val 1276140184 ecr 4153793288], length 0
-16:16:45.939178 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 20173, win 41992, options [nop,nop,TS val 1276140227 ecr 4153793461], length 0</pre>
+16:16:45.594344 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 7567, win 28960, options [nop,nop,TS val 1276140140 ecr 4153793115], length 0</pre>
 </div>
 </div>
 </div>

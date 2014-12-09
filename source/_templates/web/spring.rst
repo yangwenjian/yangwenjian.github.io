@@ -96,6 +96,12 @@ Transaction管理
     
     <tx:annotation-driven transaction-manager="transactionManager" />
 
+事务带来的困扰
+-------------------------------------
+这次编码遇到一个简单的问题，我要对数据库进行A操作和B操作，这两个操作必须在一个事务之内，但是B操作又需要A操作commit后的结果。
+
+这样就矛盾了，既然是事务，当然在commit前不能写进数据库中，但是A操作后的结果正是B操作需要的。
+
 事务方法嵌套用的迷茫
 -------------------------------------
 （这部分文字引自http://www.ibm.com/developerworks/cn/java/j-lo-spring-ts1/）

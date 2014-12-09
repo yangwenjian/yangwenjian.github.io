@@ -1,9 +1,9 @@
 
 
 
-=============================================
+=====================================================
 OpenStack Base Back Stage NeunnManager
-=============================================
+=====================================================
 我们将设计一个后台管理系统，主要职责是Tenant（租户）、User（用户），Host（主机）、HostType（主机类型）、Availability Zone（可用域、以下简称AZ）、Quato（配额）的管理维护，计费相关功能。
 
 与Base层的区别有两点：
@@ -17,11 +17,11 @@ OpenStack Base Back Stage NeunnManager
 这里暂时放下个人观点，继续介绍我们团队的设计。
 
 Host与AZ对应关系的维护
-----------------------------------------------
+----------------------------------------------------
 由于设计的问题，我们要同时维护自己的Host表，Host与AZ的对应关系表，并维护OpenStack的Host与AZ(Host Aggregate)，这里就要注意与OpenStack的同步，避免信息混乱。
 
 AZ中Host列表的更新
-``````````````````````````````````````````````
+````````````````````````````````````````````````````
 根据产品经理的要求，我们做类似与OpenStack风格的更新AZ，传入的参数是AZId，更新后的Host列表，这里我的思路如下：
 
 1. 查找AZ中已有的Host列表，与传入的Host列表进行集合的加减法，得到两个列表，分别是待删除列表与待添加列表；
@@ -39,3 +39,19 @@ AZ中Host列表的更新
     3.2. 添加AZ-Host表中对应的项；
     
     3.3. 将Host表中对应的列中AvailabilityZone字段置为该AZ，将Status置为busy；
+
+Host,AvailabilityZone与OpenStack的同步问题
+---------------------------------------------------
+NeunnManager维护的Host,AZ信息必须与OpenStack保持同步，并且以OpenStack为准，否则就会出现AZ与Host的管理混乱。
+
+Host--计算节点
+```````````````````````````````````````````````````
+计算节点，也就是Openstack中的host，与AvailabilityZone是n:1的关系，并且带有一个服务器类型，这个类型是服务器的配置，显示的Host带有的虚拟CPU，虚拟RAM，虚拟VOLUME的大小。
+
+因为我们要实现物理隔离，就必须将AvailabilityZone私有化，让其属于某个tenant，这样用户在创建实例的时候只能选择自己的AZ，不能在别人的AZ上创建实例。
+
+1. 计算节点的字段为：id, insertTime, lastUpdateTime, **name**, **availabilityzone**, status, typeid, typename, **ip**, vCpus, vRams, vVolumes.
+2. AvailabilityZone的字段为：id, insertTime, lastUpdateTime, **azName**, tenantId, tenantName, status, region, **aggregateId**.
+3. HostAzmapping的字段为：id, insertTime, lastUpdateTime, hostId, azId.
+
+这里，黑色字体表示从OpenStack处获得，必须与OpenStack保持同步。这里最重要的关系维护在HostAzMapping这张表中，但是由于使用的是hostId和azId，不能直接与OpenStack进行同步，因为OpenStack是通过名称（唯一）进行关系维护的。
