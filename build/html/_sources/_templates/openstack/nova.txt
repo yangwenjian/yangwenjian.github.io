@@ -8,6 +8,18 @@ OpenStack Nova
 Nova API:
 ======================================
 
+Nova Flavor API:
+--------------------------------------
+Nova flaovr 是为虚拟机提供硬件大小的模板，并且可以设置为public和private两种属性。
+这个功能主要是做模板管理，之后可以通过控制模板来控制用户所建的虚拟机大小。
+
+通过命令：
+nova flavor-list可以查看所有模板。
+
+通过命令：
+nova flaovr-access-list --flavor ID可以查看某个模板的访问权限；
+nova flavor-access-list --tenant ID可以查看某个租户的可访问模板列表。
+
 Hypervisor Api:
 --------------------------------------
 请求hypervisor-show的api，首先请求Hypervisor列表http://ncloud-nova-1:8774/v2/0ca7e360f8fa4f21866baad39e594c2f/os-hypervisors，
@@ -18,7 +30,6 @@ Hypervisor Api:
 
     curl -i 'http://ncloud-nova-1:8774/v2/0ca7e360f8fa4f21866baad39e594c2f/os-hypervisors/detail' -X GET -H "X-Auth-Project-Id: wtq" -H "Accept: application/json" -H "X-Auth-Token: ..."
 
-返回的是所有OpenStack中的hypervisors的详细信息，包括ip，硬件信息，虚拟化信息，虚拟配置（vcpu），返回的是Hypervisor数组，然后具体如下：
 
 ::
 

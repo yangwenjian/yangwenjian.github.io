@@ -25,11 +25,11 @@ LVM被组织为三种元素::
 
 物理卷是物理磁盘或者物理分区（例如/dev/hda或/dev/hda1），卷组（VG）是物理卷的集合，卷组可以在逻辑上划分多个逻辑卷。
 
-.. image:: ../../images/lvm1.gif
+.. image:: images/lvm1.gif
 
 之后对LV0进行格式化，之后挂载到/var。
 
-.. image:: ../../images/lvm2.gif
+.. image:: images/lvm2.gif
 
 在做PV与LV的映射中，PV和VG的基本块必须具有相同的大小，这些基本块称为物理区段（PE）和逻辑区段（LE）。尽管是一个n-to-m的映射，但PE与LE是一一对应的。
 
@@ -42,7 +42,7 @@ LVM被组织为三种元素::
 
 最后的磁盘区段映射可能为如下所示：
 
-.. image:: ../../images/lvm3.gif
+.. image:: images/lvm3.gif
 
 常见任务
 -------------------------------------
@@ -80,3 +80,14 @@ LVM可以创建磁盘的快照，创建新的快照 LV 也是使用 lvcreate 命
 4.为原 LV 创建一个可读写的快照； 
 5.使用快照卷作为磁盘映像生成一个新的虚拟机。如果需要的话，要修改网络/控制台设置； 
 6.登录已经创建的虚拟机，修改网络设置/主机名。
+
+DeviceMapper
+========================================
+DeviceMapper做为LVM的实现机制，是在Linux内核2.6版本后加入的。
+使用的基本思想是机制与策略分离，由Linux的内核来实现映射机制，而由用户态程序来进行策略控制。
+
+DeviceMapper由三部分组成：mapped device（向外提供逻辑设备），映射表，target device（物理空间段）。
+类似一个数结构，mapped device充当根节点，target device充当叶子节点，是一对多的关系。
+并且一个mapped device又可以作为上一层的target device，在层次上可以无限迭代下去。
+
+.. image:: images/devicemapper.jpg

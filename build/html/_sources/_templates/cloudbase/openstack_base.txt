@@ -59,11 +59,12 @@ autocaling的计费和负载均衡的计费暂时先不考虑。
 
 快照也需要收钱，按照快照的次数和快照大小进行计费。
 
-网络的计费模式主要取决于路由器，按照路由器的个数进行计费（青云）。neutron是否有配额功能？
+网络的计费模式主要取决于路由器，按照路由器的个数进行计费（青云）。neutron是否有配额功能？openstack每个组件都有相应的租户配额。
 
 块存储也有相应的模板进行计费，高性能的存储和地性能的存储分开计费，按照大小和使用时间进行计费，暂时不实现回收站机制。
 
 消费记录也是用户的需求点之一，我们从ceilometer中获取log进行解析后存储在base层，然后发送给用户。
+但是在后期的实现中，因为ceilometer组件jclouds没有支持，我们使用Spring的AOP进行自己记录用户的操作日志，并存储在自己的数据库中。
 
 .. image:: ../../images/cloudbase/cloud_billing_mapreduce.jpg
 
@@ -79,5 +80,8 @@ It has four edition: Community, Enterprise, Telco, Telco Hosted. Each after is m
 JBilling is a seperated system of billing which contains functions like: Core, Accounts, Invoices, Payments, Intergrations, Product Management, Mediation, Support, Deployment.
 
 
-so yet, I can not find a way to intergrate JBilling in our system. But JBilling(Community) is an opensource project, we can add some of its componets.
+so yet, I can not find a way to intergrate JBilling in our system. But JBilling(Community) is an open source project, we can add some of its componets.
+
+经过研究，JBilling的社区版提供的功能少之又少，不能满足基本需求，这个社区版纯是为了吸引人眼球的，而收费的专业版则有各种定价模板，帐务流程，发票等等特性。
+结论是在我们这里不启用JBilling。
 

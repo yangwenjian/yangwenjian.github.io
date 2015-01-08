@@ -105,6 +105,12 @@ Union File System
 -------------------------------------
 Docker can make use of several union file system variants including: AUFS, btrfs, vfs, and DeviceMapper.
 
+这里关于AUFS和DeviceMapper简单介绍一下：
+
+1) AUFS是一种Union FS，简单来说是将不同的目录挂载在一个虚拟文件系统下，优点是支持容器间共享可执行及可共享的运行库。在ubuntu中，docker就使用aufs driver，我们可以通过目录来看到docker容器里的文件。
+2) DeviceMappper是一种逻辑设备到物理设备的映射框架机制（注意，这里是机制，而策略是用户层的概念，linux主张策略与机制分开）。我们熟悉的LVM就是在DeviceMapper框架下运行的。在opensuse中，docker就使用DeviceMapper driver，我们可以看见一个大块的文件（100G），每个容器在10G之内（关于DeviceMapper的介绍在Linux LVM部分）。
+
+
 Container Format
 -------------------------------------
 Docker combines these components into a wrapper we call a container format. The default container format is called libcontainer.
@@ -152,7 +158,7 @@ Docker每次重启的时候都会DHCP一个新的IP，这次升级后它的ssh�
 
 之后就跟ssh上去一样，可以操作容器了。
 
-Docker实践
+Docker实践中遇到的问题
 -----------------------------------
 今天base和portal第一个版本发布，我将部署docker容器作为发布的运行容器。
 第一次写dockerfile，参考了同事的资料：
@@ -168,11 +174,11 @@ Docker实践
     ADD profile /etc/
     EXPOSE 8888 22
 
-build后产生新的镜像，结果怎么run这个镜像也跑不起来，直接镜像就推出，通过docker logs也看不出什么。
+build后产生新的镜像，结果怎么run这个镜像也跑不起来，直接镜像就退出，通过docker logs也看不出什么。
 
 运行我镜像列表的里的所有镜像，发现都是同一个毛病，求助于同事，同事查看了一通后也没发现明显的问题。他只是觉得镜像有问题，最后发现是我在构建的时候下载镜像的过程中断网了，结果镜像没有下去，有问题，当时就被公司的网络耍了一把。
 
-用了新的镜像后发现docker file有些内容没有写进去，profile是写进去了，但是tomcat和jdk都没有进入文件系统中，其实是我的dockerfile写法有问题，ADD添加文件夹的时候和我们观念上的添加文件夹不同，需要给文件夹指定名称。正确的写法如下：
+用了新的镜像后发现docker file有些内容没有写进去，profile是写进去了，但是tomcat和jdk都没有进入文件系统中，其实是我的dockerfile写法有问题，ADD添加文件夹的时候和我们观念上的copy文件夹不同，需要给文件夹指定名称。正确的写法如下：
 
 ::
 
@@ -215,63 +221,15 @@ Install docker on OpenSuse:
  $sudo systemctl start docker
  $sudo systemctl enable docker(optional)
 
-Run docker:
-
-::
- 
- $sudo docker run [option] [imagename] [command]
- $sudo docker run -t -i ubuntu:14.04 /bin/bash (-t means create a terminal, -i means we can interact with stdin)
- $sudo docker run -d ubuntu:14.04 /bin/bash (-d means run in deamon process)
- $sudo docker run -t -i -p localhost:8080:80 ubuntu:14.04 /bin/bash(port mapping the container 80 port to host 8080 port)
-
-Usual command:
-
-::
-
- Commands:
-    attach    Attach to a running container
-    build     Build an image from a Dockerfile
-    commit    Create a new image from a container's changes
-    cp        Copy files/folders from a container's filesystem to the host path
-    diff      Inspect changes on a container's filesystem
-    events    Get real time events from the server
-    export    Stream the contents of a container as a tar archive
-    history   Show the history of an image
-    images    List images
-    import    Create a new filesystem image from the contents of a tarball
-    info      Display system-wide information
-    inspect   Return low-level information on a container
-    kill      Kill a running container
-    load      Load an image from a tar archive
-    login     Register or log in to the Docker registry server
-    logs      Fetch the logs of a container
-    port      Lookup the public-facing port that is NAT-ed to PRIVATE_PORT
-    pause     Pause all processes within a container
-    ps        List containers
-    pull      Pull an image or a repository from a Docker registry server
-    push      Push an image or a repository to a Docker registry server
-    restart   Restart a running container
-    rm        Remove one or more containers
-    rmi       Remove one or more images
-    run       Run a command in a new container
-    save      Save an image to a tar archive
-    search    Search for an image on the Docker Hub
-    start     Start a stopped container
-    stop      Stop a running container
-    tag       Tag an image into a repository
-    top       Lookup the running processes of a container
-    unpause   Unpause a paused container
-    version   Show the Docker version information
-    wait      Block until a container stops, then print its exit code
-    
 Example:
 
 ::
-
-    $docker ps -a
-    $docker start [containerId]
+ 
+    $sudo docker run [option] [imagename] [command]
+    $sudo docker run -t -i ubuntu:14.04 /bin/bash (-t means create a terminal, -i means we can interact with stdin)
+    $sudo docker run -d ubuntu:14.04 /bin/bash (-d means run in deamon process)
+    $sudo docker run -t -i -p localhost:8080:80 ubuntu:14.04 /bin/bash(port mapping the container 80 port to host 8080 port)
     $docker attach [containerId]
-    $docker stop [containerId]
     $docker logs [containerId]
     $docker commit [containerId] name/imagename:versionId
 

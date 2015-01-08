@@ -53,6 +53,7 @@
 <li><a class="reference internal" href="#introduction">Introduction</a><ul>
 <li><a class="reference internal" href="#usage">Usage</a></li>
 <li><a class="reference internal" href="#exercise">Exercise</a></li>
+<li><a class="reference internal" href="#regular-expression-in-find-and-grep">Regular expression in find and grep</a></li>
 <li><a class="reference internal" href="#id1">参考资料</a></li>
 </ul>
 </li>
@@ -111,13 +112,24 @@ last, the letter after end character means option of this regular expression, in
 </div>
 <div class="section" id="exercise">
 <h3>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>这里记录一些自己写过的表达式，供参考：</p>
+<p>数字的正则表达式：</p>
+<div class="highlight-python"><pre>正整数和小数：/^([0-9]*[1-9][0-9]*\.[0-9]+|0\.[0-9]*[1-9][0-9]*|([0-9]*[1-9][0-9]*))$/g</pre>
+</div>
 <p>IP地址的正则表达式：</p>
-<div class="highlight-python"><pre>/\b(([01]?\d?\d|2[0-4]\d|25[0-5])\.){3}([01]?\d?\d|2[0-4]\d|25[0-5])\b/g</pre>
+<div class="highlight-python"><pre>通用的IP表达式：/\b(([01]?\d?\d|2[0-4]\d|25[0-5])\.){3}([01]?\d?\d|2[0-4]\d|25[0-5])\b/g
+精确的IP表达式：/\b(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\.((1\d?\d?|[1-9]\d|\d|2[0-4]\d|25[0-5])\.){2}(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\b/g</pre>
 </div>
-<p>也有其他的表达方式，这里只列举一种，b表示开始和结束，?表示0或者1个。如果要剔除0开头和结尾的IP，写得就复杂一些：</p>
-<div class="highlight-python"><pre>/\b(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\.((1\d?\d?|[1-9]\d|\d|2[0-4]\d|25[0-5])\.){2}(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\b/g</pre>
 </div>
-<p>这里从网上找一些典型的正则表达式：</p>
+<div class="section" id="regular-expression-in-find-and-grep">
+<h3>Regular expression in find and grep<a class="headerlink" href="#regular-expression-in-find-and-grep" title="Permalink to this headline">¶</a></h3>
+<p>在linux中可以使用正则表达式进行搜索文件：</p>
+<div class="highlight-python"><pre>通用表达式：find PATH -regex '.*REGX'(必须以.*为开头，否则不能匹配上)</pre>
+</div>
+<p>在搜索文件内容时也可使用：</p>
+<div class="highlight-python"><pre>通用表达式：find PATH -type f -name '*' | xargs grep 'REGX'(这里需要加入-type选项，要不然所有文件夹都会被列出)</pre>
+</div>
+<p>这里也从网上找一些典型的正则表达式：</p>
 <div class="highlight-python"><pre>匹配HTML标记：&lt;\s*(\S+)(\s[^&gt;]*)?&gt;[\s\S]*&lt;\s*\/\1\s*&gt;</pre>
 </div>
 </div>
