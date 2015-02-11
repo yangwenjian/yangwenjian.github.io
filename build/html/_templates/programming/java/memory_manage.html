@@ -1,0 +1,140 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Memory Management &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="代码优化篇" href="../common/codeOptimization.html" />
+    <link rel="prev" title="Json Object" href="json.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../common/codeOptimization.html" title="代码优化篇"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="json.html" title="Json Object"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Memory Management</a><ul>
+<li><a class="reference internal" href="#java">Java的内存回收机制</a></li>
+<li><a class="reference internal" href="#id1">最佳实践</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="json.html"
+                        title="previous chapter">Json Object</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../common/codeOptimization.html"
+                        title="next chapter">代码优化篇</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/programming/java/memory_manage.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="memory-management">
+<h1>Memory Management<a class="headerlink" href="#memory-management" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="java">
+<h2>Java的内存回收机制<a class="headerlink" href="#java" title="Permalink to this headline">¶</a></h2>
+<p>JVM有自己的内存回收机制，也就是我们熟悉的引用计数（reference counting）方法。
+每当有一个引用指向heap中某个对象的时候，引用计数就加一；反之，则减一。
+当有任何对象的引用计数为0的时候，立即清理该对象。</p>
+<p>对于那些自引用或者两个对象互引用的，JVM也能及时清理掉。</p>
+<p>其实JVM使用一种更高效的内存清理办法，就是从Stack区和Static区去遍历引用，对每个引用及其指向对象的所有成员进行遍历，这些都是活动的对象。
+而那些没有被遍历到的，就是不活动的对象，JVM就会对其进行清理。</p>
+</div>
+<div class="section" id="id1">
+<h2>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>虽然JAVA中有强大的GC进行内存的清理与回收，但是这个周期是比较长的，而且在使用Tomcat的过程中经常出现OutOfMemory，OutOfPergemSpace这样类似的错误，比较头疼。</p>
+<p>在内存不够的情况下也有可能造成程序本身的错误，在Neunn Base层的编写中，这里创建了大量对象，必须相应的调大Tomcat的内存配置，否则就会出现上述的各种问题。
+这里是这样修改：</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">JAVA_OPTS</span><span class="o">=</span><span class="s">&quot;$JAVA_OPTS -XX:PermSize=5120m -XX:MaxPermSize=10240m -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8&quot;</span>
+</pre></div>
+</div>
+<p>PermSapce主要是用来存储Java的类型信息的元数据，如果大量的创建对象，这个存储区域就会溢出，造成Tomcat崩溃，影响程序运行。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../common/codeOptimization.html" title="代码优化篇"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="json.html" title="Json Object"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

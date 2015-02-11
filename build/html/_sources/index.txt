@@ -107,6 +107,8 @@ Programming Skill
    _templates/programming/common/designpatterns
    _templates/programming/java/annotation
    _templates/programming/java/guice
+   _templates/programming/java/json
+   _templates/programming/java/memory_manage
    _templates/programming/common/codeOptimization
    _templates/programming/common/genetic
    _templates/programming/java/maven

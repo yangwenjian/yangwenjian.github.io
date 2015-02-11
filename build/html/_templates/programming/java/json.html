@@ -1,0 +1,167 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Json Object &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Memory Management" href="memory_manage.html" />
+    <link rel="prev" title="Guice Introduction and Analysis" href="guice.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="memory_manage.html" title="Memory Management"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="guice.html" title="Guice Introduction and Analysis"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="guice.html"
+                        title="previous chapter">Guice Introduction and Analysis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="memory_manage.html"
+                        title="next chapter">Memory Management</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/programming/java/json.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="json-object">
+<h1>Json Object<a class="headerlink" href="#json-object" title="Permalink to this headline">¶</a></h1>
+<p>Json是JavaScrip Object Notaion的缩写，是轻量级的数据交换格式。
+Json非常适合用于网络传输，传出的格式如下：</p>
+<div class="highlight-python"><pre>{
+   "name" : "Yang Wenjian",
+   "sex" : "male",
+   ......
+}</pre>
+</div>
+<p>也可以使用带有root name的Json格式：</p>
+<div class="highlight-python"><pre>{
+   "Person" : {
+       "name" : "Yang Wenjian",
+       "sex" : "male",
+       ......
+   }
+}</pre>
+</div>
+<p>我们在构建Restful的接口中经常使用Json作为返回结果，这样可以通过简单的JAVA对象即可接收。</p>
+<p>常用的第三方工具包有gson包，还有Jackson-mapper包等。</p>
+<p>这里简单比较下使用两个包的一些心得：</p>
+<p>gson包简单明了，易于使用，包里类和目录很少，比较容易上手。代码示例如下：</p>
+<div class="highlight-python"><pre>Gson gson = new GsonBuilder()
+    .excludeFieldsWithModifiers(Modifier.STATIC,Modifier.TRANSIENT, Modifier.VOLATILE)
+    .enableComplexMapKeySerialization() // 支持Map的key为复杂对象的形式
+    .setPrettyPrinting() // 对json结果格式化
+    .setDateFormat("yyyy-MM-dd HH:mm:ss:SSS")// 时间转化为特定格式
+    .create();
+T entity = null;
+try {
+    entity = (T) gson.fromJson(jsonData, returnType);
+} catch (Exception e) {
+    throw new Exception("Error With traslation.");
+}</pre>
+</div>
+<p>相比之下，JackSon包中的ObjectMapper对于上面第二种带有root name的json序列化或者反序列话支持较好，
+有自己封装好的Annotation&#8211;&#64;JsonRootName标记在类名之前，易于解析而且不容易出错。代码示例如下：</p>
+<div class="highlight-python"><pre>ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
+DEFAULT_MAPPER.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);
+DEFAULT_MAPPER.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);
+DEFAULT_MAPPER.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+T entity = (T) DEFAULT_MAPPER.readValue(jsonData, returnType);</pre>
+</div>
+<p>如果想要使用Gson进行带有root name的序列化或者反序列化，需要使用JsonObject。代码示例如下：</p>
+<div class="highlight-python"><pre>//序列化对象
+JsonElement je = gson.toJsonTree(object);
+JsonObject jo = new JsonObject();
+jo.add(CostRecordDetails.class.getSimpleName(), je);//类似于一个Mapper，在最外层再加入一个键值对；
+System.out.println(jo.toString());
+
+//反序列化
+JsonElement je2 = new JsonParser().parse(jsonData);
+JsonElement je3 = je2.getAsJsonObject().get(returnType.getSimpleName());
+T entity = (T) gson.fromJson(je3, returnType);</pre>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="memory_manage.html" title="Memory Management"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="guice.html" title="Guice Introduction and Analysis"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

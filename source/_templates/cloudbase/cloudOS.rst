@@ -6,7 +6,7 @@ Cloud OS 总结
 商用云平台的架构和设计
 
 基本概念
----------------------------------------
+=======================================
 IaaS: Infrastructure as a Service
 PaaS: Plantform as a Service
 SaaS: Software as a Service

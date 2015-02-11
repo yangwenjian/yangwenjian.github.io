@@ -51,15 +51,20 @@
   <ul>
 <li><a class="reference internal" href="#">OpenStack Base 开发总结</a><ul>
 <li><a class="reference internal" href="#base">Base层的作用</a></li>
-<li><a class="reference internal" href="#id1">Base层的开发</a><ul>
+<li><a class="reference internal" href="#id1">Base层的开发思想</a><ul>
 <li><a class="reference internal" href="#id2">Base层设计理念</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id3">Base层代码的优化</a><ul>
+<li><a class="reference internal" href="#id3">Base层的组件</a><ul>
 <li><a class="reference internal" href="#id4">计费模块</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#jbilling">JBilling</a></li>
+<li><a class="reference internal" href="#id5">Base层代码的优化</a></li>
+<li><a class="reference internal" href="#id6">Base层的部署和应用</a><ul>
+<li><a class="reference internal" href="#openstack">原生OpenStack用户的接入</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -108,7 +113,7 @@
 <img alt="../../_images/base_architecture.jpg" src="../../_images/base_architecture.jpg" />
 </div>
 <div class="section" id="id1">
-<h2>Base层的开发<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>Base层的开发思想<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>Base层分为如下几个工程：
 1.ncloud-sdk-java，base层对外的java SDK，可以通过调用其中的接口对base工程进行连接并调用其中的资源;
 2.ncloud-base，base层核心工程，主要加入我们的身份验证、业务逻辑和控制过程，并向外发布Rest接口;
@@ -122,15 +127,8 @@
 </div>
 </div>
 <div class="section" id="id3">
-<h2>Base层代码的优化<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p>Base层系统主要承载业务逻辑和控制逻辑，将用户的请求转向请求OpenStack，这里需要做一些优化工作：</p>
-<ol class="arabic simple">
-<li>将日志的级别设为SERVERE LEVEL。原因是Java对于计算密集型的程序可以达到与C++相同的速度级别，但是对于I/O密集型的程序就没那么高效了，因为Java不能像C++那样直接访问底层存储设备。</li>
-<li>针对对象转换的优化。Base层由于不想依赖JClouds而使用自己的对象，这里对象转化花费了大量的时间，尤其是嵌套的对象之间转换，将不必要的信息隐藏不转换也是优化的一种方法。</li>
-<li>针对数据库的优化。共享数据库的连接，使用数据库连接池进行管理数据库的连接，使用预编译SQL语句，批量处理SQL（Spring Hibernat已经实现）。</li>
-<li>使用多线程进行并发/并行。Spring已经做好了。</li>
-<li>针对设计模式的优化。使用DAO模式抽象出数据访问层，提高代码的可读性。</li>
-</ol>
+<h2>Base层的组件<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Base层共有租户用户控制，OpenStack中间层，计费模块，运营运维平台</p>
 <div class="section" id="id4">
 <h3>计费模块<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <p>计费功能在模板中主要实现，虚拟机，网络，块存储单独计费，其中虚拟机计费是首要需求，虚拟机计费可以根据模板费用×晕新时间进行计费。
@@ -158,6 +156,36 @@ It has four edition: Community, Enterprise, Telco, Telco Hosted. Each after is m
 <p>so yet, I can not find a way to intergrate JBilling in our system. But JBilling(Community) is an open source project, we can add some of its componets.</p>
 <p>经过研究，JBilling的社区版提供的功能少之又少，不能满足基本需求，这个社区版纯是为了吸引人眼球的，而收费的专业版则有各种定价模板，帐务流程，发票等等特性。
 结论是在我们这里不启用JBilling。</p>
+</div>
+<div class="section" id="id5">
+<h2>Base层代码的优化<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>Base层系统主要承载业务逻辑和控制逻辑，将用户的请求转向请求OpenStack，这里需要做一些优化工作：</p>
+<ol class="arabic simple">
+<li>将日志的级别设为SERVERE LEVEL。原因是Java对于计算密集型的程序可以达到与C++相同的速度级别，但是对于I/O密集型的程序就没那么高效了，因为Java不能像C++那样直接访问底层存储设备。</li>
+<li>针对对象转换的优化。Base层由于不想依赖JClouds而使用自己的对象，这里对象转化花费了大量的时间，尤其是嵌套的对象之间转换，将不必要的信息隐藏不转换也是优化的一种方法。</li>
+<li>针对数据库的优化。共享数据库的连接，使用数据库连接池进行管理数据库的连接，使用预编译SQL语句，批量处理SQL（Spring Hibernat已经实现）。</li>
+<li>使用多线程进行并发/并行。Spring已经做好了。</li>
+<li>针对设计模式的优化。使用DAO模式抽象出数据访问层，提高代码的可读性。</li>
+</ol>
+</div>
+<div class="section" id="id6">
+<h2>Base层的部署和应用<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>Base层系统作为云平台的逻辑控制和中间层，部署必须使用HA，双活+loadbalance。</p>
+<div class="section" id="openstack">
+<h3>原生OpenStack用户的接入<a class="headerlink" href="#openstack" title="Permalink to this headline">¶</a></h3>
+<p>前提条件：</p>
+<ol class="arabic simple">
+<li>Base层有自己的租户和用户控制，用户登录并非使用OpenStack的原始密码，而是用Base层加密后的密码进行登录；</li>
+<li>OpenStack原始用户的admin用户不能动；</li>
+<li>需要创建相应的base用户与原始用户对应；</li>
+<li>创建相应的资源与原始用户资源对应；</li>
+</ol>
+<p>实现步骤：</p>
+<ol class="arabic simple">
+<li>首先获取OpenStack中所有租户和用户；</li>
+<li>创建相应的租户和用户，如果有冲突，需要重命名；</li>
+</ol>
+</div>
 </div>
 </div>
 
