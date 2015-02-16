@@ -50,8 +50,11 @@
   <h3><a href="../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Memory Management</a><ul>
-<li><a class="reference internal" href="#java">Java的内存回收机制</a></li>
-<li><a class="reference internal" href="#id1">最佳实践</a></li>
+<li><a class="reference internal" href="#java">Java的内存回收机制</a><ul>
+<li><a class="reference internal" href="#id1">两种内存清理方式</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">最佳实践</a></li>
 </ul>
 </li>
 </ul>
@@ -98,9 +101,32 @@
 <p>对于那些自引用或者两个对象互引用的，JVM也能及时清理掉。</p>
 <p>其实JVM使用一种更高效的内存清理办法，就是从Stack区和Static区去遍历引用，对每个引用及其指向对象的所有成员进行遍历，这些都是活动的对象。
 而那些没有被遍历到的，就是不活动的对象，JVM就会对其进行清理。</p>
-</div>
 <div class="section" id="id1">
-<h2>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h3>两种内存清理方式<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>JVM有两种内存的清理方式：一种是stop-and-copy；另一种是mark-and-sweep。</p>
+<p>Stop-and-copy：</p>
+<ul class="simple">
+<li>暂停当前程序，将活动的内存对象copy到另一块heap区，然后将原来的heap区清理掉；</li>
+<li>新的内存对象互相紧挨着，新的heap区变得非常紧凑。</li>
+</ul>
+<p>Mark-and-sweep:</p>
+<ul class="simple">
+<li>Mark-and-sweep方式仍从Stack和Static区出发，寻找活动的内存对象；</li>
+<li>每找到活动的内存对象，将其的flag置位，并不收集；</li>
+<li>当mark进程结束后，开始进行sweep，所有dead object被清理掉，并不copy任何东西；</li>
+<li>如果想收集heap碎片的时候，进行shuffle around（重新排列）object。</li>
+</ul>
+<p>JVM可以监控垃圾回收器的工作效率，并且改变策略。</p>
+<p>如果长时间内对象都保持长期稳定活动，就会切换到Mark-and-swepp策略；
+同样，一旦JVM发现内存碎片增多，就会切换到Stop-and-copy策略。</p>
+<p>JVM还有其他策略来增加执行速度。
+最重要的一个就是just-in-time(JIT)编译器。JIT编译器能将java代码直接转换成机器码（类似与C/C++），而不需要JVM的干预，大大提高执行效率。
+但也有副作用，一是花费额外的一点时间，二是JIT编译出的机器码占用空间较大，可能会引起Paging。
+现在的JDK除非必要情况下很少使用JIT编译器。</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>最佳实践<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>虽然JAVA中有强大的GC进行内存的清理与回收，但是这个周期是比较长的，而且在使用Tomcat的过程中经常出现OutOfMemory，OutOfPergemSpace这样类似的错误，比较头疼。</p>
 <p>在内存不够的情况下也有可能造成程序本身的错误，在Neunn Base层的编写中，这里创建了大量对象，必须相应的调大Tomcat的内存配置，否则就会出现上述的各种问题。
 这里是这样修改：</p>
