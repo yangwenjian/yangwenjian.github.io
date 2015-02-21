@@ -1,0 +1,117 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>VIM &mdash; cloudlight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="自动化安装操作系统" href="../../automation/cobbler.html" />
+    <link rel="prev" title="Git" href="git.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../automation/cobbler.html" title="自动化安装操作系统"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="git.html" title="Git"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="git.html"
+                        title="previous chapter">Git</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../automation/cobbler.html"
+                        title="next chapter">自动化安装操作系统</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/linux/tools/vim.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="vim">
+<h1>VIM<a class="headerlink" href="#vim" title="Permalink to this headline">¶</a></h1>
+<p>启动YouCompleteMeServer命令，ycmd每次会在：</p>
+<div class="highlight-python"><pre>/usr/bin/python2 /home/knight/.vim/bundle/YouCompleteMe/python/ycm/../../third_party/ycmd/ycmd --port=59982 --options_file=/tmp/tmpavY1mN --log=info --idle_suicide_seconds=10800 --stdout=/tmp/ycm_temp/server_59982_stdout.log --stderr=/tmp/ycm_temp/server_59982_stderr.log</pre>
+</div>
+<p>不过我这次安装似乎并不成功，OpenSuse利用自动安装命令&#8221;./install.sh &#8211;clang-completer&#8221;，安装后生成的libclang.so有问题，每次启动都不成功，错误日志显示&#8221;libclang.so&#8221;版本有问题。
+这个原因是因为cmake版本或者python版本等原因造成的，从官网上下载clang的最新&#8221;libclang.so&#8221;，就可以使用了。</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../automation/cobbler.html" title="自动化安装操作系统"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="git.html" title="Git"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

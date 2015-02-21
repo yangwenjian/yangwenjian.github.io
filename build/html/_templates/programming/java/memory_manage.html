@@ -103,7 +103,7 @@
 而那些没有被遍历到的，就是不活动的对象，JVM就会对其进行清理。</p>
 <div class="section" id="id1">
 <h3>两种内存清理方式<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<p>JVM有两种内存的清理方式：一种是stop-and-copy；另一种是mark-and-sweep。</p>
+<p>JVM有两种基础的内存清理方式：一种是stop-and-copy；另一种是mark-and-sweep。</p>
 <p>Stop-and-copy：</p>
 <ul class="simple">
 <li>暂停当前程序，将活动的内存对象copy到另一块heap区，然后将原来的heap区清理掉；</li>

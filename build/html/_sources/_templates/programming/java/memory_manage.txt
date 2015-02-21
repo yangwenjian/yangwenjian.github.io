@@ -18,7 +18,7 @@ JVM有自己的内存回收机制，也就是我们熟悉的引用计数（refer
 
 两种内存清理方式
 ------------------------------------------
-JVM有两种内存的清理方式：一种是stop-and-copy；另一种是mark-and-sweep。
+JVM有两种基础的内存清理方式：一种是stop-and-copy；另一种是mark-and-sweep。
 
 Stop-and-copy：
 

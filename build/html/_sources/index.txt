@@ -53,6 +53,7 @@ Sulotion of Linux&Unix
    _templates/linux/tools/networktool
    _templates/linux/tools/shell
    _templates/linux/tools/git
+   _templates/linux/tools/vim
 
 
 Sulotion of Autamation
@@ -113,6 +114,7 @@ Programming Skill
    _templates/programming/common/genetic
    _templates/programming/java/maven
    _templates/programming/common/debug
+   _templates/programming/c/thinking_in_c
 
 
 Other
