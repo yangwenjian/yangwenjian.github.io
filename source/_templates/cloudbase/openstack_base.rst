@@ -17,7 +17,7 @@ Base层作为我们的核心业务逻辑和控制中心，我们所有的资源�
 
 以Base为中心的系统结构如下图所示：
 
-.. image:: ../../images/cloudbase/base_architecture.jpg
+.. image:: images/base_architecture.jpg
 
 Base层的开发思想
 =======================================
@@ -59,11 +59,11 @@ autocaling的计费和负载均衡的计费暂时先不考虑。
 消费记录也是用户的需求点之一，我们从ceilometer中获取log进行解析后存储在base层，然后发送给用户。
 但是在后期的实现中，因为ceilometer组件jclouds没有支持，我们使用Spring的AOP进行自己记录用户的操作日志，并存储在自己的数据库中。
 
-.. image:: ../../images/cloudbase/cloud_billing_mapreduce.jpg
+.. image:: images/cloud_billing_mapreduce.jpg
 
 整体的架构如下图所示：
 
-.. image:: ../../images/cloudbase/cloud_billing_arcitecher.jpg
+.. image:: images/cloud_billing_arcitecher.jpg
 
 JBilling
 =======================================

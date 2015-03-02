@@ -8,8 +8,19 @@ Spring是当前最主流的企业应用框架。
 Spring解决企业级开发的复杂性问题，利用简单的JavaBean完成之前EJB所完成的工作。
 简单来说，Spring是一个轻量级的控制反转（IOC）和面向且面编程（AOP）的框架。是每一个Java程序员必须学得的框架。
 
+为什么使用Spring
+=====================================
+Spring作为最流行的开发框架，是Java开发最重要的框架之一，如何使用Spring作为Java开发者的首要任务。
+
+1. Spring提供控制反转（IOC）和依赖注入（DI），能让外部容器控制对象的生存周期；
+2. Spring降低组件之间的耦合度，实现软件各层的解锁；
+3. Spring提供众多服务：事务管理，消息服务等；
+4. 实现AOP技术，可以用来实现权限拦截，运行期监控，日志记录等；
+5. 提供众多辅助类，加快应用开发，如：JdbcTemplate，HibernateTemplate；
+6. 集成了其他重要框架，如Hibernate，JPA，Structs等；
+
 Spring的配置
-====================================
+=====================================
 在我们所开发的Openstack Base的工程中，利用Spring的诸多特性。
 包括：AOP, Security, JavaBean, context, orm, mvc, oauth, etc.
 

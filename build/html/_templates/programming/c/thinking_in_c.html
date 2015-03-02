@@ -25,7 +25,9 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" /> 
+    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Project Management Tools" href="../../other/projectManagement.html" />
+    <link rel="prev" title="Debug Skills" href="../common/debug.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,11 +36,31 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../other/projectManagement.html" title="Project Management Tools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../common/debug.html" title="Debug Skills"
+             accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Thinking In C</a><ul>
+<li><a class="reference internal" href="#gcc">GCC编译器</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../common/debug.html"
+                        title="previous chapter">Debug Skills</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../other/projectManagement.html"
+                        title="next chapter">Project Management Tools</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/c/thinking_in_c.txt"
@@ -68,6 +90,34 @@
   <div class="section" id="thinking-in-c">
 <h1>Thinking In C<a class="headerlink" href="#thinking-in-c" title="Permalink to this headline">¶</a></h1>
 <p>Unary and assignment ops group right-to-left, all others left-to-right.</p>
+<div class="section" id="gcc">
+<h2>GCC编译器<a class="headerlink" href="#gcc" title="Permalink to this headline">¶</a></h2>
+<p>GCC的全称是The GNU Compiler Collection，包含很多语言。</p>
+<p>如果编译时包含其他头文件，需要先进行编译其他头文件，才能编译改文件。
+例如：</p>
+<div class="highlight-python"><pre>gcc -c mystuff.c
+gcc -c fun.c
+gcc -o fun fun.o mystuff.o
+
+或者
+
+gcc -c mystuff.c
+ar -rc mystuff.a mystuff.c
+gcc -c fun.c
+gcc -o fun fun.o mystuff.a</pre>
+</div>
+<p>如果是多重引用，需要按照顺序执行。
+例如：</p>
+<div class="highlight-python"><pre>gcc -o fun fun.o mystuff.a mystuff2.a
+这里fun调用mystuff中的函数，mystuff调用mystuff2中的函数</pre>
+</div>
+<p>如果在c++中引用C的库，需要加入如下代码方可执行：</p>
+<div class="highlight-python"><pre>extern "C"
+{
+#include "mystuff.h"
+}</pre>
+</div>
+</div>
 </div>
 
 
@@ -82,6 +132,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../other/projectManagement.html" title="Project Management Tools"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../common/debug.html" title="Debug Skills"
+             >previous</a> |</li>
         <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>

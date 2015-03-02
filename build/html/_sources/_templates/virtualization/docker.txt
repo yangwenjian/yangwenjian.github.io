@@ -198,6 +198,58 @@ build后产生新的镜像，结果怎么run这个镜像也跑不起来，直接
 原因是docker容器再重新启动后会覆写/etc/hosts文件，之前加的host与IP的对应表都消失了！
 这是docker的一种特性吧，这里推荐在启动时加入-v挂载本地文件到docker容器中，这样就会永久生效。
 
+Docker中的进程
+````````````````````````````````````
+Docker虽然将各个容器进行隔离，但是在宿主机中依然能观测到docker中的各种进程。
+
+某天我在调物理服务器的数据库，因为我shutdown mysql后发现还有mysql进程，我当时以为没有正常关闭就kill掉了（事后才知道是某个docker中的mysql进程）；
+第二天测试工程师来找我问我有没有动过他的数据库，我说我调的物理服务器的数据库，并没有动你docker内部的数据库，我进去调试发现mysql进程根本没启动，我就说你这进程都没了，肯定不好使啊。
+
+后来我突然意识到可能是当天的一个kill动作产生的结果，就在物理服务器中查看mysql进程，果然有两个：
+
+::
+
+    root      7647  0.0  0.0   4444   752 ?        S    Feb26   0:00 /bin/sh /usr/bin/mysqld_safe
+    mysql     8059  1.8  0.2 13835468 377860 ?     Sl   Feb26 100:52 /usr/sbin/mysqld --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=/var/log/mysql/error.log --pid-file=/var/run/mysqld/mysqld.pid --socket=/var/run/mysqld/mysqld.sock --port=3306
+    root      8294  0.0  0.0   4444   752 ?        S    03:11   0:00 /bin/sh /usr/bin/mysqld_safe
+    landsca+  8651  0.2  0.0 689568 60520 ?        Sl   03:11   0:00 /usr/sbin/mysqld --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=/var/log/mysql/error.log --pid-file=/var/run/mysqld/mysqld.pid --socket=/var/run/mysqld/mysqld.sock --port=3306
+    mysql     9310  0.1  0.0 381052 33496 ?        Ssl  03:14   0:00 /usr/sbin/mysqld
+
+我不死心，又去看ssh进程，这下就都明白了：
+
+::
+
+    root      1992  0.0  0.0  61364  2280 ?        Ss    2014   1:41 /usr/sbin/sshd -D
+    root      2789  0.0  0.0  61364  1176 ?        Ss   Feb12   0:00 /usr/sbin/sshd
+    root      4340  0.0  0.0  61364  1068 ?        Ss   Feb12   0:00 /usr/sbin/sshd
+    root      4753  0.0  0.0  61364  1072 ?        Ss   Feb12   0:00 /usr/sbin/sshd
+    root      7733  0.0  0.0  61364  1300 ?        Ss   Feb12   0:00 /usr/sbin/sshd
+    root      9885  0.0  0.0 105628  4316 ?        Ss   03:15   0:00 sshd: root@pts/5    
+    root     10152  0.0  0.0  10468   916 pts/5    S+   03:15   0:00 grep --color=auto ssh
+    root     13235  0.0  0.0  61364  1652 ?        S    Feb10   0:00 /usr/sbin/sshd -D
+    root     16146  0.0  0.0  61364  1636 ?        S    Feb10   0:00 /usr/sbin/sshd -D
+    root     16638  0.0  0.0  61364  1636 ?        S    Feb10   0:00 /usr/sbin/sshd -D
+    sshd     26085  0.6  0.0 551020 46384 ?        Sl   Feb10 186:52 /usr/bin/mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf run
+    root     31001  0.0  0.0  61364  1148 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+    root     31064  0.0  0.0  61364  1284 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+    root     31134  0.0  0.0  61364  1288 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+    root     31225  0.0  0.0  61364  1144 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+    root     41461  0.0  0.0  61364  1148 ?        Ss   Feb09   0:00 /usr/sbin/sshd -D
+    root     43786  0.0  0.0 106856  5548 ?        Ss   01:52   0:02 sshd: root@pts/12   
+    root     43904  0.0  0.0  13040  1192 ?        Ss   01:52   0:00 /usr/lib/openssh/sftp-server
+    root     44953  0.0  0.0  44140  2956 pts/12   S+   01:55   0:00 ssh root@172.17.0.20
+    root     44954  0.0  0.0  63436  3520 ?        Ss   01:55   0:00 sshd: root@pts/0    
+    root     45353  0.0  0.0  61364  1680 ?        Ss   Feb11   0:00 /usr/sbin/sshd -D
+    root     46987  0.0  0.0  61364  1144 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+    root     51025  0.0  0.0  61364  1152 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+    root     51678  0.0  0.0  61364  1140 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+    root     52817  0.0  0.0  61364  1148 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+    root     61143  0.0  0.0  61364  1144 ?        Ss   Feb10   0:00 /usr/sbin/sshd -D
+    root     63108  0.0  0.0  61364  1184 ?        Ss   Jan13   0:00 /usr/sbin/sshd -D
+    root     64920  0.0  0.0  61364  1148 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+
+因此发觉docker中的所有进程，在宿主机中是可见的，这样比较容易误操作。
+
 Docker容器调优
 -----------------------------------
 我先抛出问题，我们Base组利用docker进行部署几个服务，包括Base服务，NeunnManager服务，NeunnPortal服务，但是问题是经常发现docker中的tomcat无缘无故的自动退出，当然，这里也有OutOfMemory和OutOfPermgenSpace，但是这两个问题可以通过Tomcat参数调优进行解决，也可以进行Docker的参数调优。

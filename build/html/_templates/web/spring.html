@@ -50,26 +50,27 @@
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Spring</a><ul>
-<li><a class="reference internal" href="#id1">Spring的配置</a><ul>
-<li><a class="reference internal" href="#id2">Spring的数据源管理</a></li>
+<li><a class="reference internal" href="#id1">为什么使用Spring</a></li>
+<li><a class="reference internal" href="#id2">Spring的配置</a><ul>
+<li><a class="reference internal" href="#id3">Spring的数据源管理</a></li>
 <li><a class="reference internal" href="#spring-session">Spring Session工厂</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id3">Spring事务</a><ul>
+<li><a class="reference internal" href="#id4">Spring事务</a><ul>
 <li><a class="reference internal" href="#transaction">Transaction管理</a></li>
-<li><a class="reference internal" href="#id4">事务带来的困扰</a></li>
-<li><a class="reference internal" href="#id5">事务方法嵌套用的迷茫</a></li>
-<li><a class="reference internal" href="#id6">多种数据库连接方式带来的困惑</a></li>
+<li><a class="reference internal" href="#id5">事务带来的困扰</a></li>
+<li><a class="reference internal" href="#id6">事务方法嵌套用的迷茫</a></li>
+<li><a class="reference internal" href="#id7">多种数据库连接方式带来的困惑</a></li>
 <li><a class="reference internal" href="#bean">Bean注入</a></li>
-<li><a class="reference internal" href="#id7">Spring的事务增强</a></li>
-<li><a class="reference internal" href="#id8">最佳实践</a></li>
+<li><a class="reference internal" href="#id8">Spring的事务增强</a></li>
+<li><a class="reference internal" href="#id9">最佳实践</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id9">Spring的作用</a><ul>
+<li><a class="reference internal" href="#id10">Spring的作用</a><ul>
 <li><a class="reference internal" href="#inversion-of-control-ioc">Inversion of Control（IOC）</a><ul>
-<li><a class="reference internal" href="#id10">1.接口注入</a></li>
-<li><a class="reference internal" href="#id11">2.设值注入</a></li>
-<li><a class="reference internal" href="#id12">3.构造子注入</a></li>
+<li><a class="reference internal" href="#id11">1.接口注入</a></li>
+<li><a class="reference internal" href="#id12">2.设值注入</a></li>
+<li><a class="reference internal" href="#id13">3.构造子注入</a></li>
 </ul>
 </li>
 </ul>
@@ -117,11 +118,23 @@
 Spring解决企业级开发的复杂性问题，利用简单的JavaBean完成之前EJB所完成的工作。
 简单来说，Spring是一个轻量级的控制反转（IOC）和面向且面编程（AOP）的框架。是每一个Java程序员必须学得的框架。</p>
 <div class="section" id="id1">
-<h2>Spring的配置<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>为什么使用Spring<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Spring作为最流行的开发框架，是Java开发最重要的框架之一，如何使用Spring作为Java开发者的首要任务。</p>
+<ol class="arabic simple">
+<li>Spring提供控制反转（IOC）和依赖注入（DI），能让外部容器控制对象的生存周期；</li>
+<li>Spring降低组件之间的耦合度，实现软件各层的解锁；</li>
+<li>Spring提供众多服务：事务管理，消息服务等；</li>
+<li>实现AOP技术，可以用来实现权限拦截，运行期监控，日志记录等；</li>
+<li>提供众多辅助类，加快应用开发，如：JdbcTemplate，HibernateTemplate；</li>
+<li>集成了其他重要框架，如Hibernate，JPA，Structs等；</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>Spring的配置<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>在我们所开发的Openstack Base的工程中，利用Spring的诸多特性。
 包括：AOP, Security, JavaBean, context, orm, mvc, oauth, etc.</p>
-<div class="section" id="id2">
-<h3>Spring的数据源管理<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id3">
+<h3>Spring的数据源管理<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p>Spring在使用Hibernate的时候需要进行初始化配置，建立数据源:</p>
 <div class="highlight-python"><pre>&lt;bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"&gt;（这里使用阿里的数据库驱动）</pre>
 </div>
@@ -170,8 +183,8 @@ jdbcTemplate.update(sql,toAdd,userName);</p>
 </div>
 </div>
 </div>
-<div class="section" id="id3">
-<h2>Spring事务<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h2>Spring事务<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>Sping提供了一致的事务管理抽象，是Spring重要的抽象之一。优点如下：</p>
 <ul class="simple">
 <li>为不同事务API提供一致的编程模型，如JTA，JDBC，Hibernate，iBATIS数据库层和JDO；</li>
@@ -191,13 +204,13 @@ jdbcTemplate.update(sql,toAdd,userName);</p>
 <div class="highlight-python"><pre>&lt;tx:annotation-driven transaction-manager="transactionManager" /&gt;</pre>
 </div>
 </div>
-<div class="section" id="id4">
-<h3>事务带来的困扰<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3>事务带来的困扰<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <p>这次编码遇到一个简单的问题，我要对数据库进行A操作和B操作，这两个操作必须在一个事务之内，但是B操作又需要A操作commit后的结果。</p>
 <p>这样就矛盾了，既然是事务，当然在commit前不能写进数据库中，但是A操作后的结果正是B操作需要的。</p>
 </div>
-<div class="section" id="id5">
-<h3>事务方法嵌套用的迷茫<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h3>事务方法嵌套用的迷茫<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <p>（这部分文字引自http://www.ibm.com/developerworks/cn/java/j-lo-spring-ts1/）</p>
 <p>Spring 事务一个被讹传很广说法是：一个事务方法不应该调用另一个事务方法，否则将产生两个事务。结果造成开发人员在设计事务方法时束手束脚，生怕一不小心就踩到地雷,其实这种是不认识 Spring 事务传播机制而造成的误解，Spring 对事务控制的支持统一在 TransactionDefinition 类中描述，该类有以下几个重要的接口方法:</p>
 <div class="highlight-python"><pre>*int getPropagationBehavior()：事务的传播行为
@@ -246,8 +259,8 @@ public class ScoreService extends BaseService{
 }</pre>
 </div>
 </div>
-<div class="section" id="id6">
-<h3>多种数据库连接方式带来的困惑<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>多种数据库连接方式带来的困惑<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>对于Spring的ORM的实现方式有多种，可以采用高端的ORM技术（Hibernate，JPA，JDO），同时采用一个JDBC 技术（Spring JDBC，iBatis），前者使用的会话是对后者Connection的封装，Spring会机智的在同一事务中封装后者的链接，这样我们直接管Spring的事务就可以了。</p>
 <p>是用Hibernate的代码如下:</p>
 <div class="highlight-python"><pre>public void logon(String userName) {
@@ -275,12 +288,12 @@ public void updateLastLogonTime(String userName) {
 <div class="highlight-python"><pre>&lt;aop:aspectj-autoproxy/&gt;</pre>
 </div>
 </div>
-<div class="section" id="id7">
-<h3>Spring的事务增强<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>Spring的事务增强<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p>Spring可以增强public的方法（注意不能增强public static方法）的事务。（暂时未涉及到此处，未研究学习)</p>
 </div>
-<div class="section" id="id8">
-<h3>最佳实践<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>最佳实践<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <p>通过Base层代码编写，使我对Spring事务有了新的认识。</p>
 <p>先阐述一下这次我碰到的几个问题，首先对于Hibernate更新时碰到的问题，</p>
 <p>在Hibernate的操作时，我使用了一个危险的操作&#8211;session.clear()方法，代码如下（代码已经被我注释掉）：</p>
@@ -306,8 +319,8 @@ session.update(entity);</pre>
 我用如下方法进行解决，在更新任何bean的时候首先进行查找当前活动的bean，之后进行修改后保存，可以避免两个bean冲突的问题。</p>
 </div>
 </div>
-<div class="section" id="id9">
-<h2>Spring的作用<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id10">
+<h2>Spring的作用<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
 <p>Spring框架可以帮程序员快速搭建服务框架。</p>
 <div class="section" id="inversion-of-control-ioc">
 <h3>Inversion of Control（IOC）<a class="headerlink" href="#inversion-of-control-ioc" title="Permalink to this headline">¶</a></h3>
@@ -316,8 +329,8 @@ session.update(entity);</pre>
 <p>依赖注入（DI）更准确的描述了这种模式，组件之间的依赖关系由容器运行时决定，即由容器动态将依赖注入到组件之中。
 例如UserRegister依赖于UserDao的实现类，UserRegister不关心USerDao的实现，由容器完成依赖。</p>
 <p>IOC分为三种形式：</p>
-<div class="section" id="id10">
-<h4>1.接口注入<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id11">
+<h4>1.接口注入<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
 <p>我们开发一个injectUserDAo接口，将一个UserDAO注入到该接口的实现类中，然后UserRegister实现该接口。如：</p>
 <div class="highlight-python"><pre>public interface InjectUserDao(){
     public void setUserDao(UserDao userDao);
@@ -338,12 +351,12 @@ public class UserRegister implements InjectUserDao{
 &lt;/component&gt;</pre>
 </div>
 </div>
-<div class="section" id="id11">
-<h4>2.设值注入<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id12">
+<h4>2.设值注入<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
 <p>通过实现setter方法而进行依赖注入，是最常用的注入方式。</p>
 </div>
-<div class="section" id="id12">
-<h4>3.构造子注入<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id13">
+<h4>3.构造子注入<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
 <p>通过构造函数完成依赖注入，如：</p>
 <div class="highlight-python"><pre>public class UserRegister{
     private UserDao userDao;

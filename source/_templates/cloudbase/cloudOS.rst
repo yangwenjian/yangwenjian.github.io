@@ -20,7 +20,7 @@ SDNaaS: Software Define Network as a Service
 华为依靠Xen虚拟化技术，在开源的SLES11SP1的基础之上对操作系统进行修改，加入自己的agent进行监控管理，节点的镜像都是自己修改过的，具有很高的可靠性和稳定性，适用于小型的数据中心。
 之所以这样说，是因为华为的云平台在网络部署上只支持vlan的模式，这就限制了子网的个数，不能超过4096。
 
-.. image:: ../../images/manageone.jpg
+.. image:: images/manageone.jpg
 
 华为的ManageOne解决方案包括如下几个组建：
 FC, FusionCompute负责管理底层虚拟化资源，包括主机、存储、网络的虚拟化管理，可以直接操作底层硬件与虚拟化资源池

@@ -14,21 +14,11 @@ Openstack Base Prototype Design
 
 分为五个标签，分别是资源申请，资源管理，资源监控，租户管理，系统配置。
 
-资源申请：查看待处理的申请，进行审批或者拒绝，查看审批记录。
+1. 资源申请：查看待处理的申请，进行审批或者拒绝，查看审批记录。
+2. 资源管理：查看所有资源的使用和分配情况，对主机进行可用域划分，收回等。
+3. 资源监控：对于所有资源的监控，将未利用的资源下电。
+4. 租户管理： 对于所有租户的增删改查，以及对于每个租户配额的管理。
 
-.. image:: images/resource_management_admin_application.jpg
-
-资源管理：查看所有资源的使用和分配情况，对主机进行可用域划分，收回等。
-
-.. image:: images/resource_management_admin_control.jpg
-
-资源监控：对于所有资源的监控，将未利用的资源下电。
-
-.. image:: images/resource_management_admin_monitor.jpg
-
-租户管理： 对于所有租户的增删改查，以及对于每个租户配额的管理。
-
-.. image:: images/resource_management_admin_tenant.jpg
 
 最后经过base组的讨论，得出如下结论：
 
