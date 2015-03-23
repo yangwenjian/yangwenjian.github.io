@@ -154,6 +154,45 @@ JClouds将值存储之后进行定时刷新，如果时间超过定时刷新时�
         return oldValue;
     }
 
+JClouds Log 配置
+-----------------------------------------
+JClouds本身提供了Log支持，方便使用者在调用的时候调试，使用SLF4J和logback进行log记录。
+
+我们首先在pom中将两个jar添加进来，之后我们可以使用其默认的配置，比较方便的打印log，只要在初始化的时候写如下代码：
+
+::
+
+    CinderApi cinderApi = ContextBuilder.newBuilder("openstack-cinder")
+        .endpoint(endpoint).credentials(identity, password)
+        .modules(new SLF4JLoggingModule()).buildApi(CinderApi.class);
+
+其实默认的配置已经能满足一般使用者的需求，作为程序员，我们都喜欢自己的配置。
+在当前工程的context path目录下加入文件logback.xml（我这里加入了eclipse的resource文件夹），基本配置如下：
+
+::
+
+    <configuration scan="false">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%m%n</pattern>
+            </encoder>
+        </appender>
+        <appender name="FILE" class="ch.qos.logback.core.FileAppender"> 
+            <file>log/jclouds.log</file> 
+            <encoder> <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern> </encoder> 
+        </appender> 
+        <logger name="jclouds.wire">
+            <level value="DEBUG" />
+                <appender-ref ref="STDOUT" />
+        </logger>
+        <logger name="jclouds.headers">
+            <level value="DEBUG" />
+                <appender-ref ref="STDOUT" />
+            </logger>
+    </configuration>
+
+    
+
 JClouds源代码修改
 =========================================
 明白了JClouds的工作原理后，我们就可以自己添加相应的openstack接口的java sdk（因为jclouds漏了很多，提bug的页面经常不好使，我们期望它在下一个版本修复）

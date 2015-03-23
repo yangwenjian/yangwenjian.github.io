@@ -44,3 +44,18 @@ GCC的全称是The GNU Compiler Collection，包含很多语言。
     {
     #include "mystuff.h"
     }
+
+
+Pointers
+===================================
+指针是C的重要概念，简单说就是指向一个地址的int值。
+
+const指修饰的变量不能改变，主要看const修饰的位置。例如：
+
+::
+
+    const char* p1; /* *p1='c' illegal; ++p1 OK */
+    char* const p2; /* *p2='c' OK; ++p2 illegal */
+    const char* const p3; /* no changes at all allowed */
+
+

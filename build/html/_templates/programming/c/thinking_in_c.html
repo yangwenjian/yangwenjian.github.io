@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Thinking In C &mdash; cloudlight 1.0.1 documentation</title>
+    <title>Thinking In C &mdash; knight 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
     <link rel="next" title="Project Management Tools" href="../../other/projectManagement.html" />
     <link rel="prev" title="Debug Skills" href="../common/debug.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../common/debug.html" title="Debug Skills"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
@@ -51,6 +51,7 @@
   <ul>
 <li><a class="reference internal" href="#">Thinking In C</a><ul>
 <li><a class="reference internal" href="#gcc">GCC编译器</a></li>
+<li><a class="reference internal" href="#pointers">Pointers</a></li>
 </ul>
 </li>
 </ul>
@@ -118,6 +119,15 @@ gcc -o fun fun.o mystuff.a</pre>
 }</pre>
 </div>
 </div>
+<div class="section" id="pointers">
+<h2>Pointers<a class="headerlink" href="#pointers" title="Permalink to this headline">¶</a></h2>
+<p>指针是C的重要概念，简单说就是指向一个地址的int值。</p>
+<p>const指修饰的变量不能改变，主要看const修饰的位置。例如：</p>
+<div class="highlight-python"><pre>const char* p1; /* *p1='c' illegal; ++p1 OK */
+char* const p2; /* *p2='c' OK; ++p2 illegal */
+const char* const p3; /* no changes at all allowed */</pre>
+</div>
+</div>
 </div>
 
 
@@ -138,7 +148,7 @@ gcc -o fun fun.o mystuff.a</pre>
         <li class="right" >
           <a href="../common/debug.html" title="Debug Skills"
              >previous</a> |</li>
-        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

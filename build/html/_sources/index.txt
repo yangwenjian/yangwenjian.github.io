@@ -1,4 +1,4 @@
-.. cloudlight documentation master file, created by
+.. Knight documentation master file, created by
    sphinx-quickstart on Thu Apr 10 16:42:39 2014.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -6,11 +6,30 @@
 Welcome to Knight's documentation!
 ======================================
 
-.. image:: images/other/wedding1.jpg
+*As Your Time, As Your Life.*
+======================================
+
+.. .. image:: images/other/wedding1.jpg
+
+.. The Will of Knight
+.. =====================================
+
+.. toctree::
+   :maxdepth: 1
+ 
+   _templates/knight/oath
+   _templates/knight/resume
+
+System Structure of Knowledge
+======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/structure_of_knowledge
 
 
-
-Sulotion of Cloud Base Layer
+Solution of Cloud Base Layer
 ======================================
 
 .. toctree::
@@ -95,8 +114,18 @@ Sulotion of Web Service
 
    _templates/web/webservice
    _templates/web/restapi
-   _templates/web/spring
+   _templates/programming/java/json
    _templates/web/webpage
+
+Programming Framework
+======================================
+
+.. toctree::
+   :maxdepth: 1
+ 
+   _templates/programming/common/designpatterns
+   _templates/web/spring
+   _templates/programming/java/guice
 
 
 Programming Skill
@@ -105,14 +134,11 @@ Programming Skill
 .. toctree::
    :maxdepth: 1
 
-   _templates/programming/common/designpatterns
    _templates/programming/java/annotation
-   _templates/programming/java/guice
-   _templates/programming/java/json
    _templates/programming/java/memory_manage
+   _templates/programming/common/algorithm
    _templates/programming/common/codeOptimization
    _templates/programming/common/genetic
-   _templates/programming/java/maven
    _templates/programming/common/debug
    _templates/programming/c/thinking_in_c
 
@@ -127,19 +153,10 @@ Other
    _templates/other/opticksandenvi
    _templates/other/encode
    _templates/other/invitation
-
-
-The Will of Knight
-=====================================
-
-.. toctree::
-   :maxdepth: 1
-
-   _templates/knight/oath
-
+   _templates/programming/java/maven
 
 
 Acknowledgements
 ======================================
-*感谢东网科技提供良好的工作学习环境，感谢杨保卫、胡许冰、赵永生、崔远智的提携，感谢黄金龙、李骏骋等云计算团队的兄弟给予我的大力支持，感谢在张智博在技术文档的路上给予我诸多帮助。*
+*感谢在张智博在技术文档的路上给予我诸多帮助，感谢赵永生，崔远智给予我们的领导。*
 

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Java Annotation &mdash; cloudlight 1.0.1 documentation</title>
+    <title>Java Annotation &mdash; knight 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
     <link rel="next" title="Guice Introduction and Analysis" href="guice.html" />
     <link rel="prev" title="设计模式Head First" href="../common/designpatterns.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../common/designpatterns.html" title="设计模式Head First"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
@@ -50,7 +50,8 @@
   <h3><a href="../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Java Annotation</a><ul>
-<li><a class="reference internal" href="#id1">知识梳理</a></li>
+<li><a class="reference internal" href="#id1">反射机制</a></li>
+<li><a class="reference internal" href="#id2">知识梳理</a></li>
 </ul>
 </li>
 </ul>
@@ -91,7 +92,24 @@
 <h1>Java Annotation<a class="headerlink" href="#java-annotation" title="Permalink to this headline">¶</a></h1>
 <p>Java Annotation is an import part in jdk</p>
 <div class="section" id="id1">
-<h2>知识梳理<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>反射机制<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>首先介绍下反射机制，是java的一个重要特性，是其他语言没有的。
+反射，顾名思义就是利用一些外围信息获取关键性的内部信息。</p>
+<p>我所学习的反射，基本用于程序的解藕，考虑如下例子：</p>
+<p>有个类型为Person，属性有name, gender, height。
+我想获取某个person对象的所有信息，放入一个Map中，必然要知道person的内部实现，如果person发生变动，必然这段代码也要发生变动...</p>
+<p>但是如果我用反射的方法，就可以避免这个问题：</p>
+<div class="highlight-python"><pre>Field[] fields = person.getClass().getDeclaredFields();
+for(Field field : fields){
+    field.setAccessible(true);
+    String name = field.getName();
+    Object value = field.get(person);
+    map.put(name, value);
+}</pre>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>知识梳理<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>AOP(Aspect Oriented Programming),面向切面的编程。
 我理解为不破坏原有任何程序的情况下，能够自由的控制程序的运行方式，就好比横向切开程序，加入想要执行的代码或者属性等。</p>
 <p>APT(Annotaion Processing Tool)注解分析器。</p>
@@ -118,7 +136,7 @@
         <li class="right" >
           <a href="../common/designpatterns.html" title="设计模式Head First"
              >previous</a> |</li>
-        <li><a href="../../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

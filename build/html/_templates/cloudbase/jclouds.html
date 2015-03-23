@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>OpenStack SDK – JClouds &mdash; cloudlight 1.0.1 documentation</title>
+    <title>OpenStack SDK – JClouds &mdash; knight 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="cloudlight 1.0.1 documentation" href="../../index.html" />
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
     <link rel="next" title="Openstack Base Prototype Design" href="openstack_base_prototype.html" />
     <link rel="prev" title="OpenStack Base 开发总结" href="openstack_base.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="openstack_base.html" title="OpenStack Base 开发总结"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
@@ -57,6 +57,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#jcloudstoken">JClouds中的token缓存机制</a></li>
+<li><a class="reference internal" href="#jclouds-log">JClouds Log 配置</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#id2">JClouds源代码修改</a><ul>
@@ -227,6 +228,37 @@ try {
 }</pre>
 </div>
 </div>
+<div class="section" id="jclouds-log">
+<h3>JClouds Log 配置<a class="headerlink" href="#jclouds-log" title="Permalink to this headline">¶</a></h3>
+<p>JClouds本身提供了Log支持，方便使用者在调用的时候调试，使用SLF4J和logback进行log记录。</p>
+<p>我们首先在pom中将两个jar添加进来，之后我们可以使用其默认的配置，比较方便的打印log，只要在初始化的时候写如下代码：</p>
+<div class="highlight-python"><pre>CinderApi cinderApi = ContextBuilder.newBuilder("openstack-cinder")
+    .endpoint(endpoint).credentials(identity, password)
+    .modules(new SLF4JLoggingModule()).buildApi(CinderApi.class);</pre>
+</div>
+<p>其实默认的配置已经能满足一般使用者的需求，作为程序员，我们都喜欢自己的配置。
+在当前工程的context path目录下加入文件logback.xml（我这里加入了eclipse的resource文件夹），基本配置如下：</p>
+<div class="highlight-python"><pre>&lt;configuration scan="false"&gt;
+    &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;%m%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+    &lt;appender name="FILE" class="ch.qos.logback.core.FileAppender"&gt;
+        &lt;file&gt;log/jclouds.log&lt;/file&gt;
+        &lt;encoder&gt; &lt;Pattern&gt;%d %-5p [%c] [%thread] %m%n&lt;/Pattern&gt; &lt;/encoder&gt;
+    &lt;/appender&gt;
+    &lt;logger name="jclouds.wire"&gt;
+        &lt;level value="DEBUG" /&gt;
+            &lt;appender-ref ref="STDOUT" /&gt;
+    &lt;/logger&gt;
+    &lt;logger name="jclouds.headers"&gt;
+        &lt;level value="DEBUG" /&gt;
+            &lt;appender-ref ref="STDOUT" /&gt;
+        &lt;/logger&gt;
+&lt;/configuration&gt;</pre>
+</div>
+</div>
 </div>
 <div class="section" id="id2">
 <h2>JClouds源代码修改<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
@@ -324,7 +356,7 @@ public interface FloatingIPApi {
         <li class="right" >
           <a href="openstack_base.html" title="OpenStack Base 开发总结"
              >previous</a> |</li>
-        <li><a href="../../index.html">cloudlight 1.0.1 documentation</a> &raquo;</li> 
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
