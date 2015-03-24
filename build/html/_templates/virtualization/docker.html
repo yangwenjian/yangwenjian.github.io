@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
     <link rel="next" title="Hadoop介绍及基础研究" href="../distribution/hadoop.html" />
-    <link rel="prev" title="Energy Saving Plan–Valithria" href="../automation/energy_saving_plan.html" /> 
+    <link rel="prev" title="Automation" href="../automation/automation.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +40,7 @@
           <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../automation/energy_saving_plan.html" title="Energy Saving Plan–Valithria"
+          <a href="../automation/automation.html" title="Automation"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -88,8 +88,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../automation/energy_saving_plan.html"
-                        title="previous chapter">Energy Saving Plan&#8211;Valithria</a></p>
+  <p class="topless"><a href="../automation/automation.html"
+                        title="previous chapter">Automation</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../distribution/hadoop.html"
                         title="next chapter">Hadoop介绍及基础研究</a></p>
@@ -331,8 +331,11 @@ root     64920  0.0  0.0  61364  1148 ?        Ss    2014   0:00 /usr/sbin/sshd 
 </div>
 <div class="section" id="id3">
 <h3>Docker容器调优<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>我先抛出问题，我们Base组利用docker进行部署几个服务，包括Base服务，NeunnManager服务，NeunnPortal服务，但是问题是经常发现docker中的tomcat无缘无故的自动退出，当然，这里也有OutOfMemory和OutOfPermgenSpace，但是这两个问题可以通过Tomcat参数调优进行解决，也可以进行Docker的参数调优。</p>
-<p>但是自动退出这个问题，由于没有合适的监控，没有任何日志信息，这里没有任何解决办法，目前的策略是将每个服务进行彻底分离，并将Bamboo的Agent与服务部署的容器进行分离，避免相互干扰。</p>
+<p>我先抛出问题，我们Base组利用docker进行部署几个服务，包括Base服务，NeunnManager服务，NeunnPortal服务，
+但是问题是经常发现docker中的tomcat无缘无故的自动退出，当然，这里也有OutOfMemory和OutOfPermgenSpace，
+但是这两个问题可以通过Tomcat参数调优进行解决，也可以进行Docker的参数调优。</p>
+<p>但是自动退出这个问题，由于没有合适的监控，没有任何日志信息，这里没有任何解决办法，
+目前的策略是将每个服务进行彻底分离，并将Bamboo的Agent与服务部署的容器进行分离，避免相互干扰。</p>
 </div>
 </div>
 <div class="section" id="id4">
@@ -406,7 +409,7 @@ CMD ["/run.sh"]</pre>
           <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
              >next</a> |</li>
         <li class="right" >
-          <a href="../automation/energy_saving_plan.html" title="Energy Saving Plan–Valithria"
+          <a href="../automation/automation.html" title="Automation"
              >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

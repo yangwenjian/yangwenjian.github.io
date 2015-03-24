@@ -252,9 +252,12 @@ Docker虽然将各个容器进行隔离，但是在宿主机中依然能观测�
 
 Docker容器调优
 -----------------------------------
-我先抛出问题，我们Base组利用docker进行部署几个服务，包括Base服务，NeunnManager服务，NeunnPortal服务，但是问题是经常发现docker中的tomcat无缘无故的自动退出，当然，这里也有OutOfMemory和OutOfPermgenSpace，但是这两个问题可以通过Tomcat参数调优进行解决，也可以进行Docker的参数调优。
+我先抛出问题，我们Base组利用docker进行部署几个服务，包括Base服务，NeunnManager服务，NeunnPortal服务，
+但是问题是经常发现docker中的tomcat无缘无故的自动退出，当然，这里也有OutOfMemory和OutOfPermgenSpace，
+但是这两个问题可以通过Tomcat参数调优进行解决，也可以进行Docker的参数调优。
 
-但是自动退出这个问题，由于没有合适的监控，没有任何日志信息，这里没有任何解决办法，目前的策略是将每个服务进行彻底分离，并将Bamboo的Agent与服务部署的容器进行分离，避免相互干扰。
+但是自动退出这个问题，由于没有合适的监控，没有任何日志信息，这里没有任何解决办法，
+目前的策略是将每个服务进行彻底分离，并将Bamboo的Agent与服务部署的容器进行分离，避免相互干扰。
 
 
 Docker参考手册

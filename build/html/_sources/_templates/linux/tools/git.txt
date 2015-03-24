@@ -41,12 +41,11 @@ Git有三种状态：已提交，已修改，已暂存。
     tag        Create, list, delete or verify a tag object signed with GPG
 
 
-
-
-
-
-
-
+基本原理
+-----------------------------------------
+Git的基本原理是比对发生变化的文件，例如一个git库中有3个文件，一个团队共同维护这个库。
+如果A修改了文件a，B修改了文件b，他们先后提交，那么git的流程是这样的：
+State1(origin)-->State2(a,changed)-->State3(b,changed)--State4(merged)
 
 Git Exercise
 =========================================

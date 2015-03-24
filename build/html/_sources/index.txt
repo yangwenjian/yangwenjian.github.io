@@ -62,11 +62,11 @@ Sulotion of Linux&Unix
    _templates/linux/lvm
    _templates/linux/memory
    _templates/linux/network
-   _templates/linux/firewall
    _templates/linux/tools/networktool
    _templates/linux/tools/shell
    _templates/linux/tools/git
    _templates/linux/tools/vim
+..   _templates/linux/firewall
 
 
 Sulotion of Autamation
@@ -76,8 +76,8 @@ Sulotion of Autamation
    :maxdepth: 1
 
    _templates/automation/cobbler
-.. _templates/automation/knight
    _templates/automation/automation
+.. _templates/automation/knight
    _templates/automation/energy_saving_plan
 
 

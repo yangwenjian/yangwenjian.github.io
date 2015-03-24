@@ -50,7 +50,10 @@
   <h3><a href="../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Git</a><ul>
-<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#id1">基本原理</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#git-exercise">Git Exercise</a></li>
 <li><a class="reference internal" href="#git-branch">Git Branch</a></li>
 </ul>
@@ -119,6 +122,12 @@ rm         Remove files from the working tree and from the index
 show       Show various types of objects
 status     Show the working tree status
 tag        Create, list, delete or verify a tag object signed with GPG</pre>
+</div>
+<div class="section" id="id1">
+<h3>基本原理<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Git的基本原理是比对发生变化的文件，例如一个git库中有3个文件，一个团队共同维护这个库。
+如果A修改了文件a，B修改了文件b，他们先后提交，那么git的流程是这样的：
+State1(origin)&#8211;&gt;State2(a,changed)&#8211;&gt;State3(b,changed)&#8211;State4(merged)</p>
 </div>
 </div>
 <div class="section" id="git-exercise">
