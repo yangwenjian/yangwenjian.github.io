@@ -4,9 +4,11 @@
 ======================================
 OpenStack Nova
 ======================================
+Nova is the most important componet in OpenStack, which includes all information and control actions of virtual machine.
 
 Nova API:
 ======================================
+Nova 对外提供很多虚拟机操作和管理的API，早期的版本也包含网络，镜像，块存储的API。
 
 Nova Flavor API:
 --------------------------------------

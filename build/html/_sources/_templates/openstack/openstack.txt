@@ -17,6 +17,8 @@ Introduction
 #. Telemetry（Ceilometer）提供用量统计服务，通过它可以方便地实现 OpenStack 计费功能；
 #. Orchestration（Heat）整合了 OpenStack 中的众多组件，类似 AWS 的 CloudFormation，让用户能够通过模板来管理资源；
 #. Database（Trove）基于 OpenStack 构建的 database-as-a-service。
+#. ImageMarket（Murano）OpenStack镜像市场。
+#. HealthCheck（OSTF）OpenStack健康检查。
 
 
 Learning Path
@@ -28,15 +30,37 @@ Use OpenStack to Build our own Cloud System
     
     1.2 Build our own beans correspondence jclouds beans;
 
-2.Build port with html5;
+2.Build rest api service with jersy;
 
 3.Build monitor system named argus based on zabbix;
 
 4.Build our own storage system based on ceph;
 
-OpenStack-Nova
-================================
-Nova is the most important componet in OpenStack, which includes all information and control actions of virtual machine.
+5.Build management and operation service base on base layer;
+
+OSLO
+==============================
+在Oslo项目出现之前，Openstack的每个组件都要自己实现处理配置文件的代码，这样就导致了一系列重复代码的产生，这是程序员所不能忍受的，因此Oslo就解决这类问题。
+
+Oslo需要解决的几点问题：
+
+1) command line option parsing;
+2) common command line options;
+3) configuration file parsing;
+4) option value lookup.
+
+Oslo.conf在使用时，需要先声明配置项的名称、定义类型、帮助文字、缺省值等，然后再按照事先声明的配置项，对CLI或conf中的内容进行解析。
+
+::
+
+    common_opts = [
+        cfg.StrOpt('bind_host',
+            default='0.0.0.0',
+            help='IP address to listen on'),
+        cfg.IntOpt('bind_port',
+            default=9292,
+            help='Port number to listen on')
+    ]
 
 OpensStack from Netease
 ================================

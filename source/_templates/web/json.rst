@@ -76,3 +76,9 @@ gson包简单明了，易于使用，包里类和目录很少，比较容易上�
     JsonElement je2 = new JsonParser().parse(jsonData);
     JsonElement je3 = je2.getAsJsonObject().get(returnType.getSimpleName());
     T entity = (T) gson.fromJson(je3, returnType);
+
+如果在序列化或者反序列化中有Enum类型，并且其json值并非enum的名称的时候，我们需要做额外的工作：
+首先实现Enum的fromValue方法，然后写一个Adapter继承自JsonSerializer<Enum.class>，实现deserialize方法和serialize方法；
+之后使用GsonBuilder注册这个Adapter即可。
+
+使用ObjectMapper也是同样的原理，实现JsonDeserializer接口，并在bean的set方法前加入注释@JsonDeserialize(using = MyDeserializer.class)即可。

@@ -98,7 +98,8 @@
   <div class="section" id="securitygroup">
 <h1>SecurityGroup<a class="headerlink" href="#securitygroup" title="Permalink to this headline">¶</a></h1>
 <p>Security Group（安全组）是虚拟机网络中的重要组成部分，可以用来控制虚拟机之间的网络流量。
-反映到底层,就是利用iptables给宿主机添加iptables规则。</p>
+反映到底层,就是利用iptables给宿主机添加iptables规则。
+可以登录一台任意Compute节点，使用iptables -L命令查看这些IP规则。</p>
 <div class="section" id="id1">
 <h2>SecurityGroup<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>Openstack中nova有一个默认的安全组，如果不进行指定，nova就给寻及分配这个默认的安全组。
@@ -182,7 +183,8 @@ Nova的安全組默認只支持入口规则创建，而Neutron可以双向控制
 </div>
 <div class="section" id="id4">
 <h3>SecurityGroupRule的创建<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
-<p>OpenStack创建安全组规则的时候会提供很多定义好的安全组模板，可以大大简化用户的操作量，这里就解释下所有定义好的规则所对应的协议和端口。</p>
+<p>OpenStack创建安全组规则的时候会提供很多定义好的安全组模板，可以大大简化用户的操作量，这里就解释下所有定义好的规则所对应的协议和端口。
+这是一种设计理念，将常用的操作简化出来供用户直接使用，可以提高用户满意度。</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="14%" />

@@ -37,10 +37,8 @@ Solution of Cloud Base Layer
 
    _templates/cloudbase/cloudOS
    _templates/cloudbase/openstack_base
-   _templates/cloudbase/jclouds
-   _templates/cloudbase/openstack_base_prototype
-   _templates/cloudbase/openstack_base_releasenote
    _templates/cloudbase/openstack_base_manager
+   _templates/cloudbase/jclouds
 
 
 Sulotion of OpenStack
@@ -51,9 +49,7 @@ Sulotion of OpenStack
    
    _templates/openstack/openstack
    _templates/openstack/nova
-   _templates/openstack/securityGroup
    _templates/openstack/neutron
-   _templates/openstack/oslo
 
 
 Sulotion of Linux&Unix
@@ -63,11 +59,9 @@ Sulotion of Linux&Unix
    :maxdepth: 1
    
    _templates/linux/regularExpressions
-   _templates/linux/vpn
    _templates/linux/lvm
    _templates/linux/memory
    _templates/linux/network
-   _templates/linux/sdn
    _templates/linux/firewall
    _templates/linux/tools/networktool
    _templates/linux/tools/shell
@@ -82,7 +76,7 @@ Sulotion of Autamation
    :maxdepth: 1
 
    _templates/automation/cobbler
-   _templates/automation/knight
+.. _templates/automation/knight
    _templates/automation/automation
    _templates/automation/energy_saving_plan
 
@@ -114,7 +108,7 @@ Sulotion of Web Service
 
    _templates/web/webservice
    _templates/web/restapi
-   _templates/programming/java/json
+   _templates/web/json
    _templates/web/webpage
 
 Programming Framework
@@ -150,6 +144,7 @@ Other
    :maxdepth: 1
 
    _templates/other/projectManagement
+   _templates/cloudbase/openstack_base_releasenote
    _templates/other/opticksandenvi
    _templates/other/encode
    _templates/other/invitation

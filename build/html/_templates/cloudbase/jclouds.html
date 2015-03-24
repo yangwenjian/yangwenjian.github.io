@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Openstack Base Prototype Design" href="openstack_base_prototype.html" />
-    <link rel="prev" title="OpenStack Base 开发总结" href="openstack_base.html" /> 
+    <link rel="next" title="OpenStack Learning" href="../openstack/openstack.html" />
+    <link rel="prev" title="OpenStack Base Back Stage NeunnManager" href="openstack_base_manager.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="openstack_base_prototype.html" title="Openstack Base Prototype Design"
+          <a href="../openstack/openstack.html" title="OpenStack Learning"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="openstack_base.html" title="OpenStack Base 开发总结"
+          <a href="openstack_base_manager.html" title="OpenStack Base Back Stage NeunnManager"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -69,11 +69,11 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="openstack_base.html"
-                        title="previous chapter">OpenStack Base 开发总结</a></p>
+  <p class="topless"><a href="openstack_base_manager.html"
+                        title="previous chapter">OpenStack Base Back Stage NeunnManager</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="openstack_base_prototype.html"
-                        title="next chapter">Openstack Base Prototype Design</a></p>
+  <p class="topless"><a href="../openstack/openstack.html"
+                        title="next chapter">OpenStack Learning</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/cloudbase/jclouds.txt"
@@ -262,7 +262,8 @@ try {
 </div>
 <div class="section" id="id2">
 <h2>JClouds源代码修改<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<p>明白了JClouds的工作原理后，我们就可以自己添加相应的openstack接口的java sdk（因为jclouds漏了很多，提bug的页面经常不好使，我们期望它在下一个版本修复）</p>
+<p>明白了JClouds的工作原理后，我们就可以自己添加相应的openstack接口的java sdk（因为jclouds漏了很多，提bug的页面经常不好使，我们期望它在下一个版本修复）;
+在我们的开发过程中，发现JClouds有写API写得不是很准确，而且有很多OpenStack的restapi没有相应实现，我们边开发，就边进行JClouds的修改，但并没有提交到社区。</p>
 <div class="section" id="ip">
 <h3>绑定浮动IP<a class="headerlink" href="#ip" title="Permalink to this headline">¶</a></h3>
 <p>浮动IP的绑定就是将虚拟机赋予一个外网IP，从而在公网上就可以访问，并且可以提供相应服务了。</p>
@@ -351,10 +352,10 @@ public interface FloatingIPApi {
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="openstack_base_prototype.html" title="Openstack Base Prototype Design"
+          <a href="../openstack/openstack.html" title="OpenStack Learning"
              >next</a> |</li>
         <li class="right" >
-          <a href="openstack_base.html" title="OpenStack Base 开发总结"
+          <a href="openstack_base_manager.html" title="OpenStack Base Back Stage NeunnManager"
              >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

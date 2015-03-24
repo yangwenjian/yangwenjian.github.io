@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
     <link rel="next" title="OpenStack Nova" href="nova.html" />
-    <link rel="prev" title="OpenStack Base Back Stage NeunnManager" href="../cloudbase/openstack_base_manager.html" /> 
+    <link rel="prev" title="OpenStack SDK – JClouds" href="../cloudbase/jclouds.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +40,7 @@
           <a href="nova.html" title="OpenStack Nova"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../cloudbase/openstack_base_manager.html" title="OpenStack Base Back Stage NeunnManager"
+          <a href="../cloudbase/jclouds.html" title="OpenStack SDK – JClouds"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -52,7 +52,7 @@
 <li><a class="reference internal" href="#">OpenStack Learning</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#learning-path">Learning Path</a></li>
-<li><a class="reference internal" href="#openstack-nova">OpenStack-Nova</a></li>
+<li><a class="reference internal" href="#oslo">OSLO</a></li>
 <li><a class="reference internal" href="#opensstack-from-netease">OpensStack from Netease</a><ul>
 <li><a class="reference internal" href="#id1">网易部署方案</a></li>
 <li><a class="reference internal" href="#id2">优化方案</a></li>
@@ -64,8 +64,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../cloudbase/openstack_base_manager.html"
-                        title="previous chapter">OpenStack Base Back Stage NeunnManager</a></p>
+  <p class="topless"><a href="../cloudbase/jclouds.html"
+                        title="previous chapter">OpenStack SDK &#8211; JClouds</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="nova.html"
                         title="next chapter">OpenStack Nova</a></p>
@@ -110,6 +110,8 @@
 <li>Telemetry（Ceilometer）提供用量统计服务，通过它可以方便地实现 OpenStack 计费功能；</li>
 <li>Orchestration（Heat）整合了 OpenStack 中的众多组件，类似 AWS 的 CloudFormation，让用户能够通过模板来管理资源；</li>
 <li>Database（Trove）基于 OpenStack 构建的 database-as-a-service。</li>
+<li>ImageMarket（Murano）OpenStack镜像市场。</li>
+<li>HealthCheck（OSTF）OpenStack健康检查。</li>
 </ol>
 </div>
 <div class="section" id="learning-path">
@@ -120,13 +122,32 @@
 <div><p>1.1 Use jclouds to be our OpenStack SDK;</p>
 <p>1.2 Build our own beans correspondence jclouds beans;</p>
 </div></blockquote>
-<p>2.Build port with html5;</p>
+<p>2.Build rest api service with jersy;</p>
 <p>3.Build monitor system named argus based on zabbix;</p>
 <p>4.Build our own storage system based on ceph;</p>
+<p>5.Build management and operation service base on base layer;</p>
 </div>
-<div class="section" id="openstack-nova">
-<h2>OpenStack-Nova<a class="headerlink" href="#openstack-nova" title="Permalink to this headline">¶</a></h2>
-<p>Nova is the most important componet in OpenStack, which includes all information and control actions of virtual machine.</p>
+<div class="section" id="oslo">
+<h2>OSLO<a class="headerlink" href="#oslo" title="Permalink to this headline">¶</a></h2>
+<p>在Oslo项目出现之前，Openstack的每个组件都要自己实现处理配置文件的代码，这样就导致了一系列重复代码的产生，这是程序员所不能忍受的，因此Oslo就解决这类问题。</p>
+<p>Oslo需要解决的几点问题：</p>
+<ol class="arabic simple">
+<li>command line option parsing;</li>
+<li>common command line options;</li>
+<li>configuration file parsing;</li>
+<li>option value lookup.</li>
+</ol>
+<p>Oslo.conf在使用时，需要先声明配置项的名称、定义类型、帮助文字、缺省值等，然后再按照事先声明的配置项，对CLI或conf中的内容进行解析。</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">common_opts</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">StrOpt</span><span class="p">(</span><span class="s">&#39;bind_host&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s">&#39;0.0.0.0&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;IP address to listen on&#39;</span><span class="p">),</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">IntOpt</span><span class="p">(</span><span class="s">&#39;bind_port&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">9292</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;Port number to listen on&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="opensstack-from-netease">
 <h2>OpensStack from Netease<a class="headerlink" href="#opensstack-from-netease" title="Permalink to this headline">¶</a></h2>
@@ -210,7 +231,7 @@ echo 0 &gt; /sys/kernel/mm/transparent_hugepage/khugepaged/defrag</pre>
           <a href="nova.html" title="OpenStack Nova"
              >next</a> |</li>
         <li class="right" >
-          <a href="../cloudbase/openstack_base_manager.html" title="OpenStack Base Back Stage NeunnManager"
+          <a href="../cloudbase/jclouds.html" title="OpenStack SDK – JClouds"
              >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

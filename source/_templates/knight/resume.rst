@@ -2,17 +2,36 @@
 
 
 ============================================
-My Resume(个人履历)
+个人履历    My Resume
 ============================================
 
-Introduction（简历）
+简介    Introduction
 ============================================
-Name：杨文剑
+姓名：杨文剑        Name:Yang Wenjian.
+
+性别：男            Gender: Male.
+
 
 
 Education
 ============================================
+120 High School，Liaoning，2003-2006.
+
+Shanghai Jiaotong University, Software Engineering, 2006-2010.
 
 
 Experience
 ============================================
+
+Embeded Lab, Shanghai Jiaotong University. 2009.3-2010.6
+---------------------------------------------------------
+
+Skills
+============================================
+Programming in Java,C++,C
+
+Find solution in certain time
+
+Testing and Debugging in project
+
+Linux operation experience

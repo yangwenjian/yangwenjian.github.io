@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="OpenStack Learning" href="../openstack/openstack.html" />
-    <link rel="prev" title="Neunn XCloud Base Release Note(Version 0.6)" href="openstack_base_releasenote.html" /> 
+    <link rel="next" title="OpenStack SDK – JClouds" href="jclouds.html" />
+    <link rel="prev" title="OpenStack Base 开发总结" href="openstack_base.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../openstack/openstack.html" title="OpenStack Learning"
+          <a href="jclouds.html" title="OpenStack SDK – JClouds"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
+          <a href="openstack_base.html" title="OpenStack Base 开发总结"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -50,6 +50,8 @@
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">OpenStack Base Back Stage NeunnManager</a><ul>
+<li><a class="reference internal" href="#neunnmanager">运维管理系统NeunnManager</a><ul>
+<li><a class="reference internal" href="#id1">整体设计</a></li>
 <li><a class="reference internal" href="#hostaz">Host与AZ对应关系的维护</a><ul>
 <li><a class="reference internal" href="#azhost">AZ中Host列表的更新</a></li>
 </ul>
@@ -61,13 +63,15 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="openstack_base_releasenote.html"
-                        title="previous chapter">Neunn XCloud Base Release Note(Version 0.6)</a></p>
+  <p class="topless"><a href="openstack_base.html"
+                        title="previous chapter">OpenStack Base 开发总结</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../openstack/openstack.html"
-                        title="next chapter">OpenStack Learning</a></p>
+  <p class="topless"><a href="jclouds.html"
+                        title="next chapter">OpenStack SDK &#8211; JClouds</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/cloudbase/openstack_base_manager.txt"
@@ -96,21 +100,167 @@
             
   <div class="section" id="openstack-base-back-stage-neunnmanager">
 <h1>OpenStack Base Back Stage NeunnManager<a class="headerlink" href="#openstack-base-back-stage-neunnmanager" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="neunnmanager">
+<h2>运维管理系统NeunnManager<a class="headerlink" href="#neunnmanager" title="Permalink to this headline">¶</a></h2>
 <p>我们将设计一个后台管理系统，主要职责是Tenant（租户）、User（用户），Host（主机）、HostType（主机类型）、Availability Zone（可用域、以下简称AZ）、Quato（配额）的管理维护，计费相关功能。</p>
 <p>与Base层的区别有两点：</p>
 <ol class="arabic simple">
 <li>权限不同。这里所有的对于Openstack的操作（租户、用户、AZ、配额）都使用Admin权限，而这个权限base层对用户是禁止的（安全原因）。</li>
 <li>加入了自维护的数据库，增强OpenStack对与宿主机（Host）的管理，加入主机类型，主机与主机类型对应关系（Host表中加入一个字段），主机与AZ的对应关系（新建一张映射表）。</li>
 </ol>
-<p>这里，我的观点略有不同，主机与AZ的映射关系OpenStack已经有，只是信息很少，关于主机部分只有HostName（唯一）。
+<p>（这里，我的观点略有不同，主机与AZ的映射关系OpenStack已经有，只是信息很少，关于主机部分只有HostName（唯一）。
 这里我们可以同步维护一张表，但我认为只要在Host表中加一个字段AZId即可（因为AZ与Host是1：n的关系），没有必要新建一张表，
 其实关于这里的对象转换我也不是很理解，要知道对象转换非常吃资源，新建对象，get/set的转换等，base层的风格延续了。
-这里暂时放下个人观点，继续介绍我们团队的设计。</p>
+这里暂时放下个人观点，继续介绍我们团队的设计。）</p>
+<div class="section" id="id1">
+<h3>整体设计<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>管理员对整个云资源进行管理，资源管理界面的基础设计如下：</p>
+<p>分为六个组件，分别是租户管理，资源管理，计费管理，健康检查，日志管理，Ceph监控。</p>
+<ol class="arabic simple">
+<li>租户管理：租户的基本信息，用户管理，合同管理，配额管理，资源浏览（AZ、虚拟机、安全组、云硬盘、网络、日志）。</li>
+<li>资源管理：服务器类型管理，预留类型管理，计算节点管理，AZ管理，查看所有资源的使用和分配情况，对主机进行可用域划分，收回等。</li>
+<li>计费管理：虚拟机模板管理，云硬盘类型管理，云硬盘Qos管理。</li>
+<li>健康检查：利用OSTF项目进行OpenStack的健康检查。</li>
+<li>日志管理：记录NeunnManager的操作日志。</li>
+<li>Ceph监控：监控Ceph的健康情况和每个OSD节点的健康状况。</li>
+</ol>
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">项目</th>
+<th class="head">内容</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>租户管理</td>
+<td><ul class="first last simple">
+<li>租户列表</li>
+<li>用户列表</li>
+<li>合同列表</li>
+<li>可用域列表</li>
+<li>配额</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>资源管理</td>
+<td><ul class="first last simple">
+<li>服务器类型列表</li>
+<li>可用域管理</li>
+<li>计算节点管理</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td>合同管理</td>
+<td><ul class="first last simple">
+<li>合同列表</li>
+<li>合同扫描件</li>
+<li>合同内容</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>容量管理</td>
+<td><ul class="first last simple">
+<li>可用域容量管理</li>
+<li>计算节点容量管理</li>
+<li>cpu容量管理</li>
+<li>内存容量管理</li>
+<li>EBS容量管理</li>
+<li>IP容量管理</li>
+<li>带宽容量管理</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>资源管理分为AZ管理和计算节点管理。</strong></p>
+<p>AZ管理包括AZ列表，表项目为：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="13%" />
+<col width="13%" />
+<col width="15%" />
+<col width="11%" />
+<col width="26%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">tenant</th>
+<th class="head">region</th>
+<th class="head">type</th>
+<th class="head">visible</th>
+<th class="head">Host List</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>nova</td>
+<td>base</td>
+<td>regionOne</td>
+<td>public/private</td>
+<td>true</td>
+<td>host1, host2</td>
+</tr>
+</tbody>
+</table>
+<p>计算节点管理包括计算节点类表，表项目为：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="12%" />
+<col width="17%" />
+<col width="11%" />
+<col width="17%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">free state</th>
+<th class="head">availability zone</th>
+<th class="head">ip</th>
+<th class="head">configuration</th>
+<th class="head">power</th>
+<th class="head">metadata</th>
+<th class="head">action</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>node1</td>
+<td>true</td>
+<td>null</td>
+<td>192.168.1.2</td>
+<td>32cpus,128G mem,</td>
+<td>off</td>
+<td>save</td>
+<td><em>action</em></td>
+</tr>
+<tr class="row-odd"><td>node2</td>
+<td>false</td>
+<td>nova</td>
+<td>192.168.1.3</td>
+<td>32cpus,128G mem,</td>
+<td>on</td>
+<td>save</td>
+<td><em>action</em></td>
+</tr>
+</tbody>
+</table>
+<p>action包括如下几项操作：（未实现）</p>
+<p><em>添加到可用域</em>
+<em>从可用域释放</em>
+<em>手动上电</em>
+<em>手动下电</em>
+<em>强制重启</em></p>
+</div>
 <div class="section" id="hostaz">
-<h2>Host与AZ对应关系的维护<a class="headerlink" href="#hostaz" title="Permalink to this headline">¶</a></h2>
+<h3>Host与AZ对应关系的维护<a class="headerlink" href="#hostaz" title="Permalink to this headline">¶</a></h3>
 <p>由于设计的问题，我们要同时维护自己的Host表，Host与AZ的对应关系表，并维护OpenStack的Host与AZ(Host Aggregate)，这里就要注意与OpenStack的同步，避免信息混乱。</p>
 <div class="section" id="azhost">
-<h3>AZ中Host列表的更新<a class="headerlink" href="#azhost" title="Permalink to this headline">¶</a></h3>
+<h4>AZ中Host列表的更新<a class="headerlink" href="#azhost" title="Permalink to this headline">¶</a></h4>
 <p>根据产品经理的要求，我们做类似与OpenStack风格的更新AZ，传入的参数是AZId，更新后的Host列表，这里我的思路如下：</p>
 <ol class="arabic">
 <li><p class="first">查找AZ中已有的Host列表，与传入的Host列表进行集合的加减法，得到两个列表，分别是待删除列表与待添加列表；</p>
@@ -133,18 +283,19 @@
 </div>
 </div>
 <div class="section" id="host-availabilityzoneopenstack">
-<h2>Host,AvailabilityZone与OpenStack的同步问题<a class="headerlink" href="#host-availabilityzoneopenstack" title="Permalink to this headline">¶</a></h2>
+<h3>Host,AvailabilityZone与OpenStack的同步问题<a class="headerlink" href="#host-availabilityzoneopenstack" title="Permalink to this headline">¶</a></h3>
 <p>NeunnManager维护的Host,AZ信息必须与OpenStack保持同步，并且以OpenStack为准，否则就会出现AZ与Host的管理混乱。</p>
 <div class="section" id="host">
-<h3>Host&#8211;计算节点<a class="headerlink" href="#host" title="Permalink to this headline">¶</a></h3>
+<h4>Host&#8211;计算节点<a class="headerlink" href="#host" title="Permalink to this headline">¶</a></h4>
 <p>计算节点，也就是Openstack中的host，与AvailabilityZone是n:1的关系，并且带有一个服务器类型，这个类型是服务器的配置，显示的Host带有的虚拟CPU，虚拟RAM，虚拟VOLUME的大小。</p>
 <p>因为我们要实现物理隔离，就必须将AvailabilityZone私有化，让其属于某个tenant，这样用户在创建实例的时候只能选择自己的AZ，不能在别人的AZ上创建实例。</p>
 <ol class="arabic simple">
-<li>计算节点的字段为：id, insertTime, lastUpdateTime, <strong>name</strong>, <strong>availabilityzone</strong>, status, typeid, typename, <strong>ip</strong>, vCpus, vRams, vVolumes.</li>
-<li>AvailabilityZone的字段为：id, insertTime, lastUpdateTime, <strong>azName</strong>, tenantId, tenantName, status, region, <strong>aggregateId</strong>.</li>
+<li>计算节点的字段为：id, insertTime, lastUpdateTime, <strong>name</strong>, <strong>availabilityzone</strong>, status, typeid, typename, <strong>ip</strong>, <strong>vCpus</strong>, <strong>vRams</strong>, <strong>vVolumes</strong>.</li>
+<li>AvailabilityZone的字段为：id, insertTime, lastUpdateTime, <strong>azName</strong>, tenantId, tenantName, status, <strong>region</strong>, <strong>aggregateId</strong>.</li>
 <li>HostAzmapping的字段为：id, insertTime, lastUpdateTime, hostId, azId.</li>
 </ol>
 <p>这里，黑色字体表示从OpenStack处获得，必须与OpenStack保持同步。这里最重要的关系维护在HostAzMapping这张表中，但是由于使用的是hostId和azId，不能直接与OpenStack进行同步，因为OpenStack是通过名称（唯一）进行关系维护的。</p>
+</div>
 </div>
 </div>
 </div>
@@ -162,10 +313,10 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../openstack/openstack.html" title="OpenStack Learning"
+          <a href="jclouds.html" title="OpenStack SDK – JClouds"
              >next</a> |</li>
         <li class="right" >
-          <a href="openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
+          <a href="openstack_base.html" title="OpenStack Base 开发总结"
              >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
