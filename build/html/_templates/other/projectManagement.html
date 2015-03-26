@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Opticks and Envi(IDL)" href="opticksandenvi.html" />
+    <link rel="next" title="Neunn XCloud Base Release Note(Version 0.6)" href="../cloudbase/openstack_base_releasenote.html" />
     <link rel="prev" title="Thinking In C" href="../programming/c/thinking_in_c.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="opticksandenvi.html" title="Opticks and Envi(IDL)"
+          <a href="../cloudbase/openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../programming/c/thinking_in_c.html" title="Thinking In C"
@@ -51,7 +51,11 @@
   <ul>
 <li><a class="reference internal" href="#">Project Management Tools</a><ul>
 <li><a class="reference internal" href="#project-management">Project Management</a><ul>
-<li><a class="reference internal" href="#atlassian-confluence-wiki">Atlassian Confluence Wiki</a></li>
+<li><a class="reference internal" href="#atlassian-confluence">Atlassian Confluence</a><ul>
+<li><a class="reference internal" href="#id1">最佳实践</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#atlassian-jira">Atlassian Jira</a></li>
 <li><a class="reference internal" href="#atlassian-bamboo">Atlassian Bamboo</a></li>
 </ul>
 </li>
@@ -63,8 +67,8 @@
   <p class="topless"><a href="../programming/c/thinking_in_c.html"
                         title="previous chapter">Thinking In C</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="opticksandenvi.html"
-                        title="next chapter">Opticks and Envi(IDL)</a></p>
+  <p class="topless"><a href="../cloudbase/openstack_base_releasenote.html"
+                        title="next chapter">Neunn XCloud Base Release Note(Version 0.6)</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/other/projectManagement.txt"
@@ -95,10 +99,24 @@
 <h1>Project Management Tools<a class="headerlink" href="#project-management-tools" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="project-management">
 <h2>Project Management<a class="headerlink" href="#project-management" title="Permalink to this headline">¶</a></h2>
-<p>Project Management is an important part in software engineering.We use it to control the process of our software development.</p>
-<div class="section" id="atlassian-confluence-wiki">
-<h3>Atlassian Confluence Wiki<a class="headerlink" href="#atlassian-confluence-wiki" title="Permalink to this headline">¶</a></h3>
-<p>Confluence is a good document online.</p>
+<p>Project Management is an important part in software engineering.We use it to control the process of our software development.
+这里我推荐使用atlassian的产品，包括confluence, jira, bamboo, fisheye+crucible, crowd等等。</p>
+<p>破解的方法网上都有，基本逻辑都是替换atlassian-extra-2.*.jar，利用kengen生成新的lisence，安装的时候配置这些。
+这里我不赞成使用盗版方式，atlassian的产品按用户收费，其实费用也不是很高，如果利用率高的话建议买正版授权，如果想少花点建议减少用户数量。</p>
+<div class="section" id="atlassian-confluence">
+<h3>Atlassian Confluence<a class="headerlink" href="#atlassian-confluence" title="Permalink to this headline">¶</a></h3>
+<p>Confluence是非常优秀的online wiki.
+Confluence的用处非常广泛，创建项目，创建各类文档，等等各种功能，非常好用。</p>
+<div class="section" id="id1">
+<h4>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>conflunce与数据库有一个心跳链接，在数据库中的表为clustersafety，这个表是用来保持confluence的standalone特性的，如果两个confluence用了一个数据库，5分钟内就能让你的所有数据混乱，这个心跳保持30s一跳，如果出现问题就会停止一个confluence连接。</p>
+<p>这里需要注意的是，如果用mysql数据库，打开binlog的情况下，confluence只支持binlog_format为row或者为mixed情况，不能支持mysql默认的statement格式。
+这个错误是我某天重启mysql，结果发现confluence再也连不上数据库了，查了官方文档才找到问题的所在。</p>
+</div>
+</div>
+<div class="section" id="atlassian-jira">
+<h3>Atlassian Jira<a class="headerlink" href="#atlassian-jira" title="Permalink to this headline">¶</a></h3>
+<p>Jira主要是问题缺陷管理的工具，在项目的使用中，主要由测试人员或者项目经理发起jira，类似于工单系统，一个流程走下来，既解决了问题，又提高了管理性。</p>
 </div>
 <div class="section" id="atlassian-bamboo">
 <h3>Atlassian Bamboo<a class="headerlink" href="#atlassian-bamboo" title="Permalink to this headline">¶</a></h3>
@@ -165,7 +183,7 @@ EOF</pre>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="opticksandenvi.html" title="Opticks and Envi(IDL)"
+          <a href="../cloudbase/openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
              >next</a> |</li>
         <li class="right" >
           <a href="../programming/c/thinking_in_c.html" title="Thinking In C"

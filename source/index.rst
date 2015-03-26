@@ -18,6 +18,7 @@ Welcome to Knight's documentation!
    :maxdepth: 1
  
    _templates/knight/oath
+   _templates/knight/resume_zh
    _templates/knight/resume
 
 System Structure of Knowledge
@@ -118,7 +119,7 @@ Programming Framework
    :maxdepth: 1
  
    _templates/programming/common/designpatterns
-   _templates/web/spring
+   _templates/framework/spring
    _templates/programming/java/guice
 
 

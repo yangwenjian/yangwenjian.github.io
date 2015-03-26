@@ -8,11 +8,26 @@ Project Management Tools
 Project Management
 =========================================
 Project Management is an important part in software engineering.We use it to control the process of our software development.
+这里我推荐使用atlassian的产品，包括confluence, jira, bamboo, fisheye+crucible, crowd等等。
 
+破解的方法网上都有，基本逻辑都是替换atlassian-extra-2.*.jar，利用kengen生成新的lisence，安装的时候配置这些。
+这里我不赞成使用盗版方式，atlassian的产品按用户收费，其实费用也不是很高，如果利用率高的话建议买正版授权，如果想少花点建议减少用户数量。
 
-Atlassian Confluence Wiki
+Atlassian Confluence
 -----------------------------------------
-Confluence is a good document online.
+Confluence是非常优秀的online wiki.
+Confluence的用处非常广泛，创建项目，创建各类文档，等等各种功能，非常好用。
+
+最佳实践
+`````````````````````````````````````````
+conflunce与数据库有一个心跳链接，在数据库中的表为clustersafety，这个表是用来保持confluence的standalone特性的，如果两个confluence用了一个数据库，5分钟内就能让你的所有数据混乱，这个心跳保持30s一跳，如果出现问题就会停止一个confluence连接。
+
+这里需要注意的是，如果用mysql数据库，打开binlog的情况下，confluence只支持binlog_format为row或者为mixed情况，不能支持mysql默认的statement格式。
+这个错误是我某天重启mysql，结果发现confluence再也连不上数据库了，查了官方文档才找到问题的所在。
+
+Atlassian Jira
+-----------------------------------------
+Jira主要是问题缺陷管理的工具，在项目的使用中，主要由测试人员或者项目经理发起jira，类似于工单系统，一个流程走下来，既解决了问题，又提高了管理性。
 
 Atlassian Bamboo
 -----------------------------------------

@@ -47,7 +47,7 @@ removeAbandoned在Spring中默认为false，即不移除遗弃的链接，这里
 
 如果使用jdbcTemplate，使用如下代码进行更新数据库：
 
-   ..code:: java
+.. code:: java
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -83,6 +83,19 @@ Spring Session工厂
             <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop> 
         </props>
     </property>
+
+Bean注入
+-------------------------------------
+Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自动扫描，注入bean::
+    
+    <context:component-scan base-package="com.neunn.cloud.base.*" />
+
+这里是整个扫描一个包进行全初始化，通过Spring的注解@AutoWired直接使用。
+上述包中的所有bean类都会被自动初始化并注入到容器中，这里bean的要求是提供无参的构造函数以及相应的get和set方法。
+
+启动Spring对@AspectJ注解的支持::
+    
+    <aop:aspectj-autoproxy/>
 
 Spring事务
 =====================================
@@ -188,20 +201,6 @@ Spring 默认的事务传播行为是 PROPAGATION_REQUIRED，它适合于绝大�
     }
 
 这里要注意，Spring中Hibernate是要等事务提交的时候进行数据库同步，这里同步的时候是在logon返回的时候，问题是addSocre使用jdbc，直接就修改数据库了，这里我们使用flush()方法来覆盖掉Hibernate的一级缓存。
-
-
-Bean注入
--------------------------------------
-Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自动扫描，注入bean::
-    
-    <context:component-scan base-package="com.neunn.cloud.base.*" />
-
-这里是整个扫描一个包进行全初始化，通过Spring的注解@AutoWired直接使用。
-上述包中的所有bean类都会被自动初始化并注入到容器中，这里bean的要求是提供无参的构造函数以及相应的get和set方法。
-
-启动Spring对@AspectJ注解的支持::
-    
-    <aop:aspectj-autoproxy/>
 
 Spring的事务增强
 --------------------------------------
@@ -355,3 +354,54 @@ Spring AOP可以有如下几种实现形式：
 网上有个参考资料把after return中的参数写成了String类型，导致我开始运行的时候怎么也截获不到AfterReturning方法之内，差点就换其他方式进行截获了。
 
 这里around方式没有执行成功，返回的对象jersyclient解析不了，暂时还未解决这个问题。
+
+Spring log4j
+=========================================
+Spring可以良好的整合其他框架，在Spring中配置log4j是非常简单的事情。
+
+修改项目中的web.xml文件，加入如下内容：
+
+::
+
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>/WEB-INF/log4j.properties</param-value>
+    </context-param>
+
+在log4j.properties中加入如下内容
+
+::
+
+    #LOGFILE.PATH=/tmp/log.log
+
+    ### set log levels ###  
+    log4j.rootLogger = debug,stdout  
+    #log4j.rootLogger = debug,stdout,D ,E  
+
+    log4j.appender.Console.layout=org.apache.log4j.PatternLayout
+    log4j.appender.Console.layout.ConversionPattern= %d{yy-MM-dd HH:mm:ss} %5p %c{1}:%L - %m%n
+      
+    log4j.appender.stdout = org.apache.log4j.ConsoleAppender  
+    log4j.appender.stdout.Target = System.out  
+    log4j.appender.stdout.layout = org.apache.log4j.PatternLayout  
+    log4j.appender.stdout.layout.ConversionPattern = %d{yyyy-MM-dd} %5p %c{1}:%L  - %m%n 
+      
+    #log4j.appender.D = org.apache.log4j.DailyRollingFileAppender
+    #log4j.appender.D.DatePattern='.'yyyy-MM-dd   
+    #log4j.appender.D.File = ${LOGFILE.PATH}/log.log  
+    #log4j.appender.D.Append = true  
+    #log4j.appender.D.Threshold = DEBUG 
+    #log4j.appender.D.layout = org.apache.log4j.PatternLayout
+    #log4j.appender.D.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} %5p %c{1}:%L  - %m%n  
+    #  
+    #log4j.appender.E = org.apache.log4j.DailyRollingFileAppender
+    #log4j.appender.E.DatePattern='.'yyyy-MM-dd  
+    #log4j.appender.E.File = ${LOGFILE.PATH}/error.log 
+    #log4j.appender.E.Append = true  
+    #log4j.appender.E.Threshold = ERROR 
+    #log4j.appender.E.layout = org.apache.log4j.PatternLayout  
+    #log4j.appender.E.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} %5p %c{1}:%L  - %m%n 
+
+如果是非Web项目，需要在resource文件夹中加入log4j.properties，就可以使用非常方便的log服务了。
+
+这里需要注意的是，apache推荐使用DEBUG, INOF, WARN, ERROR这四个等级，建议在release的时候将log等级调整为ERROR或者WARN
