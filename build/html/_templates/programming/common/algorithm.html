@@ -121,6 +121,22 @@
 <div class="section" id="heap">
 <h4>Heap<a class="headerlink" href="#heap" title="Permalink to this headline">¶</a></h4>
 <p>堆是一棵完全二叉树，父节点大于字节点。利用数组进行存储，建立堆的时候从底向上进行调整，与父节点进行比较，如果大于父节点，就向上调整。</p>
+<div class="highlight-python"><pre>void HeapAdjust(int array[], int i, int nLength){
+    int nChild = 0, nTemp;
+    for(nTemp = array[i]; 2*i+1 &lt; nLength; i = nChild){
+    nChild = 2*i+1;
+    if(nChild != nLength -1 &amp;&amp; array[nChild+1] &gt; array[nChild])
+        ++nChild;
+        if(nTemp &lt; array[nChild]){
+            array[i] = array[nChild];
+        }else{
+            break;
+        }
+    }
+    //将需要调整的元素放到合适的位置
+    array[i] = nTemp;
+}</pre>
+</div>
 </div>
 </div>
 </div>

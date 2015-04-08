@@ -63,3 +63,11 @@ Data center operation experience Knowledge.
 Basic OpenStack Knowledge.
 
 A good knowledge of  English.
+
+Social Activity
+============================================
+Youth volunteer in Shanghai Jiaotong University.
+
+One of the student union in software engineering academy.
+
+Captain of volleyball team in China University of Mining and Technology.
