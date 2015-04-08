@@ -62,4 +62,4 @@ Data center operation experience Knowledge.
 
 Basic OpenStack Knowledge.
 
-Good training English.
+A good knowledge of  English.

@@ -27,7 +27,7 @@ System Structure of Knowledge
 .. toctree::
    :maxdepth: 1
 
-   _templates/structure_of_knowledge
+   _templates/knight/structure_of_knowledge
 
 
 Solution of Cloud Base Layer
@@ -145,11 +145,11 @@ Other
    :maxdepth: 1
 
    _templates/other/projectManagement
+   _templates/programming/java/maven
    _templates/cloudbase/openstack_base_releasenote
    _templates/other/opticksandenvi
    _templates/other/encode
    _templates/other/invitation
-   _templates/programming/java/maven
 
 
 Acknowledgements

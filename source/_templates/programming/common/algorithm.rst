@@ -31,3 +31,21 @@ Tree
 Heap
 ```````````````````````````````````
 堆是一棵完全二叉树，父节点大于字节点。利用数组进行存储，建立堆的时候从底向上进行调整，与父节点进行比较，如果大于父节点，就向上调整。
+
+::
+
+    void HeapAdjust(int array[], int i, int nLength){
+        int nChild = 0, nTemp;
+        for(nTemp = array[i]; 2*i+1 < nLength; i = nChild){
+        nChild = 2*i+1;
+        if(nChild != nLength -1 && array[nChild+1] > array[nChild])
+            ++nChild;
+            if(nTemp < array[nChild]){
+                array[i] = array[nChild];
+            }else{
+                break;
+            }
+        }
+        //将需要调整的元素放到合适的位置
+        array[i] = nTemp;
+    }
