@@ -1,0 +1,215 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Maven &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Neunn XCloud Base Release Note(Version 0.6)" href="../../cloudbase/openstack_base_releasenote.html" />
+    <link rel="prev" title="Project Management Tools" href="../../other/projectManagement.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../cloudbase/openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../other/projectManagement.html" title="Project Management Tools"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Maven</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#how-we-use-maven">How We Use Maven</a></li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../../other/projectManagement.html"
+                        title="previous chapter">Project Management Tools</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../cloudbase/openstack_base_releasenote.html"
+                        title="next chapter">Neunn XCloud Base Release Note(Version 0.6)</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/programming/java/config.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="maven">
+<h1>Maven<a class="headerlink" href="#maven" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Maven is a wildly used project builder tool in programming.</p>
+<div class="section" id="how-we-use-maven">
+<h3>How We Use Maven<a class="headerlink" href="#how-we-use-maven" title="Permalink to this headline">¶</a></h3>
+<p>we can test, install, deploy the project by maven.
+When we use maven, we must config the settings.xml in maven&#8217;s configuration.We can use it as its defualt settings, it will download the dependencies from maven website.
+But if we use nexus or other maven server, we must add repository{id, url, release, snapshot} into the settings file.
+After we build a maven project, we must config the pom.xml.
+In the pom file, we add project information like {parent{groupeId, artifactId, version, relativePath}, artifactId, description, properties, dependencies{dependency{groupId, artifactId, version}}}.</p>
+<p>When we change pom file(we change dependencies),we have to maven update project to download the denpendencies.
+Then we make test of maven, make install to build the project and create jar or war package.
+And we maven deploy to upload the builded package to nexus.</p>
+</div>
+<div class="section" id="best-practices">
+<h3>Best Practices<a class="headerlink" href="#best-practices" title="Permalink to this headline">¶</a></h3>
+<p>The best teacher is practice. So I try to build a maven project.</p>
+<ol class="arabic simple">
+<li>Create a maven project in eclipse. Before this, you need to install the maven plugin in eclipse.</li>
+<li>Enter the group id, artifact id of the project, and click finish.</li>
+<li>We can see the pom file has been created in the project directory.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;groupId&gt;com.neunn.neunnmanager-sdk-java&lt;/groupId&gt;
+&lt;artifactId&gt;NeunnManager-sdk-java&lt;/artifactId&gt;
+&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+&lt;packaging&gt;jar&lt;/packaging&gt;
+&lt;name&gt;NeunnManager-sdk-java&lt;/name&gt;
+&lt;url&gt;http://maven.apache.org&lt;/ur</pre>
+</div>
+<ol class="arabic simple" start="4">
+<li>Add some properties in the pom file, so we can manage it more conveniently.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;properties&gt;
+   &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+   &lt;jersey-version&gt;1.17&lt;/jersey-version&gt;
+&lt;/properties&gt;</pre>
+</div>
+<ol class="arabic simple" start="5">
+<li>Add dependencies.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;dependency&gt;
+   &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+   &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+   &lt;version&gt;${spring.version}&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+   &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+   &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+   &lt;version&gt;${spring.version}&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+</div>
+<ol class="arabic simple" start="6">
+<li>Add repositories.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;repositories&gt;
+   &lt;repository&gt;
+       &lt;snapshots&gt;
+           &lt;enabled&gt;true&lt;/enabled&gt;
+       &lt;/snapshots&gt;
+       &lt;id&gt;public&lt;/id&gt;
+       &lt;name&gt;Public Repositories&lt;/name&gt;
+       &lt;url&gt;http://192.168.250.3:8686/nexus/content/groups/public/&lt;/url&gt;
+   &lt;/repository&gt;
+&lt;/repositories&gt;</pre>
+</div>
+<ol class="arabic simple" start="7">
+<li>Add deployment.(maven deploy)</li>
+</ol>
+<div class="highlight-python"><pre>&lt;distributionManagement&gt;
+   &lt;repository&gt;
+       &lt;id&gt;releases&lt;/id&gt;
+       &lt;name&gt;Local Nexus Repository&lt;/name&gt;
+       &lt;url&gt;http://192.168.250.3:8686/nexus/content/repositories/releases/&lt;/url&gt;
+   &lt;/repository&gt;
+   &lt;snapshotRepository&gt;
+       &lt;id&gt;Snapshots&lt;/id&gt;
+       &lt;name&gt;Local Nexus Repository&lt;/name&gt;
+       &lt;url&gt;http://192.168.250.3:8686/nexus/content/repositories/snapshots&lt;/url&gt;
+   &lt;/snapshotRepository&gt;
+&lt;/distributionManagement&gt;</pre>
+</div>
+<ol class="arabic simple" start="8">
+<li>Add modules to manage other projects.</li>
+</ol>
+<div class="highlight-python"><pre>&lt;modules&gt;
+   &lt;module&gt;../com.dugeng.project1&lt;/module&gt;
+   &lt;module&gt;../com.dugeng.project2&lt;/module&gt;
+&lt;/modules&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../cloudbase/openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../other/projectManagement.html" title="Project Management Tools"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

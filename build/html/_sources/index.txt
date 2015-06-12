@@ -9,10 +9,10 @@ Welcome to Knight's documentation!
 *As Your Time, As Your Life.*
 ======================================
 
-.. .. image:: images/other/wedding1.jpg
+.. image:: images/other/wedding1.jpg
 
-.. The Will of Knight
-.. =====================================
+The Will of Knight
+=====================================
 
 .. toctree::
    :maxdepth: 1
@@ -67,7 +67,8 @@ Sulotion of Linux&Unix
    _templates/linux/tools/shell
    _templates/linux/tools/git
    _templates/linux/tools/vim
-..   _templates/linux/firewall
+   _templates/linux/tools/mysql
+   _templates/linux/firewall
 
 
 Sulotion of Autamation
@@ -78,7 +79,7 @@ Sulotion of Autamation
 
    _templates/automation/cobbler
    _templates/automation/automation
-.. _templates/automation/knight
+   _templates/automation/knight
    _templates/automation/energy_saving_plan
 
 
@@ -131,11 +132,14 @@ Programming Skill
 
    _templates/programming/java/annotation
    _templates/programming/java/memory_manage
+   _templates/programming/java/junit
    _templates/programming/common/algorithm
-   _templates/programming/common/codeOptimization
+   _templates/programming/common/how_to_write_code
+   _templates/programming/common/code_optimization
    _templates/programming/common/genetic
    _templates/programming/common/debug
    _templates/programming/c/thinking_in_c
+   _templates/programming/c/csapp
 
 
 Other
@@ -145,7 +149,7 @@ Other
    :maxdepth: 1
 
    _templates/other/projectManagement
-   _templates/programming/java/maven
+   _templates/programming/java/config
    _templates/cloudbase/openstack_base_releasenote
    _templates/other/opticksandenvi
    _templates/other/encode

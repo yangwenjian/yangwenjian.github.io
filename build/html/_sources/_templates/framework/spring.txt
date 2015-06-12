@@ -24,9 +24,70 @@ Spring的配置
 在我们所开发的Openstack Base的工程中，利用Spring的诸多特性。
 包括：AOP, Security, JavaBean, context, orm, mvc, oauth, etc.
 
+Spring的基本作用
+=======================================
+Spring框架可以帮程序员快速搭建服务框架。
+
+Inversion of Control（IOC）
+---------------------------------------
+控制反转（IOC）就是由容器控制程序之间的依赖（调用）关系，传统是由程序自己控制的。
+就像设计模式中的模板方式和好莱坞原则：Don't call us, we will call you.
+
+依赖注入（DI）更准确的描述了这种模式，组件之间的依赖关系由容器运行时决定，即由容器动态将依赖注入到组件之中。
+例如UserRegister依赖于UserDao的实现类，UserRegister不关心USerDao的实现，由容器完成依赖。
+
+IOC分为三种形式：
+
+1.接口注入
+```````````````````````````````````````
+我们开发一个injectUserDAo接口，将一个UserDAO注入到该接口的实现类中，然后UserRegister实现该接口。如：
+
+::
+
+    public interface InjectUserDao(){
+        public void setUserDao(UserDao userDao);
+    }
+
+    public class UserRegister implements InjectUserDao{
+        private UserDao userDao = null;
+        public void setUserDao(UserDao userDao){
+            this.userDao = userDao;
+        }
+    }
+
+同时，我们需要配置框架，这样实现接口后便可完成依赖注入了：
+
+::
+
+    <component> 
+        <scope>request</scope> 
+        <class>com.dev.spring.simple.MemoryUserDao</class> 
+        <enabler>com.dev.spring.simple.InjectUserDao</enabler> 
+    </component> 
+
+2.设值注入
+``````````````````````````````````````````
+通过实现setter方法而进行依赖注入，是最常用的注入方式。
+
+3.构造子注入
+``````````````````````````````````````````
+通过构造函数完成依赖注入，如：
+
+:: 
+
+    public class UserRegister{
+        private UserDao userDao;
+        public UserRegister(UserDao userDao){
+            this.userDao = userDao;
+        }
+    }
+
 
 Spring的数据源管理
--------------------------------------
+===========================================
+
+Spring jdbc 配置
+-------------------------------------------
 Spring在使用Hibernate的时候需要进行初始化配置，建立数据源::
 
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">（这里使用阿里的数据库驱动）
@@ -57,10 +118,67 @@ removeAbandoned在Spring中默认为false，即不移除遗弃的链接，这里
    
     jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom','123456',10)");
 
+Spring jdbc 关键代码
+-------------------------------------------
+spring jdbc将我们原来的使用的statement等语句都封装进去，简单易用。
 
+.. code:: java
+    
+    public <T> T query(PreparedStatementCreator psc, final PreparedStatementSetter pss, final ResultSetExtractor<T> rse) throws DataAccessException {
+		Assert.notNull(rse, "ResultSetExtractor must not be null");
+		logger.debug("Executing prepared SQL query");
+		
+        return execute(psc, new PreparedStatementCallback<T>() {
+			public T doInPreparedStatement(PreparedStatement ps) throws SQLException {
+				ResultSet rs = null;
+				try {
+					if (pss != null) {
+						pss.setValues(ps);
+					}
+					rs = ps.executeQuery();
+					ResultSet rsToUse = rs;
+					if (nativeJdbcExtractor != null) {
+						rsToUse = nativeJdbcExtractor.getNativeResultSet(rs);
+					}
+					return rse.extractData(rsToUse);
+				}
+				finally {
+					JdbcUtils.closeResultSet(rs);
+					if (pss instanceof ParameterDisposer) {
+						((ParameterDisposer) pss).cleanupParameters();
+					}
+				}
+			}
+		});
+	}
+
+jdbc通过rowmapper类进行反序列化，将结果集转换为对象的列表，具体请参看代码：
+
+.. code:: java
+
+    public List<T> extractData(ResultSet rs) throws SQLException {
+		List<T> results = (this.rowsExpected > 0 ? new ArrayList<T>(this.rowsExpected) : new ArrayList<T>());
+		int rowNum = 0;
+		while (rs.next()) {
+			results.add(this.rowMapper.mapRow(rs, rowNum++));
+		}
+		return results;
+	}
+	
+===============================================================================================================================================================
+	
+五种方式实现事务
+http://blog.csdn.net/hjm4702192/article/details/17277669如果在接口、实现类或方法上都指定了@Transactional 注解，则优先级顺序为方法>实现类>接口；
+建议只在实现类或实现类的方法上使用@Transactional，而不要在接口上使用，这是因为如果使用JDK代理机制是没问题，因为其使用基于接口的代理；而使用使用CGLIB代理机制时就会遇到问题，因为其使用基于类的代理而不是接口，这是因为接口上的@Transactional注解是“不能继承的”；
+在JDK代理机制下，“自我调用”同样不会应用相应的事务属性，其语义和<tx:tags>中一样；
+默认只对RuntimeException异常回滚；
+在使用Spring代理时，默认只有在public可见度的方法的@Transactional 注解才是有效的，其它可见度（protected、private、包可见）的方法上即使有@Transactional 注解也不会应用这些事务属性的，Spring也不会报错，如果你非要使用非公共方法注解事务管理的话，可考虑使用AspectJ。
+
+配置注解方式，必须将aop开启
+   Spring声明式事务实现其实就是Spring AOP+线程绑定实现，利用AOP实现开启和关闭事务，利用线程绑定（ThreadLocal）实现跨越多个方法实现事务传播。
 
 Spring Session工厂
--------------------------------------
+-------------------------------------------
 声明bean工厂::
     
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -97,6 +215,7 @@ Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自�
     
     <aop:aspectj-autoproxy/>
 
+
 Spring事务
 =====================================
 Sping提供了一致的事务管理抽象，是Spring重要的抽象之一。优点如下：
@@ -108,17 +227,18 @@ Sping提供了一致的事务管理抽象，是Spring重要的抽象之一。优
 
 Transaction管理
 -------------------------------------
-事务管理也是Spring中的关键属性，首先声明事物::
-    
-    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+Spring 事务管理有多种方式，具体请参考http://blog.csdn.net/hjm4702192/article/details/17277669
 
-将SessionFactory注入到Transaction中::
+这里需要注意几点：
+如果在接口、实现类或方法上都指定了@Transactional 注解，则优先级顺序为方法>实现类>接口；
+建议只在实现类或实现类的方法上使用@Transactional，而不要在接口上使用，这是因为如果使用JDK代理机制是没问题，因为其使用基于接口的代理；而使用使用CGLIB代理机制时就会遇到问题，因为其使用基于类的代理而不是接口，这是因为接口上的@Transactional注解是“不能继承的”；
+在JDK代理机制下，“自我调用”同样不会应用相应的事务属性，其语义和<tx:tags>中一样；
+默认只对RuntimeException异常回滚；
+在使用Spring代理时，默认只有在public可见度的方法的@Transactional 注解才是有效的，其它可见度（protected、private、包可见）的方法上即使有@Transactional 注解也不会应用这些事务属性的，Spring也不会报错，如果你非要使用非公共方法注解事务管理的话，可考虑使用AspectJ；
+使用注解方式，必须将aop开启，否则不能读去@Transactioanl注解
 
-    <property name="sessionFactory" ref="sessionFactory"></property>
-
-激活Spring注解方式-事务处理::
-    
-    <tx:annotation-driven transaction-manager="transactionManager" />
+Spring声明式事务实现其实就是Spring AOP+线程绑定实现，利用AOP实现开启和关闭事务，利用线程绑定（ThreadLocal）实现跨越多个方法实现事务传播。
+由于我们不可能只使用一个事务通知，可能还有其他类型事务通知，而且如果这些通知中需要事务支持怎么办？这就牵扯到通知执行顺序的问题上了，因此如果可能与其他AOP通知协作的话，而且这些通知中需要使用声明式事务管理支持，事务通知应该具有最高优先。
 
 事务带来的困扰
 -------------------------------------
@@ -208,6 +328,99 @@ Spring可以增强public的方法（注意不能增强public static方法）的�
 
 最佳实践
 ---------------------------------------
+@Transactional标记什么时候发挥作用
+```````````````````````````````````````
+在StackOverFlow上发现的问题，请看
+http://stackoverflow.com/questions/17224887/java-spring-transactional-method-not-rolling-back-as-expected
+
+这个问题是由于Spring将AOP与事务耦合在一起而引发的问题，在包spring-aop-3.2.6中，org.springframework.aop.framework.jdkDynamicAopProxy.class
+
+.. code:: java
+
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		MethodInvocation invocation;
+		Object oldProxy = null;
+		boolean setProxyContext = false;
+
+		TargetSource targetSource = this.advised.targetSource;
+		Class targetClass = null;
+		Object target = null;
+
+		try {
+			if (!this.equalsDefined && AopUtils.isEqualsMethod(method)) {
+				// The target does not implement the equals(Object) method itself.
+				return equals(args[0]);
+			}
+			if (!this.hashCodeDefined && AopUtils.isHashCodeMethod(method)) {
+				// The target does not implement the hashCode() method itself.
+				return hashCode();
+			}
+			if (!this.advised.opaque && method.getDeclaringClass().isInterface() &&
+					method.getDeclaringClass().isAssignableFrom(Advised.class)) {
+				// Service invocations on ProxyConfig with the proxy config...
+				return AopUtils.invokeJoinpointUsingReflection(this.advised, method, args);
+			}
+
+			Object retVal;
+
+			if (this.advised.exposeProxy) {
+				// Make invocation available if necessary.
+				oldProxy = AopContext.setCurrentProxy(proxy);
+				setProxyContext = true;
+			}
+
+			// May be null. Get as late as possible to minimize the time we "own" the target,
+			// in case it comes from a pool.
+			target = targetSource.getTarget();
+			if (target != null) {
+				targetClass = target.getClass();
+			}
+
+			// Get the interception chain for this method.
+			List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
+
+			// Check whether we have any advice. If we don't, we can fallback on direct
+			// reflective invocation of the target, and avoid creating a MethodInvocation.
+			if (chain.isEmpty()) {
+				// We can skip creating a MethodInvocation: just invoke the target directly
+				// Note that the final invoker must be an InvokerInterceptor so we know it does
+				// nothing but a reflective operation on the target, and no hot swapping or fancy proxying.
+				retVal = AopUtils.invokeJoinpointUsingReflection(target, method, args);
+			}
+			else {
+				// We need to create a method invocation...
+				invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
+				// Proceed to the joinpoint through the interceptor chain.
+				retVal = invocation.proceed();
+			}
+
+			// Massage return value if necessary.
+			Class<?> returnType = method.getReturnType();
+			if (retVal != null && retVal == target && returnType.isInstance(proxy) &&
+					!RawTargetAccess.class.isAssignableFrom(method.getDeclaringClass())) {
+				// Special case: it returned "this" and the return type of the method
+				// is type-compatible. Note that we can't help if the target sets
+				// a reference to itself in another returned object.
+				retVal = proxy;
+			} else if (retVal == null && returnType != Void.TYPE && returnType.isPrimitive()) {
+				throw new AopInvocationException("Null return value from advice does not match primitive return type for: " + method);
+			}
+			return retVal;
+		}
+		finally {
+			if (target != null && !targetSource.isStatic()) {
+				// Must have come from TargetSource.
+				targetSource.releaseTarget(target);
+			}
+			if (setProxyContext) {
+				// Restore old proxy.
+				AopContext.setCurrentProxy(oldProxy);
+			}
+		}
+	}
+
+Hibernate session管理
+```````````````````````````````````````
 通过Base层代码编写，使我对Spring事务有了新的认识。
 
 先阐述一下这次我碰到的几个问题，首先对于Hibernate更新时碰到的问题，
@@ -241,64 +454,6 @@ Spring可以增强public的方法（注意不能增强public static方法）的�
 由于base层的设计，增删改查这些基础操作放入基类之中，不变使用上述方法。
 我用如下方法进行解决，在更新任何bean的时候首先进行查找当前活动的bean，之后进行修改后保存，可以避免两个bean冲突的问题。
 
-
-Spring的作用
-=======================================
-Spring框架可以帮程序员快速搭建服务框架。
-
-Inversion of Control（IOC）
----------------------------------------
-控制反转（IOC）就是由容器控制程序之间的依赖（调用）关系，传统是由程序自己控制的。
-就像设计模式中的模板方式和好莱坞原则：Don't call us, we will call you.
-
-依赖注入（DI）更准确的描述了这种模式，组件之间的依赖关系由容器运行时决定，即由容器动态将依赖注入到组件之中。
-例如UserRegister依赖于UserDao的实现类，UserRegister不关心USerDao的实现，由容器完成依赖。
-
-IOC分为三种形式：
-
-1.接口注入
-```````````````````````````````````````
-我们开发一个injectUserDAo接口，将一个UserDAO注入到该接口的实现类中，然后UserRegister实现该接口。如：
-
-::
-
-    public interface InjectUserDao(){
-        public void setUserDao(UserDao userDao);
-    }
-
-    public class UserRegister implements InjectUserDao{
-        private UserDao userDao = null;
-        public void setUserDao(UserDao userDao){
-            this.userDao = userDao;
-        }
-    }
-
-同时，我们需要配置框架，这样实现接口后便可完成依赖注入了：
-
-::
-
-    <component> 
-        <scope>request</scope> 
-        <class>com.dev.spring.simple.MemoryUserDao</class> 
-        <enabler>com.dev.spring.simple.InjectUserDao</enabler> 
-    </component> 
-
-2.设值注入
-``````````````````````````````````````````
-通过实现setter方法而进行依赖注入，是最常用的注入方式。
-
-3.构造子注入
-``````````````````````````````````````````
-通过构造函数完成依赖注入，如：
-
-:: 
-
-    public class UserRegister{
-        private UserDao userDao;
-        public UserRegister(UserDao userDao){
-            this.userDao = userDao;
-        }
-    }
 
 Spring AOP
 =========================================

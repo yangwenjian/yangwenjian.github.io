@@ -51,26 +51,32 @@
   <ul>
 <li><a class="reference internal" href="#">Spring</a><ul>
 <li><a class="reference internal" href="#id1">为什么使用Spring</a></li>
-<li><a class="reference internal" href="#id2">Spring的配置</a><ul>
-<li><a class="reference internal" href="#id3">Spring的数据源管理</a></li>
+<li><a class="reference internal" href="#id2">Spring的配置</a></li>
+<li><a class="reference internal" href="#id3">Spring的基本作用</a><ul>
+<li><a class="reference internal" href="#inversion-of-control-ioc">Inversion of Control（IOC）</a><ul>
+<li><a class="reference internal" href="#id4">1.接口注入</a></li>
+<li><a class="reference internal" href="#id5">2.设值注入</a></li>
+<li><a class="reference internal" href="#id6">3.构造子注入</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id7">Spring的数据源管理</a><ul>
+<li><a class="reference internal" href="#spring-jdbc">Spring jdbc 配置</a></li>
+<li><a class="reference internal" href="#id8">Spring jdbc 关键代码</a></li>
 <li><a class="reference internal" href="#spring-session">Spring Session工厂</a></li>
 <li><a class="reference internal" href="#bean">Bean注入</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id4">Spring事务</a><ul>
+<li><a class="reference internal" href="#id9">Spring事务</a><ul>
 <li><a class="reference internal" href="#transaction">Transaction管理</a></li>
-<li><a class="reference internal" href="#id5">事务带来的困扰</a></li>
-<li><a class="reference internal" href="#id6">事务方法嵌套用的迷茫</a></li>
-<li><a class="reference internal" href="#id7">多种数据库连接方式带来的困惑</a></li>
-<li><a class="reference internal" href="#id8">Spring的事务增强</a></li>
-<li><a class="reference internal" href="#id9">最佳实践</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#id10">Spring的作用</a><ul>
-<li><a class="reference internal" href="#inversion-of-control-ioc">Inversion of Control（IOC）</a><ul>
-<li><a class="reference internal" href="#id11">1.接口注入</a></li>
-<li><a class="reference internal" href="#id12">2.设值注入</a></li>
-<li><a class="reference internal" href="#id13">3.构造子注入</a></li>
+<li><a class="reference internal" href="#id10">事务带来的困扰</a></li>
+<li><a class="reference internal" href="#id11">事务方法嵌套用的迷茫</a></li>
+<li><a class="reference internal" href="#id12">多种数据库连接方式带来的困惑</a></li>
+<li><a class="reference internal" href="#id13">Spring的事务增强</a></li>
+<li><a class="reference internal" href="#id14">最佳实践</a><ul>
+<li><a class="reference internal" href="#transactional">&#64;Transactional标记什么时候发挥作用</a></li>
+<li><a class="reference internal" href="#hibernate-session">Hibernate session管理</a></li>
 </ul>
 </li>
 </ul>
@@ -134,8 +140,60 @@ Spring解决企业级开发的复杂性问题，利用简单的JavaBean完成之
 <h2>Spring的配置<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>在我们所开发的Openstack Base的工程中，利用Spring的诸多特性。
 包括：AOP, Security, JavaBean, context, orm, mvc, oauth, etc.</p>
+</div>
 <div class="section" id="id3">
-<h3>Spring的数据源管理<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<h2>Spring的基本作用<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Spring框架可以帮程序员快速搭建服务框架。</p>
+<div class="section" id="inversion-of-control-ioc">
+<h3>Inversion of Control（IOC）<a class="headerlink" href="#inversion-of-control-ioc" title="Permalink to this headline">¶</a></h3>
+<p>控制反转（IOC）就是由容器控制程序之间的依赖（调用）关系，传统是由程序自己控制的。
+就像设计模式中的模板方式和好莱坞原则：Don&#8217;t call us, we will call you.</p>
+<p>依赖注入（DI）更准确的描述了这种模式，组件之间的依赖关系由容器运行时决定，即由容器动态将依赖注入到组件之中。
+例如UserRegister依赖于UserDao的实现类，UserRegister不关心USerDao的实现，由容器完成依赖。</p>
+<p>IOC分为三种形式：</p>
+<div class="section" id="id4">
+<h4>1.接口注入<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>我们开发一个injectUserDAo接口，将一个UserDAO注入到该接口的实现类中，然后UserRegister实现该接口。如：</p>
+<div class="highlight-python"><pre>public interface InjectUserDao(){
+    public void setUserDao(UserDao userDao);
+}
+
+public class UserRegister implements InjectUserDao{
+    private UserDao userDao = null;
+    public void setUserDao(UserDao userDao){
+        this.userDao = userDao;
+    }
+}</pre>
+</div>
+<p>同时，我们需要配置框架，这样实现接口后便可完成依赖注入了：</p>
+<div class="highlight-python"><pre>&lt;component&gt;
+    &lt;scope&gt;request&lt;/scope&gt;
+    &lt;class&gt;com.dev.spring.simple.MemoryUserDao&lt;/class&gt;
+    &lt;enabler&gt;com.dev.spring.simple.InjectUserDao&lt;/enabler&gt;
+&lt;/component&gt;</pre>
+</div>
+</div>
+<div class="section" id="id5">
+<h4>2.设值注入<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p>通过实现setter方法而进行依赖注入，是最常用的注入方式。</p>
+</div>
+<div class="section" id="id6">
+<h4>3.构造子注入<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p>通过构造函数完成依赖注入，如：</p>
+<div class="highlight-python"><pre>public class UserRegister{
+    private UserDao userDao;
+    public UserRegister(UserDao userDao){
+        this.userDao = userDao;
+    }
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>Spring的数据源管理<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="spring-jdbc">
+<h3>Spring jdbc 配置<a class="headerlink" href="#spring-jdbc" title="Permalink to this headline">¶</a></h3>
 <p>Spring在使用Hibernate的时候需要进行初始化配置，建立数据源:</p>
 <div class="highlight-python"><pre>&lt;bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"&gt;（这里使用阿里的数据库驱动）</pre>
 </div>
@@ -157,6 +215,59 @@ jdbcTemplate.update(sql,toAdd,userName);
 
 jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom','123456',10)");</pre>
 </div>
+</div>
+<div class="section" id="id8">
+<h3>Spring jdbc 关键代码<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>spring jdbc将我们原来的使用的statement等语句都封装进去，简单易用。</p>
+<div class="code java highlight-python"><pre>public &lt;T&gt; T query(PreparedStatementCreator psc, final PreparedStatementSetter pss, final ResultSetExtractor&lt;T&gt; rse) throws DataAccessException {
+            Assert.notNull(rse, "ResultSetExtractor must not be null");
+            logger.debug("Executing prepared SQL query");
+
+    return execute(psc, new PreparedStatementCallback&lt;T&gt;() {
+                    public T doInPreparedStatement(PreparedStatement ps) throws SQLException {
+                            ResultSet rs = null;
+                            try {
+                                    if (pss != null) {
+                                            pss.setValues(ps);
+                                    }
+                                    rs = ps.executeQuery();
+                                    ResultSet rsToUse = rs;
+                                    if (nativeJdbcExtractor != null) {
+                                            rsToUse = nativeJdbcExtractor.getNativeResultSet(rs);
+                                    }
+                                    return rse.extractData(rsToUse);
+                            }
+                            finally {
+                                    JdbcUtils.closeResultSet(rs);
+                                    if (pss instanceof ParameterDisposer) {
+                                            ((ParameterDisposer) pss).cleanupParameters();
+                                    }
+                            }
+                    }
+            });
+    }</pre>
+</div>
+<p>jdbc通过rowmapper类进行反序列化，将结果集转换为对象的列表，具体请参看代码：</p>
+<div class="code java highlight-python"><pre>public List&lt;T&gt; extractData(ResultSet rs) throws SQLException {
+            List&lt;T&gt; results = (this.rowsExpected &gt; 0 ? new ArrayList&lt;T&gt;(this.rowsExpected) : new ArrayList&lt;T&gt;());
+            int rowNum = 0;
+            while (rs.next()) {
+                    results.add(this.rowMapper.mapRow(rs, rowNum++));
+            }
+            return results;
+    }</pre>
+</div>
+<hr class="docutils" />
+<p>五种方式实现事务
+<a class="reference external" href="http://blog.csdn.net/hjm4702192/article/details">http://blog.csdn.net/hjm4702192/article/details</a>/17277669如果在接口、实现类或方法上都指定了&#64;Transactional 注解，则优先级顺序为方法&gt;实现类&gt;接口；
+建议只在实现类或实现类的方法上使用&#64;Transactional，而不要在接口上使用，这是因为如果使用JDK代理机制是没问题，因为其使用基于接口的代理；而使用使用CGLIB代理机制时就会遇到问题，因为其使用基于类的代理而不是接口，这是因为接口上的&#64;Transactional注解是“不能继承的”；
+在JDK代理机制下，“自我调用”同样不会应用相应的事务属性，其语义和&lt;tx:tags&gt;中一样；
+默认只对RuntimeException异常回滚；
+在使用Spring代理时，默认只有在public可见度的方法的&#64;Transactional 注解才是有效的，其它可见度（protected、private、包可见）的方法上即使有&#64;Transactional 注解也不会应用这些事务属性的，Spring也不会报错，如果你非要使用非公共方法注解事务管理的话，可考虑使用AspectJ。</p>
+<dl class="docutils">
+<dt>配置注解方式，必须将aop开启</dt>
+<dd>Spring声明式事务实现其实就是Spring AOP+线程绑定实现，利用AOP实现开启和关闭事务，利用线程绑定（ThreadLocal）实现跨越多个方法实现事务传播。</dd>
+</dl>
 </div>
 <div class="section" id="spring-session">
 <h3>Spring Session工厂<a class="headerlink" href="#spring-session" title="Permalink to this headline">¶</a></h3>
@@ -193,8 +304,8 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
 </div>
 </div>
 </div>
-<div class="section" id="id4">
-<h2>Spring事务<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h2>Spring事务<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <p>Sping提供了一致的事务管理抽象，是Spring重要的抽象之一。优点如下：</p>
 <ul class="simple">
 <li>为不同事务API提供一致的编程模型，如JTA，JDBC，Hibernate，iBATIS数据库层和JDO；</li>
@@ -204,23 +315,24 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
 </ul>
 <div class="section" id="transaction">
 <h3>Transaction管理<a class="headerlink" href="#transaction" title="Permalink to this headline">¶</a></h3>
-<p>事务管理也是Spring中的关键属性，首先声明事物:</p>
-<div class="highlight-python"><pre>&lt;bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"&gt;</pre>
+<p>Spring 事务管理有多种方式，具体请参考http://blog.csdn.net/hjm4702192/article/details/17277669</p>
+<p>这里需要注意几点：
+如果在接口、实现类或方法上都指定了&#64;Transactional 注解，则优先级顺序为方法&gt;实现类&gt;接口；
+建议只在实现类或实现类的方法上使用&#64;Transactional，而不要在接口上使用，这是因为如果使用JDK代理机制是没问题，因为其使用基于接口的代理；而使用使用CGLIB代理机制时就会遇到问题，因为其使用基于类的代理而不是接口，这是因为接口上的&#64;Transactional注解是“不能继承的”；
+在JDK代理机制下，“自我调用”同样不会应用相应的事务属性，其语义和&lt;tx:tags&gt;中一样；
+默认只对RuntimeException异常回滚；
+在使用Spring代理时，默认只有在public可见度的方法的&#64;Transactional 注解才是有效的，其它可见度（protected、private、包可见）的方法上即使有&#64;Transactional 注解也不会应用这些事务属性的，Spring也不会报错，如果你非要使用非公共方法注解事务管理的话，可考虑使用AspectJ；
+使用注解方式，必须将aop开启，否则不能读去&#64;Transactioanl注解</p>
+<p>Spring声明式事务实现其实就是Spring AOP+线程绑定实现，利用AOP实现开启和关闭事务，利用线程绑定（ThreadLocal）实现跨越多个方法实现事务传播。
+由于我们不可能只使用一个事务通知，可能还有其他类型事务通知，而且如果这些通知中需要事务支持怎么办？这就牵扯到通知执行顺序的问题上了，因此如果可能与其他AOP通知协作的话，而且这些通知中需要使用声明式事务管理支持，事务通知应该具有最高优先。</p>
 </div>
-<p>将SessionFactory注入到Transaction中:</p>
-<div class="highlight-python"><pre>&lt;property name="sessionFactory" ref="sessionFactory"&gt;&lt;/property&gt;</pre>
-</div>
-<p>激活Spring注解方式-事务处理:</p>
-<div class="highlight-python"><pre>&lt;tx:annotation-driven transaction-manager="transactionManager" /&gt;</pre>
-</div>
-</div>
-<div class="section" id="id5">
-<h3>事务带来的困扰<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h3>事务带来的困扰<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <p>这次编码遇到一个简单的问题，我要对数据库进行A操作和B操作，这两个操作必须在一个事务之内，但是B操作又需要A操作commit后的结果。</p>
 <p>这样就矛盾了，既然是事务，当然在commit前不能写进数据库中，但是A操作后的结果正是B操作需要的。</p>
 </div>
-<div class="section" id="id6">
-<h3>事务方法嵌套用的迷茫<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>事务方法嵌套用的迷茫<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <p>（这部分文字引自http://www.ibm.com/developerworks/cn/java/j-lo-spring-ts1/）</p>
 <p>Spring 事务一个被讹传很广说法是：一个事务方法不应该调用另一个事务方法，否则将产生两个事务。结果造成开发人员在设计事务方法时束手束脚，生怕一不小心就踩到地雷,其实这种是不认识 Spring 事务传播机制而造成的误解，Spring 对事务控制的支持统一在 TransactionDefinition 类中描述，该类有以下几个重要的接口方法:</p>
 <div class="highlight-python"><pre>*int getPropagationBehavior()：事务的传播行为
@@ -269,8 +381,8 @@ public class ScoreService extends BaseService{
 }</pre>
 </div>
 </div>
-<div class="section" id="id7">
-<h3>多种数据库连接方式带来的困惑<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>多种数据库连接方式带来的困惑<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <p>对于Spring的ORM的实现方式有多种，可以采用高端的ORM技术（Hibernate，JPA，JDO），同时采用一个JDBC 技术（Spring JDBC，iBatis），前者使用的会话是对后者Connection的封装，Spring会机智的在同一事务中封装后者的链接，这样我们直接管Spring的事务就可以了。</p>
 <p>是用Hibernate的代码如下:</p>
 <div class="highlight-python"><pre>public void logon(String userName) {
@@ -287,12 +399,102 @@ public void updateLastLogonTime(String userName) {
 </div>
 <p>这里要注意，Spring中Hibernate是要等事务提交的时候进行数据库同步，这里同步的时候是在logon返回的时候，问题是addSocre使用jdbc，直接就修改数据库了，这里我们使用flush()方法来覆盖掉Hibernate的一级缓存。</p>
 </div>
-<div class="section" id="id8">
-<h3>Spring的事务增强<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id13">
+<h3>Spring的事务增强<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <p>Spring可以增强public的方法（注意不能增强public static方法）的事务。（暂时未涉及到此处，未研究学习)</p>
 </div>
-<div class="section" id="id9">
-<h3>最佳实践<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id14">
+<h3>最佳实践<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="transactional">
+<h4>&#64;Transactional标记什么时候发挥作用<a class="headerlink" href="#transactional" title="Permalink to this headline">¶</a></h4>
+<p>在StackOverFlow上发现的问题，请看
+<a class="reference external" href="http://stackoverflow.com/questions/17224887/java-spring-transactional-method-not-rolling-back-as-expected">http://stackoverflow.com/questions/17224887/java-spring-transactional-method-not-rolling-back-as-expected</a></p>
+<p>这个问题是由于Spring将AOP与事务耦合在一起而引发的问题，在包spring-aop-3.2.6中，org.springframework.aop.framework.jdkDynamicAopProxy.class</p>
+<div class="code java highlight-python"><pre>public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            MethodInvocation invocation;
+            Object oldProxy = null;
+            boolean setProxyContext = false;
+
+            TargetSource targetSource = this.advised.targetSource;
+            Class targetClass = null;
+            Object target = null;
+
+            try {
+                    if (!this.equalsDefined &amp;&amp; AopUtils.isEqualsMethod(method)) {
+                            // The target does not implement the equals(Object) method itself.
+                            return equals(args[0]);
+                    }
+                    if (!this.hashCodeDefined &amp;&amp; AopUtils.isHashCodeMethod(method)) {
+                            // The target does not implement the hashCode() method itself.
+                            return hashCode();
+                    }
+                    if (!this.advised.opaque &amp;&amp; method.getDeclaringClass().isInterface() &amp;&amp;
+                                    method.getDeclaringClass().isAssignableFrom(Advised.class)) {
+                            // Service invocations on ProxyConfig with the proxy config...
+                            return AopUtils.invokeJoinpointUsingReflection(this.advised, method, args);
+                    }
+
+                    Object retVal;
+
+                    if (this.advised.exposeProxy) {
+                            // Make invocation available if necessary.
+                            oldProxy = AopContext.setCurrentProxy(proxy);
+                            setProxyContext = true;
+                    }
+
+                    // May be null. Get as late as possible to minimize the time we "own" the target,
+                    // in case it comes from a pool.
+                    target = targetSource.getTarget();
+                    if (target != null) {
+                            targetClass = target.getClass();
+                    }
+
+                    // Get the interception chain for this method.
+                    List&lt;Object&gt; chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
+
+                    // Check whether we have any advice. If we don't, we can fallback on direct
+                    // reflective invocation of the target, and avoid creating a MethodInvocation.
+                    if (chain.isEmpty()) {
+                            // We can skip creating a MethodInvocation: just invoke the target directly
+                            // Note that the final invoker must be an InvokerInterceptor so we know it does
+                            // nothing but a reflective operation on the target, and no hot swapping or fancy proxying.
+                            retVal = AopUtils.invokeJoinpointUsingReflection(target, method, args);
+                    }
+                    else {
+                            // We need to create a method invocation...
+                            invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
+                            // Proceed to the joinpoint through the interceptor chain.
+                            retVal = invocation.proceed();
+                    }
+
+                    // Massage return value if necessary.
+                    Class&lt;?&gt; returnType = method.getReturnType();
+                    if (retVal != null &amp;&amp; retVal == target &amp;&amp; returnType.isInstance(proxy) &amp;&amp;
+                                    !RawTargetAccess.class.isAssignableFrom(method.getDeclaringClass())) {
+                            // Special case: it returned "this" and the return type of the method
+                            // is type-compatible. Note that we can't help if the target sets
+                            // a reference to itself in another returned object.
+                            retVal = proxy;
+                    } else if (retVal == null &amp;&amp; returnType != Void.TYPE &amp;&amp; returnType.isPrimitive()) {
+                            throw new AopInvocationException("Null return value from advice does not match primitive return type for: " + method);
+                    }
+                    return retVal;
+            }
+            finally {
+                    if (target != null &amp;&amp; !targetSource.isStatic()) {
+                            // Must have come from TargetSource.
+                            targetSource.releaseTarget(target);
+                    }
+                    if (setProxyContext) {
+                            // Restore old proxy.
+                            AopContext.setCurrentProxy(oldProxy);
+                    }
+            }
+    }</pre>
+</div>
+</div>
+<div class="section" id="hibernate-session">
+<h4>Hibernate session管理<a class="headerlink" href="#hibernate-session" title="Permalink to this headline">¶</a></h4>
 <p>通过Base层代码编写，使我对Spring事务有了新的认识。</p>
 <p>先阐述一下这次我碰到的几个问题，首先对于Hibernate更新时碰到的问题，</p>
 <p>在Hibernate的操作时，我使用了一个危险的操作&#8211;session.clear()方法，代码如下（代码已经被我注释掉）：</p>
@@ -316,54 +518,6 @@ session.update(entity);</pre>
 </div>
 <p>由于base层的设计，增删改查这些基础操作放入基类之中，不变使用上述方法。
 我用如下方法进行解决，在更新任何bean的时候首先进行查找当前活动的bean，之后进行修改后保存，可以避免两个bean冲突的问题。</p>
-</div>
-</div>
-<div class="section" id="id10">
-<h2>Spring的作用<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
-<p>Spring框架可以帮程序员快速搭建服务框架。</p>
-<div class="section" id="inversion-of-control-ioc">
-<h3>Inversion of Control（IOC）<a class="headerlink" href="#inversion-of-control-ioc" title="Permalink to this headline">¶</a></h3>
-<p>控制反转（IOC）就是由容器控制程序之间的依赖（调用）关系，传统是由程序自己控制的。
-就像设计模式中的模板方式和好莱坞原则：Don&#8217;t call us, we will call you.</p>
-<p>依赖注入（DI）更准确的描述了这种模式，组件之间的依赖关系由容器运行时决定，即由容器动态将依赖注入到组件之中。
-例如UserRegister依赖于UserDao的实现类，UserRegister不关心USerDao的实现，由容器完成依赖。</p>
-<p>IOC分为三种形式：</p>
-<div class="section" id="id11">
-<h4>1.接口注入<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
-<p>我们开发一个injectUserDAo接口，将一个UserDAO注入到该接口的实现类中，然后UserRegister实现该接口。如：</p>
-<div class="highlight-python"><pre>public interface InjectUserDao(){
-    public void setUserDao(UserDao userDao);
-}
-
-public class UserRegister implements InjectUserDao{
-    private UserDao userDao = null;
-    public void setUserDao(UserDao userDao){
-        this.userDao = userDao;
-    }
-}</pre>
-</div>
-<p>同时，我们需要配置框架，这样实现接口后便可完成依赖注入了：</p>
-<div class="highlight-python"><pre>&lt;component&gt;
-    &lt;scope&gt;request&lt;/scope&gt;
-    &lt;class&gt;com.dev.spring.simple.MemoryUserDao&lt;/class&gt;
-    &lt;enabler&gt;com.dev.spring.simple.InjectUserDao&lt;/enabler&gt;
-&lt;/component&gt;</pre>
-</div>
-</div>
-<div class="section" id="id12">
-<h4>2.设值注入<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
-<p>通过实现setter方法而进行依赖注入，是最常用的注入方式。</p>
-</div>
-<div class="section" id="id13">
-<h4>3.构造子注入<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
-<p>通过构造函数完成依赖注入，如：</p>
-<div class="highlight-python"><pre>public class UserRegister{
-    private UserDao userDao;
-    public UserRegister(UserDao userDao){
-        this.userDao = userDao;
-    }
-}</pre>
-</div>
 </div>
 </div>
 </div>

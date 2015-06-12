@@ -1,0 +1,125 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>代码优化篇 &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="高级算法研究" href="genetic.html" />
+    <link rel="prev" title="写代码的8项建议" href="how_to_write_code.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="genetic.html" title="高级算法研究"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="how_to_write_code.html" title="写代码的8项建议"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="how_to_write_code.html"
+                        title="previous chapter">写代码的8项建议</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="genetic.html"
+                        title="next chapter">高级算法研究</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/programming/common/code_optimization.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="id1">
+<h1>代码优化篇<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>不同语言的代码优化差别是很大的，我所熟悉的java、c++、c，另外python、c#也略懂一些，我们将来讲讲代码优化的方法和效果</p>
+<p>java code optimazation</p>
+<ol class="arabic simple">
+<li>尽量重用对象，如连接String的时候尽量使用StringBuffer和StringBuilder，可以减少系统生成对象的时间，还能减少回收这些对象的时间;</li>
+<li>尽量使用局部变量，局部变量保存在Stack中，而静态和实例变量存储在Heap中，Heap访问比Stack访问慢，而且局部变量能被编译器优化;</li>
+<li>减少对代码的重复计算，有计算的情况保留结果值，比重新计算节省资源;</li>
+<li>不要在循环中使用try catch语句块;</li>
+</ol>
+<p>Java本身在编译器上做了很多优化，而且是一门成熟的语言，在编写代码时不像C++那样需要自己管理内存，简化了很多优化工作，同时给程序员表现的机会也没那么多，只要注意几个浪费空间和时间点，其余可以在算法上做优化，语言本身的优化可能还要看多线程这块如何进行。</p>
+<dl class="docutils">
+<dt>参考资料：</dt>
+<dd><a class="reference external" href="http://nakata-yf.iteye.com/blog/23545">http://nakata-yf.iteye.com/blog/23545</a></dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="genetic.html" title="高级算法研究"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="how_to_write_code.html" title="写代码的8项建议"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
