@@ -36,7 +36,51 @@ Inversion of Control（IOC）
 依赖注入（DI）更准确的描述了这种模式，组件之间的依赖关系由容器运行时决定，即由容器动态将依赖注入到组件之中。
 例如UserRegister依赖于UserDao的实现类，UserRegister不关心USerDao的实现，由容器完成依赖。
 
-IOC分为三种形式：
+Spring Session工厂
+-------------------------------------------
+声明bean工厂::
+    
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+
+将数据源dataSource注入进入SessionFactory::
+    
+    <property name="dataSource" ref="dataSource" />
+
+命名策略::
+    
+    <property name="namingStrategy">
+        <bean class="org.hibernate.cfg.ImprovedNamingStrategy" /> 
+    </property>
+    <property name="hibernateProperties">
+        <props>
+            <prop key="hibernate.dialect">${hibernate.dialect}</prop> 
+            <prop key="hibernate.show_sql">${hibernate.show_sql}</prop> 
+            <prop key="hibernate.format_sql">true</prop> 
+            <prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop> 
+            <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop> 
+        </props>
+    </property>
+
+Bean注入
+-------------------------------------
+Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自动扫描所有base-package包下的带有@Service，@Controller，@Component，@Repository的类。
+注入bean::
+    
+    <context:component-scan base-package="com.neunn.cloud.base.*" />
+
+这里是整个扫描一个包进行全初始化，通过Spring的注解@AutoWired直接使用。
+上述包中的所有bean类都会被自动初始化并注入到容器中，这里bean的要求是提供无参的构造函数以及相应的get和set方法。
+
+启动Spring对@AspectJ注解的支持::
+    
+    <aop:aspectj-autoproxy/>
+
+@Resource应用在字段上的注入规则是首先用名字进行匹配，如果类型错误则报错；如果没有名字匹配则进行类型匹配，如果字段类型是接口并有多种实现匹配，则抛出异常。
+
+@Resource应用在setter上的规则是使用属性名字进行匹配，如果类型错误则报错；如果没有名字匹配则进行属性参数类型匹配，如果参数类型是接口并有多种实现匹配，则抛出异常。
+
+IOC的三种形式
+---------------------------------------
 
 1.接口注入
 ```````````````````````````````````````
@@ -68,6 +112,7 @@ IOC分为三种形式：
 2.设值注入
 ``````````````````````````````````````````
 通过实现setter方法而进行依赖注入，是最常用的注入方式。
+
 
 3.构造子注入
 ``````````````````````````````````````````
@@ -176,45 +221,6 @@ http://blog.csdn.net/hjm4702192/article/details/17277669如果在接口、实现
 
 配置注解方式，必须将aop开启
    Spring声明式事务实现其实就是Spring AOP+线程绑定实现，利用AOP实现开启和关闭事务，利用线程绑定（ThreadLocal）实现跨越多个方法实现事务传播。
-
-Spring Session工厂
--------------------------------------------
-声明bean工厂::
-    
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-
-将数据源dataSource注入进入SessionFactory::
-    
-    <property name="dataSource" ref="dataSource" />
-
-命名策略::
-    
-    <property name="namingStrategy">
-        <bean class="org.hibernate.cfg.ImprovedNamingStrategy" /> 
-    </property>
-    <property name="hibernateProperties">
-        <props>
-            <prop key="hibernate.dialect">${hibernate.dialect}</prop> 
-            <prop key="hibernate.show_sql">${hibernate.show_sql}</prop> 
-            <prop key="hibernate.format_sql">true</prop> 
-            <prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop> 
-            <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop> 
-        </props>
-    </property>
-
-Bean注入
--------------------------------------
-Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自动扫描，注入bean::
-    
-    <context:component-scan base-package="com.neunn.cloud.base.*" />
-
-这里是整个扫描一个包进行全初始化，通过Spring的注解@AutoWired直接使用。
-上述包中的所有bean类都会被自动初始化并注入到容器中，这里bean的要求是提供无参的构造函数以及相应的get和set方法。
-
-启动Spring对@AspectJ注解的支持::
-    
-    <aop:aspectj-autoproxy/>
-
 
 Spring事务
 =====================================
@@ -509,6 +515,10 @@ Spring AOP可以有如下几种实现形式：
 网上有个参考资料把after return中的参数写成了String类型，导致我开始运行的时候怎么也截获不到AfterReturning方法之内，差点就换其他方式进行截获了。
 
 这里around方式没有执行成功，返回的对象jersyclient解析不了，暂时还未解决这个问题。
+
+Spring Filter
+=========================================
+
 
 Spring log4j
 =========================================

@@ -53,7 +53,10 @@
 <li><a class="reference internal" href="#id1">为什么使用Spring</a></li>
 <li><a class="reference internal" href="#id2">Spring的配置</a></li>
 <li><a class="reference internal" href="#id3">Spring的基本作用</a><ul>
-<li><a class="reference internal" href="#inversion-of-control-ioc">Inversion of Control（IOC）</a><ul>
+<li><a class="reference internal" href="#inversion-of-control-ioc">Inversion of Control（IOC）</a></li>
+<li><a class="reference internal" href="#spring-session">Spring Session工厂</a></li>
+<li><a class="reference internal" href="#bean">Bean注入</a></li>
+<li><a class="reference internal" href="#ioc">IOC的三种形式</a><ul>
 <li><a class="reference internal" href="#id4">1.接口注入</a></li>
 <li><a class="reference internal" href="#id5">2.设值注入</a></li>
 <li><a class="reference internal" href="#id6">3.构造子注入</a></li>
@@ -64,8 +67,6 @@
 <li><a class="reference internal" href="#id7">Spring的数据源管理</a><ul>
 <li><a class="reference internal" href="#spring-jdbc">Spring jdbc 配置</a></li>
 <li><a class="reference internal" href="#id8">Spring jdbc 关键代码</a></li>
-<li><a class="reference internal" href="#spring-session">Spring Session工厂</a></li>
-<li><a class="reference internal" href="#bean">Bean注入</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#id9">Spring事务</a><ul>
@@ -82,6 +83,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#spring-aop">Spring AOP</a></li>
+<li><a class="reference internal" href="#spring-filter">Spring Filter</a></li>
 <li><a class="reference internal" href="#spring-log4j">Spring log4j</a></li>
 </ul>
 </li>
@@ -150,7 +152,46 @@ Spring解决企业级开发的复杂性问题，利用简单的JavaBean完成之
 就像设计模式中的模板方式和好莱坞原则：Don&#8217;t call us, we will call you.</p>
 <p>依赖注入（DI）更准确的描述了这种模式，组件之间的依赖关系由容器运行时决定，即由容器动态将依赖注入到组件之中。
 例如UserRegister依赖于UserDao的实现类，UserRegister不关心USerDao的实现，由容器完成依赖。</p>
-<p>IOC分为三种形式：</p>
+</div>
+<div class="section" id="spring-session">
+<h3>Spring Session工厂<a class="headerlink" href="#spring-session" title="Permalink to this headline">¶</a></h3>
+<p>声明bean工厂:</p>
+<div class="highlight-python"><pre>&lt;bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"&gt;</pre>
+</div>
+<p>将数据源dataSource注入进入SessionFactory:</p>
+<div class="highlight-python"><pre>&lt;property name="dataSource" ref="dataSource" /&gt;</pre>
+</div>
+<p>命名策略:</p>
+<div class="highlight-python"><pre>&lt;property name="namingStrategy"&gt;
+    &lt;bean class="org.hibernate.cfg.ImprovedNamingStrategy" /&gt;
+&lt;/property&gt;
+&lt;property name="hibernateProperties"&gt;
+    &lt;props&gt;
+        &lt;prop key="hibernate.dialect"&gt;${hibernate.dialect}&lt;/prop&gt;
+        &lt;prop key="hibernate.show_sql"&gt;${hibernate.show_sql}&lt;/prop&gt;
+        &lt;prop key="hibernate.format_sql"&gt;true&lt;/prop&gt;
+        &lt;prop key="hibernate.generate_statistics"&gt;${hibernate.generate_statistics}&lt;/prop&gt;
+        &lt;prop key="hibernate.hbm2ddl.auto"&gt;${hibernate.hbm2ddl.auto}&lt;/prop&gt;
+    &lt;/props&gt;
+&lt;/property&gt;</pre>
+</div>
+</div>
+<div class="section" id="bean">
+<h3>Bean注入<a class="headerlink" href="#bean" title="Permalink to this headline">¶</a></h3>
+<p>Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自动扫描所有base-package包下的带有&#64;Service，&#64;Controller，&#64;Component，&#64;Repository的类。
+注入bean:</p>
+<div class="highlight-python"><pre>&lt;context:component-scan base-package="com.neunn.cloud.base.*" /&gt;</pre>
+</div>
+<p>这里是整个扫描一个包进行全初始化，通过Spring的注解&#64;AutoWired直接使用。
+上述包中的所有bean类都会被自动初始化并注入到容器中，这里bean的要求是提供无参的构造函数以及相应的get和set方法。</p>
+<p>启动Spring对&#64;AspectJ注解的支持:</p>
+<div class="highlight-python"><pre>&lt;aop:aspectj-autoproxy/&gt;</pre>
+</div>
+<p>&#64;Resource应用在字段上的注入规则是首先用名字进行匹配，如果类型错误则报错；如果没有名字匹配则进行类型匹配，如果字段类型是接口并有多种实现匹配，则抛出异常。</p>
+<p>&#64;Resource应用在setter上的规则是使用属性名字进行匹配，如果类型错误则报错；如果没有名字匹配则进行属性参数类型匹配，如果参数类型是接口并有多种实现匹配，则抛出异常。</p>
+</div>
+<div class="section" id="ioc">
+<h3>IOC的三种形式<a class="headerlink" href="#ioc" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="id4">
 <h4>1.接口注入<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
 <p>我们开发一个injectUserDAo接口，将一个UserDAO注入到该接口的实现类中，然后UserRegister实现该接口。如：</p>
@@ -268,40 +309,6 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
 <dt>配置注解方式，必须将aop开启</dt>
 <dd>Spring声明式事务实现其实就是Spring AOP+线程绑定实现，利用AOP实现开启和关闭事务，利用线程绑定（ThreadLocal）实现跨越多个方法实现事务传播。</dd>
 </dl>
-</div>
-<div class="section" id="spring-session">
-<h3>Spring Session工厂<a class="headerlink" href="#spring-session" title="Permalink to this headline">¶</a></h3>
-<p>声明bean工厂:</p>
-<div class="highlight-python"><pre>&lt;bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"&gt;</pre>
-</div>
-<p>将数据源dataSource注入进入SessionFactory:</p>
-<div class="highlight-python"><pre>&lt;property name="dataSource" ref="dataSource" /&gt;</pre>
-</div>
-<p>命名策略:</p>
-<div class="highlight-python"><pre>&lt;property name="namingStrategy"&gt;
-    &lt;bean class="org.hibernate.cfg.ImprovedNamingStrategy" /&gt;
-&lt;/property&gt;
-&lt;property name="hibernateProperties"&gt;
-    &lt;props&gt;
-        &lt;prop key="hibernate.dialect"&gt;${hibernate.dialect}&lt;/prop&gt;
-        &lt;prop key="hibernate.show_sql"&gt;${hibernate.show_sql}&lt;/prop&gt;
-        &lt;prop key="hibernate.format_sql"&gt;true&lt;/prop&gt;
-        &lt;prop key="hibernate.generate_statistics"&gt;${hibernate.generate_statistics}&lt;/prop&gt;
-        &lt;prop key="hibernate.hbm2ddl.auto"&gt;${hibernate.hbm2ddl.auto}&lt;/prop&gt;
-    &lt;/props&gt;
-&lt;/property&gt;</pre>
-</div>
-</div>
-<div class="section" id="bean">
-<h3>Bean注入<a class="headerlink" href="#bean" title="Permalink to this headline">¶</a></h3>
-<p>Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自动扫描，注入bean:</p>
-<div class="highlight-python"><pre>&lt;context:component-scan base-package="com.neunn.cloud.base.*" /&gt;</pre>
-</div>
-<p>这里是整个扫描一个包进行全初始化，通过Spring的注解&#64;AutoWired直接使用。
-上述包中的所有bean类都会被自动初始化并注入到容器中，这里bean的要求是提供无参的构造函数以及相应的get和set方法。</p>
-<p>启动Spring对&#64;AspectJ注解的支持:</p>
-<div class="highlight-python"><pre>&lt;aop:aspectj-autoproxy/&gt;</pre>
-</div>
 </div>
 </div>
 <div class="section" id="id9">
@@ -563,6 +570,9 @@ public class NovaAspectAdvice {
 <p>这里简单解释下，aspectj只是其中一种实现方法，包括五种方法，before，after，afterreturn，around，afterthrow分别作用在截获方法的开始，之后，返回后，整个执行过程，抛出异常后。
 网上有个参考资料把after return中的参数写成了String类型，导致我开始运行的时候怎么也截获不到AfterReturning方法之内，差点就换其他方式进行截获了。</p>
 <p>这里around方式没有执行成功，返回的对象jersyclient解析不了，暂时还未解决这个问题。</p>
+</div>
+<div class="section" id="spring-filter">
+<h2>Spring Filter<a class="headerlink" href="#spring-filter" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="spring-log4j">
 <h2>Spring log4j<a class="headerlink" href="#spring-log4j" title="Permalink to this headline">¶</a></h2>

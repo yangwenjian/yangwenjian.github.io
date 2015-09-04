@@ -63,13 +63,29 @@ Sulotion of Linux&Unix
    _templates/linux/lvm
    _templates/linux/memory
    _templates/linux/network
+   _templates/linux/firewall
+
+Linux Tools
+=====================================
+
+.. toctree::
+   :maxdepth: 1
+
    _templates/linux/tools/networktool
    _templates/linux/tools/shell
    _templates/linux/tools/git
    _templates/linux/tools/vim
    _templates/linux/tools/mysql
-   _templates/linux/firewall
+   _templates/linux/tools/varnish
+   _templates/linux/tools/cas
 
+Architecture
+======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/architecture/mvc
 
 Sulotion of Autamation
 ======================================
@@ -130,9 +146,6 @@ Programming Skill
 .. toctree::
    :maxdepth: 1
 
-   _templates/programming/java/annotation
-   _templates/programming/java/memory_manage
-   _templates/programming/java/junit
    _templates/programming/common/algorithm
    _templates/programming/common/how_to_write_code
    _templates/programming/common/code_optimization
@@ -141,6 +154,17 @@ Programming Skill
    _templates/programming/c/thinking_in_c
    _templates/programming/c/csapp
 
+Java On Roll
+======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/programming/java/serialization
+   _templates/programming/java/annotation
+   _templates/programming/java/memory_manage
+   _templates/programming/java/junit
+   _templates/programming/java/synchronous
 
 Other
 ======================================
