@@ -1,0 +1,40 @@
+
+
+
+============================================
+Monitoring System
+============================================
+
+System Monitoring
+============================================
+
+Business Monitoring
+============================================
+设计一个小的，内嵌的业务告警系统，我将给出：愿景，系统部署图，详细设计（接口定义，时序图）等。
+
+愿景
+--------------------------------------------
+完成一个小型的内嵌业务告警组件，当我们的业务系统发生故障时，能通过此组建的调用，第一时间通知运营支撑人员，并将告警持久化。
+
+1. 对于严重告警，能及时通知业务支撑人员；
+2. 流控，屏蔽相似告警，防止数据库出问题；
+3. 对内调用接口，通用，包含以下信息：level, subsystem, context, code；
+4. 对外接口，通用，包含以下信息：level, subsystem, code, solution；
+
+系统部署图
+--------------------------------------------
+
+.. image:: images/business_monitor_component.jpg 
+
+详细设计
+--------------------------------------------
+
+接口定义
+````````````````````````````````````````````
+public static void alarm(AlarmLevel.warn, String subsystem, Context context, String code);
+
+public static List<Alarm> listAlarms();
+
+public static Alarm getAlarm(String id);
+
+public static void ignoreAlarm(String code);

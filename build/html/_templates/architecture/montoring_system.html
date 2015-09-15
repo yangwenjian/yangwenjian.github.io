@@ -1,0 +1,140 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Monitoring System &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Monitoring System</a><ul>
+<li><a class="reference internal" href="#system-monitoring">System Monitoring</a></li>
+<li><a class="reference internal" href="#business-monitoring">Business Monitoring</a><ul>
+<li><a class="reference internal" href="#id1">愿景</a></li>
+<li><a class="reference internal" href="#id2">系统部署图</a></li>
+<li><a class="reference internal" href="#id3">详细设计</a><ul>
+<li><a class="reference internal" href="#id4">接口定义</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/architecture/montoring_system.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="monitoring-system">
+<h1>Monitoring System<a class="headerlink" href="#monitoring-system" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="system-monitoring">
+<h2>System Monitoring<a class="headerlink" href="#system-monitoring" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="business-monitoring">
+<h2>Business Monitoring<a class="headerlink" href="#business-monitoring" title="Permalink to this headline">¶</a></h2>
+<p>设计一个小的，内嵌的业务告警系统，我将给出：愿景，系统部署图，详细设计（接口定义，时序图）等。</p>
+<div class="section" id="id1">
+<h3>愿景<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>完成一个小型的内嵌业务告警组件，当我们的业务系统发生故障时，能通过此组建的调用，第一时间通知运营支撑人员，并将告警持久化。</p>
+<ol class="arabic simple">
+<li>对于严重告警，能及时通知业务支撑人员；</li>
+<li>流控，屏蔽相似告警，防止数据库出问题；</li>
+<li>对内调用接口，通用，包含以下信息：level, subsystem, context, code；</li>
+<li>对外接口，通用，包含以下信息：level, subsystem, code, solution；</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h3>系统部署图<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<img alt="../../_images/business_monitor_component.jpg" src="../../_images/business_monitor_component.jpg" />
+</div>
+<div class="section" id="id3">
+<h3>详细设计<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h4>接口定义<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>public static void alarm(AlarmLevel.warn, String subsystem, Context context, String code);</p>
+<p>public static List&lt;Alarm&gt; listAlarms();</p>
+<p>public static Alarm getAlarm(String id);</p>
+<p>public static void ignoreAlarm(String code);</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -18,7 +18,7 @@ Varnish的原理
 
 配置文件示例如下：
 
-..code::
+.. code::
 
 	backend tomcat1 {
 		.host = "10.10.18.65";
@@ -75,14 +75,17 @@ Varnish是利用反向代理进行缓存的，这个我开始的时候配置了�
 使用反向代理，更简单易用。
 
 1.是否可以用cookie+url做索引去缓存页面？
+
 varnish的hash值可以任意修改，如sub vcl_hash {hash_data(req.http.X-Country-Code);}，将任意的标准放入hash中。
 这里我将hash_data(request.http.cookie);加入到vcl_hash中，经不通浏览器，不同机器测试，确实将cookie值放入到的了hash中。
 
 2.缓存在Varnish中的是如何存储的？
+
 目前不支持，只能看到一些状态参数，内容太多，显示出来很容易造成varnish停止服务。
 但我们可以使用varnishstat查看一些基本参数。
 
 3.url是否支持正则表达式，如何设计我们的url patter？
+
 Varnish支持正则表达式或者ACL列表，如果使用ACL列表，需要向backend一样在前面声明。
 在我们的设计中，我建议使用前缀来区别是否走缓存。例如，我们使用/portal前缀来标识其为公共浏览页面；也可以使用后缀来表示某些请求；也可以使用reqeust的类型来决定是否走缓存；这些都标识在vcl_recv方法中。
 同时，在vcl_fetch函数中，我们也可以使用response的一些属性来决定是否缓存。
@@ -117,11 +120,15 @@ Varnish支持正则表达式或者ACL列表，如果使用ACL列表，需要向b
 
 
 4.缓存的时间如何设置？
+
 修改beresp.ttl变量如：set beresp.ttl = 1200s。
 同时，Varnish也接受过期对象的时间设置。
 
 5.什么样的请求不能走缓存？
+
+对于目前的Varnish，暂时不能支持post请求，但可以通过加入第三方模块进行post缓存。
 一般的post请求，带有动作的请求，实时性请求，建议直接走pass函数，直接从后台取，不进行缓存。
+如果强制post请求走lookup函数，varnish不能缓存post请求，它会试图将那个请求转换为get请求然后发送到后端，会导致意想不到的错误。
 
 参考资料
 ===========================================

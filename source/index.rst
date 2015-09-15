@@ -86,6 +86,7 @@ Architecture
    :maxdepth: 1
 
    _templates/architecture/mvc
+   _templates/architecture/monitoring_system
 
 Sulotion of Autamation
 ======================================
@@ -137,6 +138,7 @@ Programming Framework
  
    _templates/programming/common/designpatterns
    _templates/framework/spring
+   _templates/framework/spring_security
    _templates/programming/java/guice
 
 

@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Guice Introduction and Analysis" href="../programming/java/guice.html" />
+    <link rel="next" title="Spring Security" href="spring_security.html" />
     <link rel="prev" title="设计模式Head First" href="../programming/common/designpatterns.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../programming/java/guice.html" title="Guice Introduction and Analysis"
+          <a href="spring_security.html" title="Spring Security"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../programming/common/designpatterns.html" title="设计模式Head First"
@@ -83,7 +83,6 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#spring-aop">Spring AOP</a></li>
-<li><a class="reference internal" href="#spring-filter">Spring Filter</a></li>
 <li><a class="reference internal" href="#spring-log4j">Spring log4j</a></li>
 </ul>
 </li>
@@ -93,8 +92,8 @@
   <p class="topless"><a href="../programming/common/designpatterns.html"
                         title="previous chapter">设计模式Head First</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../programming/java/guice.html"
-                        title="next chapter">Guice Introduction and Analysis</a></p>
+  <p class="topless"><a href="spring_security.html"
+                        title="next chapter">Spring Security</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/framework/spring.txt"
@@ -571,9 +570,6 @@ public class NovaAspectAdvice {
 网上有个参考资料把after return中的参数写成了String类型，导致我开始运行的时候怎么也截获不到AfterReturning方法之内，差点就换其他方式进行截获了。</p>
 <p>这里around方式没有执行成功，返回的对象jersyclient解析不了，暂时还未解决这个问题。</p>
 </div>
-<div class="section" id="spring-filter">
-<h2>Spring Filter<a class="headerlink" href="#spring-filter" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="spring-log4j">
 <h2>Spring log4j<a class="headerlink" href="#spring-log4j" title="Permalink to this headline">¶</a></h2>
 <p>Spring可以良好的整合其他框架，在Spring中配置log4j是非常简单的事情。</p>
@@ -632,7 +628,7 @@ log4j.appender.stdout.layout.ConversionPattern = %d{yyyy-MM-dd} %5p %c{1}:%L  - 
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../programming/java/guice.html" title="Guice Introduction and Analysis"
+          <a href="spring_security.html" title="Spring Security"
              >next</a> |</li>
         <li class="right" >
           <a href="../programming/common/designpatterns.html" title="设计模式Head First"

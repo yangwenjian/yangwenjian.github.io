@@ -25,7 +25,9 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" /> 
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="cas" href="cas.html" />
+    <link rel="prev" title="MySQL Exercise" href="mysql.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,6 +36,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cas.html" title="cas"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="mysql.html" title="MySQL Exercise"
+             accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -54,6 +62,12 @@
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mysql.html"
+                        title="previous chapter">MySQL Exercise</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cas.html"
+                        title="next chapter">cas</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/linux/tools/varnish.txt"
@@ -94,8 +108,7 @@ Varnish支持使用内存、临时文件、永久性文件进行缓存，当然�
 <div class="section" id="id3">
 <h2>如何配置Varnish<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>配置文件示例如下：</p>
-<p>..code:</p>
-<div class="highlight-python"><pre>backend tomcat1 {
+<div class="code highlight-python"><pre>backend tomcat1 {
         .host = "10.10.18.65";
         .port = "8080";
         .probe = {
@@ -148,14 +161,14 @@ varnishd -f /home/query/vcl.conf -s malloc,1G -T 127.0.0.1:2000 -a 0.0.0.0:7021 
 <h2>Varnish最佳实践<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>Varnish是利用反向代理进行缓存的，这个我开始的时候配置了好久，以为是一种拦截器装置，可以截获某个端口的数据，进行缓存和转发。
 使用反向代理，更简单易用。</p>
-<p>1.是否可以用cookie+url做索引去缓存页面？
-varnish的hash值可以任意修改，如sub vcl_hash {hash_data(req.http.X-Country-Code);}，将任意的标准放入hash中。
+<p>1.是否可以用cookie+url做索引去缓存页面？</p>
+<p>varnish的hash值可以任意修改，如sub vcl_hash {hash_data(req.http.X-Country-Code);}，将任意的标准放入hash中。
 这里我将hash_data(request.http.cookie);加入到vcl_hash中，经不通浏览器，不同机器测试，确实将cookie值放入到的了hash中。</p>
-<p>2.缓存在Varnish中的是如何存储的？
-目前不支持，只能看到一些状态参数，内容太多，显示出来很容易造成varnish停止服务。
+<p>2.缓存在Varnish中的是如何存储的？</p>
+<p>目前不支持，只能看到一些状态参数，内容太多，显示出来很容易造成varnish停止服务。
 但我们可以使用varnishstat查看一些基本参数。</p>
-<p>3.url是否支持正则表达式，如何设计我们的url patter？
-Varnish支持正则表达式或者ACL列表，如果使用ACL列表，需要向backend一样在前面声明。
+<p>3.url是否支持正则表达式，如何设计我们的url patter？</p>
+<p>Varnish支持正则表达式或者ACL列表，如果使用ACL列表，需要向backend一样在前面声明。
 在我们的设计中，我建议使用前缀来区别是否走缓存。例如，我们使用/portal前缀来标识其为公共浏览页面；也可以使用后缀来表示某些请求；也可以使用reqeust的类型来决定是否走缓存；这些都标识在vcl_recv方法中。
 同时，在vcl_fetch函数中，我们也可以使用response的一些属性来决定是否缓存。
 如何特殊的url，可以通过设置request或者response的Cache-Control来进行控制。</p>
@@ -184,11 +197,13 @@ Varnish支持正则表达式或者ACL列表，如果使用ACL列表，需要向b
         return (deliver);
 }</pre>
 </div>
-<p>4.缓存的时间如何设置？
-修改beresp.ttl变量如：set beresp.ttl = 1200s。
+<p>4.缓存的时间如何设置？</p>
+<p>修改beresp.ttl变量如：set beresp.ttl = 1200s。
 同时，Varnish也接受过期对象的时间设置。</p>
-<p>5.什么样的请求不能走缓存？
-一般的post请求，带有动作的请求，实时性请求，建议直接走pass函数，直接从后台取，不进行缓存。</p>
+<p>5.什么样的请求不能走缓存？</p>
+<p>对于目前的Varnish，暂时不能支持post请求，但可以通过加入第三方模块进行post缓存。
+一般的post请求，带有动作的请求，实时性请求，建议直接走pass函数，直接从后台取，不进行缓存。
+如果强制post请求走lookup函数，varnish不能缓存post请求，它会试图将那个请求转换为get请求然后发送到后端，会导致意想不到的错误。</p>
 </div>
 <div class="section" id="id6">
 <h2>参考资料<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
@@ -208,6 +223,12 @@ Varnish支持正则表达式或者ACL列表，如果使用ACL列表，需要向b
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="cas.html" title="cas"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="mysql.html" title="MySQL Exercise"
+             >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
