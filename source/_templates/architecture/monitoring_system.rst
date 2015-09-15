@@ -60,7 +60,13 @@ Business Monitoring
 
 活动图
 ````````````````````````````````````````````
+这里通过在内存中维护一个带有时间的告警对象列表，用来判断新进的告警是否为重复告警，对于超时的告警对象，将从这个列表中被移除。
+
 .. image:: images/business_monitor_activity.jpg
+
+类图
+````````````````````````````````````````````
+.. image:: images/business_monitor_class.jpg
 
 接口定义
 ````````````````````````````````````````````
@@ -68,9 +74,13 @@ public static void alarm(AlarmLevel.warn, String message, String subsystem, Stri
 
 public static List<Alarm> listAlarms();
 
+public static List<Alarm> listAlarms(Date date);
+
+public static Page<Alarm> listAlarms(Page page);
+
 public static Alarm getAlarm(String id);
 
-public static void ignoreAlarm(String code);
+public static void ignoreAlarm(String id);
 
-public static void solveAlarm(String code);
+public static void solveAlarm(String id);
 
