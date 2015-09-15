@@ -21,8 +21,8 @@ Business Monitoring
 
 1. 对于严重告警，能及时通知业务支撑人员；
 2. 流控，屏蔽相似告警，防止数据库出问题；
-3. 对内调用接口，通用，包含以下信息：level, subsystem, context, code；
-4. 对外接口，通用，包含以下信息：level, subsystem, code, solution；
+3. 告警调用接口，通用，包含以下信息：level, subsystem, context, code；
+4. 展示调用接口，通用，包含以下信息：level, subsystem, code, solution, createTime, fixedTime；
 
 系统部署图
 --------------------------------------------
@@ -55,7 +55,7 @@ Business Monitoring
 +------------+-----------+------------+----------+----------+----------+----------+
 | createTime | timestamp | 创建时间   | 否       | 是       | 是       |          |
 +------------+-----------+------------+----------+----------+----------+----------+
-| solvedTime | timestamp | 解决时间   | 否       | 是       | 是       |          |
+| fixedTime  | timestamp | 解决时间   | 否       | 是       | 是       |          |
 +------------+-----------+------------+----------+----------+----------+----------+
 
 活动图
@@ -70,11 +70,15 @@ Business Monitoring
 
 接口定义
 ````````````````````````````````````````````
-public static void alarm(AlarmLevel.warn, String message, String subsystem, String contextInJson, String code);
+public static void alarm(AlarmLevel level, String code, String message, String subsystem, String contextInJson);
 
 public static List<Alarm> listAlarms();
 
+public static List<Alarm> listAlarms(Sort sort);
+
 public static List<Alarm> listAlarms(Date date);
+
+public static List<Alarm> listAlarms(Date date, Sort sort);
 
 public static Page<Alarm> listAlarms(Page page);
 
