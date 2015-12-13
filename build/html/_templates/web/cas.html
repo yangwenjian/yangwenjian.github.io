@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Cas &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="设计模式Head First" href="../programming/common/designpatterns.html" />
+    <link rel="prev" title="Web Page Design" href="webpage.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../programming/common/designpatterns.html" title="设计模式Head First"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="webpage.html" title="Web Page Design"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cas</a><ul>
+<li><a class="reference internal" href="#id1">Cas介绍</a></li>
+<li><a class="reference internal" href="#id2">Cas流程</a></li>
+<li><a class="reference internal" href="#cas-filter">Cas Filter处理逻辑</a></li>
+<li><a class="reference internal" href="#id3">最佳实践</a><ul>
+<li><a class="reference internal" href="#handler">使用自己的Handler来处理登录登出</a><ul>
+<li><a class="reference internal" href="#springcas-client">Spring通过如下配置文件进行配置Cas Client:</a></li>
+<li><a class="reference internal" href="#spring-cas">Spring cas关键代码</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id4">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="webpage.html"
+                        title="previous chapter">Web Page Design</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../programming/common/designpatterns.html"
+                        title="next chapter">设计模式Head First</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/web/cas.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cas">
+<h1>Cas<a class="headerlink" href="#cas" title="Permalink to this headline">¶</a></h1>
+<p>Central Authentication Service 是开源的单点登录解决方案。</p>
+<div class="section" id="id1">
+<h2>Cas介绍<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>支持的协议：Protocols ： Custom Protocol 、 CAS 、 OAuth 、 OpenID 、 RESTful API 、 SAML1.1 、 SAML2.0。
+支持的认证机制：Active Directory 、 JAAS 、 JDBC 、 LDAP 、 X.509 Certificates。
+安全策略：使用票据（ Ticket ）来实现支持的认证协议；
+支持授权：可以决定哪些服务可以请求和验证服务票据（ Service Ticket ）；
+提供高可用性：通过把认证过的状态数据存储在 TicketRegistry 组件中，这些组件有很多支持分布式环境的实现，
+如： BerkleyDB 、 Default 、 EhcacheTicketRegistry 、 JDBCTicketRegistry 、 JBOSS TreeCache 、 JpaTicketRegistry 、 MemcacheTicketRegistry 等；
+支持多种客户端： Java, .Net, PHP, Perl, Apache, uPortal 等。</p>
+</div>
+<div class="section" id="id2">
+<h2>Cas流程<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Cas的访问流程分为几个步骤：</p>
+<ol class="arabic simple">
+<li>用户访问Cas保护的资源时，部署在客户Web应用的Cas AuthenticationFilter，会截获此请求，生成service参数，然后redirect到CAS 服务的login 接口;</li>
+</ol>
+<img alt="../../_images/cas_process1.jpg" src="../../_images/cas_process1.jpg" />
+<ol class="arabic simple" start="2">
+<li>用户与Cas Server进行交互，进行身份认证，认证成功后，CAS服务器会生成认证cookie，写入浏览器，同时将cookie缓存到服务器本地，
+并为客户端浏览器设置一个 Ticket Granted Cookie（TGC），CAS 服务器还会根据service 参数生成ticket,ticket会保存到服务器，也会加在url后面，然后将请求redirect回客户Web应用；</li>
+</ol>
+<img alt="../../_images/cas_process2.jpg" src="../../_images/cas_process2.jpg" />
+<ol class="arabic simple" start="3">
+<li>Web应用的AuthenticationFilter 看到ticket参数后，会跳过，由其后面的TicketValidationFilter处理，TicketValidationFilter会利用httpclient工具
+访问cas服务的/serviceValidate接口, 将ticket、service都传到此接口，由此接口验证ticket的有效性，TicketValidationFilter 如果得到验证成功的消息，
+就会把用户信息写入web 应用的session里；</li>
+</ol>
+<img alt="../../_images/cas_process3.jpg" src="../../_images/cas_process3.jpg" />
+<ol class="arabic simple" start="4">
+<li>至此为止，SSO会话就建立起来了，以后用户在同一浏览器里访问此web应用时，AuthenticationFilter会在session里读取到用户信息，所以就不会去CAS认证，
+如果在此浏览器里访问别的web 应用时，AuthenticationFilter在session 里读取不到用户信息，会去CAS 的login接口认证，但这时CAS会读取到浏览器传来的cookie，
+所以CAS不会要求用户去登录页面登录，只是会根据service参数生成一个ticket ，然后再和web应用做一个验证ticket的交互而已。</li>
+</ol>
+</div>
+<div class="section" id="cas-filter">
+<h2>Cas Filter处理逻辑<a class="headerlink" href="#cas-filter" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id3">
+<h2>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>用户在一个应用验证通过后，以后用户在同一浏览器里访问此应用时，客户端应用中的过滤器会在 session 里读取到用户信息，
+所以就不会去CAS Server认证。如果在此浏览器里访问别的web应用时，客户端应用中的过滤器在 session 里读取不到用户信息，
+就会去CAS Server的login接口认证，但这时CAS Server会读取到浏览器传来的cookie （ TGC ），所以CAS Server不会要求用户去登录页面登录，
+只是会根据 service参数生成一个ticket，然后再和web应用做一个验证ticket的交互而已。</p>
+<div class="section" id="handler">
+<h3>使用自己的Handler来处理登录登出<a class="headerlink" href="#handler" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="springcas-client">
+<h4>Spring通过如下配置文件进行配置Cas Client:<a class="headerlink" href="#springcas-client" title="Permalink to this headline">¶</a></h4>
+<div class="code highlight-python"><pre>&lt;!-- 声明Cas认证切入点，并声明默认配置为false，以加入自己的定制 --&gt;
+&lt;security:http entry-point-ref="casAuthenticationEntryPoint" auto-config="false"&gt;
+    &lt;!-- 声明被保护的资源，注意顺序，并加入spring security的权限管理 --&gt;
+    &lt;security:intercept-url pattern="/checkauthority.do" access="IS_AUTHENTICATED_ANONYMOUSLY" /&gt;
+    &lt;security:intercept-url pattern="/\**/\*.cas" access="ROLE_USER,ROLE_DOCTOR" /&gt;
+
+    &lt;!-- 如果声明默认配置为true，可以仅指定logout-success-url，其余都有默认初始值 --&gt;
+    &lt;security:logout logout-success-url="${cas.securityContext.casProcessingFilterEntryPoint.logoutUrl}?service=${index.url}" /&gt; --&gt;
+    &lt;security:custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER" /&gt;
+    &lt;security:custom-filter ref="casAuthenticationFilter" position="CAS_FILTER"/&gt;
+    &lt;security:custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/&gt;
+    &lt;security:custom-filter ref="requestSingleLogoutFilter" position="LOGOUT_FILTER"/&gt;
+&lt;/security:http&gt;
+
+&lt;bean id="casAuthenticationEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint"&gt;
+    &lt;property name="loginUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"/&gt;
+    &lt;property name="serviceProperties" ref="serviceProperties"&gt;&lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties"&gt;
+    &lt;property name="service" value="${cas.securityContext.serviceProperties.service}" /&gt;
+    &lt;property name="sendRenew" value="false" /&gt;
+&lt;/bean&gt;
+
+&lt;security:authentication-manager alias="authenticationManager"&gt;
+    &lt;security:authentication-provider ref="casAuthenticationProvider"/&gt;
+&lt;/security:authentication-manager&gt;
+
+&lt;bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider"&gt;
+    &lt;property name="authenticationUserDetailsService" ref="authenticationUserDetailsService" /&gt;
+    &lt;property name="serviceProperties" ref="serviceProperties"&gt;&lt;/property&gt;
+    &lt;property name="ticketValidator"&gt;
+        &lt;bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator"&gt;
+            &lt;constructor-arg index="0" value="${cas.securityContext.ticketValidator.casServerUrlPrefix}"&gt;&lt;/constructor-arg&gt;
+        &lt;/bean&gt;
+    &lt;/property&gt;
+    &lt;property name="key" value="an_id_for_this_auth_provider_only"&gt;&lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter"&gt;
+    &lt;property name="authenticationManager" ref="authenticationManager"/&gt;
+    &lt;property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="authenticationSuccessHandler" class="com.xikang.ch.cas.MyAuthenticationSuccessHandler"&gt;
+    &lt;property name="alwaysUseDefaultTargetUrl" value="true" /&gt;
+    &lt;property name="defaultTargetUrl" value="${index.url}" /&gt;
+    &lt;property name="serverName" value="${ch.domain}" /&gt;
+&lt;/bean&gt;
+
+&lt;bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter"&gt;
+    &lt;property name="sessionRegistry" ref="sessionRegistry" /&gt;
+    &lt;property name="expiredUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.logoutUrl}" /&gt;
+&lt;/bean&gt;
+
+&lt;bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" /&gt;
+
+&lt;bean id="authenticationUserDetailsService" class="com.xikang.ch.cas.GrantedAuthorityFromAssertionAttributesXKUserDetailsService"&gt;
+    &lt;constructor-arg&gt;
+        &lt;array&gt;
+            &lt;value&gt;authorities&lt;/value&gt;
+        &lt;/array&gt;
+    &lt;/constructor-arg&gt;
+&lt;/bean&gt;
+&lt;bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl" /&gt;
+
+&lt;!--登出配置--&gt;
+
+&lt;bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/&gt;
+
+&lt;bean id="requestSingleLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter"&gt;
+    &lt;constructor-arg value="${cas.securityContext.casProcessingFilterEntryPoint.logoutUrl}" /&gt;
+    &lt;constructor-arg&gt;
+        &lt;!-- &lt;bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" /&gt; --&gt;
+        &lt;bean class="com.xikang.cn.cas.MySecrityContextLogouthandler"/&gt;
+    &lt;/constructor-arg&gt;
+    &lt;property name="filterProcessesUrl" value="/j_spring_security_logout" /&gt;
+&lt;/bean&gt;</pre>
+</div>
+</div>
+<div class="section" id="spring-cas">
+<h4>Spring cas关键代码<a class="headerlink" href="#spring-cas" title="Permalink to this headline">¶</a></h4>
+<p>org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:</p>
+<div class="code java highlight-python"><pre>public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+    HttpServletRequest request = (HttpServletRequest) req;
+    HttpServletResponse response = (HttpServletResponse) res;
+    if (!requiresAuthentication(request, response)) {
+        chain.doFilter(request, response);
+        return;
+    }
+    if (logger.isDebugEnabled()) {
+        logger.debug("Request is to process authentication");
+    }
+    Authentication authResult;
+    try {
+        authResult = attemptAuthentication(request, response);
+        if (authResult == null) {
+            // return immediately as subclass has indicated that it hasn't completed authentication
+            return;
+        }
+        sessionStrategy.onAuthentication(authResult, request, response);
+    }catch(InternalAuthenticationServiceException failed) {
+        logger.error("An internal error occurred while trying to authenticate the user.", failed);
+        unsuccessfulAuthentication(request, response, failed);
+        return;
+    }catch (AuthenticationException failed) {
+        unsuccessfulAuthentication(request, response, failed);
+        return;
+    }
+    //Authentication success
+    if (continueChainBeforeSuccessfulAuthentication) {
+        chain.doFilter(request, response);
+    }
+
+    successfulAuthentication(request, response, chain, authResult);
+}
+
+protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+            Authentication authResult) throws IOException, ServletException{
+    successfulAuthentication(request, response, authResult);
+}
+
+@Deprecated
+protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+            Authentication authResult) throws IOException, ServletException {
+    if (logger.isDebugEnabled()) {
+        logger.debug("Authentication success. Updating SecurityContextHolder to contain: " + authResult);
+    }
+    SecurityContextHolder.getContext().setAuthentication(authResult);
+    rememberMeServices.loginSuccess(request, response, authResult);
+    if (this.eventPublisher != null) {
+        eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
+    }
+    successHandler.onAuthenticationSuccess(request, response, authResult);
+}</pre>
+</div>
+<p>org.springframework.security.web.authentication.logout.LogoutFilter:</p>
+<div class="code java highlight-python"><pre>public LogoutFilter(String logoutSuccessUrl, LogoutHandler... handlers) {
+    Assert.notEmpty(handlers, "LogoutHandlers are required");
+    this.handlers = Arrays.asList(handlers);
+    Assert.isTrue(!StringUtils.hasLength(logoutSuccessUrl) || UrlUtils.isValidRedirectUrl(logoutSuccessUrl), logoutSuccessUrl + " isn't a valid redirect URL");
+    SimpleUrlLogoutSuccessHandler urlLogoutSuccessHandler = new SimpleUrlLogoutSuccessHandler();
+    if (StringUtils.hasText(logoutSuccessUrl)) {
+        urlLogoutSuccessHandler.setDefaultTargetUrl(logoutSuccessUrl);
+    }
+    logoutSuccessHandler = urlLogoutSuccessHandler;
+    setFilterProcessesUrl("/j_spring_security_logout");
+}
+public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+    HttpServletRequest request = (HttpServletRequest) req;
+    HttpServletResponse response = (HttpServletResponse) res;
+    if (requiresLogout(request, response)) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Logging out user '" + auth + "' and transferring to logout destination");
+        }
+        for (LogoutHandler handler : handlers) {
+            handler.logout(request, response, auth);
+        }
+        logoutSuccessHandler.onLogoutSuccess(request, response, auth);
+        return;
+    }
+    chain.doFilter(request, response);
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>参考资料<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/">https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../programming/common/designpatterns.html" title="设计模式Head First"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="webpage.html" title="Web Page Design"
+             >previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

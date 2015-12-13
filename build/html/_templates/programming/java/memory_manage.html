@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="Data Structure And Algorithm" href="../common/algorithm.html" />
-    <link rel="prev" title="Json Object" href="json.html" /> 
+    <link rel="next" title="Junit Test" href="junit.html" />
+    <link rel="prev" title="Java Annotation" href="annotation.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../common/algorithm.html" title="Data Structure And Algorithm"
+          <a href="junit.html" title="Junit Test"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="json.html" title="Json Object"
+          <a href="annotation.html" title="Java Annotation"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -50,21 +50,22 @@
   <h3><a href="../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Memory Management</a><ul>
+<li><a class="reference internal" href="#id1">内存地址空间分配：</a></li>
 <li><a class="reference internal" href="#java">Java的内存回收机制</a><ul>
-<li><a class="reference internal" href="#id1">两种内存清理方式</a></li>
+<li><a class="reference internal" href="#id2">两种内存清理方式</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id2">最佳实践</a></li>
+<li><a class="reference internal" href="#id3">最佳实践</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="json.html"
-                        title="previous chapter">Json Object</a></p>
+  <p class="topless"><a href="annotation.html"
+                        title="previous chapter">Java Annotation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../common/algorithm.html"
-                        title="next chapter">Data Structure And Algorithm</a></p>
+  <p class="topless"><a href="junit.html"
+                        title="next chapter">Junit Test</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/java/memory_manage.txt"
@@ -93,6 +94,15 @@
             
   <div class="section" id="memory-management">
 <h1>Memory Management<a class="headerlink" href="#memory-management" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>内存地址空间分配：<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>1. Java Heap
+保存Java对象的方式；</p>
+<p>2. Permgen Space
+保存Java类元数据，类名称，方法名称，internal JVM objects, JIT相关数据；</p>
+<p>3. Native Heap(C Heap):
+保存MMAP files, other JVM和第三方本地对象；由内存空间+虚拟内存-JavaHeap-Permgen计算得出；</p>
+</div>
 <div class="section" id="java">
 <h2>Java的内存回收机制<a class="headerlink" href="#java" title="Permalink to this headline">¶</a></h2>
 <p>JVM有自己的内存回收机制，也就是我们熟悉的引用计数（reference counting）方法。
@@ -101,8 +111,8 @@
 <p>对于那些自引用或者两个对象互引用的，JVM也能及时清理掉。</p>
 <p>其实JVM使用一种更高效的内存清理办法，就是从Stack区和Static区去遍历引用，对每个引用及其指向对象的所有成员进行遍历，这些都是活动的对象。
 而那些没有被遍历到的，就是不活动的对象，JVM就会对其进行清理。</p>
-<div class="section" id="id1">
-<h3>两种内存清理方式<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>两种内存清理方式<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>JVM有两种基础的内存清理方式：一种是stop-and-copy；另一种是mark-and-sweep。</p>
 <p>Stop-and-copy：</p>
 <ul class="simple">
@@ -125,14 +135,15 @@
 现在的JDK除非必要情况下很少使用JIT编译器。</p>
 </div>
 </div>
-<div class="section" id="id2">
-<h2>最佳实践<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>虽然JAVA中有强大的GC进行内存的清理与回收，但是这个周期是比较长的，而且在使用Tomcat的过程中经常出现OutOfMemory，OutOfPergemSpace这样类似的错误，比较头疼。</p>
 <p>在内存不够的情况下也有可能造成程序本身的错误，在Neunn Base层的编写中，这里创建了大量对象，必须相应的调大Tomcat的内存配置，否则就会出现上述的各种问题。
 这里是这样修改：</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">JAVA_OPTS</span><span class="o">=</span><span class="s">&quot;$JAVA_OPTS -XX:PermSize=5120m -XX:MaxPermSize=10240m -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8&quot;</span>
 </pre></div>
 </div>
+<p>-XX: 的含义是制定Permgen空间。</p>
 <p>PermSapce主要是用来存储Java的类型信息的元数据，如果大量的创建对象，这个存储区域就会溢出，造成Tomcat崩溃，影响程序运行。</p>
 </div>
 </div>
@@ -150,10 +161,10 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../common/algorithm.html" title="Data Structure And Algorithm"
+          <a href="junit.html" title="Junit Test"
              >next</a> |</li>
         <li class="right" >
-          <a href="json.html" title="Json Object"
+          <a href="annotation.html" title="Java Annotation"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

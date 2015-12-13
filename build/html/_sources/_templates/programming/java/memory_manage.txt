@@ -5,6 +5,17 @@
 Memory Management
 ==========================================
 
+内存地址空间分配：
+==========================================
+1. Java Heap
+保存Java对象的方式；
+
+2. Permgen Space
+保存Java类元数据，类名称，方法名称，internal JVM objects, JIT相关数据；
+
+3. Native Heap(C Heap):
+保存MMAP files, other JVM和第三方本地对象；由内存空间+虚拟内存-JavaHeap-Permgen计算得出；
+
 Java的内存回收机制
 ==========================================
 JVM有自己的内存回收机制，也就是我们熟悉的引用计数（reference counting）方法。
@@ -52,5 +63,7 @@ JVM还有其他策略来增加执行速度。
 ::
 
  JAVA_OPTS="$JAVA_OPTS -XX:PermSize=5120m -XX:MaxPermSize=10240m -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8"
+
+-XX: 的含义是制定Permgen空间。
 
 PermSapce主要是用来存储Java的类型信息的元数据，如果大量的创建对象，这个存储区域就会溢出，造成Tomcat崩溃，影响程序运行。

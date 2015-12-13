@@ -36,21 +36,21 @@ Solution of Cloud Base Layer
 .. toctree::
    :maxdepth: 1
 
-   _templates/cloudbase/cloudOS
-   _templates/cloudbase/openstack_base
-   _templates/cloudbase/openstack_base_manager
-   _templates/cloudbase/jclouds
+   _templates/cloud/cloudOS
+   _templates/cloud/openstack_base
+   _templates/cloud/openstack_base_manager
+   _templates/cloud/jclouds
 
 
 Sulotion of OpenStack
-======================================
+--------------------------------------
 
 .. toctree::
    :maxdepth: 1
    
-   _templates/openstack/openstack
-   _templates/openstack/nova
-   _templates/openstack/neutron
+   _templates/cloud/openstack/openstack
+   _templates/cloud/openstack/nova
+   _templates/cloud/openstack/neutron
 
 
 Sulotion of Linux&Unix
@@ -66,7 +66,7 @@ Sulotion of Linux&Unix
    _templates/linux/firewall
 
 Linux Tools
-=====================================
+--------------------------------------
 
 .. toctree::
    :maxdepth: 1
@@ -77,7 +77,7 @@ Linux Tools
    _templates/linux/tools/vim
    _templates/linux/tools/mysql
    _templates/linux/tools/varnish
-   _templates/linux/tools/cas
+   _templates/linux/tools/solr
 
 Architecture
 ======================================
@@ -117,6 +117,7 @@ Sulotion of Distribution
   
    _templates/distribution/hadoop
    _templates/distribution/storage
+   _templates/distribution/zookeeper
 
 
 Sulotion of Web Service
@@ -129,6 +130,7 @@ Sulotion of Web Service
    _templates/web/restapi
    _templates/web/json
    _templates/web/webpage
+   _templates/web/cas
 
 Programming Framework
 ======================================
@@ -137,8 +139,8 @@ Programming Framework
    :maxdepth: 1
  
    _templates/programming/common/designpatterns
-   _templates/framework/spring
-   _templates/framework/spring_security
+   _templates/programming/framework/spring
+   _templates/programming/framework/spring_security
    _templates/programming/java/guice
 
 
@@ -154,10 +156,9 @@ Programming Skill
    _templates/programming/common/genetic
    _templates/programming/common/debug
    _templates/programming/c/thinking_in_c
-   _templates/programming/c/csapp
 
 Java On Roll
-======================================
+--------------------------------------
 
 .. toctree::
    :maxdepth: 1
@@ -176,7 +177,7 @@ Other
 
    _templates/other/projectManagement
    _templates/programming/java/config
-   _templates/cloudbase/openstack_base_releasenote
+   _templates/cloud/openstack_base_releasenote
    _templates/other/opticksandenvi
    _templates/other/encode
    _templates/other/invitation
@@ -184,5 +185,5 @@ Other
 
 Acknowledgements
 ======================================
-*感谢在张智博在技术文档的路上给予我诸多帮助，感谢赵永生，崔远智给予我们的领导。*
+*感谢在张智博在技术文档的路上给予我诸多帮助。*
 

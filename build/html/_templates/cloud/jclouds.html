@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>OpenStack SDK – JClouds &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="OpenStack Learning" href="openstack/openstack.html" />
+    <link rel="prev" title="OpenStack Base Back Stage NeunnManager" href="openstack_base_manager.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="openstack/openstack.html" title="OpenStack Learning"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="openstack_base_manager.html" title="OpenStack Base Back Stage NeunnManager"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">OpenStack SDK &#8211; JClouds</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#excercise">Excercise</a><ul>
+<li><a class="reference internal" href="#jclouds">JClouds中的请求</a><ul>
+<li><a class="reference internal" href="#id1">具体请求方法</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#jcloudstoken">JClouds中的token缓存机制</a></li>
+<li><a class="reference internal" href="#jclouds-log">JClouds Log 配置</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">JClouds源代码修改</a><ul>
+<li><a class="reference internal" href="#ip">绑定浮动IP</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="openstack_base_manager.html"
+                        title="previous chapter">OpenStack Base Back Stage NeunnManager</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="openstack/openstack.html"
+                        title="next chapter">OpenStack Learning</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/cloud/jclouds.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="openstack-sdk-jclouds">
+<h1>OpenStack SDK &#8211; JClouds<a class="headerlink" href="#openstack-sdk-jclouds" title="Permalink to this headline">¶</a></h1>
+<p>JClouds is an SDK of common clouds platform.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>JClouds是一个开源框架，它可帮你在云计算中起步并重用你的Java和Clojure开发技能。
+JClouds的API允许你自由的使用可迁移的抽象或特定的云特性。我们支持多种云环境：Amazon, VMWare, Azure 和 Rackspace</p>
+</div>
+<div class="section" id="excercise">
+<h2>Excercise<a class="headerlink" href="#excercise" title="Permalink to this headline">¶</a></h2>
+<p>We use jclouds as our SDK to build our own cloud system.</p>
+<div class="section" id="jclouds">
+<h3>JClouds中的请求<a class="headerlink" href="#jclouds" title="Permalink to this headline">¶</a></h3>
+<p>JClouds作为Openstack的sdk，不外乎的作用就是将用户请求的接口转换为http的请求，然后将返回的json结果转换为结构化的对象。</p>
+<p>首先jclouds会以用户名和密码请求相应权限的token，这些是是现在getapi请求中。
+之后再利用token请求相应接口，我们看一个示例：</p>
+<div class="highlight-python"><pre>@Named("security-groups:create")                                #方法名称
+@POST                                                           #向发送的http请求类型
+@Path("/ecurity-group-rules")                                   #发送http请求的路径，一般附在endpoint后
+@SelectJson("security_group_rule")                              #返回数据的首元素标志
+@Fallback(NullOnNotFoundOr404.class)                            #返回失败后的处理方式及jclouds的返回结果
+@Consumes(MediaType.APPLICATION_JSON)                           #request接受类型的格式
+@Produces(MediaType.APPLICATION_JSON)                           #response的格式
+@MapBinder(BindSecurityGroupRuleToJsonPayload.class)            #将参数转化为json的类名称
+SecurityGroupRule createSecurityGroupRule(Ingress groupRule);   #接口方法</pre>
+</div>
+<p>这里就是整个接口的调用方式，利用java的annotation，使用一套调用模板，可以在切面中加入任意的接口，而不会影响之前的任何代码实现。</p>
+<p>这里面，有个地方需要注意，MapBinder是一个接口，是：</p>
+<blockquote>
+<div>&lt;R extends HttpRequest&gt; R bindToRequest(R request, Map&lt;String, Object&gt; postParams);</div></blockquote>
+<p>转换的类必须实现这个接口，如：</p>
+<div class="highlight-python"><pre>@Singleton
+public class BindSecurityGroupRuleToJsonPayload extends BindToJsonPayload implements MapBinder{
+    @Override
+    public &lt;R extends HttpRequest&gt; R bindToRequest(R request, Map&lt;String, Object&gt; postParams){
+        //获取request，得到参数对象
+        Builder&lt;String, Object&gt; payload = ImmutableMap.builder();
+        payload.putAll(postParams);
+        checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
+            "this binder is only valid for GeneratedHttpRequests!");
+        GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
+
+        Ingress ingress = Ingress.class.cast(find(gRequest.getInvocation().getArgs(), instanceOf(Ingress.class)));
+        //之后将所有的属性名称和值放入payload中，这里省略很多重复代码
+        if(isNotEmpty(ingress.getProtocol())) {
+            payload.put("protocol", ingress.getProtocol());
+        }
+        return super.bindToRequest(request, ImmutableMap.of("security_group_rule", payload.build()));
+    }
+}</pre>
+</div>
+<div class="section" id="id1">
+<h4>具体请求方法<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>具体请求方法在InvokeSyncToAsyncHttpMethod类中，具体方法为：</p>
+<div class="highlight-python"><pre>public Object invoke(Invocation invocation) {
+    String commandName = config.getCommandName(invocation);
+    HttpCommand command = toCommand(commandName, invocation);
+    Function&lt;HttpResponse, ?&gt; transformer = getTransformer(commandName, command);
+    org.jclouds.Fallback&lt;?&gt; fallback = getFallback(commandName, invocation, command);
+    logger.debug("&gt;&gt; invoking %s", commandName);
+    try {
+        return transformer.apply(http.invoke(command));
+    } catch (Throwable t) {
+        try {
+            return fallback.createOrPropagate(t);
+        } catch (Exception e) {
+            throw propagate(e);
+        }
+    }
+}</pre>
+</div>
+</div>
+</div>
+<div class="section" id="jcloudstoken">
+<h3>JClouds中的token缓存机制<a class="headerlink" href="#jcloudstoken" title="Permalink to this headline">¶</a></h3>
+<p>JClouds还有一个重要作用，就是将请求的token进行状态缓存。这是为了充分利用token的有效期，并能有效的减少请求次数。</p>
+<p>将token请求后进行有效的存储。</p>
+<div class="highlight-python"><pre>V value = null;
+try {
+    value = getUninterruptibly(newValue);
+    if (value == null) {
+        throw new InvalidCacheLoadException("CacheLoader returned null for key " + key + ".");
+    }
+    statsCounter.recordLoadSuccess(loadingValueReference.elapsedNanos());
+    storeLoadedValue(key, hash, loadingValueReference, value);
+    return value;
+} finally {
+    if (value == null) {
+        statsCounter.recordLoadException(loadingValueReference.elapsedNanos());
+        removeLoadingValue(key, hash, loadingValueReference);
+    }
+}</pre>
+</div>
+<p>同时还写了自动刷新token的代码，当请求token的时候，就请求scheduleRefresh方法，这个方法会返回一个有效的token。
+这里使用一个时间记录标记now获得当前时间，然后将now值传入scheduleRfresh中，得到一个现在有效的token。</p>
+<div class="highlight-python"><pre>if (count != 0) {
+// read-volatile
+// don't call getLiveEntry, which would ignore loading values
+    ReferenceEntry&lt;K, V&gt; e = getEntry(key, hash);
+    if (e != null) {
+        long now = map.ticker.read();
+        V value = getLiveValue(e, now);
+        if (value != null) {
+            recordRead(e, now);
+            statsCounter.recordHits(1);
+            return scheduleRefresh(e, key, hash, value, now, loader);
+        }
+        ValueReference&lt;K, V&gt; valueReference = e.getValueReference();
+        if (valueReference.isLoading()) {
+            return waitForLoadingValue(e, key, valueReference);
+        }
+    }
+}</pre>
+</div>
+<p>JClouds将值存储之后进行定时刷新，如果时间超过定时刷新时间，就重新获取value并且返回，如果不是，那么就会返回oldValue。</p>
+<div class="highlight-python"><pre>V scheduleRefresh(ReferenceEntry&lt;K, V&gt; entry, K key, int hash, V oldValue, long now,
+    CacheLoader&lt;? super K, V&gt; loader) {
+    if (map.refreshes() &amp;&amp; (now - entry.getWriteTime() &gt; map.refreshNanos)
+        &amp;&amp; !entry.getValueReference().isLoading()) {
+        V newValue = refresh(key, hash, loader, true);
+        if (newValue != null) {
+            return newValue;
+        }
+    }
+    return oldValue;
+}</pre>
+</div>
+</div>
+<div class="section" id="jclouds-log">
+<h3>JClouds Log 配置<a class="headerlink" href="#jclouds-log" title="Permalink to this headline">¶</a></h3>
+<p>JClouds本身提供了Log支持，方便使用者在调用的时候调试，使用SLF4J和logback进行log记录。</p>
+<p>我们首先在pom中将两个jar添加进来，之后我们可以使用其默认的配置，比较方便的打印log，只要在初始化的时候写如下代码：</p>
+<div class="highlight-python"><pre>CinderApi cinderApi = ContextBuilder.newBuilder("openstack-cinder")
+    .endpoint(endpoint).credentials(identity, password)
+    .modules(new SLF4JLoggingModule()).buildApi(CinderApi.class);</pre>
+</div>
+<p>其实默认的配置已经能满足一般使用者的需求，作为程序员，我们都喜欢自己的配置。
+在当前工程的context path目录下加入文件logback.xml（我这里加入了eclipse的resource文件夹），基本配置如下：</p>
+<div class="highlight-python"><pre>&lt;configuration scan="false"&gt;
+    &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;%m%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+    &lt;appender name="FILE" class="ch.qos.logback.core.FileAppender"&gt;
+        &lt;file&gt;log/jclouds.log&lt;/file&gt;
+        &lt;encoder&gt; &lt;Pattern&gt;%d %-5p [%c] [%thread] %m%n&lt;/Pattern&gt; &lt;/encoder&gt;
+    &lt;/appender&gt;
+    &lt;logger name="jclouds.wire"&gt;
+        &lt;level value="DEBUG" /&gt;
+            &lt;appender-ref ref="STDOUT" /&gt;
+    &lt;/logger&gt;
+    &lt;logger name="jclouds.headers"&gt;
+        &lt;level value="DEBUG" /&gt;
+            &lt;appender-ref ref="STDOUT" /&gt;
+        &lt;/logger&gt;
+&lt;/configuration&gt;</pre>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>JClouds源代码修改<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>明白了JClouds的工作原理后，我们就可以自己添加相应的openstack接口的java sdk（因为jclouds漏了很多，提bug的页面经常不好使，我们期望它在下一个版本修复）;
+在我们的开发过程中，发现JClouds有写API写得不是很准确，而且有很多OpenStack的restapi没有相应实现，我们边开发，就边进行JClouds的修改，但并没有提交到社区。</p>
+<div class="section" id="ip">
+<h3>绑定浮动IP<a class="headerlink" href="#ip" title="Permalink to this headline">¶</a></h3>
+<p>浮动IP的绑定就是将虚拟机赋予一个外网IP，从而在公网上就可以访问，并且可以提供相应服务了。</p>
+<p>从网络逻辑上是将外部网络（这里是exnet）中的一个IP赋予与之相连的某个子网中的虚拟机，通过路由器将这个IP的包直接送到虚拟机主机所在网卡，进而送到该虚拟机中。</p>
+<p>通过命令：</p>
+<div class="highlight-python"><pre>neutron --debug floatingip-associate FLOATING_IP_ID PORT_ID</pre>
+</div>
+<p>显示结果为：</p>
+<div class="highlight-python"><pre>DEBUG: neutronclient.client
+REQ:
+curl -i http://192.168.250.222:9696/v2.0/floatingips/10813711-a7ab-4aea-92d6-554dd4f7082b.json
+    -X PUT -H "X-Auth-Token:"......"
+    -H "Content-Type: application/json" -H "Accept: application/json"
+    -H "User-Agent: python-neutronclient"
+    -d '{
+            "floatingip": {
+                "port_id": "94da9cf4-1948-44ae-b2ae-8fba464aada8"
+            }
+        }
+
+RESP:
+    {
+        'date': 'Tue,
+        16Sep201407: 16: 58GMT',
+        'status': '200',
+        'content-length': '376',
+        'content-type': 'application/json;charset=UTF-8'
+    }{
+     "floatingip": {
+        "router_id": "cbd8cebf-6688-44cb-a4f6-ece233af0108",
+        "status": "DOWN",
+        "tenant_id": "51b1873935554545bb9b953e4055a997",
+        "floating_network_id": "ec8b7335-ee0f-45b1-add5-9b6cafb72660",
+        "fixed_ip_address": "192.168.20.200",
+        "floating_ip_address": "192.168.252.192",
+        "port_id": "94da9cf4-1948-44ae-b2ae-8fba464aada8",
+        "id": "10813711-a7ab-4aea-92d6-554dd4f7082b"
+    }</pre>
+</div>
+<p>根据debug的结果，则相应的API为：</p>
+<div class="highlight-python"><pre>@Path("/v2.0/floatingips")
+@RequestFilters(AuthenticateRequest.class)
+@Consumes(MediaType.APPLICATION_JSON)
+public interface FloatingIPApi {
+
+    /**
+    * 为虚拟机绑定浮动IP
+    * @parm floatingip_id, port_id
+    */
+    @Named("floatingip:associate")
+    @PUT
+    @PATH("/{floatingip_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Payload("%7B\"floatingip\":%7B\"port_id\":\"{port_id}\"%7D%7D")
+    FloatingIP associateIp(@PathParam(floatingip_id) String floatingip_id, @PayloadParam(port_id) String port_id)
+
+    /**
+    * 为虚拟机解绑浮动IP
+    * @parm floatingip_id
+    */
+    @Named("floatingip:disassociate")
+    @PUT
+    @PATH("/{floatingip_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Payload("%7B\"floatingip\":%7B\"port_id\":null%7D%7D")
+    FloatingIP disassociateIp(@PathParam(floatingip_id) String floatingip_id)
+
+}</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="openstack/openstack.html" title="OpenStack Learning"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="openstack_base_manager.html" title="OpenStack Base Back Stage NeunnManager"
+             >previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

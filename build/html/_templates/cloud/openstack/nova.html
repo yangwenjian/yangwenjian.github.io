@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>OpenStack Nova &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Neutron" href="neutron.html" />
+    <link rel="prev" title="OpenStack Learning" href="openstack.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="neutron.html" title="Neutron"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="openstack.html" title="OpenStack Learning"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">OpenStack Nova</a><ul>
+<li><a class="reference internal" href="#nova-api">Nova API:</a><ul>
+<li><a class="reference internal" href="#nova-flavor-api">Nova Flavor API:</a></li>
+<li><a class="reference internal" href="#hypervisor-api">Hypervisor Api:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="openstack.html"
+                        title="previous chapter">OpenStack Learning</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="neutron.html"
+                        title="next chapter">Neutron</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/cloud/openstack/nova.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="openstack-nova">
+<h1>OpenStack Nova<a class="headerlink" href="#openstack-nova" title="Permalink to this headline">¶</a></h1>
+<p>Nova is the most important componet in OpenStack, which includes all information and control actions of virtual machine.</p>
+<div class="section" id="nova-api">
+<h2>Nova API:<a class="headerlink" href="#nova-api" title="Permalink to this headline">¶</a></h2>
+<p>Nova 对外提供很多虚拟机操作和管理的API，早期的版本也包含网络，镜像，块存储的API。</p>
+<div class="section" id="nova-flavor-api">
+<h3>Nova Flavor API:<a class="headerlink" href="#nova-flavor-api" title="Permalink to this headline">¶</a></h3>
+<p>Nova flaovr 是为虚拟机提供硬件大小的模板，并且可以设置为public和private两种属性。
+这个功能主要是做模板管理，之后可以通过控制模板来控制用户所建的虚拟机大小。</p>
+<p>通过命令：
+nova flavor-list可以查看所有模板。</p>
+<p>通过命令：
+nova flaovr-access-list &#8211;flavor ID可以查看某个模板的访问权限；
+nova flavor-access-list &#8211;tenant ID可以查看某个租户的可访问模板列表。</p>
+</div>
+<div class="section" id="hypervisor-api">
+<h3>Hypervisor Api:<a class="headerlink" href="#hypervisor-api" title="Permalink to this headline">¶</a></h3>
+<p>请求hypervisor-show的api，首先请求Hypervisor列表http://ncloud-nova-1:8774/v2/0ca7e360f8fa4f21866baad39e594c2f/os-hypervisors，
+返回所有hypversor基本信息，之后再请求详细信息，返回的是所有OpenStack中的hypervisors的详细信息，包括ip，硬件信息，虚拟化信息，虚拟配置（vcpu），返回的是Hypervisor数组，之后从数组中获取hypervisor-show参数对应的hypervisor信息。
+具体如下：</p>
+<div class="highlight-python"><pre>curl -i 'http://ncloud-nova-1:8774/v2/0ca7e360f8fa4f21866baad39e594c2f/os-hypervisors/detail' -X GET -H "X-Auth-Project-Id: wtq" -H "Accept: application/json" -H "X-Auth-Token: ..."</pre>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&quot;hypervisors&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="s">&quot;service&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">&quot;host&quot;</span><span class="p">:</span> <span class="s">&quot;ncloud-compute-16.maas&quot;</span><span class="p">,</span>
+            <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="mi">27</span>
+        <span class="p">},</span>
+        <span class="s">&quot;vcpus_used&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s">&quot;hypervisor_type&quot;</span><span class="p">:</span> <span class="s">&quot;QEMU&quot;</span><span class="p">,</span>
+        <span class="s">&quot;local_gb_used&quot;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+        <span class="s">&quot;host_ip&quot;</span><span class="p">:</span> <span class="s">&quot;192.168.250.26&quot;</span><span class="p">,</span>
+        <span class="s">&quot;hypervisor_hostname&quot;</span><span class="p">:</span> <span class="s">&quot;ncloud-compute-16.maas&quot;</span><span class="p">,</span>
+        <span class="s">&quot;memory_mb_used&quot;</span><span class="p">:</span> <span class="mi">17920</span><span class="p">,</span>
+        <span class="s">&quot;memory_mb&quot;</span><span class="p">:</span> <span class="mi">128903</span><span class="p">,</span>
+        <span class="s">&quot;current_workload&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s">&quot;vcpus&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s">&quot;cpu_info&quot;</span><span class="p">:</span> <span class="s">&quot;{vendor</span><span class="se">\&quot;</span><span class="s">: </span><span class="se">\&quot;</span><span class="s">Intel</span><span class="se">\&quot;</span><span class="s">...</span><span class="se">\&quot;</span><span class="s">fpu</span><span class="se">\&quot;</span><span class="s">], </span><span class="se">\&quot;</span><span class="s">topology</span><span class="se">\&quot;</span><span class="s">: {</span><span class="se">\&quot;</span><span class="s">cores</span><span class="se">\&quot;</span><span class="s">: 8, </span><span class="se">\&quot;</span><span class="s">threads</span><span class="se">\&quot;</span><span class="s">: 2, </span><span class="se">\&quot;</span><span class="s">sockets</span><span class="se">\&quot;</span><span class="s">: 1}}&quot;</span><span class="p">,</span>
+        <span class="s">&quot;running_vms&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="s">&quot;free_disk_gb&quot;</span><span class="p">:</span> <span class="mi">1835</span><span class="p">,</span>
+        <span class="s">&quot;hypervisor_version&quot;</span><span class="p">:</span> <span class="mi">2000000</span><span class="p">,</span>
+        <span class="s">&quot;disk_available_least&quot;</span><span class="p">:</span> <span class="mi">1722</span><span class="p">,</span>
+        <span class="s">&quot;local_gb&quot;</span><span class="p">:</span> <span class="mi">2015</span><span class="p">,</span>
+        <span class="s">&quot;free_ram_mb&quot;</span><span class="p">:</span> <span class="mi">110983</span><span class="p">,</span>
+        <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="mi">31</span>
+    <span class="p">}]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="neutron.html" title="Neutron"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="openstack.html" title="OpenStack Learning"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

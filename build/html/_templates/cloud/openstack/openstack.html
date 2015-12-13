@@ -1,0 +1,244 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>OpenStack Learning &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="OpenStack Nova" href="nova.html" />
+    <link rel="prev" title="OpenStack SDK – JClouds" href="../jclouds.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nova.html" title="OpenStack Nova"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../jclouds.html" title="OpenStack SDK – JClouds"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">OpenStack Learning</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#learning-path">Learning Path</a></li>
+<li><a class="reference internal" href="#oslo">OSLO</a></li>
+<li><a class="reference internal" href="#opensstack-from-netease">OpensStack from Netease</a><ul>
+<li><a class="reference internal" href="#id1">网易部署方案</a></li>
+<li><a class="reference internal" href="#id2">优化方案</a></li>
+<li><a class="reference internal" href="#id3">经验分享</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../jclouds.html"
+                        title="previous chapter">OpenStack SDK &#8211; JClouds</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nova.html"
+                        title="next chapter">OpenStack Nova</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/cloud/openstack/openstack.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="openstack-learning">
+<h1>OpenStack Learning<a class="headerlink" href="#openstack-learning" title="Permalink to this headline">¶</a></h1>
+<p>How I learn about OpenStack!</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Compute（Nova）提供计算虚拟化服务，是 OpenStack 的核心，负责管理和创建虚拟机。它被设计成方便扩展，支持多种虚拟化技术，并且可以部署在标准硬件上；</li>
+<li>Object Storage（Swift）提供对象存储服务，是一个分布式，可扩展，多副本的存储系统；</li>
+<li>Block Storage（Cinder），提供块存储服务，为 OpenStack 的虚拟机提供持久的块级存储设备。支持多种存储后端，包括 Ceph，EMC等；</li>
+<li>Networking（Neutron）提供网络虚拟化服务，是一个可拔插，可扩展，API 驱动的服务；</li>
+<li>Dashboard 提供了一个图形控制台服务，让用户方便地访问，使用和维护 OpenStack 中的资源；</li>
+<li>Image（glance）提供镜像服务，它旨在发现，注册和交付虚拟机磁盘和镜像，支持多种后端；</li>
+<li>Telemetry（Ceilometer）提供用量统计服务，通过它可以方便地实现 OpenStack 计费功能；</li>
+<li>Orchestration（Heat）整合了 OpenStack 中的众多组件，类似 AWS 的 CloudFormation，让用户能够通过模板来管理资源；</li>
+<li>Database（Trove）基于 OpenStack 构建的 database-as-a-service。</li>
+<li>ImageMarket（Murano）OpenStack镜像市场。</li>
+<li>HealthCheck（OSTF）OpenStack健康检查。</li>
+</ol>
+</div>
+<div class="section" id="learning-path">
+<h2>Learning Path<a class="headerlink" href="#learning-path" title="Permalink to this headline">¶</a></h2>
+<p>Use OpenStack to Build our own Cloud System
+1.Build base layer to merge other cloud kernel such as CloudStack, Vmare;</p>
+<blockquote>
+<div><p>1.1 Use jclouds to be our OpenStack SDK;</p>
+<p>1.2 Build our own beans correspondence jclouds beans;</p>
+</div></blockquote>
+<p>2.Build rest api service with jersy;</p>
+<p>3.Build monitor system named argus based on zabbix;</p>
+<p>4.Build our own storage system based on ceph;</p>
+<p>5.Build management and operation service base on base layer;</p>
+</div>
+<div class="section" id="oslo">
+<h2>OSLO<a class="headerlink" href="#oslo" title="Permalink to this headline">¶</a></h2>
+<p>在Oslo项目出现之前，Openstack的每个组件都要自己实现处理配置文件的代码，这样就导致了一系列重复代码的产生，这是程序员所不能忍受的，因此Oslo就解决这类问题。</p>
+<p>Oslo需要解决的几点问题：</p>
+<ol class="arabic simple">
+<li>command line option parsing;</li>
+<li>common command line options;</li>
+<li>configuration file parsing;</li>
+<li>option value lookup.</li>
+</ol>
+<p>Oslo.conf在使用时，需要先声明配置项的名称、定义类型、帮助文字、缺省值等，然后再按照事先声明的配置项，对CLI或conf中的内容进行解析。</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">common_opts</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">StrOpt</span><span class="p">(</span><span class="s">&#39;bind_host&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s">&#39;0.0.0.0&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;IP address to listen on&#39;</span><span class="p">),</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">IntOpt</span><span class="p">(</span><span class="s">&#39;bind_port&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">9292</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;Port number to listen on&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="opensstack-from-netease">
+<h2>OpensStack from Netease<a class="headerlink" href="#opensstack-from-netease" title="Permalink to this headline">¶</a></h2>
+<p>网易利用OpenStack部署自己的私有云服务，为游戏和互联网应用提供基础平台。</p>
+<p>提高了机器的利用率，减少了运维开销和人员，提高了应对突发业务的能力。</p>
+<p>参考资料：<a class="reference external" href="http://www.ibm.com/developerworks/cn/cloud/library/1408_zhangxl_openstack/#resources">http://www.ibm.com/developerworks/cn/cloud/library/1408_zhangxl_openstack/#resources</a>.</p>
+<div class="section" id="id1">
+<h3>网易部署方案<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>总结下网易在部署中的一些技巧。</p>
+<ol class="arabic simple">
+<li>keystone后端使用mysql，使用memcache存放token，所有服务（nova，glance，neutron）的keystoneclient都使用memcache作为token的缓存；</li>
+<li>多region部署方案可以使得整个openstack资源池既可以支持nova-network和neutron两种网络部署方案，通过共享一个keystone实现用户单点登录；</li>
+</ol>
+<img alt="../../../_images/openstack_multiregion.jpg" src="../../../_images/openstack_multiregion.jpg" />
+<ol class="arabic simple" start="3">
+<li>为提高硬件利用率，将服务器分为计算节点，控制计算节点；</li>
+<li>对外提供 API 的服务有 nova-api-os-compute，nova-novncproxy ,glance-api，keystone。这类服务的特点是无状态，可以方便地横向扩展，故此类服务均部署在负载均衡 HAProxy 之后，并且使用 Keepalived 做高可用；</li>
+</ol>
+<img alt="../../../_images/openstack_node.jpg" src="../../../_images/openstack_node.jpg" />
+<ol class="arabic simple" start="5">
+<li>为了保证服务质量和便于维护，我们没有使用 nova-api，而是分为 nova-api-os-compute 和 nova-api-metadata 分别管理。外部依赖方面，网易私有云部署了高可用 RabbitMQ 集群和主备 MySQL，以及 memcache 集群；</li>
+<li>网络规划方面，网易私有云主要使用 nova-network 的 FlatDHCPManager+multi-host 网络模式，并划分了多个 Vlan，分别用于虚拟机 fixed-ip 网络、内网浮动 IP 网络、外网网络；</li>
+<li>运维使用类似nagios的自主研发系统，部署使用puppet，bug定位使用Stack Tach；</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h3>优化方案<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>网易选用kvm做底层虚拟化，使用libvirt做计算驱动，linux发行版选择Debian。
+选择了Debian社区的Linux 3.10.40内核源代码，并且打开了CPU/mem/blkio等cgroup配置选项以及user namespace等namespace选项，自己编译了一个适配网易私有云的Linux内核。</p>
+<p><strong>cpu优化</strong></p>
+<p>2 个 VCPU 分别绑定到不同 numa 节点的非超线程核上和分配到一对相邻的超线程核上的性能相差有 30%~40%（通过 SPEC CPU2006 工具测试）。
+由于cpu0用于处理中断请求，我们将cpu0～3预留出来，libvirt的配置如下：</p>
+<div class="highlight-python"><pre>&lt;vcpu placement='static' cpuset='4-23'&gt;1&lt;/vcpu&gt;
+&lt;cputune&gt;
+    &lt;shares&gt;1024&lt;/shares&gt;
+    &lt;period&gt;100000&lt;/period&gt;
+    &lt;quota&gt;57499&lt;/quota&gt;
+&lt;/cputune&gt;</pre>
+</div>
+<p><strong>内存优化</strong></p>
+<p>内存方面采取关闭KVM内存共享，打开透明大页。</p>
+<div class="highlight-python"><pre>echo 0 &gt; /sys/kernel/mm/ksm/pages_shared
+echo 0 &gt; /sys/kernel/mm/ksm/pages_sharing
+echo always &gt; /sys/kernel/mm/transparent_hugepage/enabled
+echo never &gt; /sys/kernel/mm/transparent_hugepage/defrag
+echo 0 &gt; /sys/kernel/mm/transparent_hugepage/khugepaged/defrag</pre>
+</div>
+<p>这些配置对云主机的cpu性能有大概7%的提升（资料来自IBM developer works）。</p>
+<p><strong>磁盘优化</strong></p>
+<p>KVM的disk cache: none cache方式；</p>
+<p>disk io scheduler: cfq；</p>
+<p>IO QOS: Nova 执行命令方式写入到 cgroup 中；</p>
+<p>network IO: 开启了 vhost_net 模式。</p>
+</div>
+<div class="section" id="id3">
+<h3>经验分享<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>建议跟进社区版本，与社区保持同步；</p>
+<p>不要闭门造车，多参考社区方案；</p>
+<p>升级问题，避免停止服务；</p>
+<p>配置项与硬件有很大关系，测试通过才能上线；</p>
+<p>避免配额之和超出容量，会有各种问题；</p>
+<p>网络规划提前做好；</p>
+<p>网络安全和信息安全需要引起重视。</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nova.html" title="OpenStack Nova"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../jclouds.html" title="OpenStack SDK – JClouds"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

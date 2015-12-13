@@ -111,7 +111,7 @@ IOC的三种形式
 
 2.设值注入
 ``````````````````````````````````````````
-通过实现setter方法而进行依赖注入，是最常用的注入方式。
+通过实现setter方法而进行依赖注入，是最常用的注入方式，方便易用，直接在配置文件中写入即可。
 
 
 3.构造子注入
@@ -127,6 +127,47 @@ IOC的三种形式
         }
     }
 
+Spring集中读取properties文件的方式
+===================================================
+
+::
+
+    <bean id="propertyConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:jdbc.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close">
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+    </bean>
+
+或者：
+
+:: 
+
+	<env-entry>
+		<env-entry-name>siteConfigHome</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>/opt/ChConfigHome/</env-entry-value>
+	</env-entry>
+	Context initCtx = new InitialContext();
+	Context envCtx = (Context) initCtx.lookup("java:comp/env");
+	result = (String) envCtx.lookup("siteConfigHome");
+
+或者：
+
+::
+
+	<context-param>
+		<param-name>serverConfigLocation</param-name>
+		<param-value>WEB-INF/classes/config-server.properties</param-value>
+	</context-param>
+	servletConfig.getServletContext().getInitParameter("serverConfigLocation");
 
 Spring的数据源管理
 ===========================================
@@ -516,6 +557,31 @@ Spring AOP可以有如下几种实现形式：
 
 这里around方式没有执行成功，返回的对象jersyclient解析不了，暂时还未解决这个问题。
 
+Spring web工程启动初始化
+====================================
+靠web容器的线程启动listerner:
+
+::
+
+	<listener>
+		<listener-class>com.xikang.ch.core.web.listener.SiteConfigureListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>com.xikang.ch.portal.system.config.CloudHospitalListenerConfigurator</listener-class>
+	</listener>
+
+加载spring配置文件：
+
+::
+
+    <context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:conf/\*/spring-context\*.xml</param-value>
+	</context-param>
+	
+程序中如何设计异常：类似于Java源代码一样，认为是bug的异常，也就是不应该，但可能的情况，使用runtime exception；
+由不可控力造成的异常：如IO，网络等不由程序控制的异常，应该使用非运行时异常。
+
 Spring log4j
 =========================================
 Spring可以良好的整合其他框架，在Spring中配置log4j是非常简单的事情。
@@ -565,4 +631,4 @@ Spring可以良好的整合其他框架，在Spring中配置log4j是非常简单
 
 如果是非Web项目，需要在resource文件夹中加入log4j.properties，就可以使用非常方便的log服务了。
 
-这里需要注意的是，apache推荐使用DEBUG, INOF, WARN, ERROR这四个等级，建议在release的时候将log等级调整为ERROR或者WARN
+这里需要注意的是，apache推荐使用DEBUG, INOF, WARN, ERROR这四个等级，建议在release的时候将log等级调整为ERROR或者WARN。
