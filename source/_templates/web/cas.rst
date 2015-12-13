@@ -19,18 +19,21 @@ Cas流程
 ========================================================
 Cas的访问流程分为几个步骤：
 
-1. 用户访问Cas保护的资源时，部署在客户Web应用的Cas AuthenticationFilter，会截获此请求，生成service参数，然后redirect到CAS 服务的login 接口;
+1. 用户访问Cas保护的资源时，部署在客户Web应用的AuthenticationFilter，会截获此请求，生成service参数，然后redirect到CAS服务的login接口，
+   例如：https://casserverurl/cas/login?service=http://webserver/j_spring_cas_security_check；
 
 .. image:: images/cas_process1.jpg
 
 2. 用户与Cas Server进行交互，进行身份认证，认证成功后，CAS服务器会生成认证cookie，写入浏览器，同时将cookie缓存到服务器本地，
-   并为客户端浏览器设置一个 Ticket Granted Cookie（TGC），CAS 服务器还会根据service 参数生成ticket,ticket会保存到服务器，也会加在url后面，然后将请求redirect回客户Web应用；
+   并为客户端浏览器设置一个 Ticket Granted Cookie（TGC），CAS 服务器还会根据service 参数生成ticket,ticket会保存到服务器，
+   也会加在url后面，然后将请求redirect回客户Web服务器，
+   例如：http://webserver/webapp/j_spring_cas_security_check?ticket=ST-0-ER94xMJmn6pha35CQRoZ；
 
 .. image:: images/cas_process2.jpg
 
-3. Web应用的AuthenticationFilter 看到ticket参数后，会跳过，由其后面的TicketValidationFilter处理，TicketValidationFilter会利用httpclient工具
-   访问cas服务的/serviceValidate接口, 将ticket、service都传到此接口，由此接口验证ticket的有效性，TicketValidationFilter 如果得到验证成功的消息，
-   就会把用户信息写入web 应用的session里；
+3. Web应用的CasAuthenticationFilter会监听上述请求，看到ticket参数后，会跳过，传给AuthenticationManager进行处理，也就是配置中的CasAuthenticationProvider，
+   由里面配置的的TicketValidationFilter处理，TicketValidationFilter会发送请求到Cas Server的/serviceValidate接口, 将ticket、service都传到此接口，
+   由此接口验证ticket的有效性，之后Cas Server会给出响应，如果成功的话响应中会包含UserName；
 
 .. image:: images/cas_process3.jpg
 
@@ -139,8 +142,128 @@ Spring通过如下配置文件进行配置Cas Client:
 Spring cas关键代码
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:
+当用户访问一个被SpringSecurity保护的资源时，会抛出AccessDeniedException或者AuthenticationException，
+就会被ExceptionTranslationFilter类探测并解惑；
 
+org.springframework.security.web.access.ExceptionTranslationFilter:
+```````````````````````````````````````````````````````````````````````````````````````````````````````````
+.. code:: java
+
+    public class ExceptionTranslationFilter extends GenericFilterBean {
+
+        private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
+        //认证的切面入口点，这里是casAuthenticationEntryPoint
+        private AuthenticationEntryPoint authenticationEntryPoint;
+        private AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
+        private ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
+        private RequestCache requestCache = new HttpSessionRequestCache();
+
+        public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+                throws IOException, ServletException {
+            HttpServletRequest request = (HttpServletRequest) req;
+            HttpServletResponse response = (HttpServletResponse) res;
+            try{
+                chain.doFilter(request, response);
+                logger.debug("Chain processed normally");
+            }catch (IOException ex) {
+                throw ex;
+            }catch (Exception ex) {
+                // Try to extract a SpringSecurityException from the stacktrace
+                Throwable[] causeChain = throwableAnalyzer.determineCauseChain(ex);
+                RuntimeException ase = (AuthenticationException) throwableAnalyzer.getFirstThrowableOfType(AuthenticationException.class, causeChain);
+                if (ase == null) {
+                    ase = (AccessDeniedException)throwableAnalyzer.getFirstThrowableOfType(AccessDeniedException.class, causeChain);
+                }
+                if (ase != null) {
+                    handleSpringSecurityException(request, response, chain, ase);
+                }else {
+                    // Rethrow ServletExceptions and RuntimeExceptions as-is
+                    if (ex instanceof ServletException) {
+                        throw (ServletException) ex;
+                    }else if (ex instanceof RuntimeException) {
+                        throw (RuntimeException) ex;
+                    }
+                    // Wrap other Exceptions. This shouldn't actually happen
+                    // as we've already covered all the possibilities for doFilter''
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        private void handleSpringSecurityException(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+                RuntimeException exception) throws IOException, ServletException {
+            if (exception instanceof AuthenticationException) {
+                logger.debug("Authentication exception occurred; redirecting to authentication entry point", exception);
+                sendStartAuthentication(request, response, chain, (AuthenticationException) exception);
+            }else if (exception instanceof AccessDeniedException) {
+                if (authenticationTrustResolver.isAnonymous(SecurityContextHolder.getContext().getAuthentication())) {
+                    logger.debug("Access is denied (user is anonymous); redirecting to authentication entry point", exception);
+                    sendStartAuthentication(request, response, chain, new InsufficientAuthenticationException(
+                                            "Full authentication is required to access this resource"));
+                } else {
+                    logger.debug("Access is denied (user is not anonymous); delegating to AccessDeniedHandler", exception);
+                    accessDeniedHandler.handle(request, response, (AccessDeniedException) exception);
+                }
+            }
+        }
+        protected void sendStartAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+                AuthenticationException reason) throws ServletException, IOException {
+            SecurityContextHolder.getContext().setAuthentication(null);
+            requestCache.saveRequest(request, response);
+            logger.debug("Calling Authentication entry point.");
+            //这里根据authenticationEntryPoint的具体类型重定向到其中的认证页面
+            authenticationEntryPoint.commence(request, response, reason);
+        }
+    }
+
+Cas Client通过TicketValidationFilter来验证ticket的有效性；
+
+org.jasig.cas.client.validation.AbstractTicketValidationFilter:
+```````````````````````````````````````````````````````````````````````````````````````````````````````````
+.. code:: java
+
+     public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, 
+        final FilterChain filterChain) throws IOException, ServletException {
+        if (!preFilter(servletRequest, servletResponse, filterChain)) {
+            return;
+        }
+        final HttpServletRequest request = (HttpServletRequest) servletRequest;
+        final HttpServletResponse response = (HttpServletResponse) servletResponse;
+        final String ticket = CommonUtils.safeGetParameter(request, getArtifactParameterName());
+        if (CommonUtils.isNotBlank(ticket)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Attempting to validate ticket: " + ticket);
+            }
+            try{
+                final Assertion assertion = this.ticketValidator.validate(ticket, constructServiceUrl(request, response));
+                if (log.isDebugEnabled()) {
+                    log.debug("Successfully authenticated user: " + assertion.getPrincipal().getName());
+                }
+                request.setAttribute(CONST_CAS_ASSERTION, assertion);
+                if (this.useSession) {
+                    request.getSession().setAttribute(CONST_CAS_ASSERTION, assertion);
+                }
+                onSuccessfulValidation(request, response, assertion);
+            }catch (final TicketValidationException e) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                log.warn(e, e);
+                onFailedValidation(request, response);
+                if (this.exceptionOnValidationFailure) {
+                    throw new ServletException(e);
+                }
+            }
+            if (this.redirectAfterValidation) {
+                log. debug("Redirecting after successful ticket validation.");
+                response.sendRedirect(response.encodeRedirectURL(constructServiceUrl(request, response)));
+                return;
+            }
+        }
+        filterChain.doFilter(request, response);
+     }
+
+Cas Client通过CasAuthenticationFilter来监听/j_spring_cas_security_check的请求，进行认证后的filter工作；
+
+org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:
+````````````````````````````````````````````````````````````````````````````````````````````````````````````
 .. code:: java
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -157,7 +280,7 @@ org.springframework.security.web.authentication.AbstractrAuthenticationProcessin
         try {
             authResult = attemptAuthentication(request, response);
             if (authResult == null) {
-                // return immediately as subclass has indicated that it hasn't completed authentication
+                // return immediately as subclass has indica ted that it hasn't completed authentication
                 return;
             }
             sessionStrategy.onAuthentication(authResult, request, response);
@@ -184,7 +307,7 @@ org.springframework.security.web.authentication.AbstractrAuthenticationProcessin
     
     @Deprecated
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                Authentication authResult) throws IOException, ServletException {
+            Authentication authResult) throws IOException, ServletException {
         if (logger.isDebugEnabled()) {
             logger.debug("Authentication success. Updating SecurityContextHolder to contain: " + authResult);
         }
@@ -196,7 +319,58 @@ org.springframework.security.web.authentication.AbstractrAuthenticationProcessin
         successHandler.onAuthenticationSuccess(request, response, authResult);
     }
 
+通过继承SimpleUrlAuthenticationSuccessHandler来实现自己的登录后逻辑；
+
+org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
+`````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+.. code:: java
+
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
+        handle(request, response, authentication);
+        clearAuthenticationAttributes(request);
+    }
+
+    protected final void clearAuthenticationAttributes(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if(session == null){
+            return;
+        }
+        session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+    }
+
+    //父类方法
+    protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+            throws IOException, ServletException {
+        String targetUrl = determineTargetUrl(request, response);
+        if (response.isCommitted()) {
+            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+            return;
+        }
+        redirectStrategy.sendRedirect(request, response, targetUrl);
+    }
+
+通过继承AbstractCasAssertionUserDetailsService来实现用户权限分配；
+
+org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsService
+`````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+
+.. code:: java
+    
+    //认证成功后回调，返回用户Code的方法
+    public abstract class AbstractCasAssertionUserDetailsService implements AuthenticationUserDetailsService{
+        public final UserDetails loadUserDetails(final Authentication token) throws UsernameNotFoundException {
+            Assert.isInstanceOf(CasAssertionAuthenticationToken.class, token, "The provided token MUST be an instance of CasAssertionAuthenticationToken.class");
+            return loadUserDetails(((CasAssertionAuthenticationToken) token).getAssertion());
+        }
+    }
+    //空方法，需要继承实现，来编写自己的逻辑
+    protected abstract UserDetails loadUserDetails(Assertion assertion);
+
+通过继承SecurityContextLogoutHandler并注入到LogoutFilter来实现自己的用户登出逻辑，这里可以使用多个Handler；
+
 org.springframework.security.web.authentication.logout.LogoutFilter:
+`````````````````````````````````````````````````````````````````````````````````````````````````````````````````
 
 .. code:: java
 
@@ -231,5 +405,7 @@ org.springframework.security.web.authentication.logout.LogoutFilter:
 
 参考资料
 ===========================================================
+http://docs.spring.io/spring-security/site/docs/3.1.6.RELEASE/reference/cas.html
 https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/
+http://blog.csdn.net/dongdong_java/article/details/22293377
 
