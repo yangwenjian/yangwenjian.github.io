@@ -7,13 +7,39 @@ Central Authentication Service 是开源的单点登录解决方案。
 
 Cas介绍
 =======================================================
-支持的协议：Protocols ： Custom Protocol 、 CAS 、 OAuth 、 OpenID 、 RESTful API 、 SAML1.1 、 SAML2.0。
+支持的协议（Protocols）： Custom Protocol 、 CAS 、 OAuth 、 OpenID 、 RESTful API 、 SAML1.1 、 SAML2.0。
+
 支持的认证机制：Active Directory 、 JAAS 、 JDBC 、 LDAP 、 X.509 Certificates。
-安全策略：使用票据（ Ticket ）来实现支持的认证协议；
-支持授权：可以决定哪些服务可以请求和验证服务票据（ Service Ticket ）；
+
+安全策略：使用票据（Ticket）来实现支持的认证协议；
+
+支持授权：可以决定哪些服务可以请求和验证服务票据（Service Ticket）；
+
 提供高可用性：通过把认证过的状态数据存储在 TicketRegistry 组件中，这些组件有很多支持分布式环境的实现，
 如： BerkleyDB 、 Default 、 EhcacheTicketRegistry 、 JDBCTicketRegistry 、 JBOSS TreeCache 、 JpaTicketRegistry 、 MemcacheTicketRegistry 等；
+
 支持多种客户端： Java, .Net, PHP, Perl, Apache, uPortal 等。
+
+相关概念
+--------------------------------------------------------
+
+Credentials：用户提供的用于登录用的凭据信息，如用户名/密码、证书、IP地址、Cookie值等。比如UsernamePasswordCredentials，封装的是用户名和密码。
+CAS进行认证的第一步，就是把从UI或request对象里取到的用户凭据封装成Credentials对象，然后交给认证管理器去认证；
+
+AuthenticationHandler：认证Handler, 每种AuthenticationHandler只能处理一种Credentials；
+
+Principal：封装用户标识，比如SimplePrincipal, 只是封装了用户名。认证成功后，credentialsToPrincipalResolvers负责由Credentials生成Principal对象；
+
+CredentialsToPrincipalResolvers：负责由Credentials生成Principal对象，每种CredentialsToPrincipalResolvers 只处理一种Credentials，
+比如UsernamePasswordCredentialsToPrincipalResolver负责从UsernamePasswordCredentials中取出用户名，然后将其赋给生成的SimplePrincipal的ID属性；
+
+AuthenticationMetaDataPopulators：负责将Credentials的一些属性赋值给Authentication的attributes属性；
+
+Authentication：Authentication是认证管理器的最终处理结果， Authentication封装了Principal，认证时间，及其他一些属性（可能来自Credentials）；
+
+AuthenticationManager：认证管理器得到Credentials对象后，负责调度AuthenticationHandler去完成认证工作，最后返回的结果是Authentication对象；
+
+CentralAuthenticationService：CAS的服务类，对Web层提供了一些方法。该类还负责调用AuthenticationManager完成认证逻辑；
 
 Cas流程
 ========================================================
@@ -39,24 +65,34 @@ Cas的访问流程分为几个步骤：
 
 4. 至此为止，SSO会话就建立起来了，以后用户在同一浏览器里访问此web应用时，AuthenticationFilter会在session里读取到用户信息，所以就不会去CAS认证，
    如果在此浏览器里访问别的web 应用时，AuthenticationFilter在session 里读取不到用户信息，会去CAS 的login接口认证，但这时CAS会读取到浏览器传来的cookie，
-   所以CAS不会要求用户去登录页面登录，只是会根据service参数生成一个ticket ，然后再和web应用做一个验证ticket的交互而已。
+   所以CAS不会要求用户去登录页面登录，只是会根据service参数生成一个ticket ，然后再和web应用做一个验证ticket的交互而已；
 
-Cas Filter处理逻辑
-=========================================================
-
+5. Cas登出时，由requestSingleLogoutFilter访问/spring_security_cas_logout重定向到Cas Server来进行登出，再由Cas Server发送一个Single Logout Request到所有
+   注册的服务中，singleLogoutFilter处理这个Single Logout Request，从静态Map中查找Session并将其置为无效。
 
 最佳实践
-=========================================================
-用户在一个应用验证通过后，以后用户在同一浏览器里访问此应用时，客户端应用中的过滤器会在 session 里读取到用户信息，
-所以就不会去CAS Server认证。如果在此浏览器里访问别的web应用时，客户端应用中的过滤器在 session 里读取不到用户信息，
-就会去CAS Server的login接口认证，但这时CAS Server会读取到浏览器传来的cookie （ TGC ），所以CAS Server不会要求用户去登录页面登录，
-只是会根据 service参数生成一个ticket，然后再和web应用做一个验证ticket的交互而已。
-
-使用自己的Handler来处理登录登出
----------------------------------------------------------
+==============================================================================================================
+通过配置来实现自己的Handler
 
 Spring通过如下配置文件进行配置Cas Client:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------------------------------------------------------------------------
+web.xml
+
+.. code::
+
+    <!-- Wraps an HttpServletRequest so that the getRemoteUser and getPrincipal return the CAS related entries -->
+    <filter>
+        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+        <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+    </filter>
+    <!-- Places the Assertion in a ThreadLocal for portions of the application that need access to it. This is useful when the Web application 
+    that this filter "fronts" needs to get the Principal name, but it has no access to the HttpServletRequest, hence making getRemoteUser() call impossible -->
+    <filter>
+        <filter-name>CAS Assertion Thread Local Filter</filter-name>
+        <filter-class>org.jasig.cas.client.util.AssertionThreadLocalFilter</filter-class>
+    </filter>
+
+spring-cas.xml
 
 .. code::
 
@@ -92,6 +128,8 @@ Spring通过如下配置文件进行配置Cas Client:
         <property name="authenticationUserDetailsService" ref="authenticationUserDetailsService" />
         <property name="serviceProperties" ref="serviceProperties"></property>
         <property name="ticketValidator">
+            <!-- Validates the tickets using the CAS 2.0 protocol. If you provide either the acceptAnyProxy or the allowedProxyChains parameters, 
+            a Cas20ProxyTicketValidator will be constructed. Otherwise a general Cas20ServiceTicketValidator will be constructed that does not accept proxy tickets -->
             <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
                 <constructor-arg index="0" value="${cas.securityContext.ticketValidator.casServerUrlPrefix}"></constructor-arg>
             </bean>
@@ -139,8 +177,9 @@ Spring通过如下配置文件进行配置Cas Client:
         <property name="filterProcessesUrl" value="/j_spring_security_logout" />
     </bean>
 
-Spring cas关键代码
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Spring cas client关键代码
+-----------------------------------------------------------------------------------------------------------
 
 当用户访问一个被SpringSecurity保护的资源时，会抛出AccessDeniedException或者AuthenticationException，
 就会被ExceptionTranslationFilter类探测并解惑；
@@ -406,6 +445,8 @@ org.springframework.security.web.authentication.logout.LogoutFilter:
 参考资料
 ===========================================================
 http://docs.spring.io/spring-security/site/docs/3.1.6.RELEASE/reference/cas.html
+
 https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/
+
 http://blog.csdn.net/dongdong_java/article/details/22293377
 

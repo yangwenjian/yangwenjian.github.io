@@ -50,13 +50,14 @@
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Cas</a><ul>
-<li><a class="reference internal" href="#id1">Cas介绍</a></li>
-<li><a class="reference internal" href="#id2">Cas流程</a></li>
-<li><a class="reference internal" href="#cas-filter">Cas Filter处理逻辑</a></li>
-<li><a class="reference internal" href="#id3">最佳实践</a><ul>
-<li><a class="reference internal" href="#handler">使用自己的Handler来处理登录登出</a><ul>
+<li><a class="reference internal" href="#id1">Cas介绍</a><ul>
+<li><a class="reference internal" href="#id2">相关概念</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">Cas流程</a></li>
+<li><a class="reference internal" href="#id4">最佳实践</a><ul>
 <li><a class="reference internal" href="#springcas-client">Spring通过如下配置文件进行配置Cas Client:</a></li>
-<li><a class="reference internal" href="#spring-cas">Spring cas关键代码</a><ul>
+<li><a class="reference internal" href="#spring-cas-client">Spring cas client关键代码</a><ul>
 <li><a class="reference internal" href="#org-springframework-security-web-access-exceptiontranslationfilter">org.springframework.security.web.access.ExceptionTranslationFilter:</a></li>
 <li><a class="reference internal" href="#org-jasig-cas-client-validation-abstractticketvalidationfilter">org.jasig.cas.client.validation.AbstractTicketValidationFilter:</a></li>
 <li><a class="reference internal" href="#org-springframework-security-web-authentication-abstractrauthenticationprocessingfilter">org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:</a></li>
@@ -67,9 +68,7 @@
 </li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a class="reference internal" href="#id4">参考资料</a></li>
+<li><a class="reference internal" href="#id5">参考资料</a></li>
 </ul>
 </li>
 </ul>
@@ -111,16 +110,29 @@
 <p>Central Authentication Service 是开源的单点登录解决方案。</p>
 <div class="section" id="id1">
 <h2>Cas介绍<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>支持的协议：Protocols ： Custom Protocol 、 CAS 、 OAuth 、 OpenID 、 RESTful API 、 SAML1.1 、 SAML2.0。
-支持的认证机制：Active Directory 、 JAAS 、 JDBC 、 LDAP 、 X.509 Certificates。
-安全策略：使用票据（ Ticket ）来实现支持的认证协议；
-支持授权：可以决定哪些服务可以请求和验证服务票据（ Service Ticket ）；
-提供高可用性：通过把认证过的状态数据存储在 TicketRegistry 组件中，这些组件有很多支持分布式环境的实现，
-如： BerkleyDB 、 Default 、 EhcacheTicketRegistry 、 JDBCTicketRegistry 、 JBOSS TreeCache 、 JpaTicketRegistry 、 MemcacheTicketRegistry 等；
-支持多种客户端： Java, .Net, PHP, Perl, Apache, uPortal 等。</p>
-</div>
+<p>支持的协议（Protocols）： Custom Protocol 、 CAS 、 OAuth 、 OpenID 、 RESTful API 、 SAML1.1 、 SAML2.0。</p>
+<p>支持的认证机制：Active Directory 、 JAAS 、 JDBC 、 LDAP 、 X.509 Certificates。</p>
+<p>安全策略：使用票据（Ticket）来实现支持的认证协议；</p>
+<p>支持授权：可以决定哪些服务可以请求和验证服务票据（Service Ticket）；</p>
+<p>提供高可用性：通过把认证过的状态数据存储在 TicketRegistry 组件中，这些组件有很多支持分布式环境的实现，
+如： BerkleyDB 、 Default 、 EhcacheTicketRegistry 、 JDBCTicketRegistry 、 JBOSS TreeCache 、 JpaTicketRegistry 、 MemcacheTicketRegistry 等；</p>
+<p>支持多种客户端： Java, .Net, PHP, Perl, Apache, uPortal 等。</p>
 <div class="section" id="id2">
-<h2>Cas流程<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h3>相关概念<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Credentials：用户提供的用于登录用的凭据信息，如用户名/密码、证书、IP地址、Cookie值等。比如UsernamePasswordCredentials，封装的是用户名和密码。
+CAS进行认证的第一步，就是把从UI或request对象里取到的用户凭据封装成Credentials对象，然后交给认证管理器去认证；</p>
+<p>AuthenticationHandler：认证Handler, 每种AuthenticationHandler只能处理一种Credentials；</p>
+<p>Principal：封装用户标识，比如SimplePrincipal, 只是封装了用户名。认证成功后，credentialsToPrincipalResolvers负责由Credentials生成Principal对象；</p>
+<p>CredentialsToPrincipalResolvers：负责由Credentials生成Principal对象，每种CredentialsToPrincipalResolvers 只处理一种Credentials，
+比如UsernamePasswordCredentialsToPrincipalResolver负责从UsernamePasswordCredentials中取出用户名，然后将其赋给生成的SimplePrincipal的ID属性；</p>
+<p>AuthenticationMetaDataPopulators：负责将Credentials的一些属性赋值给Authentication的attributes属性；</p>
+<p>Authentication：Authentication是认证管理器的最终处理结果， Authentication封装了Principal，认证时间，及其他一些属性（可能来自Credentials）；</p>
+<p>AuthenticationManager：认证管理器得到Credentials对象后，负责调度AuthenticationHandler去完成认证工作，最后返回的结果是Authentication对象；</p>
+<p>CentralAuthenticationService：CAS的服务类，对Web层提供了一些方法。该类还负责调用AuthenticationManager完成认证逻辑；</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>Cas流程<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>Cas的访问流程分为几个步骤：</p>
 <ol class="arabic simple">
 <li>用户访问Cas保护的资源时，部署在客户Web应用的AuthenticationFilter，会截获此请求，生成service参数，然后redirect到CAS服务的login接口，
@@ -143,22 +155,30 @@
 <ol class="arabic simple" start="4">
 <li>至此为止，SSO会话就建立起来了，以后用户在同一浏览器里访问此web应用时，AuthenticationFilter会在session里读取到用户信息，所以就不会去CAS认证，
 如果在此浏览器里访问别的web 应用时，AuthenticationFilter在session 里读取不到用户信息，会去CAS 的login接口认证，但这时CAS会读取到浏览器传来的cookie，
-所以CAS不会要求用户去登录页面登录，只是会根据service参数生成一个ticket ，然后再和web应用做一个验证ticket的交互而已。</li>
+所以CAS不会要求用户去登录页面登录，只是会根据service参数生成一个ticket ，然后再和web应用做一个验证ticket的交互而已；</li>
+<li>Cas登出时，由requestSingleLogoutFilter访问/spring_security_cas_logout重定向到Cas Server来进行登出，再由Cas Server发送一个Single Logout Request到所有
+注册的服务中，singleLogoutFilter处理这个Single Logout Request，从静态Map中查找Session并将其置为无效。</li>
 </ol>
 </div>
-<div class="section" id="cas-filter">
-<h2>Cas Filter处理逻辑<a class="headerlink" href="#cas-filter" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="id3">
-<h2>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p>用户在一个应用验证通过后，以后用户在同一浏览器里访问此应用时，客户端应用中的过滤器会在 session 里读取到用户信息，
-所以就不会去CAS Server认证。如果在此浏览器里访问别的web应用时，客户端应用中的过滤器在 session 里读取不到用户信息，
-就会去CAS Server的login接口认证，但这时CAS Server会读取到浏览器传来的cookie （ TGC ），所以CAS Server不会要求用户去登录页面登录，
-只是会根据 service参数生成一个ticket，然后再和web应用做一个验证ticket的交互而已。</p>
-<div class="section" id="handler">
-<h3>使用自己的Handler来处理登录登出<a class="headerlink" href="#handler" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h2>最佳实践<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>通过配置来实现自己的Handler</p>
 <div class="section" id="springcas-client">
-<h4>Spring通过如下配置文件进行配置Cas Client:<a class="headerlink" href="#springcas-client" title="Permalink to this headline">¶</a></h4>
+<h3>Spring通过如下配置文件进行配置Cas Client:<a class="headerlink" href="#springcas-client" title="Permalink to this headline">¶</a></h3>
+<p>web.xml</p>
+<div class="code highlight-python"><pre>&lt;!-- Wraps an HttpServletRequest so that the getRemoteUser and getPrincipal return the CAS related entries --&gt;
+&lt;filter&gt;
+    &lt;filter-name&gt;CAS HttpServletRequest Wrapper Filter&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.jasig.cas.client.util.HttpServletRequestWrapperFilter&lt;/filter-class&gt;
+&lt;/filter&gt;
+&lt;!-- Places the Assertion in a ThreadLocal for portions of the application that need access to it. This is useful when the Web application
+that this filter "fronts" needs to get the Principal name, but it has no access to the HttpServletRequest, hence making getRemoteUser() call impossible --&gt;
+&lt;filter&gt;
+    &lt;filter-name&gt;CAS Assertion Thread Local Filter&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.jasig.cas.client.util.AssertionThreadLocalFilter&lt;/filter-class&gt;
+&lt;/filter&gt;</pre>
+</div>
+<p>spring-cas.xml</p>
 <div class="code highlight-python"><pre>&lt;!-- 声明Cas认证切入点，并声明默认配置为false，以加入自己的定制 --&gt;
 &lt;security:http entry-point-ref="casAuthenticationEntryPoint" auto-config="false"&gt;
     &lt;!-- 声明被保护的资源，注意顺序，并加入spring security的权限管理 --&gt;
@@ -191,6 +211,8 @@
     &lt;property name="authenticationUserDetailsService" ref="authenticationUserDetailsService" /&gt;
     &lt;property name="serviceProperties" ref="serviceProperties"&gt;&lt;/property&gt;
     &lt;property name="ticketValidator"&gt;
+        &lt;!-- Validates the tickets using the CAS 2.0 protocol. If you provide either the acceptAnyProxy or the allowedProxyChains parameters,
+        a Cas20ProxyTicketValidator will be constructed. Otherwise a general Cas20ServiceTicketValidator will be constructed that does not accept proxy tickets --&gt;
         &lt;bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator"&gt;
             &lt;constructor-arg index="0" value="${cas.securityContext.ticketValidator.casServerUrlPrefix}"&gt;&lt;/constructor-arg&gt;
         &lt;/bean&gt;
@@ -239,12 +261,12 @@
 &lt;/bean&gt;</pre>
 </div>
 </div>
-<div class="section" id="spring-cas">
-<h4>Spring cas关键代码<a class="headerlink" href="#spring-cas" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="spring-cas-client">
+<h3>Spring cas client关键代码<a class="headerlink" href="#spring-cas-client" title="Permalink to this headline">¶</a></h3>
 <p>当用户访问一个被SpringSecurity保护的资源时，会抛出AccessDeniedException或者AuthenticationException，
 就会被ExceptionTranslationFilter类探测并解惑；</p>
 <div class="section" id="org-springframework-security-web-access-exceptiontranslationfilter">
-<h5>org.springframework.security.web.access.ExceptionTranslationFilter:<a class="headerlink" href="#org-springframework-security-web-access-exceptiontranslationfilter" title="Permalink to this headline">¶</a></h5>
+<h4>org.springframework.security.web.access.ExceptionTranslationFilter:<a class="headerlink" href="#org-springframework-security-web-access-exceptiontranslationfilter" title="Permalink to this headline">¶</a></h4>
 <div class="code java highlight-python"><pre>public class ExceptionTranslationFilter extends GenericFilterBean {
 
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
@@ -314,7 +336,7 @@
 <p>Cas Client通过TicketValidationFilter来验证ticket的有效性；</p>
 </div>
 <div class="section" id="org-jasig-cas-client-validation-abstractticketvalidationfilter">
-<h5>org.jasig.cas.client.validation.AbstractTicketValidationFilter:<a class="headerlink" href="#org-jasig-cas-client-validation-abstractticketvalidationfilter" title="Permalink to this headline">¶</a></h5>
+<h4>org.jasig.cas.client.validation.AbstractTicketValidationFilter:<a class="headerlink" href="#org-jasig-cas-client-validation-abstractticketvalidationfilter" title="Permalink to this headline">¶</a></h4>
 <div class="code java highlight-python"><pre>public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
    final FilterChain filterChain) throws IOException, ServletException {
    if (!preFilter(servletRequest, servletResponse, filterChain)) {
@@ -357,7 +379,7 @@
 <p>Cas Client通过CasAuthenticationFilter来监听/j_spring_cas_security_check的请求，进行认证后的filter工作；</p>
 </div>
 <div class="section" id="org-springframework-security-web-authentication-abstractrauthenticationprocessingfilter">
-<h5>org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:<a class="headerlink" href="#org-springframework-security-web-authentication-abstractrauthenticationprocessingfilter" title="Permalink to this headline">¶</a></h5>
+<h4>org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:<a class="headerlink" href="#org-springframework-security-web-authentication-abstractrauthenticationprocessingfilter" title="Permalink to this headline">¶</a></h4>
 <div class="code java highlight-python"><pre>public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
@@ -414,7 +436,7 @@ protected void successfulAuthentication(HttpServletRequest request, HttpServletR
 <p>通过继承SimpleUrlAuthenticationSuccessHandler来实现自己的登录后逻辑；</p>
 </div>
 <div class="section" id="org-springframework-security-web-authentication-simpleurlauthenticationsuccesshandler">
-<h5>org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler<a class="headerlink" href="#org-springframework-security-web-authentication-simpleurlauthenticationsuccesshandler" title="Permalink to this headline">¶</a></h5>
+<h4>org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler<a class="headerlink" href="#org-springframework-security-web-authentication-simpleurlauthenticationsuccesshandler" title="Permalink to this headline">¶</a></h4>
 <div class="code java highlight-python"><pre>public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
     handle(request, response, authentication);
@@ -443,7 +465,7 @@ protected void handle(HttpServletRequest request, HttpServletResponse response, 
 <p>通过继承AbstractCasAssertionUserDetailsService来实现用户权限分配；</p>
 </div>
 <div class="section" id="org-springframework-security-cas-userdetails-abstractcasassertionuserdetailsservice">
-<h5>org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsService<a class="headerlink" href="#org-springframework-security-cas-userdetails-abstractcasassertionuserdetailsservice" title="Permalink to this headline">¶</a></h5>
+<h4>org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsService<a class="headerlink" href="#org-springframework-security-cas-userdetails-abstractcasassertionuserdetailsservice" title="Permalink to this headline">¶</a></h4>
 <div class="code java highlight-python"><pre>//认证成功后回调，返回用户Code的方法
 public abstract class AbstractCasAssertionUserDetailsService implements AuthenticationUserDetailsService{
     public final UserDetails loadUserDetails(final Authentication token) throws UsernameNotFoundException {
@@ -457,7 +479,7 @@ protected abstract UserDetails loadUserDetails(Assertion assertion);</pre>
 <p>通过继承SecurityContextLogoutHandler并注入到LogoutFilter来实现自己的用户登出逻辑，这里可以使用多个Handler；</p>
 </div>
 <div class="section" id="org-springframework-security-web-authentication-logout-logoutfilter">
-<h5>org.springframework.security.web.authentication.logout.LogoutFilter:<a class="headerlink" href="#org-springframework-security-web-authentication-logout-logoutfilter" title="Permalink to this headline">¶</a></h5>
+<h4>org.springframework.security.web.authentication.logout.LogoutFilter:<a class="headerlink" href="#org-springframework-security-web-authentication-logout-logoutfilter" title="Permalink to this headline">¶</a></h4>
 <div class="code java highlight-python"><pre>public LogoutFilter(String logoutSuccessUrl, LogoutHandler... handlers) {
     Assert.notEmpty(handlers, "LogoutHandlers are required");
     this.handlers = Arrays.asList(handlers);
@@ -489,12 +511,11 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="id4">
-<h2>参考资料<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://docs.spring.io/spring-security/site/docs/3.1.6.RELEASE/reference/cas.html">http://docs.spring.io/spring-security/site/docs/3.1.6.RELEASE/reference/cas.html</a>
-<a class="reference external" href="https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/">https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/</a>
-<a class="reference external" href="http://blog.csdn.net/dongdong_java/article/details/22293377">http://blog.csdn.net/dongdong_java/article/details/22293377</a></p>
+<div class="section" id="id5">
+<h2>参考资料<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://docs.spring.io/spring-security/site/docs/3.1.6.RELEASE/reference/cas.html">http://docs.spring.io/spring-security/site/docs/3.1.6.RELEASE/reference/cas.html</a></p>
+<p><a class="reference external" href="https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/">https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/</a></p>
+<p><a class="reference external" href="http://blog.csdn.net/dongdong_java/article/details/22293377">http://blog.csdn.net/dongdong_java/article/details/22293377</a></p>
 </div>
 </div>
 
