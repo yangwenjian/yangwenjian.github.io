@@ -45,7 +45,7 @@ Cas流程
 ========================================================
 Cas的访问流程分为几个步骤：
 
-1. 用户访问Cas保护的资源时，部署在客户Web应用的AuthenticationFilter，会截获此请求，生成service参数，然后redirect到CAS服务的login接口，
+1. 用户访问Cas保护的资源时，部署在客户Web应用的ExceptionTranslationFilter，会截获此请求，生成service参数，然后redirect到CAS服务的login接口，
    例如：https://casserverurl/cas/login?service=http://webserver/j_spring_cas_security_check；
 
 .. image:: images/cas_process1.jpg
@@ -74,7 +74,7 @@ Cas的访问流程分为几个步骤：
 ==============================================================================================================
 通过配置来实现自己的Handler
 
-Spring通过如下配置文件进行配置Cas Client:
+Spring配置文件:
 ---------------------------------------------------------------------------------------------------------------
 web.xml
 
@@ -185,7 +185,7 @@ Spring cas client关键代码
 就会被ExceptionTranslationFilter类探测并解惑；
 
 org.springframework.security.web.access.ExceptionTranslationFilter:
-```````````````````````````````````````````````````````````````````````````````````````````````````````````
+
 .. code:: java
 
     public class ExceptionTranslationFilter extends GenericFilterBean {
@@ -257,7 +257,7 @@ org.springframework.security.web.access.ExceptionTranslationFilter:
 Cas Client通过TicketValidationFilter来验证ticket的有效性；
 
 org.jasig.cas.client.validation.AbstractTicketValidationFilter:
-```````````````````````````````````````````````````````````````````````````````````````````````````````````
+
 .. code:: java
 
      public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, 
@@ -302,7 +302,7 @@ org.jasig.cas.client.validation.AbstractTicketValidationFilter:
 Cas Client通过CasAuthenticationFilter来监听/j_spring_cas_security_check的请求，进行认证后的filter工作；
 
 org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:
-````````````````````````````````````````````````````````````````````````````````````````````````````````````
+
 .. code:: java
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -361,7 +361,7 @@ org.springframework.security.web.authentication.AbstractrAuthenticationProcessin
 通过继承SimpleUrlAuthenticationSuccessHandler来实现自己的登录后逻辑；
 
 org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
-`````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+
 .. code:: java
 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -392,7 +392,6 @@ org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHa
 通过继承AbstractCasAssertionUserDetailsService来实现用户权限分配；
 
 org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsService
-`````````````````````````````````````````````````````````````````````````````````````````````````````````````````
 
 .. code:: java
     
@@ -409,7 +408,6 @@ org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsServ
 通过继承SecurityContextLogoutHandler并注入到LogoutFilter来实现自己的用户登出逻辑，这里可以使用多个Handler；
 
 org.springframework.security.web.authentication.logout.LogoutFilter:
-`````````````````````````````````````````````````````````````````````````````````````````````````````````````````
 
 .. code:: java
 
@@ -441,6 +439,17 @@ org.springframework.security.web.authentication.logout.LogoutFilter:
         chain.doFilter(request, response);
     }
 
+Q&A
+-----------------------------------------------------------
+1. Cas Client将原始请求URL存放在什么地方？
+   回答：存放在session之中，key为"SPRING_SECURITY_SAVED_REQUEST"；
+
+2. 登录用户再次登录会发生什么情况？
+   回答：重复登录的情况，Cas Server的Handler会首先判断浏览器发出的请求是否包含TGC，如果有TGC，则直接由TGC来判别身份和授权，如果没有再接收用户名和密码；
+
+3. 如何判断ticket的有效性？
+   回答：ticket由Cas Server传给Cas Client后，Cas Client为了防止仿冒攻击，会进行二次验证，会请求Cas Server的valiteTicket接口进行验证，
+   最后解析Server的返回得到是否成功的信息和用户身份后进行session的Assertion建立，即验证成功；
 
 参考资料
 ===========================================================

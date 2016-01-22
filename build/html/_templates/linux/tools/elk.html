@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Elastic Logstash Kibana &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="基础架构" href="../../architecture/mvc.html" />
+    <link rel="prev" title="Solr And Redis" href="solr.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../architecture/mvc.html" title="基础架构"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="solr.html" title="Solr And Redis"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Elastic Logstash Kibana</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#elastic">Elastic</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#logstash">Logstash</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="solr.html"
+                        title="previous chapter">Solr And Redis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../architecture/mvc.html"
+                        title="next chapter">基础架构</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/linux/tools/elk.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="elastic-logstash-kibana">
+<h1>Elastic Logstash Kibana<a class="headerlink" href="#elastic-logstash-kibana" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="elastic">
+<h3>Elastic<a class="headerlink" href="#elastic" title="Permalink to this headline">¶</a></h3>
+<p>Features：</p>
+<ul class="simple">
+<li>Real-Time Data</li>
+<li>Real-Time Advanced Analytics</li>
+<li>Massively Distributed</li>
+<li>High Availability</li>
+<li>Multitenancy</li>
+<li>Full-Text Search</li>
+<li>Document-Oriented</li>
+<li>Schema-Free</li>
+<li>Developer-Friendly, RESTful API</li>
+<li>Per-Operation Persistence</li>
+<li>Apache 2 Open Source License</li>
+<li>Build on Apache Lucene</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Download and start</p>
+<div class="code highlight-python"><pre>curl -L -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.1/elasticsearch-2.1.1.tar.gz
+tar -xvf elasticsearch-2.1.1.tar.gz
+cd elasticsearch-2.1.1/bin
+./elasticsearch</pre>
+</div>
+<p>We can check the cluster&#8217;s health.</p>
+<div class="code highlight-python"><pre>curl 'localhost:9200/_cat/health?v'</pre>
+</div>
+<p>We can CRUD the indices. Since there is only one node in our cluster, the health would be yellow, because elastic can not write indices replicas.</p>
+<div class="code highlight-python"><pre>curl 'localhost:9200/_cat/indices?v'
+curl -XPUT 'localhost:9200/customer?pretty'</pre>
+</div>
+<div class="section" id="logstash">
+<h3>Logstash<a class="headerlink" href="#logstash" title="Permalink to this headline">¶</a></h3>
+<p>Download and start</p>
+<div class="code highlight-python"><pre>curl -L -O https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
+tar -xvf logstash-2.1.1.tar.gz</pre>
+</div>
+<p>Prepare and edit logstash.conf.</p>
+<div class="code highlight-python"><pre>input{
+        file{
+                path=&gt;"/home/knight/software/enviroment/apache-tomcat-8.0.30/logs/catalina.out"
+        }
+        file{
+                path=&gt;"/home/knight/downloads/test.log"
+        }
+}
+
+filter {
+        grok {
+                match =&gt; { "message" =&gt; "%{COMBINEDAPACHELOG}" }
+        }
+        geoip {
+                source =&gt; "clientip"
+        }
+}
+
+output{
+        elasticsearch {
+                hosts =&gt; ["localhost:9200"]
+        }
+        stdout{
+        }
+}</pre>
+</div>
+<p>Start logstash.</p>
+<div class="code highlight-python"><pre>./logstash agent -f logstash.conf</pre>
+</div>
+<p>Start Kibana.</p>
+<div class="code highlight-python"><pre>./bin/Kibana</pre>
+</div>
+<p>Create a index in elasticsearch.</p>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.elastic.co/products/elasticsearch">https://www.elastic.co/products/elasticsearch</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../architecture/mvc.html" title="基础架构"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="solr.html" title="Solr And Redis"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

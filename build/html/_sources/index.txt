@@ -5,9 +5,9 @@
 
 Welcome to Knight's documentation!
 ======================================
-
 *As Your Time, As Your Life.*
-======================================
+
+*内外兼修，以有所得，成果落地，以有所成*
 
 .. image:: images/other/wedding1.jpg
 
@@ -78,6 +78,7 @@ Linux Tools
    _templates/linux/tools/mysql
    _templates/linux/tools/varnish
    _templates/linux/tools/solr
+   _templates/linux/tools/elk
 
 Architecture
 ======================================
@@ -118,6 +119,7 @@ Sulotion of Distribution
    _templates/distribution/hadoop
    _templates/distribution/storage
    _templates/distribution/zookeeper
+   _templates/distribution/elastic
 
 
 Sulotion of Web Service
@@ -138,7 +140,6 @@ Programming Framework
 .. toctree::
    :maxdepth: 1
  
-   _templates/programming/common/designpatterns
    _templates/programming/framework/spring
    _templates/programming/framework/spring_security
    _templates/programming/java/guice
@@ -150,6 +151,7 @@ Programming Skill
 .. toctree::
    :maxdepth: 1
 
+   _templates/programming/common/designpatterns
    _templates/programming/common/algorithm
    _templates/programming/common/how_to_write_code
    _templates/programming/common/code_optimization
@@ -168,6 +170,8 @@ Java On Roll
    _templates/programming/java/memory_manage
    _templates/programming/java/junit
    _templates/programming/java/synchronous
+   _templates/programming/java/java_code_style
+   _templates/programming/java/log_and_exception
 
 Other
 ======================================
@@ -176,7 +180,7 @@ Other
    :maxdepth: 1
 
    _templates/other/projectManagement
-   _templates/programming/java/config
+   _templates/programming/java/maven
    _templates/cloud/openstack_base_releasenote
    _templates/other/opticksandenvi
    _templates/other/encode

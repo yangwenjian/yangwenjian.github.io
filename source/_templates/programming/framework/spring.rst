@@ -127,6 +127,12 @@ IOC的三种形式
         }
     }
 
+IOC最佳实践
+---------------------------------------------------
+在xk-web工程中，我们依赖一个异步操作日志工程log，同时xk-web依赖组织机构工程org，这个时候有个需求是在log中执行一个操作组织机构的方法，
+但是为了避免互相依赖，我们在log工程中写一个空的回调接口，在web工程中实现，之后再将具体对象注入到log工程的运行中，这样就是我理解的依赖
+倒置，如果相互依赖，耦合度将会不可避免的升高。
+
 Spring集中读取properties文件的方式
 ===================================================
 
@@ -364,7 +370,7 @@ Spring 默认的事务传播行为是 PROPAGATION_REQUIRED，它适合于绝大�
         System.out.println("updateLastLogonTime...");
         User user = hibernateTemplate.get(User.class,userName);
         user.setLastLogonTime(System.currentTimeMillis());
-        hibernateTemplate.flush(); //③提前于事务提交同步数据库
+        hibernateTemplate.flush(); //提前于事务提交同步数据库
     }
 
 这里要注意，Spring中Hibernate是要等事务提交的时候进行数据库同步，这里同步的时候是在logon返回的时候，问题是addSocre使用jdbc，直接就修改数据库了，这里我们使用flush()方法来覆盖掉Hibernate的一级缓存。
@@ -375,6 +381,7 @@ Spring可以增强public的方法（注意不能增强public static方法）的�
 
 最佳实践
 ---------------------------------------
+
 @Transactional标记什么时候发挥作用
 ```````````````````````````````````````
 在StackOverFlow上发现的问题，请看

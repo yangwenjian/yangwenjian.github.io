@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="Spring" href="../../framework/spring.html" />
-    <link rel="prev" title="Web Page Design" href="../../web/webpage.html" /> 
+    <link rel="next" title="Data Structure And Algorithm" href="algorithm.html" />
+    <link rel="prev" title="Guice Introduction and Analysis" href="../java/guice.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../framework/spring.html" title="Spring"
+          <a href="algorithm.html" title="Data Structure And Algorithm"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../../web/webpage.html" title="Web Page Design"
+          <a href="../java/guice.html" title="Guice Introduction and Analysis"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -85,11 +85,11 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../../web/webpage.html"
-                        title="previous chapter">Web Page Design</a></p>
+  <p class="topless"><a href="../java/guice.html"
+                        title="previous chapter">Guice Introduction and Analysis</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../../framework/spring.html"
-                        title="next chapter">Spring</a></p>
+  <p class="topless"><a href="algorithm.html"
+                        title="next chapter">Data Structure And Algorithm</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/common/designpatterns.txt"
@@ -120,18 +120,33 @@
 <h1>设计模式Head First<a class="headerlink" href="#head-first" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>六大原则：<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>1、开闭原则（Open Close Principle）
-开闭原则就是说对扩展开放，对修改关闭。在程序需要进行拓展的时候，不能去修改原有的代码，实现一个热插拔的效果。所以一句话概括就是：为了使程序的扩展性好，易于维护和升级。想要达到这样的效果，我们需要使用接口和抽象类，后面的具体设计中我们会提到这点。
-2、里氏代换原则（Liskov Substitution Principle）
-里氏代换原则(Liskov Substitution Principle LSP)面向对象设计的基本原则之一。 里氏代换原则中说，任何基类可以出现的地方，子类一定可以出现。 LSP是继承复用的基石，只有当衍生类可以替换掉基类，软件单位的功能不受到影响时，基类才能真正被复用，而衍生类也能够在基类的基础上增加新的行为。里氏代换原则是对“开-闭”原则的补充。实现“开-闭”原则的关键步骤就是抽象化。而基类与子类的继承关系就是抽象化的具体实现，所以里氏代换原则是对实现抽象化的具体步骤的规范。—— From Baidu 百科
-3、依赖倒转原则（Dependence Inversion Principle）
-这个是开闭原则的基础，具体内容：真对接口编程，依赖于抽象而不依赖于具体。
-4、接口隔离原则（Interface Segregation Principle）
-这个原则的意思是：使用多个隔离的接口，比使用单个接口要好。还是一个降低类之间的耦合度的意思，从这儿我们看出，其实设计模式就是一个软件的设计思想，从大型软件架构出发，为了升级和维护方便。所以上文中多次出现：降低依赖，降低耦合。
-5、迪米特法则（最少知道原则）（Demeter Principle）
-为什么叫最少知道原则，就是说：一个实体应当尽量少的与其他实体之间发生相互作用，使得系统功能模块相对独立。
-6、合成复用原则（Composite Reuse Principle）
-原则是尽量使用合成/聚合的方式，而不是使用继承。</p>
+<ol class="arabic">
+<li><p class="first"><strong>开闭原则（Open Close Principle）</strong></p>
+<p>开闭原则就是说对扩展开放，对修改关闭。在程序需要进行拓展的时候，不能去修改原有的代码，实现一个热插拔的效果。
+所以一句话概括就是：为了使程序的扩展性好，易于维护和升级。想要达到这样的效果，我们需要使用接口和抽象类，后面
+的具体设计中我们会提到这点。</p>
+</li>
+<li><p class="first"><strong>里氏代换原则（Liskov Substitution Principle）</strong></p>
+<p>里氏代换原则(Liskov Substitution Principle LSP)面向对象设计的基本原则之一。 里氏代换原则中说，任何基类可以出
+现的地方，子类一定可以出现。 LSP是继承复用的基石，只有当衍生类可以替换掉基类，软件单位的功能不受到影响时，基
+类才能真正被复用，而衍生类也能够在基类的基础上增加新的行为。里氏代换原则是对“开-闭”原则的补充。实现“开-闭”原
+则的关键步骤就是抽象化。而基类与子类的继承关系就是抽象化的具体实现，所以里氏代换原则是对实现抽象化的具体步骤
+的规范。—— From Baidu 百科</p>
+</li>
+<li><p class="first"><strong>依赖倒转原则（Dependence Inversion Principle）</strong></p>
+<p>这个是开闭原则的基础，具体内容：真对接口编程，依赖于抽象而不依赖于具体。</p>
+</li>
+<li><p class="first"><strong>接口隔离原则（Interface Segregation Principle）</strong></p>
+<p>这个原则的意思是：使用多个隔离的接口，比使用单个接口要好。还是一个降低类之间的耦合度的意思，从这儿我们看出，
+其实设计模式就是一个软件的设计思想，从大型软件架构出发，为了升级和维护方便。所以上文中多次出现：降低依赖，降低耦合。</p>
+</li>
+<li><p class="first"><strong>迪米特法则（最少知道原则）（Demeter Principle）</strong></p>
+<p>为什么叫最少知道原则，就是说：一个实体应当尽量少的与其他实体之间发生相互作用，使得系统功能模块相对独立。</p>
+</li>
+<li><p class="first"><strong>合成复用原则（Composite Reuse Principle）</strong></p>
+<p>原则是尽量使用合成/聚合的方式，而不是使用继承。</p>
+</li>
+</ol>
 </div>
 <div class="section" id="id2">
 <h2>创建模型（5种）：<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
@@ -296,10 +311,10 @@ Java的RMI正式远程代理的一个实现。</p>
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../framework/spring.html" title="Spring"
+          <a href="algorithm.html" title="Data Structure And Algorithm"
              >next</a> |</li>
         <li class="right" >
-          <a href="../../web/webpage.html" title="Web Page Design"
+          <a href="../java/guice.html" title="Guice Introduction and Analysis"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

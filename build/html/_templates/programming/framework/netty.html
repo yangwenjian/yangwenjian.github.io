@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Solr And Redis &mdash; knight 1.0.1 documentation</title>
+    <title>Netty &mdash; knight 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -41,17 +41,16 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../../../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Solr And Redis</a><ul>
-<li><a class="reference internal" href="#id1">基本介绍</a></li>
-<li><a class="reference internal" href="#id2">实践</a></li>
-<li><a class="reference internal" href="#id3">参考资料</a></li>
+<li><a class="reference internal" href="#">Netty</a><ul>
+<li><a class="reference internal" href="#id1">最佳实践</a></li>
+<li><a class="reference internal" href="#id2">参考资料</a></li>
 </ul>
 </li>
 </ul>
 
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../../../_sources/_templates/linux/tools/solr.txt"
+    <li><a href="../../../_sources/_templates/programming/framework/netty.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -75,27 +74,16 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="solr-and-redis">
-<h1>Solr And Redis<a class="headerlink" href="#solr-and-redis" title="Permalink to this headline">¶</a></h1>
-<p>Solr是针对大量非结构化文本，返回最近的搜索结果的一种搜索引擎。</p>
+  <div class="section" id="netty">
+<h1>Netty<a class="headerlink" href="#netty" title="Permalink to this headline">¶</a></h1>
+<p>Netty is an asynchronous event-driven network application framework for rapid development of maintainable high
+performance protocol servers &amp; clients.</p>
 <div class="section" id="id1">
-<h2>基本介绍<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>Solr是一个文件存储和检索引擎，提交Solr处理的每条记录都是一个文档。</p>
+<h2>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="id2">
-<h2>实践<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<p>例如在查找buying a book中，可能想要的搜索结果包含buying a new book这个使用数据库实现起来困难而且低效，因此提出使用solr。</p>
-<p>在云医院的项目中，为了加快搜索速度，加快相应速度，启用Solr进行优化。</p>
-<p>关于solr我们所使用的是spring集成好的jar包，使用起来和JPA一样方便，无需担心内部实现，只需要向数据库操作一样调用即可，性能方面的优势暂未实际测量；
-关于redis我们所使用的是也是spring集成好的jar包，再底层是jedis包，使用起来如同嵌套的HashMap一样方面，性能方面跟存在内存中调用相当。
-当然，这里是spring简化了两种工具的操作内容。</p>
-<p>solr是为解决搜索使用的一种方案，在云医院的设计中，并没有搜索商品等相关功能，这里使用solr并没有达到快速查找的效果，反而会因为和数据库的同步
-问题引起很多bug。建议在下一版提出搜索商品。</p>
-</div>
-<div class="section" id="id3">
-<h2>参考资料<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://lucene.apache.org/solr/quickstart.html">http://lucene.apache.org/solr/quickstart.html</a>
-<a class="reference external" href="http://www.data321.com/ed8c254d">http://www.data321.com/ed8c254d</a></p>
+<h2>参考资料<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://netty.io/">http://netty.io/</a></p>
 </div>
 </div>
 

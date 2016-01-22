@@ -62,21 +62,22 @@
 <li><a class="reference internal" href="#id6">3.构造子注入</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#id7">IOC最佳实践</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#springproperties">Spring集中读取properties文件的方式</a></li>
-<li><a class="reference internal" href="#id7">Spring的数据源管理</a><ul>
+<li><a class="reference internal" href="#id8">Spring的数据源管理</a><ul>
 <li><a class="reference internal" href="#spring-jdbc">Spring jdbc 配置</a></li>
-<li><a class="reference internal" href="#id8">Spring jdbc 关键代码</a></li>
+<li><a class="reference internal" href="#id9">Spring jdbc 关键代码</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id9">Spring事务</a><ul>
+<li><a class="reference internal" href="#id10">Spring事务</a><ul>
 <li><a class="reference internal" href="#transaction">Transaction管理</a></li>
-<li><a class="reference internal" href="#id10">事务带来的困扰</a></li>
-<li><a class="reference internal" href="#id11">事务方法嵌套用的迷茫</a></li>
-<li><a class="reference internal" href="#id12">多种数据库连接方式带来的困惑</a></li>
-<li><a class="reference internal" href="#id13">Spring的事务增强</a></li>
-<li><a class="reference internal" href="#id14">最佳实践</a><ul>
+<li><a class="reference internal" href="#id11">事务带来的困扰</a></li>
+<li><a class="reference internal" href="#id12">事务方法嵌套用的迷茫</a></li>
+<li><a class="reference internal" href="#id13">多种数据库连接方式带来的困惑</a></li>
+<li><a class="reference internal" href="#id14">Spring的事务增强</a></li>
+<li><a class="reference internal" href="#id15">最佳实践</a><ul>
 <li><a class="reference internal" href="#transactional">&#64;Transactional标记什么时候发挥作用</a></li>
 <li><a class="reference internal" href="#hibernate-session">Hibernate session管理</a></li>
 </ul>
@@ -231,6 +232,12 @@ public class UserRegister implements InjectUserDao{
 </div>
 </div>
 </div>
+<div class="section" id="id7">
+<h3>IOC最佳实践<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>在xk-web工程中，我们依赖一个异步操作日志工程log，同时xk-web依赖组织机构工程org，这个时候有个需求是在log中执行一个操作组织机构的方法，
+但是为了避免互相依赖，我们在log工程中写一个空的回调接口，在web工程中实现，之后再将具体对象注入到log工程的运行中，这样就是我理解的依赖
+倒置，如果相互依赖，耦合度将会不可避免的升高。</p>
+</div>
 </div>
 <div class="section" id="springproperties">
 <h2>Spring集中读取properties文件的方式<a class="headerlink" href="#springproperties" title="Permalink to this headline">¶</a></h2>
@@ -266,8 +273,8 @@ result = (String) envCtx.lookup("siteConfigHome");</pre>
 servletConfig.getServletContext().getInitParameter("serverConfigLocation");</pre>
 </div>
 </div>
-<div class="section" id="id7">
-<h2>Spring的数据源管理<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h2>Spring的数据源管理<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="spring-jdbc">
 <h3>Spring jdbc 配置<a class="headerlink" href="#spring-jdbc" title="Permalink to this headline">¶</a></h3>
 <p>Spring在使用Hibernate的时候需要进行初始化配置，建立数据源:</p>
@@ -292,8 +299,8 @@ jdbcTemplate.update(sql,toAdd,userName);
 jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom','123456',10)");</pre>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>Spring jdbc 关键代码<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>Spring jdbc 关键代码<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <p>spring jdbc将我们原来的使用的statement等语句都封装进去，简单易用。</p>
 <div class="code java highlight-python"><pre>public &lt;T&gt; T query(PreparedStatementCreator psc, final PreparedStatementSetter pss, final ResultSetExtractor&lt;T&gt; rse) throws DataAccessException {
             Assert.notNull(rse, "ResultSetExtractor must not be null");
@@ -346,8 +353,8 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
 </dl>
 </div>
 </div>
-<div class="section" id="id9">
-<h2>Spring事务<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id10">
+<h2>Spring事务<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
 <p>Sping提供了一致的事务管理抽象，是Spring重要的抽象之一。优点如下：</p>
 <ul class="simple">
 <li>为不同事务API提供一致的编程模型，如JTA，JDBC，Hibernate，iBATIS数据库层和JDO；</li>
@@ -368,13 +375,13 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
 <p>Spring声明式事务实现其实就是Spring AOP+线程绑定实现，利用AOP实现开启和关闭事务，利用线程绑定（ThreadLocal）实现跨越多个方法实现事务传播。
 由于我们不可能只使用一个事务通知，可能还有其他类型事务通知，而且如果这些通知中需要事务支持怎么办？这就牵扯到通知执行顺序的问题上了，因此如果可能与其他AOP通知协作的话，而且这些通知中需要使用声明式事务管理支持，事务通知应该具有最高优先。</p>
 </div>
-<div class="section" id="id10">
-<h3>事务带来的困扰<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>事务带来的困扰<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <p>这次编码遇到一个简单的问题，我要对数据库进行A操作和B操作，这两个操作必须在一个事务之内，但是B操作又需要A操作commit后的结果。</p>
 <p>这样就矛盾了，既然是事务，当然在commit前不能写进数据库中，但是A操作后的结果正是B操作需要的。</p>
 </div>
-<div class="section" id="id11">
-<h3>事务方法嵌套用的迷茫<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>事务方法嵌套用的迷茫<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <p>（这部分文字引自http://www.ibm.com/developerworks/cn/java/j-lo-spring-ts1/）</p>
 <p>Spring 事务一个被讹传很广说法是：一个事务方法不应该调用另一个事务方法，否则将产生两个事务。结果造成开发人员在设计事务方法时束手束脚，生怕一不小心就踩到地雷,其实这种是不认识 Spring 事务传播机制而造成的误解，Spring 对事务控制的支持统一在 TransactionDefinition 类中描述，该类有以下几个重要的接口方法:</p>
 <div class="highlight-python"><pre>*int getPropagationBehavior()：事务的传播行为
@@ -394,7 +401,7 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
 </div>
 <p>Spring 默认的事务传播行为是 PROPAGATION_REQUIRED，它适合于绝大多数的情况。假设 ServiveX#methodX() 都工作在事务环境下（即都被 Spring 事务增强了），假设程序中存在如下的调用链：Service1#method1()-&gt;Service2#method2()-&gt;Service3#method3()，那么这 3 个服务类的 3 个方法通过 Spring 的事务传播机制都工作在同一个事务中。</p>
 <p>下面，我们来看一下实例，UserService#logon() 方法内部调用了 UserService#updateLastLogonTime() 和 ScoreService#addScore() 方法，这两个类都继承于 BaseService。它们之间的类结构说明如下：</p>
-<img alt="_templates/programming/framework/images/spring_transaction.jpg" src="_templates/programming/framework/images/spring_transaction.jpg" />
+<img alt="../../../_images/spring_transaction.jpg" src="../../../_images/spring_transaction.jpg" />
 <p>具体代码如下:</p>
 <div class="highlight-python"><pre>@Service("userService")
 public class UserService extends BaseService {
@@ -423,8 +430,8 @@ public class ScoreService extends BaseService{
 }</pre>
 </div>
 </div>
-<div class="section" id="id12">
-<h3>多种数据库连接方式带来的困惑<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id13">
+<h3>多种数据库连接方式带来的困惑<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <p>对于Spring的ORM的实现方式有多种，可以采用高端的ORM技术（Hibernate，JPA，JDO），同时采用一个JDBC 技术（Spring JDBC，iBatis），前者使用的会话是对后者Connection的封装，Spring会机智的在同一事务中封装后者的链接，这样我们直接管Spring的事务就可以了。</p>
 <p>是用Hibernate的代码如下:</p>
 <div class="highlight-python"><pre>public void logon(String userName) {
@@ -436,17 +443,17 @@ public void updateLastLogonTime(String userName) {
     System.out.println("updateLastLogonTime...");
     User user = hibernateTemplate.get(User.class,userName);
     user.setLastLogonTime(System.currentTimeMillis());
-    hibernateTemplate.flush(); //③提前于事务提交同步数据库
+    hibernateTemplate.flush(); //提前于事务提交同步数据库
 }</pre>
 </div>
 <p>这里要注意，Spring中Hibernate是要等事务提交的时候进行数据库同步，这里同步的时候是在logon返回的时候，问题是addSocre使用jdbc，直接就修改数据库了，这里我们使用flush()方法来覆盖掉Hibernate的一级缓存。</p>
 </div>
-<div class="section" id="id13">
-<h3>Spring的事务增强<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id14">
+<h3>Spring的事务增强<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <p>Spring可以增强public的方法（注意不能增强public static方法）的事务。（暂时未涉及到此处，未研究学习)</p>
 </div>
-<div class="section" id="id14">
-<h3>最佳实践<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id15">
+<h3>最佳实践<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="transactional">
 <h4>&#64;Transactional标记什么时候发挥作用<a class="headerlink" href="#transactional" title="Permalink to this headline">¶</a></h4>
 <p>在StackOverFlow上发现的问题，请看

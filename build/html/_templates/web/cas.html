@@ -56,16 +56,9 @@
 </li>
 <li><a class="reference internal" href="#id3">Cas流程</a></li>
 <li><a class="reference internal" href="#id4">最佳实践</a><ul>
-<li><a class="reference internal" href="#springcas-client">Spring通过如下配置文件进行配置Cas Client:</a></li>
-<li><a class="reference internal" href="#spring-cas-client">Spring cas client关键代码</a><ul>
-<li><a class="reference internal" href="#org-springframework-security-web-access-exceptiontranslationfilter">org.springframework.security.web.access.ExceptionTranslationFilter:</a></li>
-<li><a class="reference internal" href="#org-jasig-cas-client-validation-abstractticketvalidationfilter">org.jasig.cas.client.validation.AbstractTicketValidationFilter:</a></li>
-<li><a class="reference internal" href="#org-springframework-security-web-authentication-abstractrauthenticationprocessingfilter">org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:</a></li>
-<li><a class="reference internal" href="#org-springframework-security-web-authentication-simpleurlauthenticationsuccesshandler">org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler</a></li>
-<li><a class="reference internal" href="#org-springframework-security-cas-userdetails-abstractcasassertionuserdetailsservice">org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsService</a></li>
-<li><a class="reference internal" href="#org-springframework-security-web-authentication-logout-logoutfilter">org.springframework.security.web.authentication.logout.LogoutFilter:</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#spring">Spring配置文件:</a></li>
+<li><a class="reference internal" href="#spring-cas-client">Spring cas client关键代码</a></li>
+<li><a class="reference internal" href="#q-a">Q&amp;A</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#id5">参考资料</a></li>
@@ -135,7 +128,7 @@ CAS进行认证的第一步，就是把从UI或request对象里取到的用户�
 <h2>Cas流程<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>Cas的访问流程分为几个步骤：</p>
 <ol class="arabic simple">
-<li>用户访问Cas保护的资源时，部署在客户Web应用的AuthenticationFilter，会截获此请求，生成service参数，然后redirect到CAS服务的login接口，
+<li>用户访问Cas保护的资源时，部署在客户Web应用的ExceptionTranslationFilter，会截获此请求，生成service参数，然后redirect到CAS服务的login接口，
 例如：<a class="reference external" href="https://casserverurl/cas/login?service=http://webserver/j_spring_cas_security_check">https://casserverurl/cas/login?service=http://webserver/j_spring_cas_security_check</a>；</li>
 </ol>
 <img alt="../../_images/cas_process1.jpg" src="../../_images/cas_process1.jpg" />
@@ -163,8 +156,8 @@ CAS进行认证的第一步，就是把从UI或request对象里取到的用户�
 <div class="section" id="id4">
 <h2>最佳实践<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>通过配置来实现自己的Handler</p>
-<div class="section" id="springcas-client">
-<h3>Spring通过如下配置文件进行配置Cas Client:<a class="headerlink" href="#springcas-client" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="spring">
+<h3>Spring配置文件:<a class="headerlink" href="#spring" title="Permalink to this headline">¶</a></h3>
 <p>web.xml</p>
 <div class="code highlight-python"><pre>&lt;!-- Wraps an HttpServletRequest so that the getRemoteUser and getPrincipal return the CAS related entries --&gt;
 &lt;filter&gt;
@@ -265,8 +258,7 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
 <h3>Spring cas client关键代码<a class="headerlink" href="#spring-cas-client" title="Permalink to this headline">¶</a></h3>
 <p>当用户访问一个被SpringSecurity保护的资源时，会抛出AccessDeniedException或者AuthenticationException，
 就会被ExceptionTranslationFilter类探测并解惑；</p>
-<div class="section" id="org-springframework-security-web-access-exceptiontranslationfilter">
-<h4>org.springframework.security.web.access.ExceptionTranslationFilter:<a class="headerlink" href="#org-springframework-security-web-access-exceptiontranslationfilter" title="Permalink to this headline">¶</a></h4>
+<p>org.springframework.security.web.access.ExceptionTranslationFilter:</p>
 <div class="code java highlight-python"><pre>public class ExceptionTranslationFilter extends GenericFilterBean {
 
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
@@ -334,9 +326,7 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
 }</pre>
 </div>
 <p>Cas Client通过TicketValidationFilter来验证ticket的有效性；</p>
-</div>
-<div class="section" id="org-jasig-cas-client-validation-abstractticketvalidationfilter">
-<h4>org.jasig.cas.client.validation.AbstractTicketValidationFilter:<a class="headerlink" href="#org-jasig-cas-client-validation-abstractticketvalidationfilter" title="Permalink to this headline">¶</a></h4>
+<p>org.jasig.cas.client.validation.AbstractTicketValidationFilter:</p>
 <div class="code java highlight-python"><pre>public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
    final FilterChain filterChain) throws IOException, ServletException {
    if (!preFilter(servletRequest, servletResponse, filterChain)) {
@@ -377,9 +367,7 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
 }</pre>
 </div>
 <p>Cas Client通过CasAuthenticationFilter来监听/j_spring_cas_security_check的请求，进行认证后的filter工作；</p>
-</div>
-<div class="section" id="org-springframework-security-web-authentication-abstractrauthenticationprocessingfilter">
-<h4>org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:<a class="headerlink" href="#org-springframework-security-web-authentication-abstractrauthenticationprocessingfilter" title="Permalink to this headline">¶</a></h4>
+<p>org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:</p>
 <div class="code java highlight-python"><pre>public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
@@ -434,9 +422,7 @@ protected void successfulAuthentication(HttpServletRequest request, HttpServletR
 }</pre>
 </div>
 <p>通过继承SimpleUrlAuthenticationSuccessHandler来实现自己的登录后逻辑；</p>
-</div>
-<div class="section" id="org-springframework-security-web-authentication-simpleurlauthenticationsuccesshandler">
-<h4>org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler<a class="headerlink" href="#org-springframework-security-web-authentication-simpleurlauthenticationsuccesshandler" title="Permalink to this headline">¶</a></h4>
+<p>org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler</p>
 <div class="code java highlight-python"><pre>public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
     handle(request, response, authentication);
@@ -463,9 +449,7 @@ protected void handle(HttpServletRequest request, HttpServletResponse response, 
 }</pre>
 </div>
 <p>通过继承AbstractCasAssertionUserDetailsService来实现用户权限分配；</p>
-</div>
-<div class="section" id="org-springframework-security-cas-userdetails-abstractcasassertionuserdetailsservice">
-<h4>org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsService<a class="headerlink" href="#org-springframework-security-cas-userdetails-abstractcasassertionuserdetailsservice" title="Permalink to this headline">¶</a></h4>
+<p>org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsService</p>
 <div class="code java highlight-python"><pre>//认证成功后回调，返回用户Code的方法
 public abstract class AbstractCasAssertionUserDetailsService implements AuthenticationUserDetailsService{
     public final UserDetails loadUserDetails(final Authentication token) throws UsernameNotFoundException {
@@ -477,9 +461,7 @@ public abstract class AbstractCasAssertionUserDetailsService implements Authenti
 protected abstract UserDetails loadUserDetails(Assertion assertion);</pre>
 </div>
 <p>通过继承SecurityContextLogoutHandler并注入到LogoutFilter来实现自己的用户登出逻辑，这里可以使用多个Handler；</p>
-</div>
-<div class="section" id="org-springframework-security-web-authentication-logout-logoutfilter">
-<h4>org.springframework.security.web.authentication.logout.LogoutFilter:<a class="headerlink" href="#org-springframework-security-web-authentication-logout-logoutfilter" title="Permalink to this headline">¶</a></h4>
+<p>org.springframework.security.web.authentication.logout.LogoutFilter:</p>
 <div class="code java highlight-python"><pre>public LogoutFilter(String logoutSuccessUrl, LogoutHandler... handlers) {
     Assert.notEmpty(handlers, "LogoutHandlers are required");
     this.handlers = Arrays.asList(handlers);
@@ -509,6 +491,17 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 }</pre>
 </div>
 </div>
+<div class="section" id="q-a">
+<h3>Q&amp;A<a class="headerlink" href="#q-a" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Cas Client将原始请求URL存放在什么地方？
+回答：存放在session之中，key为&#8221;SPRING_SECURITY_SAVED_REQUEST&#8221;；</li>
+<li>登录用户再次登录会发生什么情况？
+回答：重复登录的情况，Cas Server的Handler会首先判断浏览器发出的请求是否包含TGC，如果有TGC，则直接由TGC来判别身份和授权，如果没有再接收用户名和密码；</li>
+<li>如何判断ticket的有效性？
+回答：ticket由Cas Server传给Cas Client后，Cas Client为了防止仿冒攻击，会进行二次验证，会请求Cas Server的valiteTicket接口进行验证，
+最后解析Server的返回得到是否成功的信息和用户身份后进行session的Assertion建立，即验证成功；</li>
+</ol>
 </div>
 </div>
 <div class="section" id="id5">
