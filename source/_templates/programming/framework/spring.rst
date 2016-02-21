@@ -564,30 +564,6 @@ Spring AOP可以有如下几种实现形式：
 
 这里around方式没有执行成功，返回的对象jersyclient解析不了，暂时还未解决这个问题。
 
-Spring web工程启动初始化
-====================================
-靠web容器的线程启动listerner:
-
-::
-
-	<listener>
-		<listener-class>com.xikang.ch.core.web.listener.SiteConfigureListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>com.xikang.ch.portal.system.config.CloudHospitalListenerConfigurator</listener-class>
-	</listener>
-
-加载spring配置文件：
-
-::
-
-    <context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath*:conf/\*/spring-context\*.xml</param-value>
-	</context-param>
-	
-程序中如何设计异常：类似于Java源代码一样，认为是bug的异常，也就是不应该，但可能的情况，使用runtime exception；
-由不可控力造成的异常：如IO，网络等不由程序控制的异常，应该使用非运行时异常。
 
 Spring log4j
 =========================================

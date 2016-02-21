@@ -128,6 +128,7 @@ Sulotion of Web Service
 .. toctree::
    :maxdepth: 1
 
+   _templates/web/config
    _templates/web/webservice
    _templates/web/restapi
    _templates/web/json
@@ -142,6 +143,7 @@ Programming Framework
  
    _templates/programming/framework/spring
    _templates/programming/framework/spring_security
+   _templates/programming/framework/netty
    _templates/programming/java/guice
 
 

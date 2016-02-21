@@ -25,7 +25,9 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" /> 
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Guice Introduction and Analysis" href="../java/guice.html" />
+    <link rel="prev" title="Spring Security" href="spring_security.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,6 +36,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../java/guice.html" title="Guice Introduction and Analysis"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="spring_security.html" title="Spring Security"
+             accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -42,12 +50,20 @@
   <h3><a href="../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Netty</a><ul>
+<li><a class="reference internal" href="#socketio">SocketIO</a></li>
+<li><a class="reference internal" href="#nio">NIO</a></li>
 <li><a class="reference internal" href="#id1">最佳实践</a></li>
 <li><a class="reference internal" href="#id2">参考资料</a></li>
 </ul>
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="spring_security.html"
+                        title="previous chapter">Spring Security</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../java/guice.html"
+                        title="next chapter">Guice Introduction and Analysis</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/framework/netty.txt"
@@ -78,8 +94,84 @@
 <h1>Netty<a class="headerlink" href="#netty" title="Permalink to this headline">¶</a></h1>
 <p>Netty is an asynchronous event-driven network application framework for rapid development of maintainable high
 performance protocol servers &amp; clients.</p>
+<div class="section" id="socketio">
+<h2>SocketIO<a class="headerlink" href="#socketio" title="Permalink to this headline">¶</a></h2>
+<p>SocketIO是用同步的方式等待客户端连接，当有客户端连接时，分配一个Handler进行处理。</p>
+<div class="code java highlight-python"><pre>while(true){
+    Socket socket = serverSocket.accept();
+    // Pass the socket to the RequestHandler thread for processing
+    RequestHandler requestHandler = new RequestHandler(socket);
+    requestHandler.start();
+}
+
+class RequestHandler extends Thread{
+    ...
+    public void run(){
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter out = new PrintWriter(socket.getOutputStream());
+        out.println("Echo Server 1.0");
+        out.flush();
+        String line = in.readLine();
+        while (line != null &amp;&amp; line.length() &gt; 0) {
+            out.println("Server Echo: " + line);
+            out.flush();
+           line = in.readLine();
+        }
+        in.close();
+        out.close();
+        socket.close();
+    }
+}</pre>
+</div>
+</div>
+<div class="section" id="nio">
+<h2>NIO<a class="headerlink" href="#nio" title="Permalink to this headline">¶</a></h2>
+<p>NIO的本质是Socket连接，但使用了JDK7提供的异步处理框架FutureTask，调用后立即返回，避免阻塞。</p>
+<div class="code java highlight-python"><pre>final AsynchronousServerSocketChannel listener = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(8017));
+listener.accept(null, new CompletionHandler&lt;AsynchronousSocketChannel, Void&gt;() {
+    public void completed(AsynchronousSocketChannel ch, Void att) {
+        //accept the next connection
+        listener.accept(null, this);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
+        try{
+            int bytesRead = ch.read(byteBuffer).get(20, TimeUnit.SECONDS);
+            boolean running = true;
+            while (bytesRead != -1 &amp;&amp; running) {
+                if (byteBuffer.position() &gt; 2) {
+                    byteBuffer.flip();
+                    byte[] lineBytes = new byte[bytesRead];
+                    byteBuffer.get(lineBytes, 0, bytesRead);
+                    String line = new String(lineBytes);
+                    ch.write(ByteBuffer.wrap(line.getBytes()));
+                    byteBuffer.clear();
+                    bytesRead = ch.read(byteBuffer).get(20, TimeUnit.SECONDS);
+                }else{
+                    running = false;
+                }
+            }
+        }catch(Exception e){
+            ...//handle exception
+        }
+        ...//close ch
+    }
+});</pre>
+</div>
+</div>
 <div class="section" id="id1">
 <h2>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>使用netty作为web前端推送消息框架。
+在云医院的web项目中，因为前台定时刷新数据库带来的性能问题比较严重，因此选择使用推送方式发送消息。
+（其实我觉得是设计的问题，因为前台完全可以读redis而不去读取数据库内容，这样就可以提高效率）</li>
+</ol>
+<p>使用netty框架也能解决问题，利用前台的JS客户端进行连接，有消息的话进行推送。</p>
+<div class="code highlight-python"><pre>socket = io.connect('http://10.32.170.68:9082');
+socket.on('receive', function(data){
+    var type = $.parseJSON(data).type;
+    ...
+})</pre>
+</div>
+<p>这里加入的认证机制，通过用户第一次登录时需要进行身份认证，认证后，建立session与client的映射关系，保存到缓存中。</p>
 </div>
 <div class="section" id="id2">
 <h2>参考资料<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
@@ -99,6 +191,12 @@ performance protocol servers &amp; clients.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../java/guice.html" title="Guice Introduction and Analysis"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="spring_security.html" title="Spring Security"
+             >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>

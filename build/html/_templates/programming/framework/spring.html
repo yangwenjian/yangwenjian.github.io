@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
     <link rel="next" title="Spring Security" href="spring_security.html" />
-    <link rel="prev" title="设计模式Head First" href="../common/designpatterns.html" /> 
+    <link rel="prev" title="Cas" href="../../web/cas.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +40,7 @@
           <a href="spring_security.html" title="Spring Security"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../common/designpatterns.html" title="设计模式Head First"
+          <a href="../../web/cas.html" title="Cas"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -85,15 +85,14 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#spring-aop">Spring AOP</a></li>
-<li><a class="reference internal" href="#spring-web">Spring web工程启动初始化</a></li>
 <li><a class="reference internal" href="#spring-log4j">Spring log4j</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../common/designpatterns.html"
-                        title="previous chapter">设计模式Head First</a></p>
+  <p class="topless"><a href="../../web/cas.html"
+                        title="previous chapter">Cas</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="spring_security.html"
                         title="next chapter">Spring Security</a></p>
@@ -613,25 +612,6 @@ public class NovaAspectAdvice {
 网上有个参考资料把after return中的参数写成了String类型，导致我开始运行的时候怎么也截获不到AfterReturning方法之内，差点就换其他方式进行截获了。</p>
 <p>这里around方式没有执行成功，返回的对象jersyclient解析不了，暂时还未解决这个问题。</p>
 </div>
-<div class="section" id="spring-web">
-<h2>Spring web工程启动初始化<a class="headerlink" href="#spring-web" title="Permalink to this headline">¶</a></h2>
-<p>靠web容器的线程启动listerner:</p>
-<div class="highlight-python"><pre>&lt;listener&gt;
-        &lt;listener-class&gt;com.xikang.ch.core.web.listener.SiteConfigureListener&lt;/listener-class&gt;
-&lt;/listener&gt;
-&lt;listener&gt;
-        &lt;listener-class&gt;com.xikang.ch.portal.system.config.CloudHospitalListenerConfigurator&lt;/listener-class&gt;
-&lt;/listener&gt;</pre>
-</div>
-<p>加载spring配置文件：</p>
-<div class="highlight-python"><pre>&lt;context-param&gt;
-            &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
-            &lt;param-value&gt;classpath*:conf/\*/spring-context\*.xml&lt;/param-value&gt;
-    &lt;/context-param&gt;</pre>
-</div>
-<p>程序中如何设计异常：类似于Java源代码一样，认为是bug的异常，也就是不应该，但可能的情况，使用runtime exception；
-由不可控力造成的异常：如IO，网络等不由程序控制的异常，应该使用非运行时异常。</p>
-</div>
 <div class="section" id="spring-log4j">
 <h2>Spring log4j<a class="headerlink" href="#spring-log4j" title="Permalink to this headline">¶</a></h2>
 <p>Spring可以良好的整合其他框架，在Spring中配置log4j是非常简单的事情。</p>
@@ -693,7 +673,7 @@ log4j.appender.stdout.layout.ConversionPattern = %d{yyyy-MM-dd} %5p %c{1}:%L  - 
           <a href="spring_security.html" title="Spring Security"
              >next</a> |</li>
         <li class="right" >
-          <a href="../common/designpatterns.html" title="设计模式Head First"
+          <a href="../../web/cas.html" title="Cas"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

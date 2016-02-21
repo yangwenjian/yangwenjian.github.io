@@ -1,0 +1,223 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Web工程配置 &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="SOA" href="webservice.html" />
+    <link rel="prev" title="Elastic" href="../distribution/elastic.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="webservice.html" title="SOA"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../distribution/elastic.html" title="Elastic"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Web工程配置</a><ul>
+<li><a class="reference internal" href="#id1">Web工程记载配置文件</a><ul>
+<li><a class="reference internal" href="#id2">加载环境变量</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">Web工程启动初始化</a></li>
+<li><a class="reference internal" href="#filters">Filters</a></li>
+<li><a class="reference internal" href="#url-pattern">url-pattern</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../distribution/elastic.html"
+                        title="previous chapter">Elastic</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="webservice.html"
+                        title="next chapter">SOA</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/web/config.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="web">
+<h1>Web工程配置<a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>Web工程记载配置文件<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>context-param用来描述webapp本身的属性，而且在有ServletContext能取值，在servlets、filters、listeners中其配置作用。</p>
+<p>利用context-param，加载spring配置文件：</p>
+<div class="code highlight-python"><pre>&lt;context-param&gt;
+    &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+    &lt;param-value&gt;classpath*:conf/\*\*/spring-context\*.xml&lt;/param-value&gt;
+&lt;/context-param&gt;</pre>
+</div>
+<p>上面是Web工程能识别的字段，为contextConfigLocation，如果想自定义字段，需要添加读取配置的代码：</p>
+<div class="code java highlight-python"><pre>//在contextListener中
+String value = servletConfig.getServletContext().getInitParameter("myParam");
+//在Servlet中
+String value = request.getSession().getServletContext().getInitParameter("myParam");</pre>
+</div>
+<div class="section" id="id2">
+<h3>加载环境变量<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Environment entries are available via JNDI which may be useful when you don&#8217;t have a ServletContext directly at hands,
+such as in EJBs. The one in the web.xml is actually the last in precedence chain as to overridding environment entires.</p>
+<div class="code highlight-python"><pre>&lt;env-entry&gt;
+    &lt;env-entry-name&gt;dbhost&lt;/env-entry-name&gt;
+    &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;
+    &lt;env-entry-value&gt;localhost&lt;/env-entry-value&gt;
+&lt;/env-entry&gt;</pre>
+</div>
+<div class="code java highlight-python"><pre>// Get the base naming context
+Context env = (Context)new InitialContext().lookup("java:comp/env");
+// Get a single value
+String dbhost = (String)env.lookup("dbhost");</pre>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>Web工程启动初始化<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Web容器的线程启动listerner:</p>
+<div class="code highlight-python"><pre>&lt;listener&gt;
+        &lt;listener-class&gt;com.xikang.ch.core.web.listener.SiteConfigureListener&lt;/listener-class&gt;
+&lt;/listener&gt;
+&lt;listener&gt;
+        &lt;listener-class&gt;com.xikang.ch.portal.system.config.CloudHospitalListenerConfigurator&lt;/listener-class&gt;
+&lt;/listener&gt;</pre>
+</div>
+</div>
+<div class="section" id="filters">
+<h2>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h2>
+<p>Filter的作用是在servlet接收前对其进行预处理，在response返回给客户端之前也可以进行头和数据的处理。
+一个filter可以拦截多个请求，一个请求也能被多个filter拦截。</p>
+<p>Filter的执行顺序是由web.xml中filter-mapping的书写顺序决定的。</p>
+<p>Spring Security 配置：</p>
+<div class="code highlight-python"><pre>&lt;filter&gt;
+    &lt;filter-name&gt;springSecurityFilterChain&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.springframework.web.filter.DelegatingFilterProxy&lt;/filter-class&gt;
+&lt;/filter&gt;</pre>
+</div>
+<p>In Spring Security, the filter classes are also Spring beans defined in the application context and thus able to take advantage
+of Spring&#8217;s rich dependency-injection facilities and lifecycle interfaces. Spring&#8217;s DelegatingFilterProxy provides the link
+between web.xml and the application context.</p>
+<div class="code java highlight-python"><pre>@Override
+protected void initFilterBean() throws ServletException {
+    synchronized (this.delegateMonitor) {
+        if (this.delegate == null) {
+            // If no target bean name specified, use filter name.
+            if (this.targetBeanName == null) {
+                this.targetBeanName = getFilterName();
+            }
+            // Fetch Spring root application context and initialize the delegate early,
+            // if possible. If the root application context will be started after this
+            // filter proxy, we'll have to resort to lazy initialization.
+            WebApplicationContext wac = findWebApplicationContext();
+            if (wac != null) {
+                this.delegate = initDelegate(wac);
+            }
+        }
+    }
+}</pre>
+</div>
+<p>如果使用默认配置，targetBeanName为springSecurityFilterChain，web上下文按web.xml加载进来。</p>
+</div>
+<div class="section" id="url-pattern">
+<h2>url-pattern<a class="headerlink" href="#url-pattern" title="Permalink to this headline">¶</a></h2>
+<p>当请求发送到servlet容器的时候，容器先会将请求的url减去当前应用上下文的路径作为servlet的映射url，比如我访问的是
+<a class="reference external" href="http://localhost/test/aaa.html">http://localhost/test/aaa.html</a>， 我的应用上下文是test，容器会将http://localhost/test去掉， 剩下的/aaa.html部分拿来做servlet的
+映射匹配。这个映射匹配过程是有顺序的，而且当有一个servlet匹配成功以后，就不会去理会剩下 的servlet了（filter不同，后文会提到）。</p>
+<p>匹配类型：</p>
+<ol class="arabic simple">
+<li>结尾为&#8217;/*&#8217;;</li>
+<li>开头为&#8217;*.&#8217;;</li>
+<li>为&#8217;/&#8217;;</li>
+<li>其他精确匹配;</li>
+</ol>
+<p>url-pattern遵循如下规则：
+1. 精确路径匹配，使用contextVersion的exactWrappers;
+2. 前缀匹配，使用contextVersion的wildcardWrappers;
+3. 扩展匹配，使用contextVersion的extensionWrappers;
+4. 使用资源文件来处理servlet，使用contextVersion的welcomeResources属性，这个属性是个字符串数组;
+5. 使用默认的servlet，使用contextVersion的defaultWrapper;</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="webservice.html" title="SOA"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../distribution/elastic.html" title="Elastic"
+             >previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
