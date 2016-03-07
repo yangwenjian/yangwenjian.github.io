@@ -46,9 +46,13 @@ Bionic polarization model based on cloud computing and precision analysis, direc
 
 Data management system, director: Qian Xu.
 
-Neunn Software Development Company, 2013.8-
+Neunn Software Development Company, 2013.8-2015.4
 ---------------------------------------------------------
 Cloud Platform based on OpenStack, director: Hu Xubing, Zhao Yongsheng.
+
+Neusoft Software Development Company, 2015.5~today
+---------------------------------------------------------
+Cloud Hospital web server side design and development.
 
 Skills
 ============================================

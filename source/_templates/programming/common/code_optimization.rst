@@ -8,6 +8,9 @@ The biggest speedup you'll ever get with a program will be when you first get it
 
                                                                     --John K. Ousterhout
 
+Loop Unrolling
+============================================
+
 基本原则
 ============================================
 1. 优化的第一项原则就是保证代码在所有条件下运行正确，效率高但有bug的代码根本没有用。
@@ -31,6 +34,47 @@ java code optimazation
 2. 尽量使用局部变量，局部变量保存在Stack中，而静态和实例变量存储在Heap中，Heap访问比Stack访问慢，而且局部变量能被编译器优化；
 3. 减少对代码的重复计算，有计算的情况保留结果值，比重新计算节省资源;
 4. 不要在循环中使用try catch语句块;
+
+云医院web项目中的优化策略
+````````````````````````````````````````````
+1. 建立单字段索引，联合索引，优化mysql语句；
+
+.. code::
+
+    SELECT 
+        tb1.service_instance_code 
+    FROM
+        ch_ser_service_instance AS tb1,
+        ch_ser_service_instance_owner AS tb2 
+    WHERE tb1.service_instance_code = tb2.service_instance_code 
+    AND tb2.owner_type = 'DOCTOR' 
+    AND tb2.owner_code = 'C569DAACBE4B0AAC03A718B52' 
+    ORDER BY service_status DESC,
+    service_start_date DESC 
+    IMIT 0, 8 
+
+    在两个表中100w数据量以上时，执行时间在27s左右，优化为如下代码后，执行时间变为2s左右
+
+    SELECT 
+        service_instance_code 
+    FROM
+        (SELECT 
+            tb1.service_instance_code,
+            tb1.service_status,
+            tb1.service_start_date 
+        FROM
+            ch_ser_service_instance AS tb1,
+            ch_ser_service_instance_owner AS tb2 
+        WHERE tb1.service_instance_code = tb2.service_instance_code 
+        AND tb2.owner_type = 'DOCTOR' 
+        AND tb2.owner_code = 'C569DAACBE4B0AAC03A718B52') tb3
+    ORDER BY service_status DESC,
+        service_start_date DESC 
+    LIMIT 0, 8 
+
+2. mvc中的intercepor里尽量减少代码逻辑和数据库访问，因为每次访问DispatchServlet时都会执行interceptor中的代码，如果里面有过多的
+   数据库访问，造成用户数大量并发中出现严重的性能问题，在云医院的interceptor中，就多次访问数据库并且还进行了远程调用phr接口，
+   修改后进行一次调用后进行缓存，存储到redis中或者session中都可以解决这个问题。
 
 
 Java本身在编译器上做了很多优化，而且是一门成熟的语言，在编写代码时不像C++那样需要自己管理内存，简化了很多优化工作，同时给程序员
