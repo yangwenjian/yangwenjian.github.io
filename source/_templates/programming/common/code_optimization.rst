@@ -8,9 +8,6 @@ The biggest speedup you'll ever get with a program will be when you first get it
 
                                                                     --John K. Ousterhout
 
-Loop Unrolling
-============================================
-
 基本原则
 ============================================
 1. 优化的第一项原则就是保证代码在所有条件下运行正确，效率高但有bug的代码根本没有用。
@@ -18,6 +15,53 @@ Loop Unrolling
 3. 使用合适的数据结构和算法。
 4. 编写出编译器能给出最大优化的代码。
 5. 使用任务分割和并行计算来提高效率。
+
+优化方案的演变
+============================================
+我们度量循环程序中的速度，使用cycles per element（“CPE”），意思是每次迭代需要的时钟周期数。
+我们考虑将一个vector中的所有元素进行相加或者相乘，使用如下方案，CPE在29左右。
+
+.. code:: python
+
+    typedef int data_t;
+    typedef struct{
+        long int len;
+        data_t *data;
+    } vec_rec, *vec_prt;
+
+    #define IDENT 0
+    #define OP +
+
+    void combine1(vec_ptr v, data *dest){
+        long int i;
+        *dest = IDENT;
+        for(i = 0; i < vec_length(v); i++){
+            data_t val;
+            get_vec_element(v, i, &val);
+            *dest = *dest OP val;
+        }
+    }
+
+使用Code Motion技术，然vector的长度在整个计算过程中没有发生任何变化，我们就计算一次vector的长度，将其移出循环。
+将CPU提高8～12左右（integer～double）。
+
+.. code:: python
+
+    void combine2(vec_prt v, data *dest){
+        long int i;
+        long int length = vec_length(v);
+        *dest = IDENT;
+        for(i = 0; i < length; i++){
+            data_t val;
+            get_vec_element(v, i, &val);
+            *dest = *dest OP val;
+        }
+    }
+
+    
+
+
+
 
 最佳实践
 ============================================

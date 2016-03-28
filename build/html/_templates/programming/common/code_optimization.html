@@ -50,9 +50,9 @@
   <h3><a href="../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Code Optimization</a><ul>
-<li><a class="reference internal" href="#loop-unrolling">Loop Unrolling</a></li>
 <li><a class="reference internal" href="#id1">基本原则</a></li>
-<li><a class="reference internal" href="#id2">最佳实践</a><ul>
+<li><a class="reference internal" href="#id2">优化方案的演变</a></li>
+<li><a class="reference internal" href="#id3">最佳实践</a><ul>
 <li><a class="reference internal" href="#java-code-optimazation">java code optimazation</a><ul>
 <li><a class="reference internal" href="#web">云医院web项目中的优化策略</a></li>
 </ul>
@@ -100,9 +100,6 @@
 <p>The biggest speedup you&#8217;ll ever get with a program will be when you first get it working.</p>
 <blockquote>
 <div>&#8211;John K. Ousterhout</div></blockquote>
-<div class="section" id="loop-unrolling">
-<h2>Loop Unrolling<a class="headerlink" href="#loop-unrolling" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="id1">
 <h2>基本原则<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
@@ -114,7 +111,44 @@
 </ol>
 </div>
 <div class="section" id="id2">
-<h2>最佳实践<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>优化方案的演变<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>我们度量循环程序中的速度，使用cycles per element（“CPE”），意思是每次迭代需要的时钟周期数。
+我们考虑将一个vector中的所有元素进行相加或者相乘，使用如下方案，CPE在29左右。</p>
+<div class="code python highlight-python"><pre>typedef int data_t;
+typedef struct{
+    long int len;
+    data_t *data;
+} vec_rec, *vec_prt;
+
+#define IDENT 0
+#define OP +
+
+void combine1(vec_ptr v, data *dest){
+    long int i;
+    *dest = IDENT;
+    for(i = 0; i &lt; vec_length(v); i++){
+        data_t val;
+        get_vec_element(v, i, &amp;val);
+        *dest = *dest OP val;
+    }
+}</pre>
+</div>
+<p>使用Code Motion技术，然vector的长度在整个计算过程中没有发生任何变化，我们就计算一次vector的长度，将其移出循环。
+将CPU提高8～12左右（integer～double）。</p>
+<div class="code python highlight-python"><pre>void combine2(vec_prt v, data *dest){
+    long int i;
+    long int length = vec_length(v);
+    *dest = IDENT;
+    for(i = 0; i &lt; length; i++){
+        data_t val;
+        get_vec_element(v, i, &amp;val);
+        *dest = *dest OP val;
+    }
+}</pre>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>不同语言的代码优化方式不同，我喜欢的java、c++、c，我们将来讲讲代码优化的方法和效果。</p>
 <ul class="simple">
 <li>减少程序中不必要的代码，包括无意义的调用、条件测试、内存引用等；</li>
