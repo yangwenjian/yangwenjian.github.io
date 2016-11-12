@@ -71,13 +71,15 @@
 <li><a class="reference internal" href="#id9">Spring jdbc 关键代码</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id10">Spring事务</a><ul>
+<li><a class="reference internal" href="#id10">Spring的事务</a></li>
+<li><a class="reference internal" href="#id11">Spring事务</a><ul>
 <li><a class="reference internal" href="#transaction">Transaction管理</a></li>
-<li><a class="reference internal" href="#id11">事务带来的困扰</a></li>
-<li><a class="reference internal" href="#id12">事务方法嵌套用的迷茫</a></li>
-<li><a class="reference internal" href="#id13">多种数据库连接方式带来的困惑</a></li>
-<li><a class="reference internal" href="#id14">Spring的事务增强</a></li>
-<li><a class="reference internal" href="#id15">最佳实践</a><ul>
+<li><a class="reference internal" href="#id12">事务陷阱</a></li>
+<li><a class="reference internal" href="#id13">事务带来的困扰</a></li>
+<li><a class="reference internal" href="#id14">事务方法嵌套用的迷茫</a></li>
+<li><a class="reference internal" href="#id15">多种数据库连接方式带来的困惑</a></li>
+<li><a class="reference internal" href="#id16">Spring的事务增强</a></li>
+<li><a class="reference internal" href="#id17">最佳实践</a><ul>
 <li><a class="reference internal" href="#transactional">&#64;Transactional标记什么时候发挥作用</a></li>
 <li><a class="reference internal" href="#hibernate-session">Hibernate session管理</a></li>
 </ul>
@@ -339,7 +341,10 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
             return results;
     }</pre>
 </div>
-<hr class="docutils" />
+</div>
+</div>
+<div class="section" id="id10">
+<h2>Spring的事务<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
 <p>五种方式实现事务
 <a class="reference external" href="http://blog.csdn.net/hjm4702192/article/details">http://blog.csdn.net/hjm4702192/article/details</a>/17277669如果在接口、实现类或方法上都指定了&#64;Transactional 注解，则优先级顺序为方法&gt;实现类&gt;接口；
 建议只在实现类或实现类的方法上使用&#64;Transactional，而不要在接口上使用，这是因为如果使用JDK代理机制是没问题，因为其使用基于接口的代理；而使用使用CGLIB代理机制时就会遇到问题，因为其使用基于类的代理而不是接口，这是因为接口上的&#64;Transactional注解是“不能继承的”；
@@ -351,9 +356,8 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
 <dd>Spring声明式事务实现其实就是Spring AOP+线程绑定实现，利用AOP实现开启和关闭事务，利用线程绑定（ThreadLocal）实现跨越多个方法实现事务传播。</dd>
 </dl>
 </div>
-</div>
-<div class="section" id="id10">
-<h2>Spring事务<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id11">
+<h2>Spring事务<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
 <p>Sping提供了一致的事务管理抽象，是Spring重要的抽象之一。优点如下：</p>
 <ul class="simple">
 <li>为不同事务API提供一致的编程模型，如JTA，JDBC，Hibernate，iBATIS数据库层和JDO；</li>
@@ -374,13 +378,32 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
 <p>Spring声明式事务实现其实就是Spring AOP+线程绑定实现，利用AOP实现开启和关闭事务，利用线程绑定（ThreadLocal）实现跨越多个方法实现事务传播。
 由于我们不可能只使用一个事务通知，可能还有其他类型事务通知，而且如果这些通知中需要事务支持怎么办？这就牵扯到通知执行顺序的问题上了，因此如果可能与其他AOP通知协作的话，而且这些通知中需要使用声明式事务管理支持，事务通知应该具有最高优先。</p>
 </div>
-<div class="section" id="id11">
-<h3>事务带来的困扰<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>事务陷阱<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p>本地事务陷阱：</p>
+<p>基于 ORM 的框架需要一个事务来触发对象缓存与数据库之间的同步。这通过一个事务提交完成，其中会生成 SQL 代码，数据库会执行需要的操作
+（即插入、更新、删除）。没有事务，就不会触发 ORM 去生成 SQL 代码和保存更改，因此只会终止方法 — 没有异常，没有更新。如果使用基于
+ORM 的框架，就必须利用事务。不再依赖数据库来管理连接和提交工作。</p>
+<p>使用Spring标记带来的陷阱：</p>
+<div class="code highlight-python"><pre>&lt;tx:annotation-driven transaction-manager="transactionManager"/&gt;</pre>
+</div>
+<p>transaction-manager 属性保存一个对在 Spring 配置文件中定义的事务管理器 bean 的引用。这段代码告诉 Spring 在应用事务拦截器时使用
+&#64;Transaction 注释。如果没有它，就会忽略 &#64;Transactional 注释，导致代码不会使用任何事务。如果你的bean不交给spring管理，那么执行
+中一样不会使用事务，因为事务支持是需要AOP实现的。</p>
+<p>&#64;Transactional只读标记陷阱：</p>
+<p>例如事务传播设为SUPPORT，只读标记设为true，会由于没有事务而使得只读标记无效，只读标记只在事务启动后有效。</p>
+<p>使用REQUEST_NEW带来的异常：</p>
+<p>使用REQUEST_NEW会挂起当前事务，执行新的事务，外层事务回滚的时候，内层新起的事务不会回滚，已经被提交过了。</p>
+<p>默认的&#64;Transanctional标记默认只对运行时异常进行回滚，对受检查异常不进行回滚，如果要修改必须得自己定义rollbackFor参数。</p>
+</div>
+<div class="section" id="id13">
+<h3>事务带来的困扰<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <p>这次编码遇到一个简单的问题，我要对数据库进行A操作和B操作，这两个操作必须在一个事务之内，但是B操作又需要A操作commit后的结果。</p>
 <p>这样就矛盾了，既然是事务，当然在commit前不能写进数据库中，但是A操作后的结果正是B操作需要的。</p>
+<p>这个时候我个人建议手动写回滚方法，截获异常并自己实现回滚，如果回滚中再出现异常，那对不起，没辙。</p>
 </div>
-<div class="section" id="id12">
-<h3>事务方法嵌套用的迷茫<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id14">
+<h3>事务方法嵌套用的迷茫<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <p>（这部分文字引自http://www.ibm.com/developerworks/cn/java/j-lo-spring-ts1/）</p>
 <p>Spring 事务一个被讹传很广说法是：一个事务方法不应该调用另一个事务方法，否则将产生两个事务。结果造成开发人员在设计事务方法时束手束脚，生怕一不小心就踩到地雷,其实这种是不认识 Spring 事务传播机制而造成的误解，Spring 对事务控制的支持统一在 TransactionDefinition 类中描述，该类有以下几个重要的接口方法:</p>
 <div class="highlight-python"><pre>*int getPropagationBehavior()：事务的传播行为
@@ -429,8 +452,8 @@ public class ScoreService extends BaseService{
 }</pre>
 </div>
 </div>
-<div class="section" id="id13">
-<h3>多种数据库连接方式带来的困惑<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id15">
+<h3>多种数据库连接方式带来的困惑<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <p>对于Spring的ORM的实现方式有多种，可以采用高端的ORM技术（Hibernate，JPA，JDO），同时采用一个JDBC 技术（Spring JDBC，iBatis），前者使用的会话是对后者Connection的封装，Spring会机智的在同一事务中封装后者的链接，这样我们直接管Spring的事务就可以了。</p>
 <p>是用Hibernate的代码如下:</p>
 <div class="highlight-python"><pre>public void logon(String userName) {
@@ -447,12 +470,12 @@ public void updateLastLogonTime(String userName) {
 </div>
 <p>这里要注意，Spring中Hibernate是要等事务提交的时候进行数据库同步，这里同步的时候是在logon返回的时候，问题是addSocre使用jdbc，直接就修改数据库了，这里我们使用flush()方法来覆盖掉Hibernate的一级缓存。</p>
 </div>
-<div class="section" id="id14">
-<h3>Spring的事务增强<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id16">
+<h3>Spring的事务增强<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
 <p>Spring可以增强public的方法（注意不能增强public static方法）的事务。（暂时未涉及到此处，未研究学习)</p>
 </div>
-<div class="section" id="id15">
-<h3>最佳实践<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id17">
+<h3>最佳实践<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="transactional">
 <h4>&#64;Transactional标记什么时候发挥作用<a class="headerlink" href="#transactional" title="Permalink to this headline">¶</a></h4>
 <p>在StackOverFlow上发现的问题，请看

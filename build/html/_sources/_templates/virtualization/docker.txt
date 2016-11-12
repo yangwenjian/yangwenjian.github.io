@@ -28,6 +28,10 @@ Docker's features:
 * Change management.
 * Interactive shell.
 
+Docker Architecture
+===================================
+Docker is an open platform for developing,shipping and running applications. 
+
 Docker Design
 ===================================
 Docker uses a client-server architecture.

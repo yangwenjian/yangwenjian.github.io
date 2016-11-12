@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>婚礼请柬 &mdash; knight 1.0.1 documentation</title>
+    <title>Fork Function &mdash; knight 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -25,8 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="prev" title="Encoding and Decoding" href="encode.html" /> 
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,20 +34,22 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="encode.html" title="Encoding and Decoding"
-             accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="encode.html"
-                        title="previous chapter">Encoding and Decoding</a></p>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fork Function</a><ul>
+<li><a class="reference internal" href="#best-exercise">Best Exercise</a></li>
+</ul>
+</li>
+</ul>
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../../_sources/_templates/other/invitation.txt"
+    <li><a href="../../_sources/_templates/linux/fork.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -72,19 +73,44 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="id1">
-<h1>婚礼请柬<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
-<img alt="_templates/other/../../images/other/wedding1.jpg" src="_templates/other/../../images/other/wedding1.jpg" />
-<div class="highlight-python"><pre>各位尊敬的领导、同事：
-
-你们好！
-已经来到云计算研发部工作一年多了，非常感谢各位领导同事在一年多来对我的关心照顾。工作顺心，自然事事顺心。
-我将在2014年10月2日在瑞心城市酒店举办婚礼，诚挚的邀请您见证我和爱人李瑛组建幸福的家庭。
-时间：2014年10月2日9点58分
-地点：瑞心城市酒店二楼宴会大厅（沈河区敬宾街3-3号）</pre>
+  <div class="section" id="fork-function">
+<h1>Fork Function<a class="headerlink" href="#fork-function" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="best-exercise">
+<h2>Best Exercise<a class="headerlink" href="#best-exercise" title="Permalink to this headline">¶</a></h2>
+<p>See code here:</p>
+<div class="code cpp highlight-python"><pre>#include &lt;stdio.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+int main(void){
+        int i;
+        for(i = 0; i &lt; 2; i++){
+                fork();
+                printf("hello");
+        }
+        return 0;
+}</pre>
 </div>
-<p>地址链接：
-<a class="reference external" href="http://map.baidu.com/?shareurl=1&amp;poiShareUid=d305db1f99a80227932ca37c&amp;cityCode=58&amp;tn=B_NORMAL_MAP">http://map.baidu.com/?shareurl=1&amp;poiShareUid=d305db1f99a80227932ca37c&amp;cityCode=58&amp;tn=B_NORMAL_MAP</a></p>
+<p>It will print 8 times.</p>
+<p>But if we change the print content to &#8220;hellon&#8221;, the result will be 6 times.</p>
+<p>Why?</p>
+<p>I compare the assembly code of these two, and I find one simple difference.</p>
+<div class="code highlight-python"><pre>//printf("hello\n")
+.L3:
+    call    fork
+    movl    $.LC0, %edi
+    movl    $0, %eax
+    call    printf
+    addl    $1, -4(%rbp)
+
+//printf("hello")
+.L3:
+    call    fork
+    movl    $.LC0, %edi
+    call    puts
+    addl    $1, -4(%rbp)</pre>
+</div>
+<p>Puts function will print the string immidiately; while printf will put the string into buffer area.</p>
+</div>
 </div>
 
 
@@ -99,9 +125,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="encode.html" title="Encoding and Decoding"
-             >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>

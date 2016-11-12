@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="WebService简介与机制" href="../web/webservice.html" />
+    <link rel="next" title="zookeeper" href="zookeeper.html" />
     <link rel="prev" title="Hadoop介绍及基础研究" href="hadoop.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../web/webservice.html" title="WebService简介与机制"
+          <a href="zookeeper.html" title="zookeeper"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="hadoop.html" title="Hadoop介绍及基础研究"
@@ -53,7 +53,10 @@
 <li><a class="reference internal" href="#concept">Concept</a></li>
 <li><a class="reference internal" href="#objectstorage">ObjectStorage</a><ul>
 <li><a class="reference internal" href="#metadata-server-mds">Metadata Server(MDS, 元数据服务)</a></li>
-<li><a class="reference internal" href="#object-storage-client">Object Storage Client</a></li>
+<li><a class="reference internal" href="#object-storage-client">Object Storage Client</a><ul>
+<li><a class="reference internal" href="#id1">最佳实践</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -64,8 +67,8 @@
   <p class="topless"><a href="hadoop.html"
                         title="previous chapter">Hadoop介绍及基础研究</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../web/webservice.html"
-                        title="next chapter">WebService简介与机制</a></p>
+  <p class="topless"><a href="zookeeper.html"
+                        title="next chapter">zookeeper</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/distribution/storage.txt"
@@ -131,6 +134,15 @@
 <li>OSD得到请求后，判断要读取的OSD，并根据其认证方式要求客户端认证，授权后将数据发送给客户端；</li>
 <li>文件系统收到OSD返回的数据后，读取结束。</li>
 </ol>
+<div class="section" id="id1">
+<h4>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li>Mysql主从带来的一些问题：
+在Mysql设置主写从读的时候，会出现一个读取不到的情况，因为默认的同步策略是异步的，不能及时写到从数据库。
+对于数据强一致性的情况下，设置同步策略为写到从数据库后同步返回，这样降低效率换取一致性；也可以设置缓存进行读取，写后立即
+更新redis，然后读取操作从redis取；也可以通过Spring的DynamicDataSource进行动态的数据库选择。</li>
+</ol>
+</div>
 </div>
 </div>
 </div>
@@ -148,7 +160,7 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../web/webservice.html" title="WebService简介与机制"
+          <a href="zookeeper.html" title="zookeeper"
              >next</a> |</li>
         <li class="right" >
           <a href="hadoop.html" title="Hadoop介绍及基础研究"

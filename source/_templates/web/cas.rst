@@ -3,10 +3,15 @@
 =======================================================
 Cas
 =======================================================
-Central Authentication Service 是开源的单点登录解决方案。
+Central Authentication Service 是开源的单点登录解决方案，本身是一套框架，底层预留出接口进行认证，支持多种认证方式，Cas Client和Cas Server之间
+的通讯协议也是支持Cas，OpenId，SAML，Oauth等。
 
 Cas介绍
 =======================================================
+Cas Server: authenticate users, grant access to CAS-enabled services, issue and validate tickets, create sso session;
+
+Cas Client: communicate with CAS server via a supported protocol,  can be integrated with various software platforms and applications;
+
 支持的协议（Protocols）： Custom Protocol 、 CAS 、 OAuth 、 OpenID 、 RESTful API 、 SAML1.1 、 SAML2.0。
 
 支持的认证机制：Active Directory 、 JAAS 、 JDBC 、 LDAP 、 X.509 Certificates。
@@ -20,8 +25,16 @@ Cas介绍
 
 支持多种客户端： Java, .Net, PHP, Perl, Apache, uPortal 等。
 
+.. image:: images/cas_architecture.png
+
 相关概念
 --------------------------------------------------------
+
+TGT: Ticket Granting Ticket;
+
+TGC: Ticket Granting Cookie, TGT in client browser;
+
+ST: Service Ticket;
 
 Credentials：用户提供的用于登录用的凭据信息，如用户名/密码、证书、IP地址、Cookie值等。比如UsernamePasswordCredentials，封装的是用户名和密码。
 CAS进行认证的第一步，就是把从UI或request对象里取到的用户凭据封装成Credentials对象，然后交给认证管理器去认证；
@@ -46,29 +59,64 @@ Cas流程
 Cas的访问流程分为几个步骤：
 
 1. 用户访问Cas保护的资源时，部署在客户Web应用的ExceptionTranslationFilter，会截获此请求，生成service参数，然后redirect到CAS服务的login接口，
-   例如：https://casserverurl/cas/login?service=http://webserver/j_spring_cas_security_check；
+   例如：https://$casserverurl/cas/login?service=http://$webserver/webapp/j_spring_cas_security_check;
 
 .. image:: images/cas_process1.jpg
 
-2. 用户与Cas Server进行交互，进行身份认证，认证成功后，CAS服务器会生成认证cookie，写入浏览器，同时将cookie缓存到服务器本地，
+2. 用户与Cas Server进行交互，进行身份认证，认证成功后，CAS服务器会生成认证cookie，写入浏览器，同时将SSO session存到服务器本地，
    并为客户端浏览器设置一个 Ticket Granted Cookie（TGC），CAS 服务器还会根据service 参数生成ticket,ticket会保存到服务器，
    也会加在url后面，然后将请求redirect回客户Web服务器，
-   例如：http://webserver/webapp/j_spring_cas_security_check?ticket=ST-0-ER94xMJmn6pha35CQRoZ；
+   例如：http://$webserver/webapp/j_spring_cas_security_check?ticket=ST-0-ER94xMJmn6pha35CQRoZ;
 
 .. image:: images/cas_process2.jpg
 
 3. Web应用的CasAuthenticationFilter会监听上述请求，看到ticket参数后，会跳过，传给AuthenticationManager进行处理，也就是配置中的CasAuthenticationProvider，
    由里面配置的的TicketValidationFilter处理，TicketValidationFilter会发送请求到Cas Server的/serviceValidate接口, 将ticket、service都传到此接口，
    由此接口验证ticket的有效性，之后Cas Server会给出响应，如果成功的话响应中会包含UserName；
+   例如：http://$casserverurl/cas/serviceValidate?ticket=ST-0-ER94xMJmn6pha35CQRoZ&service=$serviceurl;
 
 .. image:: images/cas_process3.jpg
 
-4. 至此为止，SSO会话就建立起来了，以后用户在同一浏览器里访问此web应用时，AuthenticationFilter会在session里读取到用户信息，所以就不会去CAS认证，
+4. 至此为止，SSO就建立起来了，以后用户在同一浏览器里访问此web应用时，AuthenticationFilter会在session里读取到用户信息，所以就不会去CAS认证，
    如果在此浏览器里访问别的web 应用时，AuthenticationFilter在session 里读取不到用户信息，会去CAS 的login接口认证，但这时CAS会读取到浏览器传来的cookie，
    所以CAS不会要求用户去登录页面登录，只是会根据service参数生成一个ticket ，然后再和web应用做一个验证ticket的交互而已；
 
 5. Cas登出时，由requestSingleLogoutFilter访问/spring_security_cas_logout重定向到Cas Server来进行登出，再由Cas Server发送一个Single Logout Request到所有
    注册的服务中，singleLogoutFilter处理这个Single Logout Request，从静态Map中查找Session并将其置为无效。
+
+6. 整体流程图：
+
+.. image:: images/cas_flow_diagram.png
+
+代理流程：
+
+.. image:: images/cas_proxy_flow_diagram.jpg
+
+Cas HA Deployment
+=========================================================
+简单环境，建议使用云平台进行HA，使用Active/Standby方式，这样ticket信息和ticket registry都存储在内存之中，简单有效，不能做到用户零
+感知升级和切换，而且切换后会丢失SSO session，导致重新登录。
+
+集群环境，可分为Active/Standby和Active/Active，当使用Active/Active模式时，需要将ticket和ticket registry存储在共享存储上，并使用LBS
+的心跳机制，session共享是可选的，但并不推荐，建议使用LBS的source IP方式（大NAT环境下不建议），并提供冗余的服务，Session复制复杂而
+不可靠，有安全泄漏的风险。
+Active/Standby模式下，切换的时候可能会导致票据验证不通过，这个时候需要重新登录。
+
+.. image:: images/ha_architecture.png
+
+Cas Security
+=========================================================
+主要思想为宁可牺牲用户体验，也要保证ticket，session安全。
+
+1. 为了减少帐号密码暴露的风险，所有与Cas Server的交互都建议使用https方式，包括Cas server与底层的认证服务交互，与用户或Cas client的
+   交互；
+2. 不建议使用缓存集群进行同步和复制ticket信息，同时持久化也应该加密；
+3. 对于关键应用使用Force Authentication机制；
+4. 对于信任ip可使用Passive Authentication机制；
+5. 当使用代理模式时对代理链进行验证；
+6. 尽量缩短app的session timeout和SSO session的timeout，防止退出出错时造成安全风险；
+7. 支持login throttling，但建议使用认证服务器自身的throttling；
+8. 对于long term session，使用Force Authentication进行保护；
 
 最佳实践
 ==============================================================================================================

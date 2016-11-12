@@ -9,8 +9,6 @@ Welcome to Knight's documentation!
 
 *内外兼修，以有所得，成果落地，以有所成*
 
-.. image:: images/other/wedding1.jpg
-
 The Will of Knight
 =====================================
 
@@ -64,6 +62,7 @@ Sulotion of Linux&Unix
    _templates/linux/memory
    _templates/linux/network
    _templates/linux/firewall
+   _templates/linux/fork
 
 Linux Tools
 --------------------------------------
@@ -186,7 +185,6 @@ Other
    _templates/cloud/openstack_base_releasenote
    _templates/other/opticksandenvi
    _templates/other/encode
-   _templates/other/invitation
 
 
 Acknowledgements

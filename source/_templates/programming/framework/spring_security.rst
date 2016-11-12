@@ -9,11 +9,14 @@ Spring Security基于Spring框架，提供了一套Web应用安全性的完整�
 
 Spring Security如何控制权限
 ================================================
-Spring Security使用Filter组成的Chain来判断权限。
+Spring Security使用Filter组成的Chain来判断权限，主要是有AccessDecisionManager中的AccessDecisionVoter(AuthenticationVoter, 
+RoleVoter)进行投票，如果有任何一个voter没有通过，就会抛出AccessDenyException，进行重新登录。
+
 Spring预定义了很多out-of-boxed filter供开发者直接使用。
 每个Filter一般情况下（有些Filter是abstract的）都和配置文件的一个元素（有的情况下可能是属性）对应。
 比如：AUTHENTICATION_PROCESSING_FILTER，对应配置文件里面的：http/form-login元素。
-如果Spring提供的Filter不能满足权限功能，开发者可以自己定义Filter，然后放到Filter Chain的某个位置，或者替换原有的Filter，也可以放在某个Filter的前面或者后面。
+如果Spring提供的Filter不能满足权限功能，开发者可以自己定义Filter，然后放到Filter Chain的某个位置，或者替换原有的Filter，也
+可以放在某个Filter的前面或者后面。
 
 控制内容
 ------------------------------------------------
@@ -50,6 +53,15 @@ Spring预定义了很多out-of-boxed filter供开发者直接使用。
         - A object is a URL, a filter was find permission configuration by this URL, and pass to here.
         - Check authentication has attribute in permission configuration (configAttributes).
         - If not match corresponding authentication, throw a AccessDeniedException.
+
+最佳实践
+===============================================
+配置方式
+-----------------------------------------------
+1. 使用最简单的配置方式，直接写在xml文件中；
+2. 使用dataSource进行配置，数据库中需要有相应的表进行对应；
+3. 提供表和查询sql，又Spring Security自己进行查询；
+4. 自定义filter和voter等，进行扩展；
 
 参考资料
 ===============================================
