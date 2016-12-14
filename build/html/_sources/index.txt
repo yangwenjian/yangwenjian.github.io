@@ -119,6 +119,7 @@ Sulotion of Distribution
    _templates/distribution/storage
    _templates/distribution/zookeeper
    _templates/distribution/elastic
+   _templates/distribution/micro_service
 
 
 Sulotion of Web Service
