@@ -56,6 +56,11 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#id3">最佳实践</a></li>
+<li><a class="reference internal" href="#id4">内存泄漏</a><ul>
+<li><a class="reference internal" href="#id5">原理</a></li>
+<li><a class="reference internal" href="#id6">内存泄漏的情况</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -145,6 +150,22 @@
 </div>
 <p>-XX: 的含义是制定Permgen空间。</p>
 <p>PermSapce主要是用来存储Java的类型信息的元数据，如果大量的创建对象，这个存储区域就会溢出，造成Tomcat崩溃，影响程序运行。</p>
+</div>
+<div class="section" id="id4">
+<h2>内存泄漏<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>相比于C，Java不许要程序员手动回收分配的内存，但这样使得很多程序员养成了不好的习惯，从而造成内存泄漏。</p>
+<div class="section" id="id5">
+<h3>原理<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id6">
+<h3>内存泄漏的情况<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>长时间运行的线程；</li>
+<li>自定义的ClassLoader进行类加载；</li>
+<li>申请大的空间，在静态空间中有强引用，然后在ThreadLocal有自引用；</li>
+<li>循环</li>
+</ol>
+</div>
 </div>
 </div>
 
