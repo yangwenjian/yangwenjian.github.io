@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>上线sql准备 &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Project Management Tools" href="../other/projectManagement.html" />
+    <link rel="prev" title="日志及异常规范定义" href="../programming/java/log_and_exception.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../other/projectManagement.html" title="Project Management Tools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../programming/java/log_and_exception.html" title="日志及异常规范定义"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">上线sql准备</a><ul>
+<li><a class="reference internal" href="#id1">数据导入过程</a></li>
+<li><a class="reference internal" href="#id2">相关SQL准备</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../programming/java/log_and_exception.html"
+                        title="previous chapter">日志及异常规范定义</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../other/projectManagement.html"
+                        title="next chapter">Project Management Tools</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/work/netstone_shell.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="sql">
+<h1>上线sql准备<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>数据导入过程<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>将石头网member表导出，存入大平台数据库中，别名为mem_net，将大平台member表导出，存入到石头网数据库中，别名为mem_plat;</li>
+<li>利用SQL将石头网比大平台多的用户导出，建立临时表mem_net_more(283K)；</li>
+<li>利用SQL将大平台比石头网多的用户导出，建立临时表mem_plat_more;</li>
+<li>将大平台和石头网**相同用户名相同手机号码**的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;</li>
+<li>将大平台和石头网**相同用户名不同手机号码**的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;</li>
+<li>向大平台member表导入mem_net_more中数据;</li>
+<li>向石头网member表导入mem_plat_more中数据;</li>
+<li>update大平台member表，将mem_net_plat_same中的密码更新到member表中；</li>
+<li>将大平台中所有手机号重复的数据找出来，将其所有的手机号都置为空（让其重新绑定）；</li>
+<li>将mem_net_plat_same大平台的id导入到石头网的p_member_id中；</li>
+<li>手动处理mem_net_plat_diff，需要客服支持。</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>相关SQL准备<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>石头网比大平台多出的用户</li>
+</ol>
+<div class="code highlight-python"><pre>SELECT
+ username, PASSWORD, enabled, account_non_expired, credentials_non_expired,
+ reg_time AS create_date, realname AS real_name, phone AS mobile_number,
+ qq AS qq_number, email  FROM mem_net n
+ WHERE n.username IN
+ (SELECT username FROM member) ;</pre>
+</div>
+<ol class="arabic simple" start="2">
+<li>大平台比石头网多的用户</li>
+</ol>
+<div class="code highlight-python"><pre>SELECT
+  username, PASSWORD, enabled, account_non_expired, credentials_non_expired,
+  create_date AS reg_time, real_name AS realname, mobile_number AS phone,
+  qq_number AS qq, email
+FROM
+  member n
+WHERE n.username IN
+  (SELECT username FROM mem_net) ;</pre>
+</div>
+<ol class="arabic simple" start="3">
+<li>石头网和大平台相同用户名相同手机号码用户：</li>
+</ol>
+<div class="code highlight-python"><pre>SELECT n.username, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n
+INNER JOIN member m ON n.username = m.USERNAME AND n.phone = m.MOBILE_NUMBER</pre>
+</div>
+<ol class="arabic simple" start="4">
+<li>石头网与大平台用户名相同，手机号不同用户：</li>
+</ol>
+<div class="code highlight-python"><pre>SELECT n.username, m.USERNAME, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n
+INNER JOIN member m ON n.username = m.USERNAME AND n.phone &lt;&gt; m.MOBILE_NUMBER</pre>
+</div>
+<ol class="arabic simple" start="5">
+<li>将石头网比大平台多出来的用户导入到大平台中：</li>
+</ol>
+<div class="code highlight-python"><pre>INSERT INTO member
+(username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email)
+SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email
+FROM mem_net
+WHERE NOT EXISTS (SELECT * FROM member
+WHERE member.username=mem_net.username);</pre>
+</div>
+<ol class="arabic simple" start="6">
+<li>将大平台多出来的用户导入到石头网中：</li>
+</ol>
+<div class="code highlight-python"><pre>INSERT INTO member
+(username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email)
+SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email
+FROM mem_plat
+WHERE NOT EXISTS (SELECT * FROM member
+WHERE member.username=mem_plat.username);</pre>
+</div>
+<ol class="arabic simple" start="7">
+<li>将大平台与石头网帐号相同，手机号相同的账户，都改成石头网的密码：</li>
+</ol>
+<div class="code highlight-python"><pre>UPDATE member m, mem_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.MOBILE_NUMBER = n.phone</pre>
+</div>
+<ol class="arabic simple" start="8">
+<li>查询大平台手机号重复</li>
+</ol>
+<div class="code highlight-python"><pre> SELECT COUNT(*)
+FROM
+  (SELECT
+    m1.USERNAME, m2.USERNAME AS username2, m1.MOBILE_NUMBER,
+    m2.MOBILE_NUMBER AS mobile_number2
+  FROM
+    (SELECT
+      *
+    FROM
+      member
+    WHERE MOBILE_NUMBER IS NOT NULL
+      AND MOBILE_NUMBER != '') m1
+    INNER JOIN
+      (SELECT
+        *
+      FROM
+        member
+      WHERE MOBILE_NUMBER IS NOT NULL
+        AND MOBILE_NUMBER != '') m2
+      ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER
+      AND m1.USERNAME != m2.USERNAME
+      AND m1.MOBILE_NUMBER IS NOT NULL
+      AND m1.MOBILE_NUMBER != ''
+      AND m2.MOBILE_NUMBER IS NOT NULL
+      AND m2.MOBILE_NUMBER != ''
+  GROUP BY m1.username) temp
+
+  或者
+
+  SELECT
+    COUNT(*)
+  FROM
+    member
+  WHERE EXISTS
+    (SELECT
+      *
+    FROM
+      (SELECT
+        mobile_number,
+        COUNT(*) cnt
+      FROM
+        member
+      WHERE mobile_number IS NOT NULL
+        AND LENGTH(TRIM(mobile_number)) &gt; 0
+      GROUP BY mobile_number
+      HAVING COUNT(*) &gt; 1) t
+    WHERE t.mobile_number = member.mobile_number)
+  ORDER BY mobile_number</pre>
+</div>
+<ol class="arabic simple" start="9">
+<li>将所有大平台重复的手机号码置为NULL：</li>
+</ol>
+<div class="code highlight-python"><pre>UPDATE
+  member m
+SET
+  m.MOBILE_NUMBER = NULL
+WHERE m.ID IN
+  (SELECT
+    m1.id
+  FROM
+    (SELECT
+      *
+    FROM
+      member
+    WHERE MOBILE_NUMBER IS NOT NULL
+      AND MOBILE_NUMBER != '') m1
+    INNER JOIN
+      (SELECT
+        *
+      FROM
+        member
+      WHERE MOBILE_NUMBER IS NOT NULL
+        AND MOBILE_NUMBER != '') m2
+      ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER
+      AND m1.USERNAME != m2.USERNAME
+      AND m1.MOBILE_NUMBER IS NOT NULL
+      AND m1.MOBILE_NUMBER != ''
+      AND m2.MOBILE_NUMBER IS NOT NULL
+      AND m2.MOBILE_NUMBER != ''
+  GROUP BY m1.username)</pre>
+</div>
+<ol class="arabic simple" start="10">
+<li>将大平台的member表的id导入到石头网表的p_member_id中：</li>
+</ol>
+<div class="code highlight-python"><pre>UPDATE mem_net n, member m SET n.p_member_id = m.ID WHERE n.username = m.USERNAME;</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../other/projectManagement.html" title="Project Management Tools"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../programming/java/log_and_exception.html" title="日志及异常规范定义"
+             >previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

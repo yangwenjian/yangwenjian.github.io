@@ -61,6 +61,7 @@
 <li><a class="reference internal" href="#id6">内存泄漏的情况</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#id7">内存泄漏分析最佳实践</a></li>
 </ul>
 </li>
 </ul>
@@ -156,6 +157,10 @@
 <p>相比于C，Java不许要程序员手动回收分配的内存，但这样使得很多程序员养成了不好的习惯，从而造成内存泄漏。</p>
 <div class="section" id="id5">
 <h3>原理<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>在Java中，内存泄漏就是存在一些被分配的对象，这些对象有下面两个特点，首先，这些对象是可达的，即在有向图中，存在通路可以与其相连；
+其次，这些对象是无用的，即程序以后不会再使用这些对象。如果对象满足这两个条件，这些对象就可以判定为Java中的内存泄漏，这些对象不会
+被GC所回收，然而它却占用内存。</p>
+<p>还有一种情况，ClassLoader会保存所有其加载过的类，会存储在Pergem Space中，这部分内存是不会被回收的。</p>
 </div>
 <div class="section" id="id6">
 <h3>内存泄漏的情况<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
@@ -163,9 +168,20 @@
 <li>长时间运行的线程；</li>
 <li>自定义的ClassLoader进行类加载；</li>
 <li>申请大的空间，在静态空间中有强引用，然后在ThreadLocal有自引用；</li>
-<li>循环</li>
+<li>循环；</li>
+<li>没有关闭的流；</li>
+<li>没有关闭的连接；</li>
+<li>Native方法创建的对象；</li>
 </ol>
 </div>
+</div>
+<div class="section" id="id7">
+<h2>内存泄漏分析最佳实践<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>首先进行内存泄漏排查，分为两个步骤，最有效的仍然是走查代码，如果走查代码没有解决，可依照如下步骤执行：</p>
+<ol class="arabic simple">
+<li>确定Java所占的内存，使用top + M的方式进行内存排序，配合ps -e -o &#8216;pid,comm,args,pcpu,rsz,vsz,stime,user,uid&#8217; | grep java；</li>
+<li>确定Java的Heap Space和非Heap Space的内存占用，使用jmap -heap PID查看；</li>
+</ol>
 </div>
 </div>
 

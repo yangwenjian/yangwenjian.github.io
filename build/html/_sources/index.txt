@@ -98,6 +98,7 @@ Sulotion of Autamation
    _templates/automation/automation
    _templates/automation/knight
    _templates/automation/energy_saving_plan
+   _templates/automation/lucene
 
 
 Solution of Virtualization
@@ -145,6 +146,7 @@ Programming Framework
    _templates/programming/framework/spring_security
    _templates/programming/framework/netty
    _templates/programming/java/guice
+   _templates/programming/framework/spring_aop
 
 
 Programming Skill
@@ -174,6 +176,14 @@ Java On Roll
    _templates/programming/java/synchronous
    _templates/programming/java/java_code_style
    _templates/programming/java/log_and_exception
+
+Work
+=======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/work/netstone_shell
 
 Other
 ======================================
