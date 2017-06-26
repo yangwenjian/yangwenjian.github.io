@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>上线sql准备 &mdash; knight 1.0.1 documentation</title>
+    <title>NetStone上线sql准备 &mdash; knight 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -49,9 +49,12 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">上线sql准备</a><ul>
-<li><a class="reference internal" href="#id1">数据导入过程</a></li>
-<li><a class="reference internal" href="#id2">相关SQL准备</a></li>
+<li><a class="reference internal" href="#">NetStone上线sql准备</a><ul>
+<li><a class="reference internal" href="#id1">数据导入原则</a></li>
+<li><a class="reference internal" href="#id2">各项数据情况</a></li>
+<li><a class="reference internal" href="#id3">数据导入过程</a></li>
+<li><a class="reference internal" href="#id4">对业务造成影响</a></li>
+<li><a class="reference internal" href="#sql">相关SQL准备</a></li>
 </ul>
 </li>
 </ul>
@@ -88,26 +91,85 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="sql">
-<h1>上线sql准备<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="netstonesql">
+<h1>NetStone上线sql准备<a class="headerlink" href="#netstonesql" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>数据导入过程<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>数据导入原则<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
-<li>将石头网member表导出，存入大平台数据库中，别名为mem_net，将大平台member表导出，存入到石头网数据库中，别名为mem_plat;</li>
-<li>利用SQL将石头网比大平台多的用户导出，建立临时表mem_net_more(283K)；</li>
-<li>利用SQL将大平台比石头网多的用户导出，建立临时表mem_plat_more;</li>
-<li>将大平台和石头网**相同用户名相同手机号码**的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;</li>
-<li>将大平台和石头网**相同用户名不同手机号码**的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;</li>
-<li>向大平台member表导入mem_net_more中数据;</li>
-<li>向石头网member表导入mem_plat_more中数据;</li>
-<li>update大平台member表，将mem_net_plat_same中的密码更新到member表中；</li>
-<li>将大平台中所有手机号重复的数据找出来，将其所有的手机号都置为空（让其重新绑定）；</li>
-<li>将mem_net_plat_same大平台的id导入到石头网的p_member_id中；</li>
-<li>手动处理mem_net_plat_diff，需要客服支持。</li>
+<li>将两边数据进行整合，统一用户管理；</li>
+<li>保证各个业务系统的活跃用户不受到影响；</li>
+<li>将相关数据进行分析整理（各种情况的数量情况），再进行决策；</li>
 </ol>
 </div>
 <div class="section" id="id2">
-<h2>相关SQL准备<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>各项数据情况<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt>石头网</dt>
+<dd><ol class="first last loweralpha simple">
+<li>总用户数: <strong>1196K+</strong> ；</li>
+<li>活跃用户数: <strong>216K+</strong> ;</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>大平台</dt>
+<dd><ol class="first last loweralpha simple">
+<li>总用户数: <strong>925K+</strong> ；</li>
+<li>活跃用户数: <strong>3815</strong> ;</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>交叉部分</dt>
+<dd><ol class="first last loweralpha simple">
+<li>共有用户数（以用户名为标识）: <strong>900K+</strong> ;</li>
+<li>相同用户名相同手机号用户数: <strong>847K</strong> ;</li>
+<li>相同用户名不同手机号用户数: <strong>1818</strong> ;</li>
+<li>石头网活跃（在服务器内）与大平台用户名相同的用户数： <strong>173K+</strong> ;</li>
+<li>大平台活跃用户数与石头网用户名相同的用户数： <strong>1947</strong> ;</li>
+<li>石头网活跃与大平台活跃并且用户名相同的用户数： <strong>4228</strong> ;</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p class="first">其他部分
+a. 大平台手机号重复的用户数： <strong>166K+</strong> ;
+b. 上条数据中，其中活跃用户数： <strong>1190</strong> ;
+c. 石头网用户中手机号重复的用户数： <strong>265K+</strong> ;
+d. 上条数据中，其中活跃用户数： <strong>36996</strong> ;</p>
+</li>
+</ol>
+</div>
+<div class="section" id="id3">
+<h2>数据导入过程<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>将石头网member表导出，存入大平台数据库中，别名为mem_net，将authorise表导出存到大平台中;</li>
+<li>利用SQL将石头网比大平台多的用户导出，建立临时表mem_net_more(283K)；</li>
+<li>利用SQL将大平台比石头网多的用户导出，建立临时表mem_plat_more;</li>
+<li>将大平台和石头网相同用户名相同手机号码的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;</li>
+<li>将大平台和石头网相同用户名不同手机号码的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;</li>
+<li>向大平台member表导入mem_net_more中数据;</li>
+<li>向石头网mem_net表导入mem_plat_more中数据;</li>
+<li>update大平台member表，将mem_net_plat_same中的密码更新到member表中；</li>
+<li>将大平台中所有手机号重复的数据找出来，将其所有的手机号都置为空（让其重新绑定）；</li>
+<li>将mem_net_plat_same大平台的id导入到石头网的p_member_id中；</li>
+<li>将mem_net导回石头网中，替换原来的member表，此时和大平台用户数相等；</li>
+<li>手动处理mem_net_plat_diff，需要客服支持。</li>
+</ol>
+</div>
+<div class="section" id="id4">
+<h2>对业务造成影响<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>相同用户名的石头网帐号和大平台帐号，有一个密码会失效，这取决于是否是活跃用户，如果两个系统都是，则保留石头网用户的密码；</li>
+<li>同时拥有大平台和石头网的不同帐号的用户，两个账户无法自动整合成一个账户，需要手动处理；</li>
+<li>大平台中（整合后）相同手机号的用户将会都被置为NULL，导致丢失手机号信息，；</li>
+</ol>
+</div>
+<div class="section" id="sql">
+<h2>相关SQL准备<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li>石头网比大平台多出的用户</li>
 </ol>
@@ -140,7 +202,9 @@ INNER JOIN member m ON n.username = m.USERNAME AND n.phone = m.MOBILE_NUMBER</pr
 <li>石头网与大平台用户名相同，手机号不同用户：</li>
 </ol>
 <div class="code highlight-python"><pre>SELECT n.username, m.USERNAME, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n
-INNER JOIN member m ON n.username = m.USERNAME AND n.phone &lt;&gt; m.MOBILE_NUMBER</pre>
+INNER JOIN member m ON n.username = m.USERNAME AND n.phone &lt;&gt; m.MOBILE_NUMBER
+查询石头网活跃用户与打平台用户名重复的用户数：
+SELECT COUNT(*) FROM mem_net n INNER JOIN authorise a ON n.id = a.member_id INNER JOIN member m ON n.username = n.`username` WHERE a.expire &gt; NOW();</pre>
 </div>
 <ol class="arabic simple" start="5">
 <li>将石头网比大平台多出来的用户导入到大平台中：</li>
@@ -155,17 +219,18 @@ WHERE member.username=mem_net.username);</pre>
 <ol class="arabic simple" start="6">
 <li>将大平台多出来的用户导入到石头网中：</li>
 </ol>
-<div class="code highlight-python"><pre>INSERT INTO member
+<div class="code highlight-python"><pre>INSERT INTO mem_net
 (username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email)
 SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email
-FROM mem_plat
-WHERE NOT EXISTS (SELECT * FROM member
-WHERE member.username=mem_plat.username);</pre>
+FROM member
+WHERE NOT EXISTS (SELECT * FROM mem_net
+WHERE mem_net.username=member.username);</pre>
 </div>
 <ol class="arabic simple" start="7">
-<li>将大平台与石头网帐号相同，手机号相同的账户，都改成石头网的密码：</li>
+<li>将大平台与石头网帐号相同，手机号相同，石头网中非活跃用户数，大平台中是活跃用户数的账户，都改成石头网的密码：</li>
 </ol>
-<div class="code highlight-python"><pre>UPDATE member m, mem_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.MOBILE_NUMBER = n.phone</pre>
+<div class="code highlight-python"><pre>UPDATE member m, mem_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.MOBILE_NUMBER = n.phone
+找出石头网和大平台都活跃的用户数</pre>
 </div>
 <ol class="arabic simple" start="8">
 <li>查询大平台手机号重复</li>
@@ -252,9 +317,14 @@ WHERE m.ID IN
   GROUP BY m1.username)</pre>
 </div>
 <ol class="arabic simple" start="10">
-<li>将大平台的member表的id导入到石头网表的p_member_id中：</li>
+<li>其他细节：</li>
 </ol>
-<div class="code highlight-python"><pre>UPDATE mem_net n, member m SET n.p_member_id = m.ID WHERE n.username = m.USERNAME;</pre>
+<div class="code highlight-python"><pre>将大平台的member表的id导入到石头网表的p_member_id中：
+UPDATE mem_net n, member m SET n.p_member_id = m.ID WHERE n.username = m.USERNAME;
+将无效手机号置空
+UPDATE member SET mobile_number = NULL WHERE LENGTH(mobile_number) &lt;&gt;11 AND LENGTH(mobile_number) &gt; 0;
+将所有的nickname为空的置为用户名
+UPDATE member m SET m.nickname = m.USERNAME WHERE nickname IS NULL;</pre>
 </div>
 </div>
 </div>
