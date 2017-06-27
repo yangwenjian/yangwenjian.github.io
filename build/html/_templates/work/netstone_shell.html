@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>NetStone上线sql准备 &mdash; knight 1.0.1 documentation</title>
+    <title>NetStone数据整合方案 &mdash; knight 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -49,7 +49,7 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">NetStone上线sql准备</a><ul>
+<li><a class="reference internal" href="#">NetStone数据整合方案</a><ul>
 <li><a class="reference internal" href="#id1">数据导入原则</a></li>
 <li><a class="reference internal" href="#id2">各项数据情况</a></li>
 <li><a class="reference internal" href="#id3">数据导入过程</a></li>
@@ -91,8 +91,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="netstonesql">
-<h1>NetStone上线sql准备<a class="headerlink" href="#netstonesql" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="netstone">
+<h1>NetStone数据整合方案<a class="headerlink" href="#netstone" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>数据导入原则<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
@@ -130,8 +130,8 @@
 <li>相同用户名不同手机号用户数: <strong>1818</strong> ;</li>
 <li>石头网活跃（在服务器内）与大平台用户名相同的用户数: <strong>173K+</strong> ;</li>
 <li>大平台活跃用户数与石头网用户名相同的用户数: <strong>1947</strong> ;</li>
-<li>石头网活跃与大平台活跃并且用户名相同的用户数: <strong>4228</strong> ;</li>
-<li>石头网活跃与大平台活跃并且用户名相同、手机号不同的用户数: <strong>440</strong> ;</li>
+<li>石头网活跃与大平台活跃并且用户名相同的用户数: <strong>1846</strong> ;</li>
+<li>石头网活跃与大平台活跃并且用户名相同、手机号不同的用户数: <strong>101</strong> ;</li>
 </ul>
 </dd>
 </dl>
@@ -180,14 +180,12 @@
 <div class="section" id="sql">
 <h2>相关SQL准备<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
-<li>石头网比大平台多出的用户</li>
+<li>石头网相关</li>
 </ol>
-<div class="code highlight-python"><pre>SELECT
- username, PASSWORD, enabled, account_non_expired, credentials_non_expired,
- reg_time AS create_date, realname AS real_name, phone AS mobile_number,
- qq AS qq_number, email  FROM mem_net n
- WHERE n.username IN
- (SELECT username FROM member) ;</pre>
+<div class="code highlight-python"><pre>石头网比大平台多出的用户数：
+SELECT username, PASSWORD, enabled, account_non_expired, credentials_non_expired, reg_time AS create_date, realname AS real_name, phone AS mobile_number,
+qq AS qq_number, email  FROM mem_net n WHERE n.username IN (SELECT username FROM member) ;
+石头网活跃用户数：</pre>
 </div>
 <ol class="arabic simple" start="2">
 <li>大平台比石头网多的用户</li>
@@ -212,7 +210,7 @@ INNER JOIN member m ON n.username = m.USERNAME AND n.phone = m.MOBILE_NUMBER</pr
 </ol>
 <div class="code highlight-python"><pre>SELECT n.username, m.USERNAME, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n
 INNER JOIN member m ON n.username = m.USERNAME AND n.phone &lt;&gt; m.MOBILE_NUMBER
-查询石头网活跃用户与打平台用户名重复的用户数:
+查询石头网活跃用户与大平台用户名重复的用户数:
 SELECT COUNT(*) FROM mem_net n INNER JOIN authorise a ON n.id = a.member_id INNER JOIN member m ON n.username = n.`username` WHERE a.expire &gt; NOW();</pre>
 </div>
 <ol class="arabic simple" start="5">
@@ -239,7 +237,8 @@ WHERE mem_net.username=member.username);</pre>
 <li>将大平台与石头网帐号相同，手机号相同，石头网中非活跃用户数，大平台中是活跃用户数的账户，都改成石头网的密码:</li>
 </ol>
 <div class="code highlight-python"><pre>UPDATE member m, mem_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.MOBILE_NUMBER = n.phone
-找出石头网和大平台都活跃的用户数</pre>
+石头网与大平台都活跃并且用户名相同的用户：
+SELECT COUNT(*) FROM member_effective m WHERE m.`USERNAME` IN  (SELECT n.`username` FROM mem_net n INNER JOIN authorise a ON n.id = a.member_id WHERE a.expire &gt; NOW()) ;</pre>
 </div>
 <ol class="arabic simple" start="8">
 <li>查询大平台手机号重复</li>

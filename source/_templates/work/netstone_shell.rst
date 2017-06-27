@@ -1,7 +1,7 @@
 
 
 
-NetStone上线sql准备
+NetStone数据整合方案
 =======================================
 数据导入原则
 ---------------------------------------
@@ -23,8 +23,8 @@ NetStone上线sql准备
     * 相同用户名不同手机号用户数: **1818** ;
     * 石头网活跃（在服务器内）与大平台用户名相同的用户数: **173K+** ;
     * 大平台活跃用户数与石头网用户名相同的用户数: **1947** ;
-    * 石头网活跃与大平台活跃并且用户名相同的用户数: **4228** ;
-    * 石头网活跃与大平台活跃并且用户名相同、手机号不同的用户数: **440** ;
+    * 石头网活跃与大平台活跃并且用户名相同的用户数: **1846** ;
+    * 石头网活跃与大平台活跃并且用户名相同、手机号不同的用户数: **101** ;
 * 其他部分
     * 大平台手机号重复的用户数: **166K+** ;
     * 上条数据中，其中活跃用户数: **1190** ;
@@ -59,16 +59,15 @@ NetStone上线sql准备
 
 相关SQL准备
 ---------------------------------------
-1. 石头网比大平台多出的用户
+1. 石头网相关
 
 .. code::
 
-   SELECT 
-    username, PASSWORD, enabled, account_non_expired, credentials_non_expired,
-    reg_time AS create_date, realname AS real_name, phone AS mobile_number,
-    qq AS qq_number, email  FROM mem_net n 
-    WHERE n.username IN 
-    (SELECT username FROM member) ;
+    石头网比大平台多出的用户数：
+    SELECT username, PASSWORD, enabled, account_non_expired, credentials_non_expired, reg_time AS create_date, realname AS real_name, phone AS mobile_number,
+    qq AS qq_number, email  FROM mem_net n WHERE n.username IN (SELECT username FROM member) ;
+    石头网活跃用户数：
+
     
 2. 大平台比石头网多的用户
 
@@ -96,7 +95,7 @@ NetStone上线sql准备
 
     SELECT n.username, m.USERNAME, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n
     INNER JOIN member m ON n.username = m.USERNAME AND n.phone <> m.MOBILE_NUMBER
-    查询石头网活跃用户与打平台用户名重复的用户数:
+    查询石头网活跃用户与大平台用户名重复的用户数:
     SELECT COUNT(*) FROM mem_net n INNER JOIN authorise a ON n.id = a.member_id INNER JOIN member m ON n.username = n.`username` WHERE a.expire > NOW();
 
 5. 将石头网比大平台多出来的用户导入到大平台中:
@@ -127,7 +126,8 @@ NetStone上线sql准备
 .. code::
 
     UPDATE member m, mem_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.MOBILE_NUMBER = n.phone
-    找出石头网和大平台都活跃的用户数
+    石头网与大平台都活跃并且用户名相同的用户：
+    SELECT COUNT(*) FROM member_effective m WHERE m.`USERNAME` IN  (SELECT n.`username` FROM mem_net n INNER JOIN authorise a ON n.id = a.member_id WHERE a.expire > NOW()) ;
     
     
 8. 查询大平台手机号重复
