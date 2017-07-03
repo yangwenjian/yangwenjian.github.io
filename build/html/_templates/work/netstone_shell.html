@@ -54,6 +54,7 @@
 <li><a class="reference internal" href="#id2">各项数据情况</a></li>
 <li><a class="reference internal" href="#id3">数据导入过程</a></li>
 <li><a class="reference internal" href="#id4">对业务造成影响</a></li>
+<li><a class="reference internal" href="#id5">其他操作</a></li>
 <li><a class="reference internal" href="#sql">相关SQL准备</a></li>
 </ul>
 </li>
@@ -98,6 +99,7 @@
 <ol class="arabic simple">
 <li>将两边数据进行整合，统一用户管理；</li>
 <li>保证各个业务系统的活跃用户不受到影响；</li>
+<li>保证用户登录收到最少程度的影响；</li>
 <li>将相关数据进行分析整理（各种情况的数量情况），再进行决策；</li>
 </ol>
 </div>
@@ -108,7 +110,7 @@
 <dt>石头网</dt>
 <dd><ul class="first last simple">
 <li>总用户数: <strong>1196K+</strong> ；</li>
-<li>活跃用户数: <strong>216K+</strong> ;</li>
+<li>活跃用户数: <strong>186K+</strong> ;</li>
 </ul>
 </dd>
 </dl>
@@ -131,7 +133,7 @@
 <li>石头网活跃（在服务器内）与大平台用户名相同的用户数: <strong>173K+</strong> ;</li>
 <li>大平台活跃用户数与石头网用户名相同的用户数: <strong>1947</strong> ;</li>
 <li>石头网活跃与大平台活跃并且用户名相同的用户数: <strong>1846</strong> ;</li>
-<li>石头网活跃与大平台活跃并且用户名相同、手机号不同的用户数: <strong>101</strong> ;</li>
+<li>石头网活跃与大平台活跃并且用户名相同、手机号不同的用户数: <strong>179</strong> ;</li>
 </ul>
 </dd>
 </dl>
@@ -151,20 +153,19 @@
 </div>
 <div class="section" id="id3">
 <h2>数据导入过程<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<ol class="arabic simple">
-<li>将石头网member表导出，存入大平台数据库中，别名为mem_net，将authorise表导出存到大平台中;</li>
-<li>利用SQL将石头网比大平台多的用户导出，建立临时表mem_net_more(283K)；</li>
-<li>利用SQL将大平台比石头网多的用户导出，建立临时表mem_plat_more;</li>
+<ul class="simple">
+<li>将石头网member表导出，存入大平台数据库中，别名为member_stw，将authorise表导出存到大平台中;</li>
+<li>将石头网的活跃用户导出，建立临时表member_stw_effective;</li>
 <li>将大平台和石头网相同用户名相同手机号码的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;</li>
 <li>将大平台和石头网相同用户名不同手机号码的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;</li>
-<li>向大平台member表导入mem_net_more中数据;</li>
-<li>向石头网mem_net表导入mem_plat_more中数据;</li>
-<li>update大平台member表，将mem_net_plat_same中的密码更新到member表中；</li>
+<li>update大平台member表，将所有相同用户名但并非是大平台活跃用户的用户都置成石头网密码；</li>
+<li>利用SQL将石头网比大平台多的用户导出，并导入到大平台中；</li>
+<li>利用SQL将大平台比石头网多的用户导出，并导入到mem_net中；</li>
 <li>将大平台中所有手机号重复的数据找出来，将其所有的手机号都置为空（让其重新绑定）；</li>
 <li>将mem_net_plat_same大平台的id导入到石头网的p_member_id中；</li>
 <li>将mem_net导回石头网中，替换原来的member表，此时和大平台用户数相等；</li>
 <li>手动处理mem_net_plat_diff，需要客服支持。</li>
-</ol>
+</ul>
 </div>
 <div class="section" id="id4">
 <h2>对业务造成影响<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
@@ -177,45 +178,58 @@
 <li>大平台的注册方式下一步要改成手机号注册模式与石头网统一。</li>
 </ol>
 </div>
+<div class="section" id="id5">
+<h2>其他操作<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>将所有用户名相同的导出来，利用程序将大平台密码置成石头网密码，Base64解码并利用石头网算法编码，取8,24位；</li>
+<li>利用程序和excel将密码相同的用户整理出来，共458个；</li>
+</ul>
+</div>
 <div class="section" id="sql">
 <h2>相关SQL准备<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
-<ol class="arabic simple">
+<ul class="simple">
 <li>石头网相关</li>
-</ol>
+</ul>
 <div class="code highlight-python"><pre>石头网比大平台多出的用户数：
 SELECT username, PASSWORD, enabled, account_non_expired, credentials_non_expired, reg_time AS create_date, realname AS real_name, phone AS mobile_number,
-qq AS qq_number, email  FROM mem_net n WHERE n.username IN (SELECT username FROM member) ;
-石头网活跃用户数：</pre>
+qq AS qq_number, email  FROM member_net n WHERE n.username NOT IN (SELECT username FROM member) ;
+SELECT n.* FROM mem_net n WHERE n.username NOT IN (SELECT m.username FROM member m);
+石头网活跃用户数：
+SELECT COUNT(*) FROM member_net n WHERE EXISTS (SELECT * FROM authorise a WHERE a.member_id = n.id); //比较慢
+SELECT COUNT(*) FROM member_net n INNER JOIN authorise a ON a.member_id = n.id GROUP BY n.id; //这条不准，有用户买两条
+SELECT COUNT(*) FROM (SELECT n.id FROM member_net n INNER JOIN authorise a ON a.member_id = n.id GROUP BY n.id) temp;
+石头网和大平台相同用户名相同手机号码用:
+SELECT n.username, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n INNER JOIN member m ON n.username = m.USERNAME AND n.phone = m.MOBILE_NUMBE;</pre>
 </div>
-<ol class="arabic simple" start="2">
-<li>大平台比石头网多的用户</li>
-</ol>
-<div class="code highlight-python"><pre>SELECT
-  username, PASSWORD, enabled, account_non_expired, credentials_non_expired,
-  create_date AS reg_time, real_name AS realname, mobile_number AS phone,
-  qq_number AS qq, email
-FROM
-  member n
-WHERE n.username IN
-  (SELECT username FROM mem_net) ;</pre>
+<ul class="simple">
+<li>大平台相关：</li>
+</ul>
+<div class="code highlight-python"><pre>大平台比石头网多出的用户：
+SELECT COUNT(*) FROM member m WHERE NOT EXISTS (SELECT * FROM member_net n WHERE m.USERNAME = n.username);
+SELECT COUNT(*) FROM member m WHERE m.`USERNAME` NOT IN (SELECT username FROM member_net);
+活跃的用户数:
+SELECT COUNT(*) FROM member_plat_effective;</pre>
 </div>
-<ol class="arabic simple" start="3">
-<li>石头网和大平台相同用户名相同手机号码用户:</li>
-</ol>
-<div class="code highlight-python"><pre>SELECT n.username, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n
-INNER JOIN member m ON n.username = m.USERNAME AND n.phone = m.MOBILE_NUMBER</pre>
+<ul class="simple">
+<li>石头网与大平台交叉部分：</li>
+</ul>
+<div class="code highlight-python"><pre>用户名相同的用户：
+SELECT COUNT(*) FROM member m INNER JOIN member_net n ON m.USERNAME = n.username;
+SELECT username, PASSWORD, enabled, account_non_expired, credentials_non_expired, create_date AS reg_time, real_name AS realname, mobile_number AS phone,
+qq_number AS qq, email FROM member n WHERE n.username IN (SELECT username FROM member_net) ;
+用户名相同，手机号不同的用户：
+SELECT n.username, m.USERNAME, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n INNER JOIN member m ON n.username = m.USERNAME AND n.phone &lt;&gt; m.MOBILE_NUMBER;
+查询石头网活跃用户与大平台用户名重复的用户数，用这个结果建立临时表，之后导入到member_stw中，为了单独验证:
+SELECT n.* FROM member_stw n INNER JOIN member_plat_effective p ON n.username = p.username INNER JOIN member_stw_effective s ON p.username = s.username;</pre>
 </div>
-<ol class="arabic simple" start="4">
-<li>石头网与大平台用户名相同，手机号不同用户:</li>
-</ol>
-<div class="code highlight-python"><pre>SELECT n.username, m.USERNAME, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n
-INNER JOIN member m ON n.username = m.USERNAME AND n.phone &lt;&gt; m.MOBILE_NUMBER
-查询石头网活跃用户与大平台用户名重复的用户数:
-SELECT COUNT(*) FROM mem_net n INNER JOIN authorise a ON n.id = a.member_id INNER JOIN member m ON n.username = n.`username` WHERE a.expire &gt; NOW();</pre>
+<ul class="simple">
+<li>重置密码，保留投顾活跃、石头网不活跃的密码，其余用户名相同的都改成石头网密码:</li>
+</ul>
+<div class="code highlight-python"><pre>UPDATE member m, member_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.username not in (SELECT username from member_plat_effective);</pre>
 </div>
-<ol class="arabic simple" start="5">
+<ul class="simple">
 <li>将石头网比大平台多出来的用户导入到大平台中:</li>
-</ol>
+</ul>
 <div class="code highlight-python"><pre>INSERT INTO member
 (username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email)
 SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email
@@ -223,22 +237,15 @@ FROM mem_net
 WHERE NOT EXISTS (SELECT * FROM member
 WHERE member.username=mem_net.username);</pre>
 </div>
-<ol class="arabic simple" start="6">
+<ul class="simple">
 <li>将大平台多出来的用户导入到石头网中:</li>
-</ol>
+</ul>
 <div class="code highlight-python"><pre>INSERT INTO mem_net
 (username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email)
 SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email
 FROM member
 WHERE NOT EXISTS (SELECT * FROM mem_net
 WHERE mem_net.username=member.username);</pre>
-</div>
-<ol class="arabic simple" start="7">
-<li>将大平台与石头网帐号相同，手机号相同，石头网中非活跃用户数，大平台中是活跃用户数的账户，都改成石头网的密码:</li>
-</ol>
-<div class="code highlight-python"><pre>UPDATE member m, mem_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.MOBILE_NUMBER = n.phone
-石头网与大平台都活跃并且用户名相同的用户：
-SELECT COUNT(*) FROM member_effective m WHERE m.`USERNAME` IN  (SELECT n.`username` FROM mem_net n INNER JOIN authorise a ON n.id = a.member_id WHERE a.expire &gt; NOW()) ;</pre>
 </div>
 <ol class="arabic simple" start="8">
 <li>查询大平台手机号重复</li>

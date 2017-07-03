@@ -7,7 +7,8 @@ NetStone数据整合方案
 ---------------------------------------
 1. 将两边数据进行整合，统一用户管理；
 2. 保证各个业务系统的活跃用户不受到影响；
-3. 将相关数据进行分析整理（各种情况的数量情况），再进行决策；
+3. 保证用户登录收到最少程度的影响；
+4. 将相关数据进行分析整理（各种情况的数量情况），再进行决策；
 
 各项数据情况
 ---------------------------------------
@@ -33,18 +34,18 @@ NetStone数据整合方案
 
 数据导入过程
 ---------------------------------------
-1. 将石头网member表导出，存入大平台数据库中，别名为mem_net，将authorise表导出存到大平台中;
-2. 利用SQL将石头网比大平台多的用户导出，建立临时表mem_net_more(283K)；
-3. 利用SQL将大平台比石头网多的用户导出，建立临时表mem_plat_more;
-4. 将大平台和石头网相同用户名相同手机号码的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;
-5. 将大平台和石头网相同用户名不同手机号码的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;
-6. 向大平台member表导入mem_net_more中数据;
-7. 向石头网mem_net表导入mem_plat_more中数据;
-8. update大平台member表，将mem_net_plat_same中的密码更新到member表中；
-9. 将大平台中所有手机号重复的数据找出来，将其所有的手机号都置为空（让其重新绑定）；
-10. 将mem_net_plat_same大平台的id导入到石头网的p_member_id中；
-11. 将mem_net导回石头网中，替换原来的member表，此时和大平台用户数相等；
-12. 手动处理mem_net_plat_diff，需要客服支持。
+
+* 将石头网member表导出，存入大平台数据库中，别名为member_stw，将authorise表导出存到大平台中;
+* 将石头网的活跃用户导出，建立临时表member_stw_effective;
+* 将大平台和石头网相同用户名相同手机号码的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;
+* 将大平台和石头网相同用户名不同手机号码的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;
+* update大平台member表，将所有相同用户名但并非是大平台活跃用户的用户都置成石头网密码；
+* 利用SQL将石头网比大平台多的用户导出，并导入到大平台中；
+* 利用SQL将大平台比石头网多的用户导出，并导入到mem_net中；
+* 将大平台中所有手机号重复的数据找出来，将其所有的手机号都置为空（让其重新绑定）；
+* 将mem_net_plat_same大平台的id导入到石头网的p_member_id中；
+* 将mem_net导回石头网中，替换原来的member表，此时和大平台用户数相等；
+* 手动处理mem_net_plat_diff，需要客服支持。
 
 
 对业务造成影响
@@ -56,49 +57,61 @@ NetStone数据整合方案
 5. 今后开通账户时，与客户沟通时需要引导用户，如在大平台中存在将不需要再次注册，避免重复注册；
 6. 大平台的注册方式下一步要改成手机号注册模式与石头网统一。
 
+其他操作
+---------------------------------------
+* 将所有用户名相同的导出来，利用程序将大平台密码置成石头网密码，Base64解码并利用石头网算法编码，取8,24位；
+* 利用程序和excel将密码相同的用户整理出来，共458个；
+
 
 相关SQL准备
 ---------------------------------------
-1. 石头网相关
+* 石头网相关
 
 .. code::
 
     石头网比大平台多出的用户数：
     SELECT username, PASSWORD, enabled, account_non_expired, credentials_non_expired, reg_time AS create_date, realname AS real_name, phone AS mobile_number,
-    qq AS qq_number, email  FROM mem_net n WHERE n.username IN (SELECT username FROM member) ;
+    qq AS qq_number, email  FROM member_net n WHERE n.username NOT IN (SELECT username FROM member) ;
+    SELECT n.* FROM mem_net n WHERE n.username NOT IN (SELECT m.username FROM member m);
     石头网活跃用户数：
+    SELECT COUNT(*) FROM member_net n WHERE EXISTS (SELECT * FROM authorise a WHERE a.member_id = n.id); //比较慢
+    SELECT COUNT(*) FROM member_net n INNER JOIN authorise a ON a.member_id = n.id GROUP BY n.id; //这条不准，有用户买两条
+    SELECT COUNT(*) FROM (SELECT n.id FROM member_net n INNER JOIN authorise a ON a.member_id = n.id GROUP BY n.id) temp;
+    石头网和大平台相同用户名相同手机号码用:
+    SELECT n.username, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n INNER JOIN member m ON n.username = m.USERNAME AND n.phone = m.MOBILE_NUMBE;
 
     
-2. 大平台比石头网多的用户
+* 大平台相关：
 
 .. code::
 
-    SELECT 
-      username, PASSWORD, enabled, account_non_expired, credentials_non_expired, 
-      create_date AS reg_time, real_name AS realname, mobile_number AS phone,
-      qq_number AS qq, email 
-    FROM
-      member n 
-    WHERE n.username IN 
-      (SELECT username FROM mem_net) ;
-      
-3. 石头网和大平台相同用户名相同手机号码用户:
-
-.. code::
-
-    SELECT n.username, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n
-    INNER JOIN member m ON n.username = m.USERNAME AND n.phone = m.MOBILE_NUMBER
+    大平台比石头网多出的用户：
+    SELECT COUNT(*) FROM member m WHERE NOT EXISTS (SELECT * FROM member_net n WHERE m.USERNAME = n.username);
+    SELECT COUNT(*) FROM member m WHERE m.`USERNAME` NOT IN (SELECT username FROM member_net);
+    活跃的用户数:
+    SELECT COUNT(*) FROM member_plat_effective;
     
-4. 石头网与大平台用户名相同，手机号不同用户:
+* 石头网与大平台交叉部分：
+
+.. code::
+    
+    用户名相同的用户：
+    SELECT COUNT(*) FROM member m INNER JOIN member_net n ON m.USERNAME = n.username;
+    SELECT username, PASSWORD, enabled, account_non_expired, credentials_non_expired, create_date AS reg_time, real_name AS realname, mobile_number AS phone,
+    qq_number AS qq, email FROM member n WHERE n.username IN (SELECT username FROM member_net) ;
+    用户名相同，手机号不同的用户：
+    SELECT n.username, m.USERNAME, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n INNER JOIN member m ON n.username = m.USERNAME AND n.phone <> m.MOBILE_NUMBER;
+    查询石头网活跃用户与大平台用户名重复的用户数，用这个结果建立临时表，之后导入到member_stw中，为了单独验证:
+    SELECT n.* FROM member_stw n INNER JOIN member_plat_effective p ON n.username = p.username INNER JOIN member_stw_effective s ON p.username = s.username;
+
+* 重置密码，保留投顾活跃、石头网不活跃的密码，其余用户名相同的都改成石头网密码:
 
 .. code::
 
-    SELECT n.username, m.USERNAME, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n
-    INNER JOIN member m ON n.username = m.USERNAME AND n.phone <> m.MOBILE_NUMBER
-    查询石头网活跃用户与大平台用户名重复的用户数:
-    SELECT COUNT(*) FROM mem_net n INNER JOIN authorise a ON n.id = a.member_id INNER JOIN member m ON n.username = n.`username` WHERE a.expire > NOW();
+    UPDATE member m, member_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.username not in (SELECT username from member_plat_effective);
 
-5. 将石头网比大平台多出来的用户导入到大平台中:
+
+* 将石头网比大平台多出来的用户导入到大平台中:
 
 .. code::
       
@@ -109,7 +122,7 @@ NetStone数据整合方案
     WHERE NOT EXISTS (SELECT * FROM member
     WHERE member.username=mem_net.username);
     
-6. 将大平台多出来的用户导入到石头网中:
+* 将大平台多出来的用户导入到石头网中:
 
 .. code::
 
@@ -120,16 +133,6 @@ NetStone数据整合方案
     WHERE NOT EXISTS (SELECT * FROM mem_net
     WHERE mem_net.username=member.username);
  
- 
-7. 将大平台与石头网帐号相同，手机号相同，石头网中非活跃用户数，大平台中是活跃用户数的账户，都改成石头网的密码:
-
-.. code::
-
-    UPDATE member m, mem_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.MOBILE_NUMBER = n.phone
-    石头网与大平台都活跃并且用户名相同的用户：
-    SELECT COUNT(*) FROM member_effective m WHERE m.`USERNAME` IN  (SELECT n.`username` FROM mem_net n INNER JOIN authorise a ON n.id = a.member_id WHERE a.expire > NOW()) ;
-    
-    
 8. 查询大平台手机号重复
 
 .. code::
