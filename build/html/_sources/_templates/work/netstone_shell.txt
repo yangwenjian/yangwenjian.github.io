@@ -35,10 +35,9 @@ NetStone数据整合方案
 数据导入过程
 ---------------------------------------
 
-* 将石头网member表导出，存入大平台数据库中，别名为member_stw，将authorise表导出存到大平台中;
+* 将石头网member表导出，存入大平台数据库中，别名为mem_net，同时也将authorise表导出存到大平台中;
 * 将石头网的活跃用户导出，建立临时表member_stw_effective;
-* 将大平台和石头网相同用户名相同手机号码的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;
-* 将大平台和石头网相同用户名不同手机号码的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;
+* 将大平台的活跃用户导出，建立临时表member_plat_effective;
 * update大平台member表，将所有相同用户名但并非是大平台活跃用户的用户都置成石头网密码；
 * 利用SQL将石头网比大平台多的用户导出，并导入到大平台中；
 * 利用SQL将大平台比石头网多的用户导出，并导入到mem_net中；
@@ -61,6 +60,8 @@ NetStone数据整合方案
 ---------------------------------------
 * 将所有用户名相同的导出来，利用程序将大平台密码置成石头网密码，Base64解码并利用石头网算法编码，取8,24位；
 * 利用程序和excel将密码相同的用户整理出来，共458个；
+* 将大平台和石头网相同用户名相同手机号码的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;
+* 将大平台和石头网相同用户名不同手机号码的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;
 
 
 相关SQL准备
@@ -190,34 +191,9 @@ NetStone数据整合方案
 
 .. code::
 
-    UPDATE 
-      member m 
-    SET
-      m.MOBILE_NUMBER = NULL 
-    WHERE m.ID IN 
-      (SELECT 
-	m1.id 
-      FROM
-	(SELECT 
-	  * 
-	FROM
-	  member 
-	WHERE MOBILE_NUMBER IS NOT NULL 
-	  AND MOBILE_NUMBER != '') m1 
-	INNER JOIN 
-	  (SELECT 
-	    * 
-	  FROM
-	    member 
-	  WHERE MOBILE_NUMBER IS NOT NULL 
-	    AND MOBILE_NUMBER != '') m2 
-	  ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER 
-	  AND m1.USERNAME != m2.USERNAME 
-	  AND m1.MOBILE_NUMBER IS NOT NULL 
-	  AND m1.MOBILE_NUMBER != '' 
-	  AND m2.MOBILE_NUMBER IS NOT NULL 
-	  AND m2.MOBILE_NUMBER != '' 
-      GROUP BY m1.username)
+    UPDATE member m SET  m.MOBILE_NUMBER = NULL  WHERE m.ID IN  (SELECT 	m1.id  FROM	(SELECT  * FROM  member WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != '') m1 
+    INNER JOIN  (SELECT  * FROM  member  WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != '') m2  ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER   AND m1.USERNAME != m2.USERNAME 
+    AND m1.MOBILE_NUMBER IS NOT NULL  AND m1.MOBILE_NUMBER != ''  AND m2.MOBILE_NUMBER IS NOT NULL  AND m2.MOBILE_NUMBER != '' GROUP BY m1.username)
       
 10. 其他细节:
 

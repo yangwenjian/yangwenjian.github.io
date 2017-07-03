@@ -1,0 +1,145 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>善后工作 &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Project Management Tools" href="../other/projectManagement.html" />
+    <link rel="prev" title="NetStone数据整合方案" href="netstone_shell.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../other/projectManagement.html" title="Project Management Tools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="netstone_shell.html" title="NetStone数据整合方案"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="netstone_shell.html"
+                        title="previous chapter">NetStone数据整合方案</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../other/projectManagement.html"
+                        title="next chapter">Project Management Tools</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/work/netstone_process.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>uthorise表复制到大平台中，将member表改为member_net别名；</p>
+<ol class="arabic simple" start="2">
+<li>通过投顾系统建立投顾活跃用户表member_plat_effective;</li>
+<li>查询石头网活跃用户，建立石头网活跃用户表member_net_effective;
+SELECT n.username, n.password,n.phone FROM member_net n INNER JOIN authorise a ON a.member_id = n.id GROUP BY n.id;</li>
+<li>将大平台与石头网重复用户名部分中，是投顾活跃用户的列表筛选出来；
+SELECT n.* FROM member_net n INNER JOIN member_plat_effective p ON n.username = p.username INNER JOIN member_net_effective s ON p.username = s.username;</li>
+<li>这部分石头网用户单独提出放入临时表member_stw，将上一条的结果导出为SQL脚本，修改表名执行，这样在登录中首先对其进行认证，如果不匹配再去大平台认证；</li>
+<li>对于大平台和石头网重复用户名的部分，大平台中保留所有投顾活跃用户，其余用户名相同的都改成石头网密码；
+UPDATE member m, member_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.username not in (SELECT username from member_plat_effective);</li>
+<li>将石头网比大平台多的用户导入到大平台中，缺少的字段置默认值；
+INSERT INTO member (username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email) SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email FROM member_net WHERE NOT EXISTS (SELECT * FROM member WHERE member.username = member_net.username)</li>
+<li>将大平台比石头网多的用户导入到石头网的临时表中，缺少的字段置默认值；
+INSERT INTO member_net(username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email) SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email FROM member WHERE NOT EXISTS (SELECT * FROM member_net
+WHERE member_net.username=member.username);</li>
+<li>将大平台手机号重复的置空；
+UPDATE member m SET  m.MOBILE_NUMBER = NULL  WHERE m.ID IN  (SELECT  m1.id  FROM (SELECT  * FROM  member WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != &#8216;&#8217;) m1
+INNER JOIN  (SELECT  * FROM  member  WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != &#8216;&#8217;) m2  ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER   AND m1.USERNAME != m2.USERNAME
+AND m1.MOBILE_NUMBER IS NOT NULL  AND m1.MOBILE_NUMBER != &#8216;&#8217;  AND m2.MOBILE_NUMBER IS NOT NULL  AND m2.MOBILE_NUMBER != &#8216;&#8217; GROUP BY m1.username)</li>
+<li>将大平台的member表的id导入到石头网表的p_member_id中；
+UPDATE member_net n, member m SET n.p_member_id = m.ID WHERE n.username = m.USERNAME;</li>
+<li>将member_net表导回到石头网中；</li>
+<li>将无效手机号置空;
+UPDATE member SET mobile_number = NULL WHERE LENGTH(mobile_number) &lt;&gt;11 AND LENGTH(mobile_number) &gt; 0;</li>
+<li>将所有的nickname为空的置为用户名
+UPDATE member m SET m.nickname = m.USERNAME WHERE nickname IS NULL；</li>
+</ol>
+<div class="section" id="id1">
+<h1>善后工作<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple">
+<li>检查几种类型的用户数据是否完整，大平台member表，石头网member表，投顾用户表；</li>
+<li>检查集中类型的用户是否能正常登录；</li>
+</ol>
+<p>参考资料：
+<a class="reference external" href="http://yangwenjian.github.io/build/html/_templates/work/netstone_shell.html">http://yangwenjian.github.io/build/html/_templates/work/netstone_shell.html</a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../other/projectManagement.html" title="Project Management Tools"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="netstone_shell.html" title="NetStone数据整合方案"
+             >previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

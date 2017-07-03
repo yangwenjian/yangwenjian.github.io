@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Project Management Tools" href="../other/projectManagement.html" />
+    <link rel="next" title="善后工作" href="netstone_process.html" />
     <link rel="prev" title="日志及异常规范定义" href="../programming/java/log_and_exception.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../other/projectManagement.html" title="Project Management Tools"
+          <a href="netstone_process.html" title="善后工作"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../programming/java/log_and_exception.html" title="日志及异常规范定义"
@@ -64,8 +64,8 @@
   <p class="topless"><a href="../programming/java/log_and_exception.html"
                         title="previous chapter">日志及异常规范定义</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../other/projectManagement.html"
-                        title="next chapter">Project Management Tools</a></p>
+  <p class="topless"><a href="netstone_process.html"
+                        title="next chapter">善后工作</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/work/netstone_shell.txt"
@@ -154,10 +154,9 @@
 <div class="section" id="id3">
 <h2>数据导入过程<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>将石头网member表导出，存入大平台数据库中，别名为member_stw，将authorise表导出存到大平台中;</li>
+<li>将石头网member表导出，存入大平台数据库中，别名为mem_net，同时也将authorise表导出存到大平台中;</li>
 <li>将石头网的活跃用户导出，建立临时表member_stw_effective;</li>
-<li>将大平台和石头网相同用户名相同手机号码的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;</li>
-<li>将大平台和石头网相同用户名不同手机号码的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;</li>
+<li>将大平台的活跃用户导出，建立临时表member_plat_effective;</li>
 <li>update大平台member表，将所有相同用户名但并非是大平台活跃用户的用户都置成石头网密码；</li>
 <li>利用SQL将石头网比大平台多的用户导出，并导入到大平台中；</li>
 <li>利用SQL将大平台比石头网多的用户导出，并导入到mem_net中；</li>
@@ -183,6 +182,8 @@
 <ul class="simple">
 <li>将所有用户名相同的导出来，利用程序将大平台密码置成石头网密码，Base64解码并利用石头网算法编码，取8,24位；</li>
 <li>利用程序和excel将密码相同的用户整理出来，共458个；</li>
+<li>将大平台和石头网相同用户名相同手机号码的条目筛出（我们认为是同一用户），建立临时表mem_net_plat_same（847K）;</li>
+<li>将大平台和石头网相同用户名不同手机号码的条目筛出（我们认为是不同用户），建立临时表mem_net_plat_diff（1818）;</li>
 </ul>
 </div>
 <div class="section" id="sql">
@@ -302,34 +303,9 @@ FROM
 <ol class="arabic simple" start="9">
 <li>将所有大平台重复的手机号码置为NULL:</li>
 </ol>
-<div class="code highlight-python"><pre>UPDATE
-  member m
-SET
-  m.MOBILE_NUMBER = NULL
-WHERE m.ID IN
-  (SELECT
-    m1.id
-  FROM
-    (SELECT
-      *
-    FROM
-      member
-    WHERE MOBILE_NUMBER IS NOT NULL
-      AND MOBILE_NUMBER != '') m1
-    INNER JOIN
-      (SELECT
-        *
-      FROM
-        member
-      WHERE MOBILE_NUMBER IS NOT NULL
-        AND MOBILE_NUMBER != '') m2
-      ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER
-      AND m1.USERNAME != m2.USERNAME
-      AND m1.MOBILE_NUMBER IS NOT NULL
-      AND m1.MOBILE_NUMBER != ''
-      AND m2.MOBILE_NUMBER IS NOT NULL
-      AND m2.MOBILE_NUMBER != ''
-  GROUP BY m1.username)</pre>
+<div class="code highlight-python"><pre>UPDATE member m SET  m.MOBILE_NUMBER = NULL  WHERE m.ID IN  (SELECT         m1.id  FROM     (SELECT  * FROM  member WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != '') m1
+INNER JOIN  (SELECT  * FROM  member  WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != '') m2  ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER   AND m1.USERNAME != m2.USERNAME
+AND m1.MOBILE_NUMBER IS NOT NULL  AND m1.MOBILE_NUMBER != ''  AND m2.MOBILE_NUMBER IS NOT NULL  AND m2.MOBILE_NUMBER != '' GROUP BY m1.username)</pre>
 </div>
 <ol class="arabic simple" start="10">
 <li>其他细节:</li>
@@ -357,7 +333,7 @@ UPDATE member m SET m.nickname = m.USERNAME WHERE nickname IS NULL;</pre>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../other/projectManagement.html" title="Project Management Tools"
+          <a href="netstone_process.html" title="善后工作"
              >next</a> |</li>
         <li class="right" >
           <a href="../programming/java/log_and_exception.html" title="日志及异常规范定义"

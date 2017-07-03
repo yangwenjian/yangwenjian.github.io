@@ -184,6 +184,7 @@ Work
    :maxdepth: 1
 
    _templates/work/netstone_shell
+   _templates/work/netstone_process
 
 Other
 ======================================
