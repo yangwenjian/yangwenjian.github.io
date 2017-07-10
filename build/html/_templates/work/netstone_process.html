@@ -94,32 +94,43 @@
 <div class="section" id="id2">
 <h2>准备工作<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
-<li>在半夜进行，保证期间没有人进行注册，登录；</li>
-<li>时间比较紧，抓紧时间进行</li>
+<li>在半夜进行，停止相应服务，保证期间没有人进行注册，登录；</li>
+<li>时间比较紧，抓紧时间进行;</li>
+<li>为保险起见，所有数据库操作都在临时服务器上进行，之后往线上数据库导；</li>
 </ol>
 </div>
 <div class="section" id="id3">
 <h2>具体流程<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p>1.暂停线上石头网服务，将线上石头网数据库的member表和authorise表利用如下语句导出为sql文件，之后将member_net表中的`member`全部替换为`member_net`，将之前的两个sql导入到大平台数据库中；（15min）</p>
-<div class="code highlight-python"><pre>石头网线上服务器中：
-mysqldump -uroot -p stw member &gt; member_net.sql
-mysqldump -uroot -p stw authorise &gt; authorise.sql
-sed -i 's/`member`/`member_net`/' member_net.sql
-gzip member_net.sql
-gzip authorise.sql
+<p>1.暂停线上石头网服务，将线上石头网数据库的member表和authorise表利用如下语句导出为sql文件，之后将member_net.sql中的`member`全部替换
+为`member_net`，再将线上大平台的member表导出，将之前的sql导入到临时服务器数据库中；（15min）</p>
+<div class="code highlight-python"><pre>    石头网线上服务器中：
+    mysqldump -uroot -p stw member &gt; member_net.sql
+    mysqldump -uroot -p stw authorise &gt; authorise.sql
+    sed -i 's/`member`/`member_net`/' member_net.sql
+    gzip member_net.sql
+    gzip authorise.sql
 大平台线上服务器中：
-gunzip member_net.sql.gz
-gunzip authorise.sql.gz
-将member_net建表语句第二行替换为`username` varchar(30) COLLATE utf8_bin NOT NULL,
-mysql -uroot platform &lt; member_net.sql
-mysql -uroot platform &lt; authorise.sql
-为member_net表建立索引：</pre>
+mysqldump -uroot -p platform member &gt; member.sql
+gzip member.sql
+    临时服务器中：
+    gunzip member_net.sql.gz
+    gunzip authorise.sql.gz
+gunzip member.sql.gz
+    将member_net建表语句第二行替换为`username` varchar(30) COLLATE utf8_bin NOT NULL,
+    mysql -uroot platform &lt; member_net.sql
+    mysql -uroot platform &lt; authorise.sql
+mysql -uroot platform &lt; member.sql
+    为member_net表建立索引：</pre>
 </div>
 <ol class="arabic simple" start="2">
 <li>通过投顾线上系统，建立投顾活跃用户表member_plat_effective，放入打平台数据库;（yyw提供，5min）</li>
+</ol>
+<div class="code highlight-python"><pre>select * from member where MEMBER_TYPE in ('3','4');</pre>
+</div>
+<ol class="arabic simple" start="3">
 <li>查询石头网活跃用户，建立石头网活跃用户表member_net_effective;</li>
 </ol>
-<div class="code highlight-python"><pre>大平台线上服务器中：
+<div class="code highlight-python"><pre>临时服务器中：
 mysqldump -uroot platform member_net -w "id in(select member_id from authorise where member_id= member_net.id and expire&gt;=SYSDATE())" --lock-all-tables &gt; member_net_effective.sql;
 sed -i 's/`member_net`/`member_net_effective`/' member_net_effective.sql
 mysql -uroot platform &lt; member_net_effective.sql</pre>
@@ -127,7 +138,7 @@ mysql -uroot platform &lt; member_net_effective.sql</pre>
 <ol class="arabic simple" start="4">
 <li>将大平台与石头网重复用户名部分中，是投顾活跃用户的列表筛选出来,备份结果，创建临时表member_stw，这样在登录中首先对其进行认证，如果不匹配再去大平台认证；</li>
 </ol>
-<div class="code highlight-python"><pre>大平台线上服务器中：
+<div class="code highlight-python"><pre>临时服务器中：
 mysqldump -uroot platform member_net -w "username IN (SELECT username FROM member_plat_effective) AND n.username IN (SELECT username FROM member_net_effective)" --lock-all-tables &gt; member_stw.sql;
 sed -i 's/`member_net`/`member_stw`/' member_stw.sql
 mysql -uroot platform &lt; member_stw.sql
@@ -136,13 +147,14 @@ mysql -uroot platform &lt; member_stw.sql
 <ol class="arabic simple" start="5">
 <li>对于大平台和石头网重复用户名的部分，大平台中保留所有投顾活跃用户，其余用户名相同的都改成石头网密码（1min）；</li>
 </ol>
-<div class="code highlight-python"><pre>大平台上执行：
+<div class="code highlight-python"><pre>临时服务器上执行：
 UPDATE member m, member_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.username not in (SELECT username from member_plat_effective);</pre>
 </div>
 <ol class="arabic simple" start="6">
-<li>将石头网比大平台多的用户导入到大平台中，缺少的字段置默认值(17s)；</li>
+<li>将石头网比大平台多的用户导入到大平台中，缺少的字段置默认值(17s),同时，这些多出来的用户也需要导入到投顾系统中；</li>
 </ol>
-<div class="code highlight-python"><pre>INSERT INTO member (username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email) SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email FROM member_net WHERE NOT EXISTS (SELECT * FROM member WHERE member.username = member_net.username)</pre>
+<div class="code highlight-python"><pre>临时服务器上执行：
+INSERT INTO member (username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email) SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email FROM member_net WHERE NOT EXISTS (SELECT * FROM member WHERE member.username = member_net.username)</pre>
 </div>
 <ol class="arabic simple" start="7">
 <li>将大平台比石头网多的用户导入到石头网的临时表中，缺少的字段置默认值；(last_logintime,role_id,note, mark加入默认值)</li>
@@ -158,7 +170,8 @@ select count(*) from member_net;
 <ol class="arabic simple" start="8">
 <li>将大平台的member表的id导入到石头网表的p_member_id中，并将member_net表导回石头网数据库；</li>
 </ol>
-<div class="code highlight-python"><pre>UPDATE member_net n, member m SET n.p_member_id = m.ID WHERE n.username = m.USERNAME;
+<div class="code highlight-python"><pre>临时服务器上执行：
+UPDATE member_net n, member m SET n.p_member_id = m.ID WHERE n.username = m.USERNAME;
 mysqldump -uroot platform member_net &gt; member_back_net.sql;
 sed -i 's/`member_net`/`member`/' member_back_net.sql
 gzip member_back_net.sql;
@@ -174,14 +187,24 @@ INNER JOIN  (SELECT  * FROM  member  WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE
 将无效手机号置空;
 UPDATE member SET mobile_number = NULL WHERE LENGTH(mobile_number) &lt;&gt;11 AND LENGTH(mobile_number) &gt; 0;
 将所有的nickname为空的置为用户名
-UPDATE member m SET m.nickname = m.USERNAME WHERE nickname IS NULL;</pre>
+UPDATE member m SET m.nickname = m.USERNAME WHERE nickname IS NULL;
+往线上大平台恢复：
+mysqldump -uroot platform member &gt; member_back.sql;
+mysqldump -uroot platform member_stw &gt; member_stw.sql
+gzip member_back.sql
+gzip member_stw.sql
+大平台线上服务器中：
+gunzip member_back.sql.gz
+gunzip member_stw.sql.gz
+mysql -uroot -p platform &lt; member_back.sql
+mysql -uroot -p platform &lt; member_stw.sql</pre>
 </div>
 </div>
 <div class="section" id="id4">
 <h2>善后工作<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li>检查几种类型的用户数据是否完整，大平台member表，石头网member表，投顾用户表；</li>
-<li>检查集中类型的用户是否能正常登录；</li>
+<li>检查集中类型的用户是否能正常登录，石头网活跃投顾活跃，石头网其他用户，投顾其他用户；</li>
 </ol>
 <p>参考资料：
 <a class="reference external" href="http://yangwenjian.github.io/build/html/_templates/work/netstone_shell.html">http://yangwenjian.github.io/build/html/_templates/work/netstone_shell.html</a></p>
