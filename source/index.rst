@@ -38,14 +38,6 @@ Solution of Cloud Base Layer
    _templates/cloud/openstack_base
    _templates/cloud/openstack_base_manager
    _templates/cloud/jclouds
-
-
-Sulotion of OpenStack
---------------------------------------
-
-.. toctree::
-   :maxdepth: 1
-   
    _templates/cloud/openstack/openstack
    _templates/cloud/openstack/nova
    _templates/cloud/openstack/neutron
@@ -87,6 +79,7 @@ Architecture
 
    _templates/architecture/mvc
    _templates/architecture/monitoring_system
+   _templates/architecture/operation
 
 Sulotion of Autamation
 ======================================
@@ -135,6 +128,14 @@ Sulotion of Web Service
    _templates/web/json
    _templates/web/webpage
    _templates/web/cas
+
+Performance
+=======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/performance/web_performance
 
 Programming Framework
 ======================================

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="Data Structure And Algorithm" href="../common/algorithm.html" />
+    <link rel="next" title="Synchronous And Asynchronous" href="synchronous.html" />
     <link rel="prev" title="Memory Management" href="memory_manage.html" /> 
   </head>
   <body>
@@ -37,7 +35,7 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../common/algorithm.html" title="Data Structure And Algorithm"
+          <a href="synchronous.html" title="Synchronous And Asynchronous"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="memory_manage.html" title="Memory Management"
@@ -65,8 +63,8 @@
   <p class="topless"><a href="memory_manage.html"
                         title="previous chapter">Memory Management</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../common/algorithm.html"
-                        title="next chapter">Data Structure And Algorithm</a></p>
+  <p class="topless"><a href="synchronous.html"
+                        title="next chapter">Synchronous And Asynchronous</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/java/junit.txt"
@@ -105,7 +103,7 @@
 <h2>源代码分析<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id2">
 <h3>运行关键代码<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<div class="code java highlight-python"><pre>@Override
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>@Override
 public void run(final RunNotifier notifier) {
     EachTestNotifier testNotifier= new EachTestNotifier(notifier,
                     getDescription());
@@ -119,7 +117,8 @@ public void run(final RunNotifier notifier) {
         } catch (Throwable e) {
                 testNotifier.addFailure(e);
         }
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="assertion">
@@ -148,7 +147,7 @@ public void run(final RunNotifier notifier) {
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../common/algorithm.html" title="Data Structure And Algorithm"
+          <a href="synchronous.html" title="Synchronous And Asynchronous"
              >next</a> |</li>
         <li class="right" >
           <a href="memory_manage.html" title="Memory Management"
@@ -158,7 +157,7 @@ public void run(final RunNotifier notifier) {
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

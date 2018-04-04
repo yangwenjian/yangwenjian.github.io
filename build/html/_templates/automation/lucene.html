@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -25,7 +23,9 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" /> 
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Docker" href="../virtualization/docker.html" />
+    <link rel="prev" title="Energy Saving Plan–Valithria" href="energy_saving_plan.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,6 +34,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../virtualization/docker.html" title="Docker"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="energy_saving_plan.html" title="Energy Saving Plan–Valithria"
+             accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -49,6 +55,12 @@
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="energy_saving_plan.html"
+                        title="previous chapter">Energy Saving Plan&#8211;Valithria</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../virtualization/docker.html"
+                        title="next chapter">Docker</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/automation/lucene.txt"
@@ -85,6 +97,26 @@
 </div>
 <div class="section" id="id3">
 <h2>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><dl class="first docutils">
+<dt>索引的构建步骤</dt>
+<dd><p class="first">定义Document【有多少个field】,如果希望将一些关联信息也写入，这时候提前定义好数据冗余的格式。</p>
+<p>选择analyzer,不同的搜索需要使用不同的分词器，常用的有一元，二元，和基于词库的分词器。词库分词还可以自定义词组（包含stop word)</p>
+<p class="last">使用IndexWriter写入索引文件</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>索引的检索步骤</dt>
+<dd><p class="first">查询Query的构建，这里可以使用BooleanQuery结合多个子Query联合多个条件一起查询，发挥你的想象力吧，基于这个功能其实多
+表查询也不在话下，而且还有基于偏移量，基于范围的条件匹配。组合起来基本可以满足大部分查询的需求了。</p>
+<p>使用IndexSearch进行查询</p>
+<p>通过TopDocs.sourceDocs找到文件的编号</p>
+<p class="last">使用IndexSercher通过文档编号，读取Doc内容</p>
+</dd>
+</dl>
+</li>
+</ul>
 </div>
 </div>
 
@@ -100,12 +132,18 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../virtualization/docker.html" title="Docker"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="energy_saving_plan.html" title="Energy Saving Plan–Valithria"
+             >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

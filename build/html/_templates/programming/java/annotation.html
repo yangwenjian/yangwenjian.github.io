@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="Guice Introduction and Analysis" href="guice.html" />
-    <link rel="prev" title="设计模式Head First" href="../common/designpatterns.html" /> 
+    <link rel="next" title="Memory Management" href="memory_manage.html" />
+    <link rel="prev" title="序列化与反序列化" href="serialization.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +35,10 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="guice.html" title="Guice Introduction and Analysis"
+          <a href="memory_manage.html" title="Memory Management"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../common/designpatterns.html" title="设计模式Head First"
+          <a href="serialization.html" title="序列化与反序列化"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -57,11 +55,11 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../common/designpatterns.html"
-                        title="previous chapter">设计模式Head First</a></p>
+  <p class="topless"><a href="serialization.html"
+                        title="previous chapter">序列化与反序列化</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="guice.html"
-                        title="next chapter">Guice Introduction and Analysis</a></p>
+  <p class="topless"><a href="memory_manage.html"
+                        title="next chapter">Memory Management</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/java/annotation.txt"
@@ -99,13 +97,14 @@
 <p>有个类型为Person，属性有name, gender, height。
 我想获取某个person对象的所有信息，放入一个Map中，必然要知道person的内部实现，如果person发生变动，必然这段代码也要发生变动...</p>
 <p>但是如果我用反射的方法，就可以避免这个问题：</p>
-<div class="highlight-python"><pre>Field[] fields = person.getClass().getDeclaredFields();
+<div class="highlight-python"><div class="highlight"><pre><span></span>Field[] fields = person.getClass().getDeclaredFields();
 for(Field field : fields){
     field.setAccessible(true);
     String name = field.getName();
     Object value = field.get(person);
     map.put(name, value);
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="id2">
@@ -131,17 +130,17 @@ for(Field field : fields){
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="guice.html" title="Guice Introduction and Analysis"
+          <a href="memory_manage.html" title="Memory Management"
              >next</a> |</li>
         <li class="right" >
-          <a href="../common/designpatterns.html" title="设计模式Head First"
+          <a href="serialization.html" title="序列化与反序列化"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

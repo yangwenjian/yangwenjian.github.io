@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,8 +24,8 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Knight Lancelot" href="knight.html" />
-    <link rel="prev" title="VIM" href="../linux/tools/vim.html" /> 
+    <link rel="next" title="Automation" href="automation.html" />
+    <link rel="prev" title="Operation System" href="../architecture/operation.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +35,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="knight.html" title="Knight Lancelot"
+          <a href="automation.html" title="Automation"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../linux/tools/vim.html" title="VIM"
+          <a href="../architecture/operation.html" title="Operation System"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -62,11 +60,11 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../linux/tools/vim.html"
-                        title="previous chapter">VIM</a></p>
+  <p class="topless"><a href="../architecture/operation.html"
+                        title="previous chapter">Operation System</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="knight.html"
-                        title="next chapter">Knight Lancelot</a></p>
+  <p class="topless"><a href="automation.html"
+                        title="next chapter">Automation</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/automation/cobbler.txt"
@@ -125,22 +123,22 @@ cobbler sync（同步配置）会将现有的cobbler配置导入，</p>
 <div class="section" id="id4">
 <h2>cobbler源码分析<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>cobbler的源代码从开始，首先读取conf配置文件。</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">cobbler.cli</span> <span class="kn">as</span> <span class="nn">app</span>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cobbler.cli</span> <span class="kn">as</span> <span class="nn">app</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="n">PROFILING</span> <span class="o">=</span> <span class="bp">False</span>
 
 <span class="k">if</span> <span class="n">PROFILING</span><span class="p">:</span>
-    <span class="k">print</span> <span class="s">&quot;** PROFILING **&quot;</span>
+    <span class="k">print</span> <span class="s2">&quot;** PROFILING **&quot;</span>
     <span class="kn">import</span> <span class="nn">hotshot</span>
     <span class="kn">import</span> <span class="nn">hotshot.stats</span>
-    <span class="n">prof</span> <span class="o">=</span> <span class="n">hotshot</span><span class="o">.</span><span class="n">Profile</span><span class="p">(</span><span class="s">&quot;cobbler.prof&quot;</span><span class="p">)</span>
+    <span class="n">prof</span> <span class="o">=</span> <span class="n">hotshot</span><span class="o">.</span><span class="n">Profile</span><span class="p">(</span><span class="s2">&quot;cobbler.prof&quot;</span><span class="p">)</span>
     <span class="n">prof</span><span class="o">.</span><span class="n">runcall</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">main</span><span class="p">)</span>
     <span class="n">prof</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="n">hotshot</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;cobbler.prof&quot;</span><span class="p">)</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">hotshot</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;cobbler.prof&quot;</span><span class="p">)</span>
     <span class="n">stats</span><span class="o">.</span><span class="n">strip_dirs</span><span class="p">()</span>
-    <span class="n">stats</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="s">&#39;time&#39;</span><span class="p">)</span>
-    <span class="k">print</span> <span class="s">&quot;** REPORT **&quot;</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s2">&quot;** REPORT **&quot;</span>
     <span class="n">stats</span><span class="o">.</span><span class="n">print_stats</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -163,17 +161,17 @@ cobbler sync（同步配置）会将现有的cobbler配置导入，</p>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="knight.html" title="Knight Lancelot"
+          <a href="automation.html" title="Automation"
              >next</a> |</li>
         <li class="right" >
-          <a href="../linux/tools/vim.html" title="VIM"
+          <a href="../architecture/operation.html" title="Operation System"
              >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

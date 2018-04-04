@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -97,7 +95,7 @@
 <p>GCC的全称是The GNU Compiler Collection，包含很多语言。</p>
 <p>如果编译时包含其他头文件，需要先进行编译其他头文件，才能编译改文件。
 例如：</p>
-<div class="highlight-python"><pre>gcc -c mystuff.c
+<div class="highlight-python"><div class="highlight"><pre><span></span>gcc -c mystuff.c
 gcc -c fun.c
 gcc -o fun fun.o mystuff.o
 
@@ -106,33 +104,37 @@ gcc -o fun fun.o mystuff.o
 gcc -c mystuff.c
 ar -rc mystuff.a mystuff.c
 gcc -c fun.c
-gcc -o fun fun.o mystuff.a</pre>
+gcc -o fun fun.o mystuff.a
+</pre></div>
 </div>
 <p>如果是多重引用，需要按照顺序执行。
 例如：</p>
-<div class="highlight-python"><pre>gcc -o fun fun.o mystuff.a mystuff2.a
-这里fun调用mystuff中的函数，mystuff调用mystuff2中的函数</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>gcc -o fun fun.o mystuff.a mystuff2.a
+这里fun调用mystuff中的函数，mystuff调用mystuff2中的函数
+</pre></div>
 </div>
 <p>如果在c++中引用C的库，需要加入如下代码方可执行：</p>
-<div class="highlight-python"><pre>extern "C"
+<div class="highlight-python"><div class="highlight"><pre><span></span>extern &quot;C&quot;
 {
-#include "mystuff.h"
-}</pre>
+#include &quot;mystuff.h&quot;
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="pointers">
 <h2>Pointers<a class="headerlink" href="#pointers" title="Permalink to this headline">¶</a></h2>
 <p>指针是C的重要概念，简单说就是指向一个地址的int值。</p>
 <p>const指修饰的变量不能改变，主要看const修饰的位置。例如：</p>
-<div class="highlight-python"><pre>const char* p1; /* *p1='c' illegal; ++p1 OK */
-char* const p2; /* *p2='c' OK; ++p2 illegal */
-const char* const p3; /* no changes at all allowed */</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>const char* p1; /* *p1=&#39;c&#39; illegal; ++p1 OK */
+char* const p2; /* *p2=&#39;c&#39; OK; ++p2 illegal */
+const char* const p3; /* no changes at all allowed */
+</pre></div>
 </div>
 </div>
 <div class="section" id="id1">
 <h2>系统即表示<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>unsigned 和 signed转换会给系统带来bug，请看：</p>
-<div class="highlight-python"><pre>size_t strlen(const char*);
+<div class="highlight-python"><div class="highlight"><pre><span></span>size_t strlen(const char*);
 int strlong(char *s, char *t){
     return strlen(s) - strlen(t) &gt; 0;
 }
@@ -152,7 +154,8 @@ int copy_from_kernel(void *user_dest, int maxlen){
     and user will copy many bits of memory.
     FreeBSD source code bug, and it is fixed by
     change maxlen to size_t.
-    ****************************************/</pre>
+    ****************************************/
+</pre></div>
 </div>
 </div>
 </div>
@@ -180,7 +183,7 @@ int copy_from_kernel(void *user_dest, int maxlen){
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="cas" href="cas.html" />
+    <link rel="next" title="Solr And Redis" href="solr.html" />
     <link rel="prev" title="MySQL Exercise" href="mysql.html" /> 
   </head>
   <body>
@@ -37,7 +35,7 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="cas.html" title="cas"
+          <a href="solr.html" title="Solr And Redis"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="mysql.html" title="MySQL Exercise"
@@ -66,8 +64,8 @@
   <p class="topless"><a href="mysql.html"
                         title="previous chapter">MySQL Exercise</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="cas.html"
-                        title="next chapter">cas</a></p>
+  <p class="topless"><a href="solr.html"
+                        title="next chapter">Solr And Redis</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/linux/tools/varnish.txt"
@@ -108,11 +106,11 @@ Varnish支持使用内存、临时文件、永久性文件进行缓存，当然�
 <div class="section" id="id3">
 <h2>如何配置Varnish<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>配置文件示例如下：</p>
-<div class="code highlight-python"><pre>backend tomcat1 {
-        .host = "10.10.18.65";
-        .port = "8080";
+<div class="code highlight-python"><div class="highlight"><pre><span></span>backend tomcat1 {
+        .host = &quot;10.10.18.65&quot;;
+        .port = &quot;8080&quot;;
         .probe = {
-                .url = "/storefiles/";
+                .url = &quot;/storefiles/&quot;;
                 .interval = 5s;
                 .timeout = 1s;
                 .window = 5;
@@ -126,7 +124,7 @@ director tomcat random {
         {.backend = tomcat3; .weight = 5;}
 }
 sub vcl_recv {
-        if (req.url ~ "\.(css|js|html|htm|gif|jpg|jpeg|png|bmp|tiff|tif|ico|img|mp3|ogg|swf|flv)($|\?)") {
+        if (req.url ~ &quot;\.(css|js|html|htm|gif|jpg|jpeg|png|bmp|tiff|tif|ico|img|mp3|ogg|swf|flv)($|\?)&quot;) {
                 remove req.http.cookie;
                 return (lookup);
         } else {
@@ -141,12 +139,13 @@ sub vcl_fetch {
 }
 sub vcl_deliver {
         if (obj.hits &gt; 0) {
-                set resp.http.X-Cache = "HIT from www.xikang.com";
+                set resp.http.X-Cache = &quot;HIT from www.xikang.com&quot;;
         } else {
-                set resp.http.X-Cache = "MISS from www.xikang.com";
+                set resp.http.X-Cache = &quot;MISS from www.xikang.com&quot;;
         }
         return (deliver);
-}</pre>
+}
+</pre></div>
 </div>
 <div class="section" id="id4">
 <h3>Varnish的基本命令：<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
@@ -172,7 +171,7 @@ varnishd -f /home/query/vcl.conf -s malloc,1G -T 127.0.0.1:2000 -a 0.0.0.0:7021 
 在我们的设计中，我建议使用前缀来区别是否走缓存。例如，我们使用/portal前缀来标识其为公共浏览页面；也可以使用后缀来表示某些请求；也可以使用reqeust的类型来决定是否走缓存；这些都标识在vcl_recv方法中。
 同时，在vcl_fetch函数中，我们也可以使用response的一些属性来决定是否缓存。
 如何特殊的url，可以通过设置request或者response的Cache-Control来进行控制。</p>
-<div class="code highlight-python"><pre>sub vcl_fetch {
+<div class="code highlight-python"><div class="highlight"><pre><span></span>sub vcl_fetch {
         if (beresp.status == 500 || beresp.status == 501 || beresp.status == 502 ||
                 beresp.status == 503 || beresp.status == 504 || beresp.status == 500) {
                 return (restart);
@@ -181,21 +180,22 @@ varnishd -f /home/query/vcl.conf -s malloc,1G -T 127.0.0.1:2000 -a 0.0.0.0:7021 
                 return (hit_for_pass);
         }
         #WEB服务器指明不缓存的内容，varnish服务器不缓存
-        if (beresp.http.Pragma ~ "no-cache" || beresp.http.Cache-Control ~ "no-cache" ||
-                beresp.http.Cache-Control ~ "private") {
+        if (beresp.http.Pragma ~ &quot;no-cache&quot; || beresp.http.Cache-Control ~ &quot;no-cache&quot; ||
+                beresp.http.Cache-Control ~ &quot;private&quot;) {
                 return (hit_for_pass);
         }
-        if (req.request == "GET" &amp;&amp; req.url ~ "\.(css|js|html|htm)$") {
+        if (req.request == &quot;GET&quot; &amp;&amp; req.url ~ &quot;\.(css|js|html|htm)$&quot;) {
                 set beresp.ttl = 300s;
         }
-        if (req.request == "GET" &amp;&amp; req.url ~ "\.(gif|jpg|jpeg|png|bmp|tiff|tif|ico|img)$") {
+        if (req.request == &quot;GET&quot; &amp;&amp; req.url ~ &quot;\.(gif|jpg|jpeg|png|bmp|tiff|tif|ico|img)$&quot;) {
                 set beresp.ttl = 3600s;
         }
-        if (req.request == "GET" &amp;&amp; req.url ~ "\.(mp3|ogg|swf|flv)$") {
+        if (req.request == &quot;GET&quot; &amp;&amp; req.url ~ &quot;\.(mp3|ogg|swf|flv)$&quot;) {
                 set beresp.ttl = 10d;
         }
         return (deliver);
-}</pre>
+}
+</pre></div>
 </div>
 <p>4.缓存的时间如何设置？</p>
 <p>修改beresp.ttl变量如：set beresp.ttl = 1200s。
@@ -224,7 +224,7 @@ varnishd -f /home/query/vcl.conf -s malloc,1G -T 127.0.0.1:2000 -a 0.0.0.0:7021 
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="cas.html" title="cas"
+          <a href="solr.html" title="Solr And Redis"
              >next</a> |</li>
         <li class="right" >
           <a href="mysql.html" title="MySQL Exercise"
@@ -234,7 +234,7 @@ varnishd -f /home/query/vcl.conf -s malloc,1G -T 127.0.0.1:2000 -a 0.0.0.0:7021 
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

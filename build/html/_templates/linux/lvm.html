@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -27,7 +25,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
     <link rel="next" title="Linux Memory" href="memory.html" />
-    <link rel="prev" title="VPN" href="vpn.html" /> 
+    <link rel="prev" title="Regular Expressions" href="regularExpressions.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +38,7 @@
           <a href="memory.html" title="Linux Memory"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="vpn.html" title="VPN"
+          <a href="regularExpressions.html" title="Regular Expressions"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -62,8 +60,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="vpn.html"
-                        title="previous chapter">VPN</a></p>
+  <p class="topless"><a href="regularExpressions.html"
+                        title="previous chapter">Regular Expressions</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="memory.html"
                         title="next chapter">Linux Memory</a></p>
@@ -105,9 +103,10 @@
 <div class="section" id="id1">
 <h2>LVM的结构<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>LVM被组织为三种元素:</p>
-<div class="highlight-python"><pre>*卷(Volume): 物理和逻辑卷和卷组
+<div class="highlight-python"><div class="highlight"><pre><span></span>*卷(Volume): 物理和逻辑卷和卷组
 *区段(Extent): 物理和逻辑区段
-*设备映射器(Device mapper): Linux内核模块</pre>
+*设备映射器(Device mapper): Linux内核模块
+</pre></div>
 </div>
 <p>物理卷是物理磁盘或者物理分区（例如/dev/hda或/dev/hda1），卷组（VG）是物理卷的集合，卷组可以在逻辑上划分多个逻辑卷。</p>
 <img alt="../../_images/lvm1.gif" src="../../_images/lvm1.gif" />
@@ -115,10 +114,11 @@
 <img alt="../../_images/lvm2.gif" src="../../_images/lvm2.gif" />
 <p>在做PV与LV的映射中，PV和VG的基本块必须具有相同的大小，这些基本块称为物理区段（PE）和逻辑区段（LE）。尽管是一个n-to-m的映射，但PE与LE是一一对应的。</p>
 <p>这里需要注意几点:</p>
-<div class="highlight-python"><pre>*默认的区段大小是4M；
+<div class="highlight-python"><div class="highlight"><pre><span></span>*默认的区段大小是4M；
 *区段的大小不影响磁盘的IO性能，但会影响LVM工具的效率；
 *动态扩展不会丢失数据，但修改区段的大小可能会丢失数据；
-*LVM并非连续的分配PE；</pre>
+*LVM并非连续的分配PE；
+</pre></div>
 </div>
 <p>最后的磁盘区段映射可能为如下所示：</p>
 <img alt="../../_images/lvm3.gif" src="../../_images/lvm3.gif" />
@@ -136,10 +136,12 @@
 <div class="section" id="id3">
 <h2>用快照执行备份<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>LVM可以创建磁盘的快照，创建新的快照 LV 也是使用 lvcreate 命令，但是要指定 -s 参数和原来的 LV。在这种情况下，-L size 指定例外列表的大小，这影响快照支持的最大差异量，如果差异超过这个量，就无法保持一致性:</p>
-<div class="highlight-python"><pre>*lvcreate -s -L 2G -n snap/dev/test-volume/test</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>*lvcreate -s -L 2G -n snap/dev/test-volume/test
+</pre></div>
 </div>
 <p>对于所有日常操作，快照看起来就是 原 LV 的一个拷贝。如果已经建立了文件系统的话，可以用以下命令挂载它:</p>
-<div class="highlight-python"><pre>*mount -o ro /dev/test-volume/test /mnt/snap</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>*mount -o ro /dev/test-volume/test /mnt/snap
+</pre></div>
 </div>
 <p>这里注意，如果数据库建立在 LV 上，并且需要一个一致的备份，那么一定要刷新表并在获得读取锁（read-lock）的情况下建立快照卷。</p>
 </div>
@@ -180,14 +182,14 @@
           <a href="memory.html" title="Linux Memory"
              >next</a> |</li>
         <li class="right" >
-          <a href="vpn.html" title="VPN"
+          <a href="regularExpressions.html" title="Regular Expressions"
              >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

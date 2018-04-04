@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -27,7 +25,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
     <link rel="next" title="Data Structure And Algorithm" href="algorithm.html" />
-    <link rel="prev" title="Guice Introduction and Analysis" href="../java/guice.html" /> 
+    <link rel="prev" title="Spring AOP" href="../framework/spring_aop.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +38,7 @@
           <a href="algorithm.html" title="Data Structure And Algorithm"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../java/guice.html" title="Guice Introduction and Analysis"
+          <a href="../framework/spring_aop.html" title="Spring AOP"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -85,8 +83,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../java/guice.html"
-                        title="previous chapter">Guice Introduction and Analysis</a></p>
+  <p class="topless"><a href="../framework/spring_aop.html"
+                        title="previous chapter">Spring AOP</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="algorithm.html"
                         title="next chapter">Data Structure And Algorithm</a></p>
@@ -260,10 +258,11 @@ Java的RMI正式远程代理的一个实现。</p>
 <h3>命令模式（Command）：<a class="headerlink" href="#command" title="Permalink to this headline">¶</a></h3>
 <p>某个对象不直接调用其他对象，而是通过Command解耦的方式进行调用，command.excute(target)进行调用；
 命令模式是为了解耦调用者和被调用者实现而设计的。其基础是以下接口：</p>
-<div class="code java highlight-python"><pre>public interface Command{
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public interface Command{
     public void execute();
     public void undo();
-}</pre>
+}
+</pre></div>
 </div>
 <p>也可以进行组合命令，实现一个组合命令继承自Command，拥有一个command数组，之后通过这个数组实现一系列命令，进行多命令的实现。
 命令模式可以用作队列请求。</p>
@@ -358,14 +357,14 @@ Java的RMI正式远程代理的一个实现。</p>
           <a href="algorithm.html" title="Data Structure And Algorithm"
              >next</a> |</li>
         <li class="right" >
-          <a href="../java/guice.html" title="Guice Introduction and Analysis"
+          <a href="../framework/spring_aop.html" title="Spring AOP"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

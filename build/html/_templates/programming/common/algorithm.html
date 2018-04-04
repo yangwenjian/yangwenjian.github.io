@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="代码优化篇" href="codeOptimization.html" />
-    <link rel="prev" title="Memory Management" href="../java/memory_manage.html" /> 
+    <link rel="next" title="写代码的8项建议" href="how_to_write_code.html" />
+    <link rel="prev" title="设计模式Head First" href="designpatterns.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +35,10 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="codeOptimization.html" title="代码优化篇"
+          <a href="how_to_write_code.html" title="写代码的8项建议"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../java/memory_manage.html" title="Memory Management"
+          <a href="designpatterns.html" title="设计模式Head First"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -63,11 +61,11 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../java/memory_manage.html"
-                        title="previous chapter">Memory Management</a></p>
+  <p class="topless"><a href="designpatterns.html"
+                        title="previous chapter">设计模式Head First</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="codeOptimization.html"
-                        title="next chapter">代码优化篇</a></p>
+  <p class="topless"><a href="how_to_write_code.html"
+                        title="next chapter">写代码的8项建议</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/common/algorithm.txt"
@@ -121,7 +119,7 @@
 <div class="section" id="heap">
 <h4>Heap<a class="headerlink" href="#heap" title="Permalink to this headline">¶</a></h4>
 <p>堆是一棵完全二叉树，父节点大于字节点。利用数组进行存储，建立堆的时候从底向上进行调整，与父节点进行比较，如果大于父节点，就向上调整。</p>
-<div class="highlight-python"><pre>void HeapAdjust(int array[], int i, int nLength){
+<div class="highlight-python"><div class="highlight"><pre><span></span>void HeapAdjust(int array[], int i, int nLength){
     int nChild = 0, nTemp;
     for(nTemp = array[i]; 2*i+1 &lt; nLength; i = nChild){
     nChild = 2*i+1;
@@ -135,7 +133,8 @@
     }
     //将需要调整的元素放到合适的位置
     array[i] = nTemp;
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 </div>
@@ -155,17 +154,17 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="codeOptimization.html" title="代码优化篇"
+          <a href="how_to_write_code.html" title="写代码的8项建议"
              >next</a> |</li>
         <li class="right" >
-          <a href="../java/memory_manage.html" title="Memory Management"
+          <a href="designpatterns.html" title="设计模式Head First"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

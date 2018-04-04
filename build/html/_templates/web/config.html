@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -27,7 +25,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
     <link rel="next" title="SOA" href="webservice.html" />
-    <link rel="prev" title="Elastic" href="../distribution/elastic.html" /> 
+    <link rel="prev" title="微服务" href="../distribution/micro_service.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +38,7 @@
           <a href="webservice.html" title="SOA"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../distribution/elastic.html" title="Elastic"
+          <a href="../distribution/micro_service.html" title="微服务"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -62,8 +60,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../distribution/elastic.html"
-                        title="previous chapter">Elastic</a></p>
+  <p class="topless"><a href="../distribution/micro_service.html"
+                        title="previous chapter">微服务</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="webservice.html"
                         title="next chapter">SOA</a></p>
@@ -99,43 +97,48 @@
 <h2>Web工程记载配置文件<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>context-param用来描述webapp本身的属性，而且在有ServletContext能取值，在servlets、filters、listeners中其配置作用。</p>
 <p>利用context-param，加载spring配置文件：</p>
-<div class="code highlight-python"><pre>&lt;context-param&gt;
+<div class="code highlight-python"><div class="highlight"><pre><span></span>&lt;context-param&gt;
     &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
     &lt;param-value&gt;classpath*:conf/\*\*/spring-context\*.xml&lt;/param-value&gt;
-&lt;/context-param&gt;</pre>
+&lt;/context-param&gt;
+</pre></div>
 </div>
 <p>上面是Web工程能识别的字段，为contextConfigLocation，如果想自定义字段，需要添加读取配置的代码：</p>
-<div class="code java highlight-python"><pre>//在contextListener中
-String value = servletConfig.getServletContext().getInitParameter("myParam");
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//在contextListener中
+String value = servletConfig.getServletContext().getInitParameter(&quot;myParam&quot;);
 //在Servlet中
-String value = request.getSession().getServletContext().getInitParameter("myParam");</pre>
+String value = request.getSession().getServletContext().getInitParameter(&quot;myParam&quot;);
+</pre></div>
 </div>
 <div class="section" id="id2">
 <h3>加载环境变量<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>Environment entries are available via JNDI which may be useful when you don&#8217;t have a ServletContext directly at hands,
 such as in EJBs. The one in the web.xml is actually the last in precedence chain as to overridding environment entires.</p>
-<div class="code highlight-python"><pre>&lt;env-entry&gt;
+<div class="code highlight-python"><div class="highlight"><pre><span></span>&lt;env-entry&gt;
     &lt;env-entry-name&gt;dbhost&lt;/env-entry-name&gt;
     &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;
     &lt;env-entry-value&gt;localhost&lt;/env-entry-value&gt;
-&lt;/env-entry&gt;</pre>
+&lt;/env-entry&gt;
+</pre></div>
 </div>
-<div class="code java highlight-python"><pre>// Get the base naming context
-Context env = (Context)new InitialContext().lookup("java:comp/env");
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>// Get the base naming context
+Context env = (Context)new InitialContext().lookup(&quot;java:comp/env&quot;);
 // Get a single value
-String dbhost = (String)env.lookup("dbhost");</pre>
+String dbhost = (String)env.lookup(&quot;dbhost&quot;);
+</pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="id3">
 <h2>Web工程启动初始化<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>Web容器的线程启动listerner:</p>
-<div class="code highlight-python"><pre>&lt;listener&gt;
+<div class="code highlight-python"><div class="highlight"><pre><span></span>&lt;listener&gt;
         &lt;listener-class&gt;com.xikang.ch.core.web.listener.SiteConfigureListener&lt;/listener-class&gt;
 &lt;/listener&gt;
 &lt;listener&gt;
         &lt;listener-class&gt;com.xikang.ch.portal.system.config.CloudHospitalListenerConfigurator&lt;/listener-class&gt;
-&lt;/listener&gt;</pre>
+&lt;/listener&gt;
+</pre></div>
 </div>
 </div>
 <div class="section" id="filters">
@@ -144,15 +147,16 @@ String dbhost = (String)env.lookup("dbhost");</pre>
 一个filter可以拦截多个请求，一个请求也能被多个filter拦截。</p>
 <p>Filter的执行顺序是由web.xml中filter-mapping的书写顺序决定的。</p>
 <p>Spring Security 配置：</p>
-<div class="code highlight-python"><pre>&lt;filter&gt;
+<div class="code highlight-python"><div class="highlight"><pre><span></span>&lt;filter&gt;
     &lt;filter-name&gt;springSecurityFilterChain&lt;/filter-name&gt;
     &lt;filter-class&gt;org.springframework.web.filter.DelegatingFilterProxy&lt;/filter-class&gt;
-&lt;/filter&gt;</pre>
+&lt;/filter&gt;
+</pre></div>
 </div>
 <p>In Spring Security, the filter classes are also Spring beans defined in the application context and thus able to take advantage
 of Spring&#8217;s rich dependency-injection facilities and lifecycle interfaces. Spring&#8217;s DelegatingFilterProxy provides the link
 between web.xml and the application context.</p>
-<div class="code java highlight-python"><pre>@Override
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>@Override
 protected void initFilterBean() throws ServletException {
     synchronized (this.delegateMonitor) {
         if (this.delegate == null) {
@@ -162,14 +166,15 @@ protected void initFilterBean() throws ServletException {
             }
             // Fetch Spring root application context and initialize the delegate early,
             // if possible. If the root application context will be started after this
-            // filter proxy, we'll have to resort to lazy initialization.
+            // filter proxy, we&#39;ll have to resort to lazy initialization.
             WebApplicationContext wac = findWebApplicationContext();
             if (wac != null) {
                 this.delegate = initDelegate(wac);
             }
         }
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>如果使用默认配置，targetBeanName为springSecurityFilterChain，web上下文按web.xml加载进来。</p>
 </div>
@@ -210,14 +215,14 @@ protected void initFilterBean() throws ServletException {
           <a href="webservice.html" title="SOA"
              >next</a> |</li>
         <li class="right" >
-          <a href="../distribution/elastic.html" title="Elastic"
+          <a href="../distribution/micro_service.html" title="微服务"
              >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

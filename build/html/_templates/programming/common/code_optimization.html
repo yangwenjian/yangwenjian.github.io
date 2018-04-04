@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -117,7 +115,7 @@
 <h2>二、 优化方案的演变<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>我们度量循环程序中的速度，使用cycles per element（“CPE”），意思是每次迭代需要的时钟周期数。
 我们考虑将一个vector中的所有元素进行相加或者相乘，使用如下方案，CPE在29左右。</p>
-<div class="code cpp highlight-python"><pre>typedef int data_t;
+<div class="code cpp highlight-python"><div class="highlight"><pre><span></span>typedef int data_t;
 typedef struct{
     long int len;
     data_t *data;
@@ -134,13 +132,14 @@ void combine1(vec_ptr v, data *dest){
         get_vec_element(v, i, &amp;val);
         *dest = *dest OP val;
     }
-}</pre>
+}
+</pre></div>
 </div>
 <div class="section" id="code-motion">
 <h3>1. Code Motion<a class="headerlink" href="#code-motion" title="Permalink to this headline">¶</a></h3>
 <p>使用*Code Motion*技术，然vector的长度在整个计算过程中没有发生任何变化，我们就计算一次vector的长度，将其移出循环。
 将CPE提高8～12左右（integer～double）。</p>
-<div class="code cpp highlight-python"><pre>void combine2(vec_prt v, data *dest){
+<div class="code cpp highlight-python"><div class="highlight"><pre><span></span>void combine2(vec_prt v, data *dest){
     long int i;
     long int length = vec_length(v);
     *dest = IDENT;
@@ -149,14 +148,15 @@ void combine1(vec_ptr v, data *dest){
         get_vec_element(v, i, &amp;val);
         *dest = *dest OP val;
     }
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="reducing-procedure-calls">
 <h3>2. Reducing Procedure Calls<a class="headerlink" href="#reducing-procedure-calls" title="Permalink to this headline">¶</a></h3>
 <p>使用*Reducing Procedure Calls*方式，可以减少循环内的方法调用。
 可以将加法的CPE降到6左右。</p>
-<div class="code cpp highlight-python"><pre>data_t *get_vec_start(vec_prt v){
+<div class="code cpp highlight-python"><div class="highlight"><pre><span></span>data_t *get_vec_start(vec_prt v){
     return v-&gt;data;
 }
 void combine3(vec_prt v, data *dest){
@@ -167,7 +167,8 @@ void combine3(vec_prt v, data *dest){
     for(i = 0; i &lt; length; i++){
         *dest = *dest OP data[i];
     }
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="eliminating-unneeded-memory-reference">
@@ -175,7 +176,7 @@ void combine3(vec_prt v, data *dest){
 <p>减少不必要的内存使用，因为汇编代码不能直接计算内存中的数据，需要进行提取到寄存器中，在进行计算和存储。
 通过减少内存的引用，可以将CPE提高到2～5(integer~double)。但编译器并不会进行这样的优化，因为编译器是非常小心的。
 考虑如下情况，*dest指向v中的某个数据，这样的话就会改变数组的值导致结果的不一致。</p>
-<div class="code cpp highlight-python"><pre>void combine4(vec_prt v, data *dest){
+<div class="code cpp highlight-python"><div class="highlight"><pre><span></span>void combine4(vec_prt v, data *dest){
     long int i;
     long int length = vec_length(v);
     data_t *data = get_vec_start(v);
@@ -184,26 +185,29 @@ void combine3(vec_prt v, data *dest){
         acc = acc OP data[i];
     }
     *dest = acc;
-}</pre>
+}
+</pre></div>
 </div>
 <p>通过减少内存的引用，可以将CPE提高到2～5(integer~double)。但编译器并不会进行这样的优化，因为编译器是非常小心的。
 考虑如下情况，*dest指向v中的某个数据，这样的话就会改变数组的值导致结果的不一致。</p>
 <p>通过加入编译选项-O2,可以将CPE减少到3～5（integer～double），汇编代码如下，减少了从内存读取的步骤：</p>
-<div class="code highlight-python"><pre>// i in %rdx, data in %rax, limit in %rbp, dest at %rx12, product in %xmm0
+<div class="code highlight-python"><div class="highlight"><pre><span></span>// i in %rdx, data in %rax, limit in %rbp, dest at %rx12, product in %xmm0
 .L560:                                  loop:
     mulss   (%rax, %rdx, 4), %xmm0           Multiply product by data[i]
     addq    $1, %rdx                        Increment i
     cmpq    %rdx, %rbp                      Compare limit:i
     movss   %xmm0, (%r12)                   Store product at dest
-    jg      .L560                           If &gt;, goto loop</pre>
+    jg      .L560                           If &gt;, goto loop
+</pre></div>
 </div>
 <p>与-O1的情况进行比较，结果如下：</p>
-<div class="code highlight-python"><pre>.L498:                                  loop:
+<div class="code highlight-python"><div class="highlight"><pre><span></span>.L498:                                  loop:
     movss (%rbp), %xmm0                     Read product from dest
     mulss (%rax, &amp;rdx, 4), %xmm0            Multiply product by data[i]
     movss %xmm0, (%rbp)                     Store product at dest
     cmpq %rdx, %r12                         Compare i:limit
-    jg   .L498                              if &gt;, goto loop</pre>
+    jg   .L498                              if &gt;, goto loop
+</pre></div>
 </div>
 </div>
 <div class="section" id="understanding-modern-processors">
@@ -232,14 +236,14 @@ to another.</p>
 <li>不要在循环中使用try catch语句块;</li>
 <li>建立单字段索引，联合索引，优化mysql语句；</li>
 </ol>
-<div class="code highlight-python"><pre>SELECT
+<div class="code highlight-python"><div class="highlight"><pre><span></span>SELECT
     tb1.service_instance_code
 FROM
     ch_ser_service_instance AS tb1,
     ch_ser_service_instance_owner AS tb2
 WHERE tb1.service_instance_code = tb2.service_instance_code
-AND tb2.owner_type = 'DOCTOR'
-AND tb2.owner_code = 'C569DAACBE4B0AAC03A718B52'
+AND tb2.owner_type = &#39;DOCTOR&#39;
+AND tb2.owner_code = &#39;C569DAACBE4B0AAC03A718B52&#39;
 ORDER BY service_status DESC,
 service_start_date DESC
 IMIT 0, 8
@@ -257,11 +261,12 @@ FROM
         ch_ser_service_instance AS tb1,
         ch_ser_service_instance_owner AS tb2
     WHERE tb1.service_instance_code = tb2.service_instance_code
-    AND tb2.owner_type = 'DOCTOR'
-    AND tb2.owner_code = 'C569DAACBE4B0AAC03A718B52') tb3
+    AND tb2.owner_type = &#39;DOCTOR&#39;
+    AND tb2.owner_code = &#39;C569DAACBE4B0AAC03A718B52&#39;) tb3
 ORDER BY service_status DESC,
     service_start_date DESC
-LIMIT 0, 8</pre>
+LIMIT 0, 8
+</pre></div>
 </div>
 <ol class="arabic simple" start="6">
 <li>mvc中的intercepor里尽量减少代码逻辑和数据库访问，因为每次访问DispatchServlet时都会执行interceptor中的代码，如果里面有过多的
@@ -301,7 +306,7 @@ LIMIT 0, 8</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

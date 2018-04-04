@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -204,11 +202,12 @@ It can send the packages without processer processing.
 When recieving message, it can notify the processer and wait for the processing.</p>
 <p>DMA using BD(Buffer Description) as sending and reciving unit.
 Each package will divide into some frame. Every frame is stored in one BD, like this:</p>
-<div class="code highlight-python"><pre>typedef struct{
+<div class="code highlight-python"><div class="highlight"><pre><span></span>typedef struct{
      void \*bufprt;  //save the start address of BD
      int length;     //save length of package stored
      int sc;         //save the state of BD
-}BD_STRUCT;</pre>
+}BD_STRUCT;
+</pre></div>
 </div>
 <div class="section" id="optimization">
 <h4>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h4>
@@ -272,7 +271,7 @@ It devides the data plane from control plane, and control the network flow more 
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

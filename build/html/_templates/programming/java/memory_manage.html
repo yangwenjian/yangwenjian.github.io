@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -146,7 +144,7 @@
 <p>虽然JAVA中有强大的GC进行内存的清理与回收，但是这个周期是比较长的，而且在使用Tomcat的过程中经常出现OutOfMemory，OutOfPergemSpace这样类似的错误，比较头疼。</p>
 <p>在内存不够的情况下也有可能造成程序本身的错误，在Neunn Base层的编写中，这里创建了大量对象，必须相应的调大Tomcat的内存配置，否则就会出现上述的各种问题。
 这里是这样修改：</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">JAVA_OPTS</span><span class="o">=</span><span class="s">&quot;$JAVA_OPTS -XX:PermSize=5120m -XX:MaxPermSize=10240m -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">JAVA_OPTS</span><span class="o">=</span><span class="s2">&quot;$JAVA_OPTS -XX:PermSize=5120m -XX:MaxPermSize=10240m -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8&quot;</span>
 </pre></div>
 </div>
 <p>-XX: 的含义是制定Permgen空间。</p>
@@ -208,7 +206,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

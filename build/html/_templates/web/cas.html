@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Spring" href="../programming/framework/spring.html" />
+    <link rel="next" title="Web Performance" href="../performance/web_performance.html" />
     <link rel="prev" title="Web Page Design" href="webpage.html" /> 
   </head>
   <body>
@@ -37,7 +35,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../programming/framework/spring.html" title="Spring"
+          <a href="../performance/web_performance.html" title="Web Performance"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="webpage.html" title="Web Page Design"
@@ -72,8 +70,8 @@
   <p class="topless"><a href="webpage.html"
                         title="previous chapter">Web Page Design</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../programming/framework/spring.html"
-                        title="next chapter">Spring</a></p>
+  <p class="topless"><a href="../performance/web_performance.html"
+                        title="next chapter">Web Performance</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/web/cas.txt"
@@ -198,99 +196,101 @@ Active/Standby模式下，切换的时候可能会导致票据验证不通过，
 <div class="section" id="spring">
 <h3>Spring配置文件:<a class="headerlink" href="#spring" title="Permalink to this headline">¶</a></h3>
 <p>web.xml</p>
-<div class="code highlight-python"><pre>&lt;!-- Wraps an HttpServletRequest so that the getRemoteUser and getPrincipal return the CAS related entries --&gt;
+<div class="code highlight-python"><div class="highlight"><pre><span></span>&lt;!-- Wraps an HttpServletRequest so that the getRemoteUser and getPrincipal return the CAS related entries --&gt;
 &lt;filter&gt;
     &lt;filter-name&gt;CAS HttpServletRequest Wrapper Filter&lt;/filter-name&gt;
     &lt;filter-class&gt;org.jasig.cas.client.util.HttpServletRequestWrapperFilter&lt;/filter-class&gt;
 &lt;/filter&gt;
 &lt;!-- Places the Assertion in a ThreadLocal for portions of the application that need access to it. This is useful when the Web application
-that this filter "fronts" needs to get the Principal name, but it has no access to the HttpServletRequest, hence making getRemoteUser() call impossible --&gt;
+that this filter &quot;fronts&quot; needs to get the Principal name, but it has no access to the HttpServletRequest, hence making getRemoteUser() call impossible --&gt;
 &lt;filter&gt;
     &lt;filter-name&gt;CAS Assertion Thread Local Filter&lt;/filter-name&gt;
     &lt;filter-class&gt;org.jasig.cas.client.util.AssertionThreadLocalFilter&lt;/filter-class&gt;
-&lt;/filter&gt;</pre>
+&lt;/filter&gt;
+</pre></div>
 </div>
 <p>spring-cas.xml</p>
-<div class="code highlight-python"><pre>&lt;!-- 声明Cas认证切入点，并声明默认配置为false，以加入自己的定制 --&gt;
-&lt;security:http entry-point-ref="casAuthenticationEntryPoint" auto-config="false"&gt;
+<div class="code highlight-python"><div class="highlight"><pre><span></span>&lt;!-- 声明Cas认证切入点，并声明默认配置为false，以加入自己的定制 --&gt;
+&lt;security:http entry-point-ref=&quot;casAuthenticationEntryPoint&quot; auto-config=&quot;false&quot;&gt;
     &lt;!-- 声明被保护的资源，注意顺序，并加入spring security的权限管理 --&gt;
-    &lt;security:intercept-url pattern="/checkauthority.do" access="IS_AUTHENTICATED_ANONYMOUSLY" /&gt;
-    &lt;security:intercept-url pattern="/\**/\*.cas" access="ROLE_USER,ROLE_DOCTOR" /&gt;
+    &lt;security:intercept-url pattern=&quot;/checkauthority.do&quot; access=&quot;IS_AUTHENTICATED_ANONYMOUSLY&quot; /&gt;
+    &lt;security:intercept-url pattern=&quot;/\**/\*.cas&quot; access=&quot;ROLE_USER,ROLE_DOCTOR&quot; /&gt;
 
     &lt;!-- 如果声明默认配置为true，可以仅指定logout-success-url，其余都有默认初始值 --&gt;
-    &lt;security:logout logout-success-url="${cas.securityContext.casProcessingFilterEntryPoint.logoutUrl}?service=${index.url}" /&gt; --&gt;
-    &lt;security:custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER" /&gt;
-    &lt;security:custom-filter ref="casAuthenticationFilter" position="CAS_FILTER"/&gt;
-    &lt;security:custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/&gt;
-    &lt;security:custom-filter ref="requestSingleLogoutFilter" position="LOGOUT_FILTER"/&gt;
+    &lt;security:logout logout-success-url=&quot;${cas.securityContext.casProcessingFilterEntryPoint.logoutUrl}?service=${index.url}&quot; /&gt; --&gt;
+    &lt;security:custom-filter ref=&quot;concurrencyFilter&quot; position=&quot;CONCURRENT_SESSION_FILTER&quot; /&gt;
+    &lt;security:custom-filter ref=&quot;casAuthenticationFilter&quot; position=&quot;CAS_FILTER&quot;/&gt;
+    &lt;security:custom-filter ref=&quot;singleLogoutFilter&quot; before=&quot;CAS_FILTER&quot;/&gt;
+    &lt;security:custom-filter ref=&quot;requestSingleLogoutFilter&quot; position=&quot;LOGOUT_FILTER&quot;/&gt;
 &lt;/security:http&gt;
 
-&lt;bean id="casAuthenticationEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint"&gt;
-    &lt;property name="loginUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"/&gt;
-    &lt;property name="serviceProperties" ref="serviceProperties"&gt;&lt;/property&gt;
+&lt;bean id=&quot;casAuthenticationEntryPoint&quot; class=&quot;org.springframework.security.cas.web.CasAuthenticationEntryPoint&quot;&gt;
+    &lt;property name=&quot;loginUrl&quot; value=&quot;${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}&quot;/&gt;
+    &lt;property name=&quot;serviceProperties&quot; ref=&quot;serviceProperties&quot;&gt;&lt;/property&gt;
 &lt;/bean&gt;
 
-&lt;bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties"&gt;
-    &lt;property name="service" value="${cas.securityContext.serviceProperties.service}" /&gt;
-    &lt;property name="sendRenew" value="false" /&gt;
+&lt;bean id=&quot;serviceProperties&quot; class=&quot;org.springframework.security.cas.ServiceProperties&quot;&gt;
+    &lt;property name=&quot;service&quot; value=&quot;${cas.securityContext.serviceProperties.service}&quot; /&gt;
+    &lt;property name=&quot;sendRenew&quot; value=&quot;false&quot; /&gt;
 &lt;/bean&gt;
 
-&lt;security:authentication-manager alias="authenticationManager"&gt;
-    &lt;security:authentication-provider ref="casAuthenticationProvider"/&gt;
+&lt;security:authentication-manager alias=&quot;authenticationManager&quot;&gt;
+    &lt;security:authentication-provider ref=&quot;casAuthenticationProvider&quot;/&gt;
 &lt;/security:authentication-manager&gt;
 
-&lt;bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider"&gt;
-    &lt;property name="authenticationUserDetailsService" ref="authenticationUserDetailsService" /&gt;
-    &lt;property name="serviceProperties" ref="serviceProperties"&gt;&lt;/property&gt;
-    &lt;property name="ticketValidator"&gt;
+&lt;bean id=&quot;casAuthenticationProvider&quot; class=&quot;org.springframework.security.cas.authentication.CasAuthenticationProvider&quot;&gt;
+    &lt;property name=&quot;authenticationUserDetailsService&quot; ref=&quot;authenticationUserDetailsService&quot; /&gt;
+    &lt;property name=&quot;serviceProperties&quot; ref=&quot;serviceProperties&quot;&gt;&lt;/property&gt;
+    &lt;property name=&quot;ticketValidator&quot;&gt;
         &lt;!-- Validates the tickets using the CAS 2.0 protocol. If you provide either the acceptAnyProxy or the allowedProxyChains parameters,
         a Cas20ProxyTicketValidator will be constructed. Otherwise a general Cas20ServiceTicketValidator will be constructed that does not accept proxy tickets --&gt;
-        &lt;bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator"&gt;
-            &lt;constructor-arg index="0" value="${cas.securityContext.ticketValidator.casServerUrlPrefix}"&gt;&lt;/constructor-arg&gt;
+        &lt;bean class=&quot;org.jasig.cas.client.validation.Cas20ServiceTicketValidator&quot;&gt;
+            &lt;constructor-arg index=&quot;0&quot; value=&quot;${cas.securityContext.ticketValidator.casServerUrlPrefix}&quot;&gt;&lt;/constructor-arg&gt;
         &lt;/bean&gt;
     &lt;/property&gt;
-    &lt;property name="key" value="an_id_for_this_auth_provider_only"&gt;&lt;/property&gt;
+    &lt;property name=&quot;key&quot; value=&quot;an_id_for_this_auth_provider_only&quot;&gt;&lt;/property&gt;
 &lt;/bean&gt;
 
-&lt;bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter"&gt;
-    &lt;property name="authenticationManager" ref="authenticationManager"/&gt;
-    &lt;property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/&gt;
+&lt;bean id=&quot;casAuthenticationFilter&quot; class=&quot;org.springframework.security.cas.web.CasAuthenticationFilter&quot;&gt;
+    &lt;property name=&quot;authenticationManager&quot; ref=&quot;authenticationManager&quot;/&gt;
+    &lt;property name=&quot;authenticationSuccessHandler&quot; ref=&quot;authenticationSuccessHandler&quot;/&gt;
 &lt;/bean&gt;
 
-&lt;bean id="authenticationSuccessHandler" class="com.xikang.ch.cas.MyAuthenticationSuccessHandler"&gt;
-    &lt;property name="alwaysUseDefaultTargetUrl" value="true" /&gt;
-    &lt;property name="defaultTargetUrl" value="${index.url}" /&gt;
-    &lt;property name="serverName" value="${ch.domain}" /&gt;
+&lt;bean id=&quot;authenticationSuccessHandler&quot; class=&quot;com.xikang.ch.cas.MyAuthenticationSuccessHandler&quot;&gt;
+    &lt;property name=&quot;alwaysUseDefaultTargetUrl&quot; value=&quot;true&quot; /&gt;
+    &lt;property name=&quot;defaultTargetUrl&quot; value=&quot;${index.url}&quot; /&gt;
+    &lt;property name=&quot;serverName&quot; value=&quot;${ch.domain}&quot; /&gt;
 &lt;/bean&gt;
 
-&lt;bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter"&gt;
-    &lt;property name="sessionRegistry" ref="sessionRegistry" /&gt;
-    &lt;property name="expiredUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.logoutUrl}" /&gt;
+&lt;bean id=&quot;concurrencyFilter&quot; class=&quot;org.springframework.security.web.session.ConcurrentSessionFilter&quot;&gt;
+    &lt;property name=&quot;sessionRegistry&quot; ref=&quot;sessionRegistry&quot; /&gt;
+    &lt;property name=&quot;expiredUrl&quot; value=&quot;${cas.securityContext.casProcessingFilterEntryPoint.logoutUrl}&quot; /&gt;
 &lt;/bean&gt;
 
-&lt;bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" /&gt;
+&lt;bean id=&quot;sessionRegistry&quot; class=&quot;org.springframework.security.core.session.SessionRegistryImpl&quot; /&gt;
 
-&lt;bean id="authenticationUserDetailsService" class="com.xikang.ch.cas.GrantedAuthorityFromAssertionAttributesXKUserDetailsService"&gt;
+&lt;bean id=&quot;authenticationUserDetailsService&quot; class=&quot;com.xikang.ch.cas.GrantedAuthorityFromAssertionAttributesXKUserDetailsService&quot;&gt;
     &lt;constructor-arg&gt;
         &lt;array&gt;
             &lt;value&gt;authorities&lt;/value&gt;
         &lt;/array&gt;
     &lt;/constructor-arg&gt;
 &lt;/bean&gt;
-&lt;bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl" /&gt;
+&lt;bean id=&quot;proxyGrantingTicketStorage&quot; class=&quot;org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl&quot; /&gt;
 
 &lt;!--登出配置--&gt;
 
-&lt;bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/&gt;
+&lt;bean id=&quot;singleLogoutFilter&quot; class=&quot;org.jasig.cas.client.session.SingleSignOutFilter&quot;/&gt;
 
-&lt;bean id="requestSingleLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter"&gt;
-    &lt;constructor-arg value="${cas.securityContext.casProcessingFilterEntryPoint.logoutUrl}" /&gt;
+&lt;bean id=&quot;requestSingleLogoutFilter&quot; class=&quot;org.springframework.security.web.authentication.logout.LogoutFilter&quot;&gt;
+    &lt;constructor-arg value=&quot;${cas.securityContext.casProcessingFilterEntryPoint.logoutUrl}&quot; /&gt;
     &lt;constructor-arg&gt;
-        &lt;!-- &lt;bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" /&gt; --&gt;
-        &lt;bean class="com.xikang.cn.cas.MySecrityContextLogouthandler"/&gt;
+        &lt;!-- &lt;bean class=&quot;org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler&quot; /&gt; --&gt;
+        &lt;bean class=&quot;com.xikang.cn.cas.MySecrityContextLogouthandler&quot;/&gt;
     &lt;/constructor-arg&gt;
-    &lt;property name="filterProcessesUrl" value="/j_spring_security_logout" /&gt;
-&lt;/bean&gt;</pre>
+    &lt;property name=&quot;filterProcessesUrl&quot; value=&quot;/j_spring_security_logout&quot; /&gt;
+&lt;/bean&gt;
+</pre></div>
 </div>
 </div>
 <div class="section" id="spring-cas-client">
@@ -298,7 +298,7 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
 <p>当用户访问一个被SpringSecurity保护的资源时，会抛出AccessDeniedException或者AuthenticationException，
 就会被ExceptionTranslationFilter类探测并解惑；</p>
 <p>org.springframework.security.web.access.ExceptionTranslationFilter:</p>
-<div class="code java highlight-python"><pre>public class ExceptionTranslationFilter extends GenericFilterBean {
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public class ExceptionTranslationFilter extends GenericFilterBean {
 
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
     //认证的切面入口点，这里是casAuthenticationEntryPoint
@@ -313,7 +313,7 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
         HttpServletResponse response = (HttpServletResponse) res;
         try{
             chain.doFilter(request, response);
-            logger.debug("Chain processed normally");
+            logger.debug(&quot;Chain processed normally&quot;);
         }catch (IOException ex) {
             throw ex;
         }catch (Exception ex) {
@@ -332,8 +332,8 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
                 }else if (ex instanceof RuntimeException) {
                     throw (RuntimeException) ex;
                 }
-                // Wrap other Exceptions. This shouldn't actually happen
-                // as we've already covered all the possibilities for doFilter''
+                // Wrap other Exceptions. This shouldn&#39;t actually happen
+                // as we&#39;ve already covered all the possibilities for doFilter&#39;&#39;
                 throw new RuntimeException(ex);
             }
         }
@@ -341,15 +341,15 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
     private void handleSpringSecurityException(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             RuntimeException exception) throws IOException, ServletException {
         if (exception instanceof AuthenticationException) {
-            logger.debug("Authentication exception occurred; redirecting to authentication entry point", exception);
+            logger.debug(&quot;Authentication exception occurred; redirecting to authentication entry point&quot;, exception);
             sendStartAuthentication(request, response, chain, (AuthenticationException) exception);
         }else if (exception instanceof AccessDeniedException) {
             if (authenticationTrustResolver.isAnonymous(SecurityContextHolder.getContext().getAuthentication())) {
-                logger.debug("Access is denied (user is anonymous); redirecting to authentication entry point", exception);
+                logger.debug(&quot;Access is denied (user is anonymous); redirecting to authentication entry point&quot;, exception);
                 sendStartAuthentication(request, response, chain, new InsufficientAuthenticationException(
-                                        "Full authentication is required to access this resource"));
+                                        &quot;Full authentication is required to access this resource&quot;));
             } else {
-                logger.debug("Access is denied (user is not anonymous); delegating to AccessDeniedHandler", exception);
+                logger.debug(&quot;Access is denied (user is not anonymous); delegating to AccessDeniedHandler&quot;, exception);
                 accessDeniedHandler.handle(request, response, (AccessDeniedException) exception);
             }
         }
@@ -358,15 +358,16 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
             AuthenticationException reason) throws ServletException, IOException {
         SecurityContextHolder.getContext().setAuthentication(null);
         requestCache.saveRequest(request, response);
-        logger.debug("Calling Authentication entry point.");
+        logger.debug(&quot;Calling Authentication entry point.&quot;);
         //这里根据authenticationEntryPoint的具体类型重定向到其中的认证页面
         authenticationEntryPoint.commence(request, response, reason);
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>Cas Client通过TicketValidationFilter来验证ticket的有效性；</p>
 <p>org.jasig.cas.client.validation.AbstractTicketValidationFilter:</p>
-<div class="code java highlight-python"><pre>public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
    final FilterChain filterChain) throws IOException, ServletException {
    if (!preFilter(servletRequest, servletResponse, filterChain)) {
        return;
@@ -376,12 +377,12 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
    final String ticket = CommonUtils.safeGetParameter(request, getArtifactParameterName());
    if (CommonUtils.isNotBlank(ticket)) {
        if (log.isDebugEnabled()) {
-           log.debug("Attempting to validate ticket: " + ticket);
+           log.debug(&quot;Attempting to validate ticket: &quot; + ticket);
        }
        try{
            final Assertion assertion = this.ticketValidator.validate(ticket, constructServiceUrl(request, response));
            if (log.isDebugEnabled()) {
-               log.debug("Successfully authenticated user: " + assertion.getPrincipal().getName());
+               log.debug(&quot;Successfully authenticated user: &quot; + assertion.getPrincipal().getName());
            }
            request.setAttribute(CONST_CAS_ASSERTION, assertion);
            if (this.useSession) {
@@ -397,17 +398,18 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
            }
        }
        if (this.redirectAfterValidation) {
-           log. debug("Redirecting after successful ticket validation.");
+           log. debug(&quot;Redirecting after successful ticket validation.&quot;);
            response.sendRedirect(response.encodeRedirectURL(constructServiceUrl(request, response)));
            return;
        }
    }
    filterChain.doFilter(request, response);
-}</pre>
+}
+</pre></div>
 </div>
 <p>Cas Client通过CasAuthenticationFilter来监听/j_spring_cas_security_check的请求，进行认证后的filter工作；</p>
 <p>org.springframework.security.web.authentication.AbstractrAuthenticationProcessingFilter:</p>
-<div class="code java highlight-python"><pre>public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     if (!requiresAuthentication(request, response)) {
@@ -415,18 +417,18 @@ that this filter "fronts" needs to get the Principal name, but it has no access 
         return;
     }
     if (logger.isDebugEnabled()) {
-        logger.debug("Request is to process authentication");
+        logger.debug(&quot;Request is to process authentication&quot;);
     }
     Authentication authResult;
     try {
         authResult = attemptAuthentication(request, response);
         if (authResult == null) {
-            // return immediately as subclass has indica ted that it hasn't completed authentication
+            // return immediately as subclass has indica ted that it hasn&#39;t completed authentication
             return;
         }
         sessionStrategy.onAuthentication(authResult, request, response);
     }catch(InternalAuthenticationServiceException failed) {
-        logger.error("An internal error occurred while trying to authenticate the user.", failed);
+        logger.error(&quot;An internal error occurred while trying to authenticate the user.&quot;, failed);
         unsuccessfulAuthentication(request, response, failed);
         return;
     }catch (AuthenticationException failed) {
@@ -450,7 +452,7 @@ protected void successfulAuthentication(HttpServletRequest request, HttpServletR
 protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
         Authentication authResult) throws IOException, ServletException {
     if (logger.isDebugEnabled()) {
-        logger.debug("Authentication success. Updating SecurityContextHolder to contain: " + authResult);
+        logger.debug(&quot;Authentication success. Updating SecurityContextHolder to contain: &quot; + authResult);
     }
     SecurityContextHolder.getContext().setAuthentication(authResult);
     rememberMeServices.loginSuccess(request, response, authResult);
@@ -458,11 +460,12 @@ protected void successfulAuthentication(HttpServletRequest request, HttpServletR
         eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
     }
     successHandler.onAuthenticationSuccess(request, response, authResult);
-}</pre>
+}
+</pre></div>
 </div>
 <p>通过继承SimpleUrlAuthenticationSuccessHandler来实现自己的登录后逻辑；</p>
 <p>org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler</p>
-<div class="code java highlight-python"><pre>public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
     handle(request, response, authentication);
     clearAuthenticationAttributes(request);
@@ -481,36 +484,38 @@ protected void handle(HttpServletRequest request, HttpServletResponse response, 
         throws IOException, ServletException {
     String targetUrl = determineTargetUrl(request, response);
     if (response.isCommitted()) {
-        logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+        logger.debug(&quot;Response has already been committed. Unable to redirect to &quot; + targetUrl);
         return;
     }
     redirectStrategy.sendRedirect(request, response, targetUrl);
-}</pre>
+}
+</pre></div>
 </div>
 <p>通过继承AbstractCasAssertionUserDetailsService来实现用户权限分配；</p>
 <p>org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsService</p>
-<div class="code java highlight-python"><pre>//认证成功后回调，返回用户Code的方法
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//认证成功后回调，返回用户Code的方法
 public abstract class AbstractCasAssertionUserDetailsService implements AuthenticationUserDetailsService{
     public final UserDetails loadUserDetails(final Authentication token) throws UsernameNotFoundException {
-        Assert.isInstanceOf(CasAssertionAuthenticationToken.class, token, "The provided token MUST be an instance of CasAssertionAuthenticationToken.class");
+        Assert.isInstanceOf(CasAssertionAuthenticationToken.class, token, &quot;The provided token MUST be an instance of CasAssertionAuthenticationToken.class&quot;);
         return loadUserDetails(((CasAssertionAuthenticationToken) token).getAssertion());
     }
 }
 //空方法，需要继承实现，来编写自己的逻辑
-protected abstract UserDetails loadUserDetails(Assertion assertion);</pre>
+protected abstract UserDetails loadUserDetails(Assertion assertion);
+</pre></div>
 </div>
 <p>通过继承SecurityContextLogoutHandler并注入到LogoutFilter来实现自己的用户登出逻辑，这里可以使用多个Handler；</p>
 <p>org.springframework.security.web.authentication.logout.LogoutFilter:</p>
-<div class="code java highlight-python"><pre>public LogoutFilter(String logoutSuccessUrl, LogoutHandler... handlers) {
-    Assert.notEmpty(handlers, "LogoutHandlers are required");
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public LogoutFilter(String logoutSuccessUrl, LogoutHandler... handlers) {
+    Assert.notEmpty(handlers, &quot;LogoutHandlers are required&quot;);
     this.handlers = Arrays.asList(handlers);
-    Assert.isTrue(!StringUtils.hasLength(logoutSuccessUrl) || UrlUtils.isValidRedirectUrl(logoutSuccessUrl), logoutSuccessUrl + " isn't a valid redirect URL");
+    Assert.isTrue(!StringUtils.hasLength(logoutSuccessUrl) || UrlUtils.isValidRedirectUrl(logoutSuccessUrl), logoutSuccessUrl + &quot; isn&#39;t a valid redirect URL&quot;);
     SimpleUrlLogoutSuccessHandler urlLogoutSuccessHandler = new SimpleUrlLogoutSuccessHandler();
     if (StringUtils.hasText(logoutSuccessUrl)) {
         urlLogoutSuccessHandler.setDefaultTargetUrl(logoutSuccessUrl);
     }
     logoutSuccessHandler = urlLogoutSuccessHandler;
-    setFilterProcessesUrl("/j_spring_security_logout");
+    setFilterProcessesUrl(&quot;/j_spring_security_logout&quot;);
 }
 public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
@@ -518,7 +523,7 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
     if (requiresLogout(request, response)) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (logger.isDebugEnabled()) {
-            logger.debug("Logging out user '" + auth + "' and transferring to logout destination");
+            logger.debug(&quot;Logging out user &#39;&quot; + auth + &quot;&#39; and transferring to logout destination&quot;);
         }
         for (LogoutHandler handler : handlers) {
             handler.logout(request, response, auth);
@@ -527,7 +532,8 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
         return;
     }
     chain.doFilter(request, response);
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="q-a">
@@ -564,7 +570,7 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../programming/framework/spring.html" title="Spring"
+          <a href="../performance/web_performance.html" title="Web Performance"
              >next</a> |</li>
         <li class="right" >
           <a href="webpage.html" title="Web Page Design"
@@ -574,7 +580,7 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

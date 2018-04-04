@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -25,7 +23,9 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" /> 
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Varnish" href="varnish.html" />
+    <link rel="prev" title="VIM" href="vim.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,6 +34,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="varnish.html" title="Varnish"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vim.html" title="VIM"
+             accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -50,6 +56,12 @@
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vim.html"
+                        title="previous chapter">VIM</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="varnish.html"
+                        title="next chapter">Varnish</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/linux/tools/mysql.txt"
@@ -82,7 +94,7 @@
 <div class="section" id="mysql">
 <h2>MySQL配置<a class="headerlink" href="#mysql" title="Permalink to this headline">¶</a></h2>
 <p>以下是基本配置：</p>
-<div class="highlight-python"><pre>[client]
+<div class="highlight-python"><div class="highlight"><pre><span></span>[client]
 port            = 3306
 socket          = /var/run/mysqld/mysqld.sock
 default-character-set = utf8
@@ -166,7 +178,7 @@ binlog_format           = row
 # Read the manual, too, if you want chroot!
 # chroot = /var/lib/mysql/
 #
-# For generating SSL certificates I recommend the OpenSSL GUI "tinyca".
+# For generating SSL certificates I recommend the OpenSSL GUI &quot;tinyca&quot;.
 #
 # ssl-ca=/etc/mysql/cacert.pem
 # ssl-cert=/etc/mysql/server-cert.pem
@@ -185,9 +197,10 @@ key_buffer              = 16M
 
 #
 # * IMPORTANT: Additional settings that can override those from this file!
-#   The files must end with '.cnf', otherwise they'll be ignored.
+#   The files must end with &#39;.cnf&#39;, otherwise they&#39;ll be ignored.
 #
-!includedir /etc/mysql/conf.d/</pre>
+!includedir /etc/mysql/conf.d/
+</pre></div>
 </div>
 <div class="section" id="binlog">
 <h3>binlog<a class="headerlink" href="#binlog" title="Permalink to this headline">¶</a></h3>
@@ -212,12 +225,18 @@ key_buffer              = 16M
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="varnish.html" title="Varnish"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vim.html" title="VIM"
+             >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

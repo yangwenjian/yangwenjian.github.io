@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -97,13 +95,15 @@
 <p>我们在使用服务器时经常喜欢用带有!&#64;#$的某些字符作为密码，这带来一个问题，shell中!是有意义的，表示上一条命令。
 这里有两种方式解决这个问题：</p>
 <p>进行转意，例如：</p>
-<div class="highlight-python"><pre>mysqldump -uroot -p"Hello@"\!"$" -A &gt; dump.sql</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>mysqldump -uroot -p&quot;Hello@&quot;\!&quot;$&quot; -A &gt; dump.sql
+</pre></div>
 </div>
 <p>或者使用脚本进行变量转换，例如：</p>
-<div class="highlight-python"><pre>dumpfile=$(date +%Y%m%d%H%M).sql
+<div class="highlight-python"><div class="highlight"><pre><span></span>dumpfile=$(date +%Y%m%d%H%M).sql
 dbuser=root
-dbpassword='Hello@!$'
-mysqldump -u${dbuser} -p${dbpassword} -A &gt; ${dumpfile}</pre>
+dbpassword=&#39;Hello@!$&#39;
+mysqldump -u${dbuser} -p${dbpassword} -A &gt; ${dumpfile}
+</pre></div>
 </div>
 </div>
 <div class="section" id="awk">
@@ -114,36 +114,39 @@ It defines every line one record, and defines every string one field, which is d
 <p>打印第一行：    awk ‘NR==1{print $0}&#8217;</p>
 <p>打印第一行最后一个字段：    awk -F: &#8216;NR==1{print $NF}&#8217;</p>
 <p>This is a shell use awk to start all the docker container when the power is on. I put this shell to excute in /etc/rc.local.</p>
-<div class="highlight-python"><pre>#!/bin/bash
+<div class="highlight-python"><div class="highlight"><pre><span></span>#!/bin/bash
 
-list=`docker ps -a | awk 'NR!=1{print $1}'`
+list=`docker ps -a | awk &#39;NR!=1{print $1}&#39;`
 echo ${list}
 
 for container in $list
     do
     docker start $container
-    done</pre>
+    done
+</pre></div>
 </div>
 <p>This is a shell check gmail.</p>
-<div class="highlight-python"><pre>#!/bin/bash
+<div class="highlight-python"><div class="highlight"><pre><span></span>#!/bin/bash
 
-curl -u yangwenjian99@gmail.com --silent "https://mail.google.com/mail/feed/atom" | perl -ne \
-    '
-print "Subject: $1 " if /&lt;title&gt;(.+?)&lt;\/title&gt;/ &amp;&amp; $title++;
-print "(from $1)\n" if /&lt;email&gt;(.+?)&lt;\/email&gt;/
-    '</pre>
+curl -u yangwenjian99@gmail.com --silent &quot;https://mail.google.com/mail/feed/atom&quot; | perl -ne \
+    &#39;
+print &quot;Subject: $1 &quot; if /&lt;title&gt;(.+?)&lt;\/title&gt;/ &amp;&amp; $title++;
+print &quot;(from $1)\n&quot; if /&lt;email&gt;(.+?)&lt;\/email&gt;/
+    &#39;
+</pre></div>
 </div>
 <p>This is an example to check network.</p>
-<div class="highlight-python"><pre>#!/bin/bash
+<div class="highlight-python"><div class="highlight"><pre><span></span>#!/bin/bash
 
 for((i=1;i&lt;=255;i++));do
     ping -c 5 192.168.1.$i
-    done</pre>
+    done
+</pre></div>
 </div>
 <p>Here is a pit in my work. I want to count the first line of one file, but it doesn&#8217;t work.</p>
-<div class="highlight-python"><pre>count=0
+<div class="highlight-python"><div class="highlight"><pre><span></span>count=0
 sum=0
-awk '{print $1}' public/shell/testfile | while read onehelloline
+awk &#39;{print $1}&#39; public/shell/testfile | while read onehelloline
 do
     echo $onehelloline
     ((count= count+1))
@@ -154,14 +157,16 @@ done
 echo $count
 echo $sum
 averagetime=`expr $(($sum/$count))`
-echo $averagetime</pre>
+echo $averagetime
+</pre></div>
 </div>
 <p>最后发现count和sum都是0,原因是那块循环中并没有影响到全局变量。修改循环变量如下：</p>
-<div class="highlight-python"><pre>data1=`awk '{print $1}' public/shell/testfile`
+<div class="highlight-python"><div class="highlight"><pre><span></span>data1=`awk &#39;{print $1}&#39; public/shell/testfile`
 for data in $data1;do
     ((count= count+1))
     ((sum= sum+data))
-done</pre>
+done
+</pre></div>
 </div>
 </div>
 </div>
@@ -189,7 +194,7 @@ done</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

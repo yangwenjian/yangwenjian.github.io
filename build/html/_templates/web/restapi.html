@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -140,48 +138,52 @@
 <h2>RestAPI的请求与返回<a class="headerlink" href="#restapi" title="Permalink to this headline">¶</a></h2>
 <p>Json定义的随意度比较大，如何解析，要看字符串的具体格式和解析方式。
 如何解析返回的json串，这里参考几个例子：</p>
-<div class="highlight-python"><pre>{
-    "id" : 1,
-    "name" : "YangWenjian",
-    "company" : "Neunn"
+<div class="highlight-python"><div class="highlight"><pre><span></span>{
+    &quot;id&quot; : 1,
+    &quot;name&quot; : &quot;YangWenjian&quot;,
+    &quot;company&quot; : &quot;Neunn&quot;
 }
-这里使用对象Person接收Json字符串。</pre>
+这里使用对象Person接收Json字符串。
+</pre></div>
 </div>
-<div class="highlight-python"><pre>[{
-    "id" : 1,
-    "name" : "YangWenjian",
-    "company" : "Neunn"
+<div class="highlight-python"><div class="highlight"><pre><span></span>[{
+    &quot;id&quot; : 1,
+    &quot;name&quot; : &quot;YangWenjian&quot;,
+    &quot;company&quot; : &quot;Neunn&quot;
 }
 {
-    "id" : 1,
-    "name" : "YangWenjian",
-    "company" : "Neunn"
+    &quot;id&quot; : 1,
+    &quot;name&quot; : &quot;YangWenjian&quot;,
+    &quot;company&quot; : &quot;Neunn&quot;
 }]
-这里使用对象的数组Person[]接收Json字符串。</pre>
+这里使用对象的数组Person[]接收Json字符串。
+</pre></div>
 </div>
-<div class="highlight-python"><pre>{
-"depatemant" :
+<div class="highlight-python"><div class="highlight"><pre><span></span>{
+&quot;depatemant&quot; :
     [{
-        "id" : 1,
-        "name" : "YangWenjian",
-        "company" : "Neunn"
+        &quot;id&quot; : 1,
+        &quot;name&quot; : &quot;YangWenjian&quot;,
+        &quot;company&quot; : &quot;Neunn&quot;
     }
     {
-        "id" : 1,
-        "name" : "YangWenjian",
+        &quot;id&quot; : 1,
+        &quot;name&quot; : &quot;YangWenjian&quot;,
     }]
 }
-这里使用包含Person列表的Department对象进行接收字符串，注意首先要解析这个对象的名字，而不是直接解析字段。</pre>
+这里使用包含Person列表的Department对象进行接收字符串，注意首先要解析这个对象的名字，而不是直接解析字段。
+</pre></div>
 </div>
 <p>在OpenStack-Base层的代码中我使用Jackson进行接收json字符串：</p>
-<div class="highlight-python"><pre>ObjectMapper DEFAULT_MAPPER = new ObjectMapper(); //创建ObjectMapper对象
+<div class="highlight-python"><div class="highlight"><pre><span></span>ObjectMapper DEFAULT_MAPPER = new ObjectMapper(); //创建ObjectMapper对象
 DEFAULT_MAPPER.enable(SerializationConfig.Feature.WRAP_ROOT_VALUE);//序列化规则
 DEFAULT_MAPPER.enable(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE);//反序列化规则
 DEFAULT_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);//名称对应规则
 DEFAULT_MAPPER.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);//反序列化时忽略未定义的属性
 T entity = (T) DEFAULT_MAPPER.readValue(jsonData, returnType);//从json中读取对象，如果json是[]，需要用数组的类型；
 /**也可以用List与Bean对象的组合，此方法已经deprecation
-entity = (T) DEFAULT_MAPPER.readValue(jsonData, TypeFactory.collectionType(List.class,OstfTestSet.class)); */</pre>
+entity = (T) DEFAULT_MAPPER.readValue(jsonData, TypeFactory.collectionType(List.class,OstfTestSet.class)); */
+</pre></div>
 </div>
 <div class="section" id="id2">
 <h3>REST缓存机制<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
@@ -232,7 +234,7 @@ entity = (T) DEFAULT_MAPPER.readValue(jsonData, TypeFactory.collectionType(List.
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

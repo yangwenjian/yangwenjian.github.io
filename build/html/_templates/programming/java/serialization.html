@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -27,7 +25,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
     <link rel="next" title="Java Annotation" href="annotation.html" />
-    <link rel="prev" title="CSAPP" href="../c/csapp.html" /> 
+    <link rel="prev" title="Thinking In C" href="../c/thinking_in_c.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +38,7 @@
           <a href="annotation.html" title="Java Annotation"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../c/csapp.html" title="CSAPP"
+          <a href="../c/thinking_in_c.html" title="Thinking In C"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -60,8 +58,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../c/csapp.html"
-                        title="previous chapter">CSAPP</a></p>
+  <p class="topless"><a href="../c/thinking_in_c.html"
+                        title="previous chapter">Thinking In C</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="annotation.html"
                         title="next chapter">Java Annotation</a></p>
@@ -105,12 +103,12 @@
 <p>静态变量是不被序列化的，静态变量是属于类的状态，而序列化是针对Java对象的。</p>
 <p>Java在序列化对象进行存储时，如果将同一个对象序列化两次，为了节省空间，第二次写入时只是写对第一次的引用。</p>
 <p>对于final变量，因为只能赋值一次，反序列化的时候会重新计算其值，如果反序列化类中将final赋成”古尔丹“，那么在反序列化时就会重新计算成”古尔丹“。但下面这个例子特殊：</p>
-<div class="code java highlight-python"><pre>//服务端序列化类
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//服务端序列化类
 public class Person implements Serializable{
     private static final long serialVersionUUID = 9187654L;
     public final String name;
     pulic Person(){
-        name="地域咆哮";
+        name=&quot;地域咆哮&quot;;
     }
 }
 //客户端反序列化类
@@ -118,9 +116,10 @@ public class Person implements Serializable{
     private static final long serialVersionUUID = 9187654L;
     public final String name;
     public Person(){
-        name = "古尔丹";
+        name = &quot;古尔丹&quot;;
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>反序列化执行后，name的属性值仍然是”地域咆哮“！
 这是因为JVM从数据流中获取一个Object对象，然后读取其中的类表述信息，看到final变量，需要重新计算，
@@ -150,14 +149,14 @@ public class Person implements Serializable{
           <a href="annotation.html" title="Java Annotation"
              >next</a> |</li>
         <li class="right" >
-          <a href="../c/csapp.html" title="CSAPP"
+          <a href="../c/thinking_in_c.html" title="Thinking In C"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

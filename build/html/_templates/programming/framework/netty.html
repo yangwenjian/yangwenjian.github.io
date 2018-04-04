@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -97,7 +95,7 @@ performance protocol servers &amp; clients.</p>
 <div class="section" id="socketio">
 <h2>SocketIO<a class="headerlink" href="#socketio" title="Permalink to this headline">¶</a></h2>
 <p>SocketIO是用同步的方式等待客户端连接，当有客户端连接时，分配一个Handler进行处理。</p>
-<div class="code java highlight-python"><pre>while(true){
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>while(true){
     Socket socket = serverSocket.accept();
     // Pass the socket to the RequestHandler thread for processing
     RequestHandler requestHandler = new RequestHandler(socket);
@@ -109,11 +107,11 @@ class RequestHandler extends Thread{
     public void run(){
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(socket.getOutputStream());
-        out.println("Echo Server 1.0");
+        out.println(&quot;Echo Server 1.0&quot;);
         out.flush();
         String line = in.readLine();
         while (line != null &amp;&amp; line.length() &gt; 0) {
-            out.println("Server Echo: " + line);
+            out.println(&quot;Server Echo: &quot; + line);
             out.flush();
            line = in.readLine();
         }
@@ -121,13 +119,14 @@ class RequestHandler extends Thread{
         out.close();
         socket.close();
     }
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="nio">
 <h2>NIO<a class="headerlink" href="#nio" title="Permalink to this headline">¶</a></h2>
 <p>NIO的本质是Socket连接，但使用了JDK7提供的异步处理框架FutureTask，调用后立即返回，避免阻塞。</p>
-<div class="code java highlight-python"><pre>final AsynchronousServerSocketChannel listener = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(8017));
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>final AsynchronousServerSocketChannel listener = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(8017));
 listener.accept(null, new CompletionHandler&lt;AsynchronousSocketChannel, Void&gt;() {
     public void completed(AsynchronousSocketChannel ch, Void att) {
         //accept the next connection
@@ -154,7 +153,8 @@ listener.accept(null, new CompletionHandler&lt;AsynchronousSocketChannel, Void&g
         }
         ...//close ch
     }
-});</pre>
+});
+</pre></div>
 </div>
 </div>
 <div class="section" id="id1">
@@ -165,11 +165,12 @@ listener.accept(null, new CompletionHandler&lt;AsynchronousSocketChannel, Void&g
 （其实我觉得是设计的问题，因为前台完全可以读redis而不去读取数据库内容，这样就可以提高效率）</li>
 </ol>
 <p>使用netty框架也能解决问题，利用前台的JS客户端进行连接，有消息的话进行推送。</p>
-<div class="code highlight-python"><pre>socket = io.connect('http://10.32.170.68:9082');
-socket.on('receive', function(data){
+<div class="code highlight-python"><div class="highlight"><pre><span></span>socket = io.connect(&#39;http://10.32.170.68:9082&#39;);
+socket.on(&#39;receive&#39;, function(data){
     var type = $.parseJSON(data).type;
     ...
-})</pre>
+})
+</pre></div>
 </div>
 <p>这里加入的认证机制，通过用户第一次登录时需要进行身份认证，认证后，建立session与client的映射关系，保存到缓存中。</p>
 </div>
@@ -202,7 +203,7 @@ socket.on('receive', function(data){
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

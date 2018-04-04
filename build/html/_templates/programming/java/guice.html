@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="Json Object" href="json.html" />
-    <link rel="prev" title="Java Annotation" href="annotation.html" /> 
+    <link rel="next" title="Spring AOP" href="../framework/spring_aop.html" />
+    <link rel="prev" title="Netty" href="../framework/netty.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +35,10 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="json.html" title="Json Object"
+          <a href="../framework/spring_aop.html" title="Spring AOP"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="annotation.html" title="Java Annotation"
+          <a href="../framework/netty.html" title="Netty"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -61,11 +59,11 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="annotation.html"
-                        title="previous chapter">Java Annotation</a></p>
+  <p class="topless"><a href="../framework/netty.html"
+                        title="previous chapter">Netty</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="json.html"
-                        title="next chapter">Json Object</a></p>
+  <p class="topless"><a href="../framework/spring_aop.html"
+                        title="next chapter">Spring AOP</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/java/guice.txt"
@@ -113,21 +111,23 @@ Less boilerplate.</p>
 <h3>Personal comprehension<a class="headerlink" href="#personal-comprehension" title="Permalink to this headline">¶</a></h3>
 <p>When we need to create an instance, we know that we have to use &#8216;new&#8217; to create one. But it will lead our code is dependent by the real implemation, so we create design pattern called &#8216;Factory Mode&#8217;, but the factory mode still has some shortcoming, Some bigger man in google works on the project called guice.
 When we use facotry we still have some dependency, such as class or some name.But when we use guice, we can bind implementation class to abstract class. If we change implementation code, we only have to change the dependency binding. In this case, some class extends AbstractModule(from guice).</p>
-<div class="code java highlight-python"><pre>public class BillingModule extends AbstractModule {
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public class BillingModule extends AbstractModule {
 @Override
     protected void configure() {
         bind(TransactionLog.class).to(DatabaseTransactionLog.class);
         bind(CreditCardProcessor.class).to(PaypalCreditCardProcessor.class);
         bind(BillingService.class).to(RealBillingService.class);
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>So, we don&#8217;t use new or factory, or we even don&#8217;t have to specify the instance name in String. All work is done in guice, we only have to make bind and use some annotaion(&#8216;&#64;&#8217;) in the implementation class</p>
-<div class="code java highlight-python"><pre>public static void main(String[] args) {
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public static void main(String[] args) {
     Injector injector = Guice.createInjector(new BillingModule());
     BillingService billingService = injector.getInstance(BillingService.class);
     ...
- }</pre>
+ }
+</pre></div>
 </div>
 <p>For more information:
 <a class="reference external" href="https://code.google.com/p/google-guice/wiki/">https://code.google.com/p/google-guice/wiki/</a></p>
@@ -148,17 +148,17 @@ When we use facotry we still have some dependency, such as class or some name.Bu
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="json.html" title="Json Object"
+          <a href="../framework/spring_aop.html" title="Spring AOP"
              >next</a> |</li>
         <li class="right" >
-          <a href="annotation.html" title="Java Annotation"
+          <a href="../framework/netty.html" title="Netty"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

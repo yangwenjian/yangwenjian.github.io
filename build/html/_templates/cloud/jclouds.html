@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -116,50 +114,52 @@ JClouds的API允许你自由的使用可迁移的抽象或特定的云特性。�
 <p>JClouds作为Openstack的sdk，不外乎的作用就是将用户请求的接口转换为http的请求，然后将返回的json结果转换为结构化的对象。</p>
 <p>首先jclouds会以用户名和密码请求相应权限的token，这些是是现在getapi请求中。
 之后再利用token请求相应接口，我们看一个示例：</p>
-<div class="highlight-python"><pre>@Named("security-groups:create")                                #方法名称
+<div class="highlight-python"><div class="highlight"><pre><span></span>@Named(&quot;security-groups:create&quot;)                                #方法名称
 @POST                                                           #向发送的http请求类型
-@Path("/ecurity-group-rules")                                   #发送http请求的路径，一般附在endpoint后
-@SelectJson("security_group_rule")                              #返回数据的首元素标志
+@Path(&quot;/ecurity-group-rules&quot;)                                   #发送http请求的路径，一般附在endpoint后
+@SelectJson(&quot;security_group_rule&quot;)                              #返回数据的首元素标志
 @Fallback(NullOnNotFoundOr404.class)                            #返回失败后的处理方式及jclouds的返回结果
 @Consumes(MediaType.APPLICATION_JSON)                           #request接受类型的格式
 @Produces(MediaType.APPLICATION_JSON)                           #response的格式
 @MapBinder(BindSecurityGroupRuleToJsonPayload.class)            #将参数转化为json的类名称
-SecurityGroupRule createSecurityGroupRule(Ingress groupRule);   #接口方法</pre>
+SecurityGroupRule createSecurityGroupRule(Ingress groupRule);   #接口方法
+</pre></div>
 </div>
 <p>这里就是整个接口的调用方式，利用java的annotation，使用一套调用模板，可以在切面中加入任意的接口，而不会影响之前的任何代码实现。</p>
 <p>这里面，有个地方需要注意，MapBinder是一个接口，是：</p>
 <blockquote>
 <div>&lt;R extends HttpRequest&gt; R bindToRequest(R request, Map&lt;String, Object&gt; postParams);</div></blockquote>
 <p>转换的类必须实现这个接口，如：</p>
-<div class="highlight-python"><pre>@Singleton
+<div class="highlight-python"><div class="highlight"><pre><span></span>@Singleton
 public class BindSecurityGroupRuleToJsonPayload extends BindToJsonPayload implements MapBinder{
     @Override
     public &lt;R extends HttpRequest&gt; R bindToRequest(R request, Map&lt;String, Object&gt; postParams){
         //获取request，得到参数对象
         Builder&lt;String, Object&gt; payload = ImmutableMap.builder();
         payload.putAll(postParams);
-        checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
-            "this binder is only valid for GeneratedHttpRequests!");
+        checkArgument(checkNotNull(request, &quot;request&quot;) instanceof GeneratedHttpRequest,
+            &quot;this binder is only valid for GeneratedHttpRequests!&quot;);
         GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
 
         Ingress ingress = Ingress.class.cast(find(gRequest.getInvocation().getArgs(), instanceOf(Ingress.class)));
         //之后将所有的属性名称和值放入payload中，这里省略很多重复代码
         if(isNotEmpty(ingress.getProtocol())) {
-            payload.put("protocol", ingress.getProtocol());
+            payload.put(&quot;protocol&quot;, ingress.getProtocol());
         }
-        return super.bindToRequest(request, ImmutableMap.of("security_group_rule", payload.build()));
+        return super.bindToRequest(request, ImmutableMap.of(&quot;security_group_rule&quot;, payload.build()));
     }
-}</pre>
+}
+</pre></div>
 </div>
 <div class="section" id="id1">
 <h4>具体请求方法<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
 <p>具体请求方法在InvokeSyncToAsyncHttpMethod类中，具体方法为：</p>
-<div class="highlight-python"><pre>public Object invoke(Invocation invocation) {
+<div class="highlight-python"><div class="highlight"><pre><span></span>public Object invoke(Invocation invocation) {
     String commandName = config.getCommandName(invocation);
     HttpCommand command = toCommand(commandName, invocation);
     Function&lt;HttpResponse, ?&gt; transformer = getTransformer(commandName, command);
     org.jclouds.Fallback&lt;?&gt; fallback = getFallback(commandName, invocation, command);
-    logger.debug("&gt;&gt; invoking %s", commandName);
+    logger.debug(&quot;&gt;&gt; invoking %s&quot;, commandName);
     try {
         return transformer.apply(http.invoke(command));
     } catch (Throwable t) {
@@ -169,7 +169,8 @@ public class BindSecurityGroupRuleToJsonPayload extends BindToJsonPayload implem
             throw propagate(e);
         }
     }
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 </div>
@@ -177,11 +178,11 @@ public class BindSecurityGroupRuleToJsonPayload extends BindToJsonPayload implem
 <h3>JClouds中的token缓存机制<a class="headerlink" href="#jcloudstoken" title="Permalink to this headline">¶</a></h3>
 <p>JClouds还有一个重要作用，就是将请求的token进行状态缓存。这是为了充分利用token的有效期，并能有效的减少请求次数。</p>
 <p>将token请求后进行有效的存储。</p>
-<div class="highlight-python"><pre>V value = null;
+<div class="highlight-python"><div class="highlight"><pre><span></span>V value = null;
 try {
     value = getUninterruptibly(newValue);
     if (value == null) {
-        throw new InvalidCacheLoadException("CacheLoader returned null for key " + key + ".");
+        throw new InvalidCacheLoadException(&quot;CacheLoader returned null for key &quot; + key + &quot;.&quot;);
     }
     statsCounter.recordLoadSuccess(loadingValueReference.elapsedNanos());
     storeLoadedValue(key, hash, loadingValueReference, value);
@@ -191,13 +192,14 @@ try {
         statsCounter.recordLoadException(loadingValueReference.elapsedNanos());
         removeLoadingValue(key, hash, loadingValueReference);
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>同时还写了自动刷新token的代码，当请求token的时候，就请求scheduleRefresh方法，这个方法会返回一个有效的token。
 这里使用一个时间记录标记now获得当前时间，然后将now值传入scheduleRfresh中，得到一个现在有效的token。</p>
-<div class="highlight-python"><pre>if (count != 0) {
+<div class="highlight-python"><div class="highlight"><pre><span></span>if (count != 0) {
 // read-volatile
-// don't call getLiveEntry, which would ignore loading values
+// don&#39;t call getLiveEntry, which would ignore loading values
     ReferenceEntry&lt;K, V&gt; e = getEntry(key, hash);
     if (e != null) {
         long now = map.ticker.read();
@@ -212,10 +214,11 @@ try {
             return waitForLoadingValue(e, key, valueReference);
         }
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>JClouds将值存储之后进行定时刷新，如果时间超过定时刷新时间，就重新获取value并且返回，如果不是，那么就会返回oldValue。</p>
-<div class="highlight-python"><pre>V scheduleRefresh(ReferenceEntry&lt;K, V&gt; entry, K key, int hash, V oldValue, long now,
+<div class="highlight-python"><div class="highlight"><pre><span></span>V scheduleRefresh(ReferenceEntry&lt;K, V&gt; entry, K key, int hash, V oldValue, long now,
     CacheLoader&lt;? super K, V&gt; loader) {
     if (map.refreshes() &amp;&amp; (now - entry.getWriteTime() &gt; map.refreshNanos)
         &amp;&amp; !entry.getValueReference().isLoading()) {
@@ -225,38 +228,41 @@ try {
         }
     }
     return oldValue;
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="jclouds-log">
 <h3>JClouds Log 配置<a class="headerlink" href="#jclouds-log" title="Permalink to this headline">¶</a></h3>
 <p>JClouds本身提供了Log支持，方便使用者在调用的时候调试，使用SLF4J和logback进行log记录。</p>
 <p>我们首先在pom中将两个jar添加进来，之后我们可以使用其默认的配置，比较方便的打印log，只要在初始化的时候写如下代码：</p>
-<div class="highlight-python"><pre>CinderApi cinderApi = ContextBuilder.newBuilder("openstack-cinder")
+<div class="highlight-python"><div class="highlight"><pre><span></span>CinderApi cinderApi = ContextBuilder.newBuilder(&quot;openstack-cinder&quot;)
     .endpoint(endpoint).credentials(identity, password)
-    .modules(new SLF4JLoggingModule()).buildApi(CinderApi.class);</pre>
+    .modules(new SLF4JLoggingModule()).buildApi(CinderApi.class);
+</pre></div>
 </div>
 <p>其实默认的配置已经能满足一般使用者的需求，作为程序员，我们都喜欢自己的配置。
 在当前工程的context path目录下加入文件logback.xml（我这里加入了eclipse的resource文件夹），基本配置如下：</p>
-<div class="highlight-python"><pre>&lt;configuration scan="false"&gt;
-    &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;configuration scan=&quot;false&quot;&gt;
+    &lt;appender name=&quot;STDOUT&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
         &lt;encoder&gt;
             &lt;pattern&gt;%m%n&lt;/pattern&gt;
         &lt;/encoder&gt;
     &lt;/appender&gt;
-    &lt;appender name="FILE" class="ch.qos.logback.core.FileAppender"&gt;
+    &lt;appender name=&quot;FILE&quot; class=&quot;ch.qos.logback.core.FileAppender&quot;&gt;
         &lt;file&gt;log/jclouds.log&lt;/file&gt;
         &lt;encoder&gt; &lt;Pattern&gt;%d %-5p [%c] [%thread] %m%n&lt;/Pattern&gt; &lt;/encoder&gt;
     &lt;/appender&gt;
-    &lt;logger name="jclouds.wire"&gt;
-        &lt;level value="DEBUG" /&gt;
-            &lt;appender-ref ref="STDOUT" /&gt;
+    &lt;logger name=&quot;jclouds.wire&quot;&gt;
+        &lt;level value=&quot;DEBUG&quot; /&gt;
+            &lt;appender-ref ref=&quot;STDOUT&quot; /&gt;
     &lt;/logger&gt;
-    &lt;logger name="jclouds.headers"&gt;
-        &lt;level value="DEBUG" /&gt;
-            &lt;appender-ref ref="STDOUT" /&gt;
+    &lt;logger name=&quot;jclouds.headers&quot;&gt;
+        &lt;level value=&quot;DEBUG&quot; /&gt;
+            &lt;appender-ref ref=&quot;STDOUT&quot; /&gt;
         &lt;/logger&gt;
-&lt;/configuration&gt;</pre>
+&lt;/configuration&gt;
+</pre></div>
 </div>
 </div>
 </div>
@@ -269,42 +275,44 @@ try {
 <p>浮动IP的绑定就是将虚拟机赋予一个外网IP，从而在公网上就可以访问，并且可以提供相应服务了。</p>
 <p>从网络逻辑上是将外部网络（这里是exnet）中的一个IP赋予与之相连的某个子网中的虚拟机，通过路由器将这个IP的包直接送到虚拟机主机所在网卡，进而送到该虚拟机中。</p>
 <p>通过命令：</p>
-<div class="highlight-python"><pre>neutron --debug floatingip-associate FLOATING_IP_ID PORT_ID</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>neutron --debug floatingip-associate FLOATING_IP_ID PORT_ID
+</pre></div>
 </div>
 <p>显示结果为：</p>
-<div class="highlight-python"><pre>DEBUG: neutronclient.client
+<div class="highlight-python"><div class="highlight"><pre><span></span>DEBUG: neutronclient.client
 REQ:
 curl -i http://192.168.250.222:9696/v2.0/floatingips/10813711-a7ab-4aea-92d6-554dd4f7082b.json
-    -X PUT -H "X-Auth-Token:"......"
-    -H "Content-Type: application/json" -H "Accept: application/json"
-    -H "User-Agent: python-neutronclient"
-    -d '{
-            "floatingip": {
-                "port_id": "94da9cf4-1948-44ae-b2ae-8fba464aada8"
+    -X PUT -H &quot;X-Auth-Token:&quot;......&quot;
+    -H &quot;Content-Type: application/json&quot; -H &quot;Accept: application/json&quot;
+    -H &quot;User-Agent: python-neutronclient&quot;
+    -d &#39;{
+            &quot;floatingip&quot;: {
+                &quot;port_id&quot;: &quot;94da9cf4-1948-44ae-b2ae-8fba464aada8&quot;
             }
         }
 
 RESP:
     {
-        'date': 'Tue,
-        16Sep201407: 16: 58GMT',
-        'status': '200',
-        'content-length': '376',
-        'content-type': 'application/json;charset=UTF-8'
+        &#39;date&#39;: &#39;Tue,
+        16Sep201407: 16: 58GMT&#39;,
+        &#39;status&#39;: &#39;200&#39;,
+        &#39;content-length&#39;: &#39;376&#39;,
+        &#39;content-type&#39;: &#39;application/json;charset=UTF-8&#39;
     }{
-     "floatingip": {
-        "router_id": "cbd8cebf-6688-44cb-a4f6-ece233af0108",
-        "status": "DOWN",
-        "tenant_id": "51b1873935554545bb9b953e4055a997",
-        "floating_network_id": "ec8b7335-ee0f-45b1-add5-9b6cafb72660",
-        "fixed_ip_address": "192.168.20.200",
-        "floating_ip_address": "192.168.252.192",
-        "port_id": "94da9cf4-1948-44ae-b2ae-8fba464aada8",
-        "id": "10813711-a7ab-4aea-92d6-554dd4f7082b"
-    }</pre>
+     &quot;floatingip&quot;: {
+        &quot;router_id&quot;: &quot;cbd8cebf-6688-44cb-a4f6-ece233af0108&quot;,
+        &quot;status&quot;: &quot;DOWN&quot;,
+        &quot;tenant_id&quot;: &quot;51b1873935554545bb9b953e4055a997&quot;,
+        &quot;floating_network_id&quot;: &quot;ec8b7335-ee0f-45b1-add5-9b6cafb72660&quot;,
+        &quot;fixed_ip_address&quot;: &quot;192.168.20.200&quot;,
+        &quot;floating_ip_address&quot;: &quot;192.168.252.192&quot;,
+        &quot;port_id&quot;: &quot;94da9cf4-1948-44ae-b2ae-8fba464aada8&quot;,
+        &quot;id&quot;: &quot;10813711-a7ab-4aea-92d6-554dd4f7082b&quot;
+    }
+</pre></div>
 </div>
 <p>根据debug的结果，则相应的API为：</p>
-<div class="highlight-python"><pre>@Path("/v2.0/floatingips")
+<div class="highlight-python"><div class="highlight"><pre><span></span>@Path(&quot;/v2.0/floatingips&quot;)
 @RequestFilters(AuthenticateRequest.class)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface FloatingIPApi {
@@ -313,27 +321,28 @@ public interface FloatingIPApi {
     * 为虚拟机绑定浮动IP
     * @parm floatingip_id, port_id
     */
-    @Named("floatingip:associate")
+    @Named(&quot;floatingip:associate&quot;)
     @PUT
-    @PATH("/{floatingip_id}")
+    @PATH(&quot;/{floatingip_id}&quot;)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Payload("%7B\"floatingip\":%7B\"port_id\":\"{port_id}\"%7D%7D")
+    @Payload(&quot;%7B\&quot;floatingip\&quot;:%7B\&quot;port_id\&quot;:\&quot;{port_id}\&quot;%7D%7D&quot;)
     FloatingIP associateIp(@PathParam(floatingip_id) String floatingip_id, @PayloadParam(port_id) String port_id)
 
     /**
     * 为虚拟机解绑浮动IP
     * @parm floatingip_id
     */
-    @Named("floatingip:disassociate")
+    @Named(&quot;floatingip:disassociate&quot;)
     @PUT
-    @PATH("/{floatingip_id}")
+    @PATH(&quot;/{floatingip_id}&quot;)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Payload("%7B\"floatingip\":%7B\"port_id\":null%7D%7D")
+    @Payload(&quot;%7B\&quot;floatingip\&quot;:%7B\&quot;port_id\&quot;:null%7D%7D&quot;)
     FloatingIP disassociateIp(@PathParam(floatingip_id) String floatingip_id)
 
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 </div>
@@ -362,7 +371,7 @@ public interface FloatingIPApi {
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

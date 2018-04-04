@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -25,7 +23,9 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" /> 
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Linux Network Tool" href="tools/networktool.html" />
+    <link rel="prev" title="Linux FireWall" href="firewall.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,6 +34,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tools/networktool.html" title="Linux Network Tool"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="firewall.html" title="Linux FireWall"
+             accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -47,6 +53,12 @@
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="firewall.html"
+                        title="previous chapter">Linux FireWall</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tools/networktool.html"
+                        title="next chapter">Linux Network Tool</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/linux/fork.txt"
@@ -78,23 +90,24 @@
 <div class="section" id="best-exercise">
 <h2>Best Exercise<a class="headerlink" href="#best-exercise" title="Permalink to this headline">¶</a></h2>
 <p>See code here:</p>
-<div class="code cpp highlight-python"><pre>#include &lt;stdio.h&gt;
+<div class="code cpp highlight-python"><div class="highlight"><pre><span></span>#include &lt;stdio.h&gt;
 #include &lt;sys/types.h&gt;
 #include &lt;unistd.h&gt;
 int main(void){
         int i;
         for(i = 0; i &lt; 2; i++){
                 fork();
-                printf("hello");
+                printf(&quot;hello&quot;);
         }
         return 0;
-}</pre>
+}
+</pre></div>
 </div>
 <p>It will print 8 times.</p>
 <p>But if we change the print content to &#8220;hellon&#8221;, the result will be 6 times.</p>
 <p>Why?</p>
 <p>I compare the assembly code of these two, and I find one simple difference.</p>
-<div class="code highlight-python"><pre>//printf("hello\n")
+<div class="code highlight-python"><div class="highlight"><pre><span></span>//printf(&quot;hello\n&quot;)
 .L3:
     call    fork
     movl    $.LC0, %edi
@@ -102,12 +115,13 @@ int main(void){
     call    printf
     addl    $1, -4(%rbp)
 
-//printf("hello")
+//printf(&quot;hello&quot;)
 .L3:
     call    fork
     movl    $.LC0, %edi
     call    puts
-    addl    $1, -4(%rbp)</pre>
+    addl    $1, -4(%rbp)
+</pre></div>
 </div>
 <p>Puts function will print the string immidiately; while printf will put the string into buffer area.</p>
 </div>
@@ -125,12 +139,18 @@ int main(void){
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="tools/networktool.html" title="Linux Network Tool"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="firewall.html" title="Linux FireWall"
+             >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

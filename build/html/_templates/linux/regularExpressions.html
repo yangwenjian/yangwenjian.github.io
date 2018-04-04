@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -27,7 +25,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
     <link rel="next" title="LVM" href="lvm.html" />
-    <link rel="prev" title="Neutron" href="../openstack/neutron.html" /> 
+    <link rel="prev" title="Neutron" href="../cloud/openstack/neutron.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +38,7 @@
           <a href="lvm.html" title="LVM"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../openstack/neutron.html" title="Neutron"
+          <a href="../cloud/openstack/neutron.html" title="Neutron"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -62,7 +60,7 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../openstack/neutron.html"
+  <p class="topless"><a href="../cloud/openstack/neutron.html"
                         title="previous chapter">Neutron</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="lvm.html"
@@ -114,23 +112,28 @@ last, the letter after end character means option of this regular expression, in
 <h3>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
 <p>这里记录一些自己写过的表达式，供参考：</p>
 <p>数字的正则表达式：</p>
-<div class="highlight-python"><pre>正整数和小数：/^([0-9]*[1-9][0-9]*\.[0-9]+|0\.[0-9]*[1-9][0-9]*|([0-9]*[1-9][0-9]*))$/g</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>正整数和小数：/^([0-9]*[1-9][0-9]*\.[0-9]+|0\.[0-9]*[1-9][0-9]*|([0-9]*[1-9][0-9]*))$/g
+</pre></div>
 </div>
 <p>IP地址的正则表达式：</p>
-<div class="highlight-python"><pre>通用的IP表达式：/\b(([01]?\d?\d|2[0-4]\d|25[0-5])\.){3}([01]?\d?\d|2[0-4]\d|25[0-5])\b/g
-精确的IP表达式：/\b(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\.((1\d?\d?|[1-9]\d|\d|2[0-4]\d|25[0-5])\.){2}(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\b/g</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>通用的IP表达式：/\b(([01]?\d?\d|2[0-4]\d|25[0-5])\.){3}([01]?\d?\d|2[0-4]\d|25[0-5])\b/g
+精确的IP表达式：/\b(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\.((1\d?\d?|[1-9]\d|\d|2[0-4]\d|25[0-5])\.){2}(1\d?\d?|[1-9]\d|[1-9]|2[0-4]\d|25[0-5])\b/g
+</pre></div>
 </div>
 </div>
 <div class="section" id="regular-expression-in-find-and-grep">
 <h3>Regular expression in find and grep<a class="headerlink" href="#regular-expression-in-find-and-grep" title="Permalink to this headline">¶</a></h3>
 <p>在linux中可以使用正则表达式进行搜索文件：</p>
-<div class="highlight-python"><pre>通用表达式：find PATH -regex '.*REGX'(必须以.*为开头，否则不能匹配上)</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>通用表达式：find PATH -regex &#39;.*REGX&#39;(必须以.*为开头，否则不能匹配上)
+</pre></div>
 </div>
 <p>在搜索文件内容时也可使用：</p>
-<div class="highlight-python"><pre>通用表达式：find PATH -type f -name '*' | xargs grep 'REGX'(这里需要加入-type选项，要不然所有文件夹都会被列出)</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>通用表达式：find PATH -type f -name &#39;*&#39; | xargs grep &#39;REGX&#39;(这里需要加入-type选项，要不然所有文件夹都会被列出)
+</pre></div>
 </div>
 <p>这里也从网上找一些典型的正则表达式：</p>
-<div class="highlight-python"><pre>匹配HTML标记：&lt;\s*(\S+)(\s[^&gt;]*)?&gt;[\s\S]*&lt;\s*\/\1\s*&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>匹配HTML标记：&lt;\s*(\S+)(\s[^&gt;]*)?&gt;[\s\S]*&lt;\s*\/\1\s*&gt;
+</pre></div>
 </div>
 </div>
 <div class="section" id="id1">
@@ -156,14 +159,14 @@ last, the letter after end character means option of this regular expression, in
           <a href="lvm.html" title="LVM"
              >next</a> |</li>
         <li class="right" >
-          <a href="../openstack/neutron.html" title="Neutron"
+          <a href="../cloud/openstack/neutron.html" title="Neutron"
              >previous</a> |</li>
         <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

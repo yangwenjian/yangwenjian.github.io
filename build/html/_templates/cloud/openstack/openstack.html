@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -138,13 +136,13 @@
 <li>option value lookup.</li>
 </ol>
 <p>Oslo.conf在使用时，需要先声明配置项的名称、定义类型、帮助文字、缺省值等，然后再按照事先声明的配置项，对CLI或conf中的内容进行解析。</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">common_opts</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">cfg</span><span class="o">.</span><span class="n">StrOpt</span><span class="p">(</span><span class="s">&#39;bind_host&#39;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s">&#39;0.0.0.0&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s">&#39;IP address to listen on&#39;</span><span class="p">),</span>
-    <span class="n">cfg</span><span class="o">.</span><span class="n">IntOpt</span><span class="p">(</span><span class="s">&#39;bind_port&#39;</span><span class="p">,</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">common_opts</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">StrOpt</span><span class="p">(</span><span class="s1">&#39;bind_host&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;IP address to listen on&#39;</span><span class="p">),</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">IntOpt</span><span class="p">(</span><span class="s1">&#39;bind_port&#39;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">9292</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s">&#39;Port number to listen on&#39;</span><span class="p">)</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Port number to listen on&#39;</span><span class="p">)</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -180,20 +178,22 @@
 <p><strong>cpu优化</strong></p>
 <p>2 个 VCPU 分别绑定到不同 numa 节点的非超线程核上和分配到一对相邻的超线程核上的性能相差有 30%~40%（通过 SPEC CPU2006 工具测试）。
 由于cpu0用于处理中断请求，我们将cpu0～3预留出来，libvirt的配置如下：</p>
-<div class="highlight-python"><pre>&lt;vcpu placement='static' cpuset='4-23'&gt;1&lt;/vcpu&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;vcpu placement=&#39;static&#39; cpuset=&#39;4-23&#39;&gt;1&lt;/vcpu&gt;
 &lt;cputune&gt;
     &lt;shares&gt;1024&lt;/shares&gt;
     &lt;period&gt;100000&lt;/period&gt;
     &lt;quota&gt;57499&lt;/quota&gt;
-&lt;/cputune&gt;</pre>
+&lt;/cputune&gt;
+</pre></div>
 </div>
 <p><strong>内存优化</strong></p>
 <p>内存方面采取关闭KVM内存共享，打开透明大页。</p>
-<div class="highlight-python"><pre>echo 0 &gt; /sys/kernel/mm/ksm/pages_shared
+<div class="highlight-python"><div class="highlight"><pre><span></span>echo 0 &gt; /sys/kernel/mm/ksm/pages_shared
 echo 0 &gt; /sys/kernel/mm/ksm/pages_sharing
 echo always &gt; /sys/kernel/mm/transparent_hugepage/enabled
 echo never &gt; /sys/kernel/mm/transparent_hugepage/defrag
-echo 0 &gt; /sys/kernel/mm/transparent_hugepage/khugepaged/defrag</pre>
+echo 0 &gt; /sys/kernel/mm/transparent_hugepage/khugepaged/defrag
+</pre></div>
 </div>
 <p>这些配置对云主机的cpu性能有大概7%的提升（资料来自IBM developer works）。</p>
 <p><strong>磁盘优化</strong></p>
@@ -238,7 +238,7 @@ echo 0 &gt; /sys/kernel/mm/transparent_hugepage/khugepaged/defrag</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

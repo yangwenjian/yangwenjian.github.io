@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -106,7 +104,7 @@ limited knowledge about other units: only units &#8220;closely&#8221; related to
 talk to its friends; don&#8217;t talk to strangers. Only talk to your immediate friends.</li>
 <li><em>&lt;Architecture&gt;</em> Classes should not be coupled to too many other classes (Single Responsibility Principle).</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 class Foo{
     T1 t1;
     T2 t2;
@@ -122,7 +120,8 @@ class Foo{
         T9 t9;
     }
 
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic" start="3">
 <li><dl class="first docutils">
@@ -140,7 +139,7 @@ class Foo{
 <li><p class="first"><em>&lt;Changability&gt;</em> Magic numbers should not be used.</p>
 </li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public void doSomething(){
     for(int i = 0; i &lt; 4; i++){ // Noncompliant, 4 is magic number that no ones knows.
         ...
@@ -153,12 +152,13 @@ public void doSomething(){
     for(int i = 0; i &lt; NUMBER_OF_CYCLES; i++){
         ...
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="6">
 <li>Control flow statements &#8220;if&#8221;, &#8220;for&#8221;, &#8220;while&#8221;, &#8220;switch&#8221; and &#8220;try&#8221; should not be nested too deeply.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example
 if(condition1){
     ...
     if(condition2){
@@ -172,24 +172,26 @@ if(condition1){
             }
         }
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="7">
 <li><em>&lt;Maintainability&gt;</em> A field should not duplicate the name of its containing class.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public class Foo{
     private String foo;
     public String getFoo(){ ... }
 }
 
 Foo foo = new Foo();
-foo.getFoo(); // What does this return?</pre>
+foo.getFoo(); // What does this return?
+</pre></div>
 </div>
 <ol class="arabic simple" start="8">
 <li><em>&lt;Readability&gt;</em> &#8220;switch case&#8221; clauses should not have too many lines.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 switch(variable){
     case 0:
         methodCall1();
@@ -214,12 +216,13 @@ private void doSomething(){
     methodCall2();
     methodCall3();
     ...
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="9">
 <li><em>&lt;Readability&gt;</em> Variables should not be declared before they are relevant.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public boolean isCondition(int a, int b){
     int difference = a - b;
     MyClass foo = new MyClass(a); // Noncompliant; not used before the first return.
@@ -230,12 +233,13 @@ public boolean isCondition(int a, int b){
         return true;
     }
     return false;
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="10">
 <li>Loops should not contain more than a single &#8220;break&#8221; or &#8220;continue&#8221; statement.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 for( int i = 0; i &lt;= 10; i++){
     if(i % 2 == 0){
         continue;
@@ -244,13 +248,14 @@ for( int i = 0; i &lt;= 10; i++){
     if(i % 3 == 0){
         continue;
     }
-    System.out.println("i = " + i);
-}</pre>
+    System.out.println(&quot;i = &quot; + i);
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="11">
 <li>Methods should not have too many return statements.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public boolean myMethod(){
     if(condition1){
         return true;
@@ -262,7 +267,8 @@ public boolean myMethod(){
         }
     }
     return false;
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="12">
 <li>Fields and methods should not have conflicting names.</li>
@@ -284,7 +290,7 @@ public boolean myMethod(){
 <li>&#8220;equals(Object object)&#8221; should test
 argument type, because equals() takes a generic object as a parameter.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Compliant Code Example 正确代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Compliant Code Example 正确代码
 public boolean equals(Object object){
     if(object == null)
         return false;
@@ -292,80 +298,87 @@ public boolean equals(Object object){
         return false;
     MyClass mc = (MyClass) object;
     ...
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="3">
 <li>&#8220;Iterator.hasNext()&#8221; should not call &#8220;Iterator.next()&#8221;, hasNext() method should not have any side effects.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 @Override //override Iterator method
 public boolean hasNext(){
     if(next() != null){
         return true;
     }
     return false;
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="4">
 <li>&#8220;Object.wait(...)&#8221; should never be called on objects that implement &#8220;java.util.concurrent.locks.Condition&#8221;,
 should use &#8220;Object.await()&#8221; method.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 final Lock lock = new ReentrantLock();
 final Condition notFull = lock.newCondition();
 notFull.wait();
 
 //Compliant Code Example 正确代码
-notFull.await();</pre>
+notFull.await();
+</pre></div>
 </div>
 <ol class="arabic simple" start="5">
 <li>&#8220;PreparedStatement&#8221; and &#8220;ResultSet&#8221; methods should be called with valid indices. They all start with 1.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
-PreparedStatement ps = con.PreparedStatement("select name from employees where hireDate &gt; ? and salary &lt; ?");
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+PreparedStatement ps = con.PreparedStatement(&quot;select name from employees where hireDate &gt; ? and salary &lt; ?&quot;);
 ps.setDate(0, date);//Noncompliant, should be 1.
 ps.setDouble(1, salary);//Noncompliant, should be 2.
 ResultSet rs = ps.excuteQuery();
 while(rs.next()){
     String name = rs.getString(0);//Noncompliant, should be 1.
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="6">
 <li>&#8220;return&#8221; statements should not occur in &#8220;finally&#8221; blocks. Returning from a finally block suppresses the propagation of any unhandled Throwable
 which was thrown in the try or catch block.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public static void doSthThrowsException(){
     try{
         throw new RuntimeException();
     } finally{
         return; //NonCompliant, it will prevent the throw action.
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="7">
 <li>&#8220;ScheduledThreadPoolExecutor&#8221; should not have 0 core threads.</li>
 <li>A &#8220;for&#8221; loop update clause should move the counter in the right direction, or it will be infinit.</li>
 <li>Blocks synchronized on fields should not contain assignments of new objects to those fields.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
-private String color = "red";
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+private String color = &quot;red&quot;;
 private void doSomething(){
     synchronized(color) {
-        // lock is actually on object instance "red" referred to by the color variable
-        color = "green"; // Noncompliant; other threads now allowed into this block
+        // lock is actually on object instance &quot;red&quot; referred to by the color variable
+        color = &quot;green&quot;; // Noncompliant; other threads now allowed into this block
         // ...
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="10">
 <li>Conditions should not unconditionally evaluate to &#8220;TRUE&#8221; or to &#8220;FALSE&#8221;, or it will not called condition.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 if(foo == bar &amp;&amp; ... &amp; foo != bar){ ...  }
 if(foo == 4){
     if(foo &gt; 4) // Noncompliant, at this point foo is equal to 4.
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="11">
 <li>There should be no cycles in style definitions as this can lead to runtime exceptions.</li>
@@ -375,7 +388,7 @@ of the object monitor is waited for? Internally, the JVM relies on these methods
 them will corrupt the behavior of the JVM.</li>
 <li>Null pointers should not be dereferenced.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 @CheckForNull
 String getName(){ ... }
 public boolean isNameEmpty(){
@@ -393,74 +406,80 @@ try{
 
 private void merge(@NonNull Color firstColor, @NonNull Color secondColor){...}
 public void append(@CheckForNull Color color){
-    merge(currentColor, color); ////Noncompliant, should be null-checked because merge() doesn't accept nullable parameters.
+    merge(currentColor, color); ////Noncompliant, should be null-checked because merge() doesn&#39;t accept nullable parameters.
 }
 
 void paint(Color color){
     if(color == null){
-        System.out.println("color " + color.getName() + " is null!");
+        System.out.println(&quot;color &quot; + color.getName() + &quot; is null!&quot;);
         return;
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="14">
 <li>Reflection should not used to check non-runtime annotations. Like <a class="reference external" href="mailto:'&#37;&#52;&#48;Override">'<span>&#64;</span>Override</a>&#8216; annotation, it is marked as RetentionPolicy.SOURCE. Reflectin can only
 read the annotation with &#8216;RetentionPolicy.SOURCE&#8217; mark.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
-Method m = String.class.getMethod("getBytes", new Class[]{int.class, int.class, byte[].class, int.class});
-if(m.isAnnotationPresent(Override.class)){...} //Noncompliant, will alaways return false, even @Override is present.</pre>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+Method m = String.class.getMethod(&quot;getBytes&quot;, new Class[]{int.class, int.class, byte[].class, int.class});
+if(m.isAnnotationPresent(Override.class)){...} //Noncompliant, will alaways return false, even @Override is present.
+</pre></div>
 </div>
 <ol class="arabic simple" start="15">
 <li>Resources should be closed. Like connections, streams, files and other classes implement the Closeable must be manually close after creation.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 OutputStream stream = null;
 try{
     for(String property : propertyList){
-        stream = new FileOutputStream("myfile.txt");
+        stream = new FileOutputStream(&quot;myfile.txt&quot;);
     }
 } catch(Exception e){
 } finally{
     stream.close();//Mutiple streams were opened. Only the last is closed.
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="16">
 <li>super.finalize() should be called at the end of Object.finalize() implementations.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 protected void finalize(){
     super.finalize();   //Noncompliant; this call should come last.
     releaseSomeResources();
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="17">
 <li>Synchronization should not be based on Strings or boxed primitives. It should use object.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 private static final Boolean bLock = Boolean.FALSE;
 private static final Integer iLock = Integer.valueOf(1);
-private static final String sLock = "LOCK";
+private static final String sLock = &quot;LOCK&quot;;
 public void doSomething(){
     synchronized(bLock){... }//Noncompliant
     synchronized(iLock){... }//Noncompliant
     synchronized(sLock){... }//Noncompliant
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="18">
 <li>&#8220;equals&#8221; should not be used to test values of &#8220;Atomic&#8221; classes.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 AtomicInteger aInt1 = new AtomicInteger(0);
 AtomicInteger aInt2 = new AtomicInteger(0);
 if(aInt1.equals(aInt2)) { //AtomicClass do not override equals() method.
     ...
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="19">
 <li>The value returned from a stream read should be checked.</li>
 </ol>
-<div class="code java highlight-python"><pre>//NonCompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//NonCompliant Code Example 错误代码
 public void doSomething(){
     try{
         InputStream istream = new InputStream(file);
@@ -471,27 +490,30 @@ public void doSomething(){
         *   while(count  = istream.read(buffer) &gt; 0)
         */
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="20">
 <li>&#8220;read&#8221; and &#8220;readLine&#8221; return values should be used.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 buffReader = new BufferedReader(new FileReader(fileName));
 while(BufferedReader.readLine() != null){//Noncompliant should use string to get the return value.
     ...
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="21">
 <li>Short-circuit logic should be used to prevent null pointer dereferences in conditionals.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 if(str == null &amp;&amp; str.length() == 0){
-    System.out.println("String is empty.");
+    System.out.println(&quot;String is empty.&quot;);
 }
 if(str != null || str.length() &gt; 0){
-    System.out.println("String is no empty.");
-}</pre>
+    System.out.println(&quot;String is no empty.&quot;);
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="22">
 <li>Throwable and Error should not be caught.</li>
@@ -500,7 +522,7 @@ if(str != null || str.length() &gt; 0){
 <li>&#8220;ConcurrentLinkedQueue.size()&#8221; should not be used. It is an expensive operation, and may be inaccurate if the queue is modified during execution.</li>
 <li>&#8220;equals&#8221; methods should be symmetric and work for subclasses.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public class Fruit extends Food{
     private Season ripe;
     public boolean equals(Object object){
@@ -517,7 +539,8 @@ public class Fruit extends Food{
             return ripe.equals(((Fruit)obj).getRipe());
         }
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="27">
 <li>&#8220;equals(Object obj)&#8221; should be overriden along with the &#8220;compareTo(T obj)&#8221; method. In java documentation, it strongly recommanded
@@ -526,14 +549,15 @@ that (x.compareTo(y) == 0) == (x.equals(y)).</li>
 checked and runtime exceptions, casting too broad a net. The exceptions should be explicitly listed in the catch clause.</li>
 <li>&#8220;hashCode&#8221; and &#8220;toString&#8221; should not be called on array instances.</li>
 </ol>
-<div class="code java highlight-python"><pre>public static void main(String[] agrs){
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public static void main(String[] agrs){
     //Noncompliant Code Example 错误代码
     String argstr = args.toString();
     int argHash = args.hashCode();
     //Compliant Code Example 正确代码
     String argstr1 = Arrays.toString(args);
     int argHash1 = Arrays.hasCode(args);
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="30">
 <li>&#8220;indexOf&#8221; checks should not be for positive numbers. Because &#8220;indexOf&#8221; can return 0 if it is found at the first place. &#8220;indexOf&#8221;
@@ -542,12 +566,13 @@ should check &#8216; &gt; -1 &#8216; or &#8216; &gt;= 0 &#8216; if you need.</li
 <li>&#8220;object == null&#8221; should be used instead of &#8220;object.equals(null)&#8221;.</li>
 <li>&#8220;Object.wait(...)&#8221; and &#8220;Condition.await(...)&#8221; should be called inside a &#8220;while&#8221; loop.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 synchronized(obj){
     if(!suitableCondition()){
-        obj.wait(); //the thread can wake up whereas the condition is still false. We should use 'while'
+        obj.wait(); //the thread can wake up whereas the condition is still false. We should use &#39;while&#39;
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="34">
 <li>&#8220;public static&#8221; fields should be constant. It is used to share a state among several objects.If we don&#8217;t make such variables final,
@@ -558,21 +583,22 @@ in an attempt at serializing the outer class as well.</li>
 <li>&#8220;wait(...)&#8221; should be used instead of &#8220;Thread.sleep(...)&#8221; when a lock is held. Calling &#8220;Thread.sleep(...)&#8221; to hold lock cloud lead to
 performance and scalability issues, or deadlocks.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public void doSomething(){
     synchronized(monitor){
         while(notReady()){
-            Thread.sleep(2000); // Noncompliant, should be "monitor.wait(2000)" instead.
+            Thread.sleep(2000); // Noncompliant, should be &quot;monitor.wait(2000)&quot; instead.
         }
         process();
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="38">
 <li>&#8220;wait(...)&#8221;, &#8220;notify()&#8221; and &#8220;notifyAll()&#8221; methods should only be called when a lock is obviously held on an object. By contract, the method
 Object.wait(...), Object.notify() and Object.notifyAll() should be called by a thread that is the owner of the object&#8217;s monitor.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 private void removeElement(){
     while(!suitableCondition()){
         obj.wait(); //Noncompliant
@@ -587,40 +613,44 @@ private void removeElement(){
             obj.wait(); // Compliant, this thread is the owner of obj.
         }
     }
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="39">
 <li>Collections should not be passed as argument to their own methods.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Compliant Code Example 正确代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Compliant Code Example 正确代码
 List&lt;Object&gt; objs = new ArrayList&lt;Object&gt;();
-objs.add("Hello");
+objs.add(&quot;Hello&quot;);
 objs.add(objs); // Noncompliant, will throw StackOverflowException if obj.hashCode() called.
 objs.addAll(objs); // Noncompliant, behavior undefined.
 objs.containsAll(objs); //Noncompliant, always true.
 objs.removeAll(objs); //Noncompliant, confusing. Use clear() instead.
-objs.retainAll(objs); //Noncompliant, NOOP</pre>
+objs.retainAll(objs); //Noncompliant, NOOP
+</pre></div>
 </div>
 <ol class="arabic simple" start="40">
 <li>Dissimilar primitive wrappers should not be used with the ternary operator without explicit casting.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 Integer i = 123456789;
 Float f = 1.0f;
 Number n = condition ? i : f; //Noncompliant, i is coeredto float. n = 1.23456792E8
 //Compliant Code Example 正确代码
-Number n = condition ? (Number) i : f;</pre>
+Number n = condition ? (Number) i : f;
+</pre></div>
 </div>
 <ol class="arabic simple" start="41">
 <li>Exception handlers should preserve the orginal exception.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
-try{ ... }catch(Exception e){ LOGGER.info("context"); } // Noncompliant, exception is lost.
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+try{ ... }catch(Exception e){ LOGGER.info(&quot;context&quot;); } // Noncompliant, exception is lost.
 try{ ... }catch(Exception e){ LOGGER.info(e.getMessage()); } // Noncompliant, only message is preserved.
-try{ ... }catch(Exception e){ throw new RuntimeException("context"); } // Noncompliant, exception is lost.
+try{ ... }catch(Exception e){ throw new RuntimeException(&quot;context&quot;); } // Noncompliant, exception is lost.
 //Compliant Code Example 正确代码
 try{ ... }catch(Exception e){ LOGGER.info(e); }
-try{ ... }catch(Exception e){ throw new RuntimeException(e); }</pre>
+try{ ... }catch(Exception e){ throw new RuntimeException(e); }
+</pre></div>
 </div>
 <ol class="arabic simple" start="42">
 <li>Exceptions should not be thrown from servlet methods. Failure to catch exceptions in a servlet cloud leave
@@ -635,7 +665,7 @@ lazy initialization of non-volatile fields could mean that a second thread has a
 object while the first thread is still creating it. Allowing such access could cause serious bugs. Instead.
 The initizliation block should be synchronized or the variable made volatile.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 protected static Object instance = null;
 /**
 * 正确代码应为： protected static volatile Object instance = null;
@@ -646,13 +676,14 @@ public static Object getInstance(){
     }
     instance = new Object(); // Noncompliant
     return instance;
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="48">
 <li>Locks should be released. The logic in a method should ensure that locks are released in the methods in which
 they were acquired.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 Lock lock = new Lock();
 public void acquireLock(){
     lock.lock();
@@ -672,43 +703,47 @@ public void doSomething(){
     lock.lock();
     ...
     lock.unlock();
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="49">
 <li>Math operands should be cast before assignments.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 float twoThirds = 2/3;
 long millisInYear = 1000*3000*24*365;
 long bigNum = Integer.MAX_VALUE + 2; // Yields -2147483647
 long bigNegNum = Integer.MIN_VALUE -1; // positive result
 public long compute(int factor){
     return factor * 10000; // if factor &gt; 214748
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="50">
 <li>Math should not be performed on floats.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 float a = 16777216.0f;
 float b = 1.0f;
 float c = a + b; // Noncompliant; yields 1.6777216E7
 double d = a + b; // Noncompliant; between two floats.
 //Compliant Code Example 正确代码
 BigDecimal c = BigDecimal.valueOf(a).add(BigDecimal.valueOf(b));
-double d = (double) a + (double) b;</pre>
+double d = (double) a + (double) b;
+</pre></div>
 </div>
 <ol class="arabic simple" start="51">
 <li>Modulus results should not be checked for direct equality.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public boolean isOdd(int x){
     return x % 2 ==1;
 }
 //Compliant Code Example 正确代码
 public boolean isOdd(int x){
     return x % 2 != 0; // 或者 return Math.abs(x%2) != 1;
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="52">
 <li>Mutable members should not be stored or returned directly. Or the value will be changed at other class.</li>
@@ -718,18 +753,20 @@ active sessions out to file at shutdown &amp; deserialize any such sessions at s
 <li>Objects should not be created to be dropped immediately without being used.</li>
 <li>Return values should not be ignored when function calls don&#8217;t have any side effects.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public void handle(String command){
     command.toLowerCase(); // Noncompliant, result will be thrown away.
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="57">
 <li>Servlets should not have mutable instance fields. Because the fields are shared by all users.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 public Class MyServlet extends HttpServlet{
     private String userName; // Noncompliant.
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="58">
 <li>The Array.equals(Object obj) method should not be used. Because array doesn&#8217;t override equals(), &#8216;equals()&#8217;
@@ -745,13 +782,14 @@ to be excuted in the current thread.</li>
 passed to SQL commands should be sanitized.</li>
 <li>Values should not be uselessly incremented.</li>
 </ol>
-<div class="code java highlight-python"><pre>//Noncompliant Code Example 错误代码
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
 publi int incr(){
     int i = 0;
     int j = 0;
     i = i++; // Noncompliant, i is 0.
     return j++; // Noncompliant, return 0.
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="64">
 <li>&#8220;&#64;Override&#8221; annotation should be used on any method overriding.</li>
@@ -788,7 +826,7 @@ publi int incr(){
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

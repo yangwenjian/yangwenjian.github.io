@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="善后工作" href="netstone_process.html" />
+    <link rel="next" title="石头网整合大平台详细流程" href="netstone_process.html" />
     <link rel="prev" title="日志及异常规范定义" href="../programming/java/log_and_exception.html" /> 
   </head>
   <body>
@@ -37,7 +35,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="netstone_process.html" title="善后工作"
+          <a href="netstone_process.html" title="石头网整合大平台详细流程"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../programming/java/log_and_exception.html" title="日志及异常规范定义"
@@ -65,7 +63,7 @@
                         title="previous chapter">日志及异常规范定义</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="netstone_process.html"
-                        title="next chapter">善后工作</a></p>
+                        title="next chapter">石头网整合大平台详细流程</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/work/netstone_shell.txt"
@@ -191,7 +189,7 @@
 <ul class="simple">
 <li>石头网相关</li>
 </ul>
-<div class="code highlight-python"><pre>石头网比大平台多出的用户数：
+<div class="code highlight-python"><div class="highlight"><pre><span></span>石头网比大平台多出的用户数：
 SELECT username, PASSWORD, enabled, account_non_expired, credentials_non_expired, reg_time AS create_date, realname AS real_name, phone AS mobile_number,
 qq AS qq_number, email  FROM member_net n WHERE n.username NOT IN (SELECT username FROM member) ;
 SELECT n.* FROM mem_net n WHERE n.username NOT IN (SELECT m.username FROM member m);
@@ -200,58 +198,64 @@ SELECT COUNT(*) FROM member_net n WHERE EXISTS (SELECT * FROM authorise a WHERE 
 SELECT COUNT(*) FROM member_net n INNER JOIN authorise a ON a.member_id = n.id GROUP BY n.id; //这条不准，有用户买两条
 SELECT COUNT(*) FROM (SELECT n.id FROM member_net n INNER JOIN authorise a ON a.member_id = n.id GROUP BY n.id) temp;
 石头网和大平台相同用户名相同手机号码用:
-SELECT n.username, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n INNER JOIN member m ON n.username = m.USERNAME AND n.phone = m.MOBILE_NUMBE;</pre>
+SELECT n.username, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n INNER JOIN member m ON n.username = m.USERNAME AND n.phone = m.MOBILE_NUMBE;
+</pre></div>
 </div>
 <ul class="simple">
 <li>大平台相关：</li>
 </ul>
-<div class="code highlight-python"><pre>大平台比石头网多出的用户：
+<div class="code highlight-python"><div class="highlight"><pre><span></span>大平台比石头网多出的用户：
 SELECT COUNT(*) FROM member m WHERE NOT EXISTS (SELECT * FROM member_net n WHERE m.USERNAME = n.username);
 SELECT COUNT(*) FROM member m WHERE m.`USERNAME` NOT IN (SELECT username FROM member_net);
 活跃的用户数:
-SELECT COUNT(*) FROM member_plat_effective;</pre>
+SELECT COUNT(*) FROM member_plat_effective;
+</pre></div>
 </div>
 <ul class="simple">
 <li>石头网与大平台交叉部分：</li>
 </ul>
-<div class="code highlight-python"><pre>用户名相同的用户：
+<div class="code highlight-python"><div class="highlight"><pre><span></span>用户名相同的用户：
 SELECT COUNT(*) FROM member m INNER JOIN member_net n ON m.USERNAME = n.username;
 SELECT username, PASSWORD, enabled, account_non_expired, credentials_non_expired, create_date AS reg_time, real_name AS realname, mobile_number AS phone,
 qq_number AS qq, email FROM member n WHERE n.username IN (SELECT username FROM member_net) ;
 用户名相同，手机号不同的用户：
 SELECT n.username, m.USERNAME, n.password, n.phone, m.MOBILE_NUMBER FROM mem_net n INNER JOIN member m ON n.username = m.USERNAME AND n.phone &lt;&gt; m.MOBILE_NUMBER;
 查询石头网活跃用户与大平台用户名重复的用户数，用这个结果建立临时表，之后导入到member_stw中，为了单独验证:
-SELECT n.* FROM member_stw n INNER JOIN member_plat_effective p ON n.username = p.username INNER JOIN member_stw_effective s ON p.username = s.username;</pre>
+SELECT n.* FROM member_stw n INNER JOIN member_plat_effective p ON n.username = p.username INNER JOIN member_stw_effective s ON p.username = s.username;
+</pre></div>
 </div>
 <ul class="simple">
 <li>重置密码，保留投顾活跃、石头网不活跃的密码，其余用户名相同的都改成石头网密码:</li>
 </ul>
-<div class="code highlight-python"><pre>UPDATE member m, member_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.username not in (SELECT username from member_plat_effective);</pre>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>UPDATE member m, member_net n SET m.PASSWORD = n.password WHERE m.USERNAME = n.username AND m.username not in (SELECT username from member_plat_effective);
+</pre></div>
 </div>
 <ul class="simple">
 <li>将石头网比大平台多出来的用户导入到大平台中:</li>
 </ul>
-<div class="code highlight-python"><pre>INSERT INTO member
+<div class="code highlight-python"><div class="highlight"><pre><span></span>INSERT INTO member
 (username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email)
 SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email
 FROM mem_net
 WHERE NOT EXISTS (SELECT * FROM member
-WHERE member.username=mem_net.username);</pre>
+WHERE member.username=mem_net.username);
+</pre></div>
 </div>
 <ul class="simple">
 <li>将大平台多出来的用户导入到石头网中:</li>
 </ul>
-<div class="code highlight-python"><pre>INSERT INTO mem_net
+<div class="code highlight-python"><div class="highlight"><pre><span></span>INSERT INTO mem_net
 (username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, reg_time, realname, phone, qq, email)
 SELECT username, PASSWORD, enabled, account_non_expired, CREDENTIALS_NON_EXPIRED, create_date, REAL_NAME, mobile_number, qq_number, email
 FROM member
 WHERE NOT EXISTS (SELECT * FROM mem_net
-WHERE mem_net.username=member.username);</pre>
+WHERE mem_net.username=member.username);
+</pre></div>
 </div>
 <ol class="arabic simple" start="8">
 <li>查询大平台手机号重复</li>
 </ol>
-<div class="code highlight-python"><pre> SELECT COUNT(*)
+<div class="code highlight-python"><div class="highlight"><pre><span></span> SELECT COUNT(*)
 FROM
   (SELECT
     m1.USERNAME, m2.USERNAME AS username2, m1.MOBILE_NUMBER,
@@ -262,20 +266,20 @@ FROM
     FROM
       member
     WHERE MOBILE_NUMBER IS NOT NULL
-      AND MOBILE_NUMBER != '') m1
+      AND MOBILE_NUMBER != &#39;&#39;) m1
     INNER JOIN
       (SELECT
         *
       FROM
         member
       WHERE MOBILE_NUMBER IS NOT NULL
-        AND MOBILE_NUMBER != '') m2
+        AND MOBILE_NUMBER != &#39;&#39;) m2
       ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER
       AND m1.USERNAME != m2.USERNAME
       AND m1.MOBILE_NUMBER IS NOT NULL
-      AND m1.MOBILE_NUMBER != ''
+      AND m1.MOBILE_NUMBER != &#39;&#39;
       AND m2.MOBILE_NUMBER IS NOT NULL
-      AND m2.MOBILE_NUMBER != ''
+      AND m2.MOBILE_NUMBER != &#39;&#39;
   GROUP BY m1.username) temp
 
   或者
@@ -298,24 +302,27 @@ FROM
       GROUP BY mobile_number
       HAVING COUNT(*) &gt; 1) t
     WHERE t.mobile_number = member.mobile_number)
-  ORDER BY mobile_number</pre>
+  ORDER BY mobile_number
+</pre></div>
 </div>
 <ol class="arabic simple" start="9">
 <li>将所有大平台重复的手机号码置为NULL:</li>
 </ol>
-<div class="code highlight-python"><pre>UPDATE member m SET  m.MOBILE_NUMBER = NULL  WHERE m.ID IN  (SELECT         m1.id  FROM     (SELECT  * FROM  member WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != '') m1
-INNER JOIN  (SELECT  * FROM  member  WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != '') m2  ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER   AND m1.USERNAME != m2.USERNAME
-AND m1.MOBILE_NUMBER IS NOT NULL  AND m1.MOBILE_NUMBER != ''  AND m2.MOBILE_NUMBER IS NOT NULL  AND m2.MOBILE_NUMBER != '' GROUP BY m1.username)</pre>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>UPDATE member m SET  m.MOBILE_NUMBER = NULL  WHERE m.ID IN  (SELECT         m1.id  FROM     (SELECT  * FROM  member WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != &#39;&#39;) m1
+INNER JOIN  (SELECT  * FROM  member  WHERE MOBILE_NUMBER IS NOT NULL  AND MOBILE_NUMBER != &#39;&#39;) m2  ON m1.MOBILE_NUMBER = m2.MOBILE_NUMBER   AND m1.USERNAME != m2.USERNAME
+AND m1.MOBILE_NUMBER IS NOT NULL  AND m1.MOBILE_NUMBER != &#39;&#39;  AND m2.MOBILE_NUMBER IS NOT NULL  AND m2.MOBILE_NUMBER != &#39;&#39; GROUP BY m1.username)
+</pre></div>
 </div>
 <ol class="arabic simple" start="10">
 <li>其他细节:</li>
 </ol>
-<div class="code highlight-python"><pre>将大平台的member表的id导入到石头网表的p_member_id中:
+<div class="code highlight-python"><div class="highlight"><pre><span></span>将大平台的member表的id导入到石头网表的p_member_id中:
 UPDATE mem_net n, member m SET n.p_member_id = m.ID WHERE n.username = m.USERNAME;
 将无效手机号置空
 UPDATE member SET mobile_number = NULL WHERE LENGTH(mobile_number) &lt;&gt;11 AND LENGTH(mobile_number) &gt; 0;
 将所有的nickname为空的置为用户名
-UPDATE member m SET m.nickname = m.USERNAME WHERE nickname IS NULL;</pre>
+UPDATE member m SET m.nickname = m.USERNAME WHERE nickname IS NULL;
+</pre></div>
 </div>
 </div>
 </div>
@@ -333,7 +340,7 @@ UPDATE member m SET m.nickname = m.USERNAME WHERE nickname IS NULL;</pre>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="netstone_process.html" title="善后工作"
+          <a href="netstone_process.html" title="石头网整合大平台详细流程"
              >next</a> |</li>
         <li class="right" >
           <a href="../programming/java/log_and_exception.html" title="日志及异常规范定义"
@@ -343,7 +350,7 @@ UPDATE member m SET m.nickname = m.USERNAME WHERE nickname IS NULL;</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

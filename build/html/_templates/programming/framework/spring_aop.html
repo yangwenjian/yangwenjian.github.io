@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -25,7 +23,9 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" /> 
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="设计模式Head First" href="../common/designpatterns.html" />
+    <link rel="prev" title="Guice Introduction and Analysis" href="../java/guice.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,6 +34,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../common/designpatterns.html" title="设计模式Head First"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../java/guice.html" title="Guice Introduction and Analysis"
+             accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -51,6 +57,12 @@
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../java/guice.html"
+                        title="previous chapter">Guice Introduction and Analysis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../common/designpatterns.html"
+                        title="next chapter">设计模式Head First</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/framework/spring_aop.txt"
@@ -88,35 +100,37 @@
 4.注入式AspectJ切面。</p>
 <p>在base这个项目中，我使用aspectj进行aop代码的插入，这个配置起来比较方便，而且效率也很高。</p>
 <p>配置文件：</p>
-<div class="highlight-python"><pre>&lt;!--启动Spring对@AspectJ注解的支持 --&gt;
-&lt;aop:aspectj-autoproxy/&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;!--启动Spring对@AspectJ注解的支持 --&gt;
+&lt;aop:aspectj-autoproxy/&gt;
+</pre></div>
 </div>
 <p>这样就开启spring的aspectj的功能，我们就可以使用代码实现AOP编程了。</p>
 <p>代码实例：</p>
-<div class="highlight-python"><pre>@Component
+<div class="highlight-python"><div class="highlight"><pre><span></span>@Component
 @Aspect
 public class NovaAspectAdvice {
-    @Before(value ="execution(* com.neunn.cloud.*.*(..))")
+    @Before(value =&quot;execution(* com.neunn.cloud.*.*(..))&quot;)
     public void doBefore(JoinPoint jp) {
 
     }
-    @After(value ="execution(* com.neunn.cloud.*.*(..))")
+    @After(value =&quot;execution(* com.neunn.cloud.*.*(..))&quot;)
     public void doAfter(JoinPoint jp) {
 
     }
-    @AfterReturning(value = "execution(* com.neunn.*.create*(..))", returning = "result")
+    @AfterReturning(value = &quot;execution(* com.neunn.*.create*(..))&quot;, returning = &quot;result&quot;)
     public void doAfter(JoinPoint jp, Object result) {
 
     }
-    @Around(value = "execution(* com.neunn.*.create*(..))")
+    @Around(value = &quot;execution(* com.neunn.*.create*(..))&quot;)
     public void doAround(ProceedingJoinPoint pjp) throws Throwable {
 
     }
-    @AfterThrowing(value = "execution(* com.neunn.*.create*(..))", throwing = "e")
+    @AfterThrowing(value = &quot;execution(* com.neunn.*.create*(..))&quot;, throwing = &quot;e&quot;)
     public void doThrow(JoinPoint jp, Throwable e) {
 
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>这里简单解释下，aspectj只是其中一种实现方法，包括五种方法，before，after，afterreturn，around，afterthrow分别作用在截获方法的开始，之后，返回后，整个执行过程，抛出异常后。
 网上有个参考资料把after return中的参数写成了String类型，导致我开始运行的时候怎么也截获不到AfterReturning方法之内，差点就换其他方式进行截获了。</p>
@@ -132,10 +146,10 @@ public class NovaAspectAdvice {
 的是不同的类，这是由Spring Boot自动识别并配置的，也可以通过手动setApplicatonContex或者setWebEnviroment方式进行
 配置，但这样配置后，自己启动一会就莫名退出了，原因待查。</p>
 <p>通过将好用的配置不断进行对比，关键的方式是在与缓存的调用方式：</p>
-<div class="code java highlight-python"><pre>@Service
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>@Service
 public class SemanticService{
 
-    @Cacheable("tokenCache")
+    @Cacheable(&quot;tokenCache&quot;)
     public String getToken(){
         ......
     }
@@ -150,7 +164,8 @@ private SemanticService semanticService;
 public void semanticService(){
     String token = semanticService.getToken();//在上层调用者上调用getToken方法
     ...
-}</pre>
+}
+</pre></div>
 </div>
 <p>那么上述两种方法都能走cache吗？</p>
 <p>回答是前者不能调用cache，后者可以。其实大家都很熟悉Spring的调用栈，并不是像我们平时new一个对象然后进行调用，
@@ -173,12 +188,18 @@ Spring的AOP，就相当于我们自己简单调用了自己一下，跳过AOP�
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../common/designpatterns.html" title="设计模式Head First"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../java/guice.html" title="Guice Introduction and Analysis"
+             >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

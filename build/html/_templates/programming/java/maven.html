@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -115,25 +113,27 @@ And we maven deploy to upload the builded package to nexus.</p>
 <li>Enter the group id, artifact id of the project, and click finish.</li>
 <li>We can see the pom file has been created in the project directory.</li>
 </ol>
-<div class="highlight-python"><pre>&lt;groupId&gt;com.neunn.neunnmanager-sdk-java&lt;/groupId&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;groupId&gt;com.neunn.neunnmanager-sdk-java&lt;/groupId&gt;
 &lt;artifactId&gt;NeunnManager-sdk-java&lt;/artifactId&gt;
 &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
 &lt;packaging&gt;jar&lt;/packaging&gt;
 &lt;name&gt;NeunnManager-sdk-java&lt;/name&gt;
-&lt;url&gt;http://maven.apache.org&lt;/ur</pre>
+&lt;url&gt;http://maven.apache.org&lt;/ur
+</pre></div>
 </div>
 <ol class="arabic simple" start="4">
 <li>Add some properties in the pom file, so we can manage it more conveniently.</li>
 </ol>
-<div class="highlight-python"><pre>&lt;properties&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;properties&gt;
    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
    &lt;jersey-version&gt;1.17&lt;/jersey-version&gt;
-&lt;/properties&gt;</pre>
+&lt;/properties&gt;
+</pre></div>
 </div>
 <ol class="arabic simple" start="5">
 <li>Add dependencies.</li>
 </ol>
-<div class="highlight-python"><pre>&lt;dependency&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;dependency&gt;
    &lt;groupId&gt;org.springframework&lt;/groupId&gt;
    &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
    &lt;version&gt;${spring.version}&lt;/version&gt;
@@ -142,12 +142,13 @@ And we maven deploy to upload the builded package to nexus.</p>
    &lt;groupId&gt;org.springframework&lt;/groupId&gt;
    &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
    &lt;version&gt;${spring.version}&lt;/version&gt;
-&lt;/dependency&gt;</pre>
+&lt;/dependency&gt;
+</pre></div>
 </div>
 <ol class="arabic simple" start="6">
 <li>Add repositories.</li>
 </ol>
-<div class="highlight-python"><pre>&lt;repositories&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;repositories&gt;
    &lt;repository&gt;
        &lt;snapshots&gt;
            &lt;enabled&gt;true&lt;/enabled&gt;
@@ -156,12 +157,13 @@ And we maven deploy to upload the builded package to nexus.</p>
        &lt;name&gt;Public Repositories&lt;/name&gt;
        &lt;url&gt;http://192.168.250.3:8686/nexus/content/groups/public/&lt;/url&gt;
    &lt;/repository&gt;
-&lt;/repositories&gt;</pre>
+&lt;/repositories&gt;
+</pre></div>
 </div>
 <ol class="arabic simple" start="7">
 <li>Add deployment.(maven deploy)</li>
 </ol>
-<div class="highlight-python"><pre>&lt;distributionManagement&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;distributionManagement&gt;
    &lt;repository&gt;
        &lt;id&gt;releases&lt;/id&gt;
        &lt;name&gt;Local Nexus Repository&lt;/name&gt;
@@ -172,15 +174,17 @@ And we maven deploy to upload the builded package to nexus.</p>
        &lt;name&gt;Local Nexus Repository&lt;/name&gt;
        &lt;url&gt;http://192.168.250.3:8686/nexus/content/repositories/snapshots&lt;/url&gt;
    &lt;/snapshotRepository&gt;
-&lt;/distributionManagement&gt;</pre>
+&lt;/distributionManagement&gt;
+</pre></div>
 </div>
 <ol class="arabic simple" start="8">
 <li>Add modules to manage other projects.</li>
 </ol>
-<div class="highlight-python"><pre>&lt;modules&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;modules&gt;
    &lt;module&gt;../com.dugeng.project1&lt;/module&gt;
    &lt;module&gt;../com.dugeng.project2&lt;/module&gt;
-&lt;/modules&gt;</pre>
+&lt;/modules&gt;
+</pre></div>
 </div>
 </div>
 </div>
@@ -209,7 +213,7 @@ And we maven deploy to upload the builded package to nexus.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

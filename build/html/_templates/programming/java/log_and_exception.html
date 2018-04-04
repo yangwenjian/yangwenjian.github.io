@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="Project Management Tools" href="../../other/projectManagement.html" />
+    <link rel="next" title="NetStone数据整合方案" href="../../work/netstone_shell.html" />
     <link rel="prev" title="Java Code Style" href="java_code_style.html" /> 
   </head>
   <body>
@@ -37,7 +35,7 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../other/projectManagement.html" title="Project Management Tools"
+          <a href="../../work/netstone_shell.html" title="NetStone数据整合方案"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="java_code_style.html" title="Java Code Style"
@@ -79,8 +77,8 @@
   <p class="topless"><a href="java_code_style.html"
                         title="previous chapter">Java Code Style</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../../other/projectManagement.html"
-                        title="next chapter">Project Management Tools</a></p>
+  <p class="topless"><a href="../../work/netstone_shell.html"
+                        title="next chapter">NetStone数据整合方案</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/java/log_and_exception.txt"
@@ -146,19 +144,21 @@
 避免多次调用get方；</li>
 <li>日志不能影响程序的正确运行，不能有副作用；</li>
 </ol>
-<div class="code java highlight-python"><pre>//你确定request不能为null吗？
-log.debug("Processing request with id: {}", request.getId());</pre>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//你确定request不能为null吗？
+log.debug(&quot;Processing request with id: {}&quot;, request.getId());
+</pre></div>
 </div>
 <ol class="arabic simple" start="5">
 <li>不记录集合对象；</li>
 </ol>
-<div class="code java highlight-python"><pre>//因为日志是同步的，可能会由于内存溢出，线程饥饿，lazy initialization，日志文件溢出等造成问题。
-log.debug("Returning users: {}", users);
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//因为日志是同步的，可能会由于内存溢出，线程饥饿，lazy initialization，日志文件溢出等造成问题。
+log.debug(&quot;Returning users: {}&quot;, users);
 //使用如下方式记录ID即可
-log.debug("Returning user ids: {}", collect(users, "id"));
+log.debug(&quot;Returning user ids: {}&quot;, collect(users, &quot;id&quot;));
 public static Collection collect(Collection collection, String propertyName) {
     return CollectionUtils.collect(collection, new BeanToPropertyValueTransformer(propertyName));
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="6">
 <li>必须包含上下文信息，具体的ID，名称等，也不要记录只有自己能看懂的 &#8216;magic-log&#8217; （我就比较喜欢加上#knight标记）；</li>
@@ -174,11 +174,12 @@ public static Collection collect(Collection collection, String propertyName) {
 <h4>Use Guarded Logging<a class="headerlink" href="#use-guarded-logging" title="Permalink to this headline">¶</a></h4>
 <p>&#8220;Guarded logging&#8221; is a pattern that checks to see if a log statement will result in output before it is executed.
 使用大量字符串或者其他对象会降低性能，并倒是GC工作更加频繁。</p>
-<div class="code java highlight-python"><pre>if(LOG.isDebugEnabled()){
-    LOG.debug("This is " + "a best practice " + "example");
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>if(LOG.isDebugEnabled()){
+    LOG.debug(&quot;This is &quot; + &quot;a best practice &quot; + &quot;example&quot;);
 }
 //使用SLF4J可以使用如下代码
-log.debug("Found {} records matching filter: '{}'", records, filter);</pre>
+log.debug(&quot;Found {} records matching filter: &#39;{}&#39;&quot;, records, filter);
+</pre></div>
 </div>
 </div>
 </div>
@@ -214,23 +215,25 @@ JVM 不再有继续执行操作所需的内存资源时，将出现 OutOfMemoryE
 <li>具体问题具体解决，异常的部分优点在于能为不同类型的问题提供不同的处理操作，特定异常需要特定的处理模块；不要使用覆盖式的异常处理模块，
 因为没有哪个方法四海皆能用，当代码变化时，完全被忽略了；</li>
 </ol>
-<div class="code java highlight-python"><pre>//错误示例
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//错误示例
 try{
     ...
 } catch(Exception e){
     ...
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="3">
 <li>记录可能影响程序的异常，但很有必要，因为可以用来跟踪程序的运行；</li>
 <li>根据情形将异常转化为业务上下文，将异常传到不同上下文，需要转换为对新上下文有意义的形式；</li>
 <li>不能忽略异常，这是无用工，后续出现问题非常难以排查，导致意向不到的问题；</li>
 </ol>
-<div class="code java highlight-python"><pre>//错误示例
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//错误示例
 try{
-    Class.forName("business.domain.Customer");
+    Class.forName(&quot;business.domain.Customer&quot;);
 } catch(ClassNotFoudException e){
-}</pre>
+}
+</pre></div>
 </div>
 <ol class="arabic simple" start="6">
 <li>有些异常不必捕获和处理，可以通过程序来解决相应的问题；</li>
@@ -252,13 +255,14 @@ exceptions尤其不应用来标示发生了一些致命错误, 这些错误不�
 个问题，因为我们极少控制线程，而是让应用服务器来做这个。应用服务器将捕获和处理那些在应用代码中没有捕获的运行时异常，而不会让这些异常挂
 起整个Java虚拟机。</p>
 <p>Oracle官网上这样说：</p>
-<div class="code highlight-python"><pre>Runtime exceptions represent problems that are the result of a programming problem, and as such, the API client code cannot reasonably
+<div class="code highlight-python"><div class="highlight"><pre><span></span>Runtime exceptions represent problems that are the result of a programming problem, and as such, the API client code cannot reasonably
 be expected to recover from them or to handle them in any way. Such problems include arithmetic exceptions, such as dividing by zero;
 pointer exceptions, such as trying to access an object through a null reference; and indexing exceptions, such as attempting to access
 an array element through an index that is too large or too small.
 
-Here's the bottom line guideline: If a client can reasonably be expected to recover from an exception, make it a checked exception. If
-a client cannot do anything to recover from the exception, make it an unchecked exception.</pre>
+Here&#39;s the bottom line guideline: If a client can reasonably be expected to recover from an exception, make it a checked exception. If
+a client cannot do anything to recover from the exception, make it an unchecked exception.
+</pre></div>
 </div>
 </div>
 <div class="section" id="id12">
@@ -291,7 +295,7 @@ a client cannot do anything to recover from the exception, make it an unchecked 
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../other/projectManagement.html" title="Project Management Tools"
+          <a href="../../work/netstone_shell.html" title="NetStone数据整合方案"
              >next</a> |</li>
         <li class="right" >
           <a href="java_code_style.html" title="Java Code Style"
@@ -301,7 +305,7 @@ a client cannot do anything to recover from the exception, make it an unchecked 
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

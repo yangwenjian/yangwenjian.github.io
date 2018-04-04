@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -121,56 +119,63 @@
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>Download and start</p>
-<div class="code highlight-python"><pre>curl -L -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.1/elasticsearch-2.1.1.tar.gz
+<div class="code highlight-python"><div class="highlight"><pre><span></span>curl -L -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.1/elasticsearch-2.1.1.tar.gz
 tar -xvf elasticsearch-2.1.1.tar.gz
 cd elasticsearch-2.1.1/bin
-./elasticsearch</pre>
+./elasticsearch
+</pre></div>
 </div>
 <p>We can check the cluster&#8217;s health.</p>
-<div class="code highlight-python"><pre>curl 'localhost:9200/_cat/health?v'</pre>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>curl &#39;localhost:9200/_cat/health?v&#39;
+</pre></div>
 </div>
 <p>We can CRUD the indices. Since there is only one node in our cluster, the health would be yellow, because elastic can not write indices replicas.</p>
-<div class="code highlight-python"><pre>curl 'localhost:9200/_cat/indices?v'
-curl -XPUT 'localhost:9200/customer?pretty'</pre>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>curl &#39;localhost:9200/_cat/indices?v&#39;
+curl -XPUT &#39;localhost:9200/customer?pretty&#39;
+</pre></div>
 </div>
 <div class="section" id="logstash">
 <h3>Logstash<a class="headerlink" href="#logstash" title="Permalink to this headline">¶</a></h3>
 <p>Download and start</p>
-<div class="code highlight-python"><pre>curl -L -O https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
-tar -xvf logstash-2.1.1.tar.gz</pre>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>curl -L -O https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
+tar -xvf logstash-2.1.1.tar.gz
+</pre></div>
 </div>
 <p>Prepare and edit logstash.conf.</p>
-<div class="code highlight-python"><pre>input{
+<div class="code highlight-python"><div class="highlight"><pre><span></span>input{
         file{
-                path=&gt;"/home/knight/software/enviroment/apache-tomcat-8.0.30/logs/catalina.out"
+                path=&gt;&quot;/home/knight/software/enviroment/apache-tomcat-8.0.30/logs/catalina.out&quot;
         }
         file{
-                path=&gt;"/home/knight/downloads/test.log"
+                path=&gt;&quot;/home/knight/downloads/test.log&quot;
         }
 }
 
 filter {
         grok {
-                match =&gt; { "message" =&gt; "%{COMBINEDAPACHELOG}" }
+                match =&gt; { &quot;message&quot; =&gt; &quot;%{COMBINEDAPACHELOG}&quot; }
         }
         geoip {
-                source =&gt; "clientip"
+                source =&gt; &quot;clientip&quot;
         }
 }
 
 output{
         elasticsearch {
-                hosts =&gt; ["localhost:9200"]
+                hosts =&gt; [&quot;localhost:9200&quot;]
         }
         stdout{
         }
-}</pre>
+}
+</pre></div>
 </div>
 <p>Start logstash.</p>
-<div class="code highlight-python"><pre>./logstash agent -f logstash.conf</pre>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>./logstash agent -f logstash.conf
+</pre></div>
 </div>
 <p>Start Kibana.</p>
-<div class="code highlight-python"><pre>./bin/Kibana</pre>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>./bin/Kibana
+</pre></div>
 </div>
 <p>Create a index in elasticsearch.</p>
 </div>
@@ -204,7 +209,7 @@ output{
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="自动化安装操作系统" href="../../automation/cobbler.html" />
+    <link rel="next" title="MySQL Exercise" href="mysql.html" />
     <link rel="prev" title="Git" href="git.html" /> 
   </head>
   <body>
@@ -37,7 +35,7 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../automation/cobbler.html" title="自动化安装操作系统"
+          <a href="mysql.html" title="MySQL Exercise"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="git.html" title="Git"
@@ -51,8 +49,8 @@
   <p class="topless"><a href="git.html"
                         title="previous chapter">Git</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../../automation/cobbler.html"
-                        title="next chapter">自动化安装操作系统</a></p>
+  <p class="topless"><a href="mysql.html"
+                        title="next chapter">MySQL Exercise</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/linux/tools/vim.txt"
@@ -82,7 +80,8 @@
   <div class="section" id="vim">
 <h1>VIM<a class="headerlink" href="#vim" title="Permalink to this headline">¶</a></h1>
 <p>启动YouCompleteMeServer命令，ycmd每次会在：</p>
-<div class="highlight-python"><pre>/usr/bin/python2 /home/knight/.vim/bundle/YouCompleteMe/python/ycm/../../third_party/ycmd/ycmd --port=59982 --options_file=/tmp/tmpavY1mN --log=info --idle_suicide_seconds=10800 --stdout=/tmp/ycm_temp/server_59982_stdout.log --stderr=/tmp/ycm_temp/server_59982_stderr.log</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>/usr/bin/python2 /home/knight/.vim/bundle/YouCompleteMe/python/ycm/../../third_party/ycmd/ycmd --port=59982 --options_file=/tmp/tmpavY1mN --log=info --idle_suicide_seconds=10800 --stdout=/tmp/ycm_temp/server_59982_stdout.log --stderr=/tmp/ycm_temp/server_59982_stderr.log
+</pre></div>
 </div>
 <p>不过我这次安装似乎并不成功，OpenSuse利用自动安装命令&#8221;./install.sh &#8211;clang-completer&#8221;，安装后生成的libclang.so有问题，每次启动都不成功，错误日志显示&#8221;libclang.so&#8221;版本有问题。
 这个原因是因为cmake版本或者python版本等原因造成的，从官网上下载clang的最新&#8221;libclang.so&#8221;，就可以使用了。</p>
@@ -101,7 +100,7 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../automation/cobbler.html" title="自动化安装操作系统"
+          <a href="mysql.html" title="MySQL Exercise"
              >next</a> |</li>
         <li class="right" >
           <a href="git.html" title="Git"
@@ -111,7 +110,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -194,34 +192,36 @@ Nova的安全組默認只支持入口规则创建，而Neutron可以双向控制
 <p>总体功能和界面体现并误差，实现上完全从nova分离，转到neutron的管理中，nova则更关注与compute相关的信息。
 但在rest api返回上，字段发生了比较明显的变化。</p>
 <p>nova返回的security group rule的json格式：</p>
-<div class="highlight-python"><pre>"rules": [
+<div class="highlight-python"><div class="highlight"><pre><span></span>&quot;rules&quot;: [
     {
-        "from_port": 99,                                            #端口起始地址，与toPort构成集合
-        "group": {                                                  #允许被另一个租户的安全组为aaa的机器访问
-            "tenant_id": "51b1873935554545bb9b953e4055a997",        #自身租户ID或者另一安全组的所属租户ID（待查）
-            "name": "aaaaaaaaaaaaaaaaa"                             #允许被另一安全组访问的安全组名称
+        &quot;from_port&quot;: 99,                                            #端口起始地址，与toPort构成集合
+        &quot;group&quot;: {                                                  #允许被另一个租户的安全组为aaa的机器访问
+            &quot;tenant_id&quot;: &quot;51b1873935554545bb9b953e4055a997&quot;,        #自身租户ID或者另一安全组的所属租户ID（待查）
+            &quot;name&quot;: &quot;aaaaaaaaaaaaaaaaa&quot;                             #允许被另一安全组访问的安全组名称
         },
-        "ip_protocol": "tcp",                                       #访问协议
-        "to_port": 99,                                              #
-        "parent_group_id": "2b430fbb-656f-4c56-a863-786bb8f97b0b",  #所属安全组ID
-        "ip_range": {},                                             #允许被访问的网络cidr，与group之间是二取一的关系
-        "id": "09245bbd-6e03-4264-9c19-27a534702c3d"                #自身ID
+        &quot;ip_protocol&quot;: &quot;tcp&quot;,                                       #访问协议
+        &quot;to_port&quot;: 99,                                              #
+        &quot;parent_group_id&quot;: &quot;2b430fbb-656f-4c56-a863-786bb8f97b0b&quot;,  #所属安全组ID
+        &quot;ip_range&quot;: {},                                             #允许被访问的网络cidr，与group之间是二取一的关系
+        &quot;id&quot;: &quot;09245bbd-6e03-4264-9c19-27a534702c3d&quot;                #自身ID
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>neutron返回的security group rule的json格式：</p>
-<div class="highlight-python"><pre>"security_group_rule": {
-    "remote_group_id": "f7518f66-9f50-4568-b42d-5577f6899ad9",      #可访问的远程安全组id
-    "direction": "ingress",                                         #访问方向，ingress表示从外部访问虚拟机
-    "remote_ip_prefix": null,                                       #可访问的远程cidr，与remote_group_id之间是二取一的关系
-    "protocol": null,                                               #可访问的网络协议
-    "tenant_id": "dc3c2f4fd2a84ddbba087360d10461db",                #所属租户ID
-    "port_range_max": null,                                         #端口范围最大值（同上面的toPort）
-    "security_group_id": "f7518f66-9f50-4568-b42d-5577f6899ad9",    #所属安全组的ID
-    "port_range_min": null,                                         #端口范围最小值（同上面的fromPort）
-    "ethertype": "IPv4",                                            #网络类型（ipv4/ipv6)
-    "id": "0bd5a998-c392-4da2-8450-14219883e515"                    #自身ID
-}</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&quot;security_group_rule&quot;: {
+    &quot;remote_group_id&quot;: &quot;f7518f66-9f50-4568-b42d-5577f6899ad9&quot;,      #可访问的远程安全组id
+    &quot;direction&quot;: &quot;ingress&quot;,                                         #访问方向，ingress表示从外部访问虚拟机
+    &quot;remote_ip_prefix&quot;: null,                                       #可访问的远程cidr，与remote_group_id之间是二取一的关系
+    &quot;protocol&quot;: null,                                               #可访问的网络协议
+    &quot;tenant_id&quot;: &quot;dc3c2f4fd2a84ddbba087360d10461db&quot;,                #所属租户ID
+    &quot;port_range_max&quot;: null,                                         #端口范围最大值（同上面的toPort）
+    &quot;security_group_id&quot;: &quot;f7518f66-9f50-4568-b42d-5577f6899ad9&quot;,    #所属安全组的ID
+    &quot;port_range_min&quot;: null,                                         #端口范围最小值（同上面的fromPort）
+    &quot;ethertype&quot;: &quot;IPv4&quot;,                                            #网络类型（ipv4/ipv6)
+    &quot;id&quot;: &quot;0bd5a998-c392-4da2-8450-14219883e515&quot;                    #自身ID
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="id4">
@@ -354,7 +354,7 @@ Nova的安全組默認只支持入口规则创建，而Neutron可以双向控制
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

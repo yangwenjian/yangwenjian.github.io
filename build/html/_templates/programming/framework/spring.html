@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -27,7 +25,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
     <link rel="next" title="Spring Security" href="spring_security.html" />
-    <link rel="prev" title="Cas" href="../../web/cas.html" /> 
+    <link rel="prev" title="Web Performance" href="../../performance/web_performance.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +38,7 @@
           <a href="spring_security.html" title="Spring Security"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../../web/cas.html" title="Cas"
+          <a href="../../performance/web_performance.html" title="Web Performance"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -93,8 +91,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../../web/cas.html"
-                        title="previous chapter">Cas</a></p>
+  <p class="topless"><a href="../../performance/web_performance.html"
+                        title="previous chapter">Web Performance</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="spring_security.html"
                         title="next chapter">Spring Security</a></p>
@@ -159,36 +157,41 @@ Spring解决企业级开发的复杂性问题，利用简单的JavaBean完成之
 <div class="section" id="spring-session">
 <h3>Spring Session工厂<a class="headerlink" href="#spring-session" title="Permalink to this headline">¶</a></h3>
 <p>声明bean工厂:</p>
-<div class="highlight-python"><pre>&lt;bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;bean id=&quot;sessionFactory&quot; class=&quot;org.springframework.orm.hibernate4.LocalSessionFactoryBean&quot;&gt;
+</pre></div>
 </div>
 <p>将数据源dataSource注入进入SessionFactory:</p>
-<div class="highlight-python"><pre>&lt;property name="dataSource" ref="dataSource" /&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&gt;
+</pre></div>
 </div>
 <p>命名策略:</p>
-<div class="highlight-python"><pre>&lt;property name="namingStrategy"&gt;
-    &lt;bean class="org.hibernate.cfg.ImprovedNamingStrategy" /&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;property name=&quot;namingStrategy&quot;&gt;
+    &lt;bean class=&quot;org.hibernate.cfg.ImprovedNamingStrategy&quot; /&gt;
 &lt;/property&gt;
-&lt;property name="hibernateProperties"&gt;
+&lt;property name=&quot;hibernateProperties&quot;&gt;
     &lt;props&gt;
-        &lt;prop key="hibernate.dialect"&gt;${hibernate.dialect}&lt;/prop&gt;
-        &lt;prop key="hibernate.show_sql"&gt;${hibernate.show_sql}&lt;/prop&gt;
-        &lt;prop key="hibernate.format_sql"&gt;true&lt;/prop&gt;
-        &lt;prop key="hibernate.generate_statistics"&gt;${hibernate.generate_statistics}&lt;/prop&gt;
-        &lt;prop key="hibernate.hbm2ddl.auto"&gt;${hibernate.hbm2ddl.auto}&lt;/prop&gt;
+        &lt;prop key=&quot;hibernate.dialect&quot;&gt;${hibernate.dialect}&lt;/prop&gt;
+        &lt;prop key=&quot;hibernate.show_sql&quot;&gt;${hibernate.show_sql}&lt;/prop&gt;
+        &lt;prop key=&quot;hibernate.format_sql&quot;&gt;true&lt;/prop&gt;
+        &lt;prop key=&quot;hibernate.generate_statistics&quot;&gt;${hibernate.generate_statistics}&lt;/prop&gt;
+        &lt;prop key=&quot;hibernate.hbm2ddl.auto&quot;&gt;${hibernate.hbm2ddl.auto}&lt;/prop&gt;
     &lt;/props&gt;
-&lt;/property&gt;</pre>
+&lt;/property&gt;
+</pre></div>
 </div>
 </div>
 <div class="section" id="bean">
 <h3>Bean注入<a class="headerlink" href="#bean" title="Permalink to this headline">¶</a></h3>
 <p>Bean注入是Spring特色之一，进行解耦，激活Spring注解方式：自动扫描所有base-package包下的带有&#64;Service，&#64;Controller，&#64;Component，&#64;Repository的类。
 注入bean:</p>
-<div class="highlight-python"><pre>&lt;context:component-scan base-package="com.neunn.cloud.base.*" /&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;context:component-scan base-package=&quot;com.neunn.cloud.base.*&quot; /&gt;
+</pre></div>
 </div>
 <p>这里是整个扫描一个包进行全初始化，通过Spring的注解&#64;AutoWired直接使用。
 上述包中的所有bean类都会被自动初始化并注入到容器中，这里bean的要求是提供无参的构造函数以及相应的get和set方法。</p>
 <p>启动Spring对&#64;AspectJ注解的支持:</p>
-<div class="highlight-python"><pre>&lt;aop:aspectj-autoproxy/&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;aop:aspectj-autoproxy/&gt;
+</pre></div>
 </div>
 <p>&#64;Resource应用在字段上的注入规则是首先用名字进行匹配，如果类型错误则报错；如果没有名字匹配则进行类型匹配，如果字段类型是接口并有多种实现匹配，则抛出异常。</p>
 <p>&#64;Resource应用在setter上的规则是使用属性名字进行匹配，如果类型错误则报错；如果没有名字匹配则进行属性参数类型匹配，如果参数类型是接口并有多种实现匹配，则抛出异常。</p>
@@ -198,7 +201,7 @@ Spring解决企业级开发的复杂性问题，利用简单的JavaBean完成之
 <div class="section" id="id4">
 <h4>1.接口注入<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
 <p>我们开发一个injectUserDAo接口，将一个UserDAO注入到该接口的实现类中，然后UserRegister实现该接口。如：</p>
-<div class="highlight-python"><pre>public interface InjectUserDao(){
+<div class="highlight-python"><div class="highlight"><pre><span></span>public interface InjectUserDao(){
     public void setUserDao(UserDao userDao);
 }
 
@@ -207,14 +210,16 @@ public class UserRegister implements InjectUserDao{
     public void setUserDao(UserDao userDao){
         this.userDao = userDao;
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>同时，我们需要配置框架，这样实现接口后便可完成依赖注入了：</p>
-<div class="highlight-python"><pre>&lt;component&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;component&gt;
     &lt;scope&gt;request&lt;/scope&gt;
     &lt;class&gt;com.dev.spring.simple.MemoryUserDao&lt;/class&gt;
     &lt;enabler&gt;com.dev.spring.simple.InjectUserDao&lt;/enabler&gt;
-&lt;/component&gt;</pre>
+&lt;/component&gt;
+</pre></div>
 </div>
 </div>
 <div class="section" id="id5">
@@ -224,12 +229,13 @@ public class UserRegister implements InjectUserDao{
 <div class="section" id="id6">
 <h4>3.构造子注入<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
 <p>通过构造函数完成依赖注入，如：</p>
-<div class="highlight-python"><pre>public class UserRegister{
+<div class="highlight-python"><div class="highlight"><pre><span></span>public class UserRegister{
     private UserDao userDao;
     public UserRegister(UserDao userDao){
         this.userDao = userDao;
     }
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 </div>
@@ -242,36 +248,39 @@ public class UserRegister implements InjectUserDao{
 </div>
 <div class="section" id="springproperties">
 <h2>Spring集中读取properties文件的方式<a class="headerlink" href="#springproperties" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><pre>&lt;bean id="propertyConfigurer"
-    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"&gt;
-    &lt;property name="locations"&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;bean id=&quot;propertyConfigurer&quot;
+    class=&quot;org.springframework.beans.factory.config.PropertyPlaceholderConfigurer&quot;&gt;
+    &lt;property name=&quot;locations&quot;&gt;
         &lt;list&gt;
             &lt;value&gt;classpath:jdbc.properties&lt;/value&gt;
         &lt;/list&gt;
     &lt;/property&gt;
 &lt;/bean&gt;
-&lt;bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-    destroy-method="close"&gt;
-    &lt;property name="url" value="${jdbc.url}"/&gt;
-    &lt;property name="username" value="${jdbc.username}"/&gt;
-&lt;/bean&gt;</pre>
+&lt;bean id=&quot;dataSource&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;
+    destroy-method=&quot;close&quot;&gt;
+    &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+    &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot;/&gt;
+&lt;/bean&gt;
+</pre></div>
 </div>
 <p>或者：</p>
-<div class="highlight-python"><pre>&lt;env-entry&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;env-entry&gt;
         &lt;env-entry-name&gt;siteConfigHome&lt;/env-entry-name&gt;
         &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;
         &lt;env-entry-value&gt;/opt/ChConfigHome/&lt;/env-entry-value&gt;
 &lt;/env-entry&gt;
 Context initCtx = new InitialContext();
-Context envCtx = (Context) initCtx.lookup("java:comp/env");
-result = (String) envCtx.lookup("siteConfigHome");</pre>
+Context envCtx = (Context) initCtx.lookup(&quot;java:comp/env&quot;);
+result = (String) envCtx.lookup(&quot;siteConfigHome&quot;);
+</pre></div>
 </div>
 <p>或者：</p>
-<div class="highlight-python"><pre>&lt;context-param&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;context-param&gt;
         &lt;param-name&gt;serverConfigLocation&lt;/param-name&gt;
         &lt;param-value&gt;WEB-INF/classes/config-server.properties&lt;/param-value&gt;
 &lt;/context-param&gt;
-servletConfig.getServletContext().getInitParameter("serverConfigLocation");</pre>
+servletConfig.getServletContext().getInitParameter(&quot;serverConfigLocation&quot;);
+</pre></div>
 </div>
 </div>
 <div class="section" id="id8">
@@ -279,33 +288,36 @@ servletConfig.getServletContext().getInitParameter("serverConfigLocation");</pre
 <div class="section" id="spring-jdbc">
 <h3>Spring jdbc 配置<a class="headerlink" href="#spring-jdbc" title="Permalink to this headline">¶</a></h3>
 <p>Spring在使用Hibernate的时候需要进行初始化配置，建立数据源:</p>
-<div class="highlight-python"><pre>&lt;bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"&gt;（这里使用阿里的数据库驱动）</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot;&gt;（这里使用阿里的数据库驱动）
+</pre></div>
 </div>
 <p>之后进行数据库连接dataSource的各项配置：driverClassName, url(pay attention to encoding), username, password, initialSize, maxActive(最大活跃数), maxIdle(最大空闲值), minIdle(最小空闲值)。</p>
 <p>Spring能自己管理数据连接池，但有时代码不小心也会出现连接泄漏的情况，这里碰到的问题时访问base层一段时间后出现卡在Obtaining JDBC Connection，之后超时连接错误。
 目前的应对方法是在ApplicationContext.xml文件中加入如下配置:</p>
-<div class="highlight-python"><pre>&lt;property name="removeAbandoned" value="true" /&gt;
-&lt;property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}" /&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;property name=&quot;removeAbandoned&quot; value=&quot;true&quot; /&gt;
+&lt;property name=&quot;removeAbandonedTimeout&quot; value=&quot;${jdbc.removeAbandonedTimeout}&quot; /&gt;
+</pre></div>
 </div>
 <p>removeAbandoned在Spring中默认为false，即不移除遗弃的链接，这里我们设置为true，再设置超时时间为10,单位为秒，这样超过10s不进行新请求的链接将被释放回收，避免链接泄漏的情况发生。</p>
 <p>目前的Spring 数据连接管理是自动建立和释放链接的，但是你需要使用jdbcTemplate或者使用SessionFactory.getCurrentSession()，其中，Session.getCurrentSession()是将Session绑定到Spring起的当前线程中，之后连接也就自然过度到Spring管理，自动释放；
 但是如果使用SessionFactory.openSession()，是重新打开一链接，不与当前线程与事务绑定，这样如果你不手动close()的话，数据库连接就会泄漏。</p>
 <p>如果使用jdbcTemplate，使用如下代码进行更新数据库：</p>
-<div class="code java highlight-python"><pre>@Autowired
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>@Autowired
 private JdbcTemplate jdbcTemplate;
 
-String sql = "UPDATE t_user u SET u.score = u.score + ? WHERE user_name =?";
+String sql = &quot;UPDATE t_user u SET u.score = u.score + ? WHERE user_name =?&quot;;
 jdbcTemplate.update(sql,toAdd,userName);
 
-jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom','123456',10)");</pre>
+jdbcTemplate.execute(&quot;INSERT INTO t_user(user_name,password,score) VALUES(&#39;tom&#39;,&#39;123456&#39;,10)&quot;);
+</pre></div>
 </div>
 </div>
 <div class="section" id="id9">
 <h3>Spring jdbc 关键代码<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <p>spring jdbc将我们原来的使用的statement等语句都封装进去，简单易用。</p>
-<div class="code java highlight-python"><pre>public &lt;T&gt; T query(PreparedStatementCreator psc, final PreparedStatementSetter pss, final ResultSetExtractor&lt;T&gt; rse) throws DataAccessException {
-            Assert.notNull(rse, "ResultSetExtractor must not be null");
-            logger.debug("Executing prepared SQL query");
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public &lt;T&gt; T query(PreparedStatementCreator psc, final PreparedStatementSetter pss, final ResultSetExtractor&lt;T&gt; rse) throws DataAccessException {
+            Assert.notNull(rse, &quot;ResultSetExtractor must not be null&quot;);
+            logger.debug(&quot;Executing prepared SQL query&quot;);
 
     return execute(psc, new PreparedStatementCallback&lt;T&gt;() {
                     public T doInPreparedStatement(PreparedStatement ps) throws SQLException {
@@ -329,17 +341,19 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
                             }
                     }
             });
-    }</pre>
+    }
+</pre></div>
 </div>
 <p>jdbc通过rowmapper类进行反序列化，将结果集转换为对象的列表，具体请参看代码：</p>
-<div class="code java highlight-python"><pre>public List&lt;T&gt; extractData(ResultSet rs) throws SQLException {
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public List&lt;T&gt; extractData(ResultSet rs) throws SQLException {
             List&lt;T&gt; results = (this.rowsExpected &gt; 0 ? new ArrayList&lt;T&gt;(this.rowsExpected) : new ArrayList&lt;T&gt;());
             int rowNum = 0;
             while (rs.next()) {
                     results.add(this.rowMapper.mapRow(rs, rowNum++));
             }
             return results;
-    }</pre>
+    }
+</pre></div>
 </div>
 </div>
 </div>
@@ -385,7 +399,8 @@ jdbcTemplate.execute("INSERT INTO t_user(user_name,password,score) VALUES('tom',
 （即插入、更新、删除）。没有事务，就不会触发 ORM 去生成 SQL 代码和保存更改，因此只会终止方法 — 没有异常，没有更新。如果使用基于
 ORM 的框架，就必须利用事务。不再依赖数据库来管理连接和提交工作。</p>
 <p>使用Spring标记带来的陷阱：</p>
-<div class="code highlight-python"><pre>&lt;tx:annotation-driven transaction-manager="transactionManager"/&gt;</pre>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>&lt;tx:annotation-driven transaction-manager=&quot;transactionManager&quot;/&gt;
+</pre></div>
 </div>
 <p>transaction-manager 属性保存一个对在 Spring 配置文件中定义的事务管理器 bean 的引用。这段代码告诉 Spring 在应用事务拦截器时使用
 &#64;Transaction 注释。如果没有它，就会忽略 &#64;Transactional 注释，导致代码不会使用任何事务。如果你的bean不交给spring管理，那么执行
@@ -406,26 +421,28 @@ ORM 的框架，就必须利用事务。不再依赖数据库来管理连接和�
 <h3>事务方法嵌套用的迷茫<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <p>（这部分文字引自http://www.ibm.com/developerworks/cn/java/j-lo-spring-ts1/）</p>
 <p>Spring 事务一个被讹传很广说法是：一个事务方法不应该调用另一个事务方法，否则将产生两个事务。结果造成开发人员在设计事务方法时束手束脚，生怕一不小心就踩到地雷,其实这种是不认识 Spring 事务传播机制而造成的误解，Spring 对事务控制的支持统一在 TransactionDefinition 类中描述，该类有以下几个重要的接口方法:</p>
-<div class="highlight-python"><pre>*int getPropagationBehavior()：事务的传播行为
+<div class="highlight-python"><div class="highlight"><pre><span></span>*int getPropagationBehavior()：事务的传播行为
 *int getIsolationLevel()：事务的隔离级别
 *int getTimeout()：事务的过期时间
-*boolean isReadOnly()：事务的读写特性</pre>
+*boolean isReadOnly()：事务的读写特性
+</pre></div>
 </div>
 <p>很明显，除了事务的传播行为外，事务的其它特性 Spring 是借助底层资源的功能来完成的，Spring 无非只充当个代理的角色。但是事务的传播行为却是 Spring 凭借自身的框架提供的功能，是 Spring 提供给开发者最珍贵的礼物，讹传的说法玷污了 Spring 事务框架最美丽的光；
 所谓事务传播行为就是多个事务方法相互调用时，事务如何在这些方法间传播。Spring 支持 7 种事务传播行为:</p>
-<div class="highlight-python"><pre>*PROPAGATION_REQUIRED 如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。这是最常见的选择。
+<div class="highlight-python"><div class="highlight"><pre><span></span>*PROPAGATION_REQUIRED 如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。这是最常见的选择。
 *PROPAGATION_SUPPORTS 支持当前事务，如果当前没有事务，就以非事务方式执行。
 *PROPAGATION_MANDATORY 使用当前的事务，如果当前没有事务，就抛出异常。
 *PROPAGATION_REQUIRES_NEW 新建事务，如果当前存在事务，把当前事务挂起。
 *PROPAGATION_NOT_SUPPORTED 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
 *PROPAGATION_NEVER 以非事务方式执行，如果当前存在事务，则抛出异常。
-*PROPAGATION_NESTED 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与 PROPAGATION_REQUIRED 类似的操作</pre>
+*PROPAGATION_NESTED 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与 PROPAGATION_REQUIRED 类似的操作
+</pre></div>
 </div>
 <p>Spring 默认的事务传播行为是 PROPAGATION_REQUIRED，它适合于绝大多数的情况。假设 ServiveX#methodX() 都工作在事务环境下（即都被 Spring 事务增强了），假设程序中存在如下的调用链：Service1#method1()-&gt;Service2#method2()-&gt;Service3#method3()，那么这 3 个服务类的 3 个方法通过 Spring 的事务传播机制都工作在同一个事务中。</p>
 <p>下面，我们来看一下实例，UserService#logon() 方法内部调用了 UserService#updateLastLogonTime() 和 ScoreService#addScore() 方法，这两个类都继承于 BaseService。它们之间的类结构说明如下：</p>
 <img alt="../../../_images/spring_transaction.jpg" src="../../../_images/spring_transaction.jpg" />
 <p>具体代码如下:</p>
-<div class="highlight-python"><pre>@Service("userService")
+<div class="highlight-python"><div class="highlight"><pre><span></span>@Service(&quot;userService&quot;)
 public class UserService extends BaseService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -436,37 +453,39 @@ public class UserService extends BaseService {
         scoreService.addScore(userName, 20);
     }
     public void updateLastLogonTime(String userName) {
-        String sql = "UPDATE t_user u SET u.last_logon_time = ? WHERE user_name =?";
+        String sql = &quot;UPDATE t_user u SET u.last_logon_time = ? WHERE user_name =?&quot;;
         jdbcTemplate.update(sql, System.currentTimeMillis(), userName);
    }
 }
 
-@Service("scoreUserService")
+@Service(&quot;scoreUserService&quot;)
 public class ScoreService extends BaseService{
     @Autowired
     private JdbcTemplate jdbcTemplate;
     public void addScore(String userName, int toAdd) {
-        String sql = "UPDATE t_user u SET u.score = u.score + ? WHERE user_name =?";
+        String sql = &quot;UPDATE t_user u SET u.score = u.score + ? WHERE user_name =?&quot;;
         jdbcTemplate.update(sql, toAdd, userName);
     }
-}</pre>
+}
+</pre></div>
 </div>
 </div>
 <div class="section" id="id15">
 <h3>多种数据库连接方式带来的困惑<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <p>对于Spring的ORM的实现方式有多种，可以采用高端的ORM技术（Hibernate，JPA，JDO），同时采用一个JDBC 技术（Spring JDBC，iBatis），前者使用的会话是对后者Connection的封装，Spring会机智的在同一事务中封装后者的链接，这样我们直接管Spring的事务就可以了。</p>
 <p>是用Hibernate的代码如下:</p>
-<div class="highlight-python"><pre>public void logon(String userName) {
-    System.out.println("logon method...");
+<div class="highlight-python"><div class="highlight"><pre><span></span>public void logon(String userName) {
+    System.out.println(&quot;logon method...&quot;);
     updateLastLogonTime(userName); //①使用Hibernate数据访问技术
     scoreService.addScore(userName, 20); //②使用Spring JDBC数据访问技术
 }
 public void updateLastLogonTime(String userName) {
-    System.out.println("updateLastLogonTime...");
+    System.out.println(&quot;updateLastLogonTime...&quot;);
     User user = hibernateTemplate.get(User.class,userName);
     user.setLastLogonTime(System.currentTimeMillis());
     hibernateTemplate.flush(); //提前于事务提交同步数据库
-}</pre>
+}
+</pre></div>
 </div>
 <p>这里要注意，Spring中Hibernate是要等事务提交的时候进行数据库同步，这里同步的时候是在logon返回的时候，问题是addSocre使用jdbc，直接就修改数据库了，这里我们使用flush()方法来覆盖掉Hibernate的一级缓存。</p>
 </div>
@@ -481,7 +500,7 @@ public void updateLastLogonTime(String userName) {
 <p>在StackOverFlow上发现的问题，请看
 <a class="reference external" href="http://stackoverflow.com/questions/17224887/java-spring-transactional-method-not-rolling-back-as-expected">http://stackoverflow.com/questions/17224887/java-spring-transactional-method-not-rolling-back-as-expected</a></p>
 <p>这个问题是由于Spring将AOP与事务耦合在一起而引发的问题，在包spring-aop-3.2.6中，org.springframework.aop.framework.jdkDynamicAopProxy.class</p>
-<div class="code java highlight-python"><pre>public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             MethodInvocation invocation;
             Object oldProxy = null;
             boolean setProxyContext = false;
@@ -513,7 +532,7 @@ public void updateLastLogonTime(String userName) {
                             setProxyContext = true;
                     }
 
-                    // May be null. Get as late as possible to minimize the time we "own" the target,
+                    // May be null. Get as late as possible to minimize the time we &quot;own&quot; the target,
                     // in case it comes from a pool.
                     target = targetSource.getTarget();
                     if (target != null) {
@@ -523,7 +542,7 @@ public void updateLastLogonTime(String userName) {
                     // Get the interception chain for this method.
                     List&lt;Object&gt; chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 
-                    // Check whether we have any advice. If we don't, we can fallback on direct
+                    // Check whether we have any advice. If we don&#39;t, we can fallback on direct
                     // reflective invocation of the target, and avoid creating a MethodInvocation.
                     if (chain.isEmpty()) {
                             // We can skip creating a MethodInvocation: just invoke the target directly
@@ -542,12 +561,12 @@ public void updateLastLogonTime(String userName) {
                     Class&lt;?&gt; returnType = method.getReturnType();
                     if (retVal != null &amp;&amp; retVal == target &amp;&amp; returnType.isInstance(proxy) &amp;&amp;
                                     !RawTargetAccess.class.isAssignableFrom(method.getDeclaringClass())) {
-                            // Special case: it returned "this" and the return type of the method
-                            // is type-compatible. Note that we can't help if the target sets
+                            // Special case: it returned &quot;this&quot; and the return type of the method
+                            // is type-compatible. Note that we can&#39;t help if the target sets
                             // a reference to itself in another returned object.
                             retVal = proxy;
                     } else if (retVal == null &amp;&amp; returnType != Void.TYPE &amp;&amp; returnType.isPrimitive()) {
-                            throw new AopInvocationException("Null return value from advice does not match primitive return type for: " + method);
+                            throw new AopInvocationException(&quot;Null return value from advice does not match primitive return type for: &quot; + method);
                     }
                     return retVal;
             }
@@ -561,7 +580,8 @@ public void updateLastLogonTime(String userName) {
                             AopContext.setCurrentProxy(oldProxy);
                     }
             }
-    }</pre>
+    }
+</pre></div>
 </div>
 </div>
 <div class="section" id="hibernate-session">
@@ -569,23 +589,25 @@ public void updateLastLogonTime(String userName) {
 <p>通过Base层代码编写，使我对Spring事务有了新的认识。</p>
 <p>先阐述一下这次我碰到的几个问题，首先对于Hibernate更新时碰到的问题，</p>
 <p>在Hibernate的操作时，我使用了一个危险的操作&#8211;session.clear()方法，代码如下（代码已经被我注释掉）：</p>
-<div class="highlight-python"><pre>Assert.notNull(entity, NO_TEXT);
+<div class="highlight-python"><div class="highlight"><pre><span></span>Assert.notNull(entity, NO_TEXT);
 entity.setLastUpdateTime(new Date());// 最后一次修改时间
 Session session = getXSession();
 // 这是一个一棍子打死的操作，慎用！
 // session.clear();
 session.update(entity);
-logger.debug("update entity: {}", entity);
-eturn getXSession().get(entity.getClass(), entity.getId());</pre>
+logger.debug(&quot;update entity: {}&quot;, entity);
+eturn getXSession().get(entity.getClass(), entity.getId());
+</pre></div>
 </div>
 <p>这里我使用了session.clear()方法，但是带来的后果是所有事务的操作只有最后一个对数据库的操作是有效的，其余都被clear掉了！（调试了好几天）</p>
 <p>如果是单纯想清空之前的缓存对象，可以用如下方法：</p>
-<div class="highlight-python"><pre>//清空之前的缓存对象
+<div class="highlight-python"><div class="highlight"><pre><span></span>//清空之前的缓存对象
 Object cache = session.load(Host.class, entity.getId());
 if (cache != null) {
     session.evict(cache);
 }
-session.update(entity);</pre>
+session.update(entity);
+</pre></div>
 </div>
 <p>由于base层的设计，增删改查这些基础操作放入基类之中，不变使用上述方法。
 我用如下方法进行解决，在更新任何bean的时候首先进行查找当前活动的bean，之后进行修改后保存，可以避免两个bean冲突的问题。</p>
@@ -601,35 +623,37 @@ session.update(entity);</pre>
 4.注入式AspectJ切面。</p>
 <p>在base这个项目中，我使用aspectj进行aop代码的插入，这个配置起来比较方便，而且效率也很高。</p>
 <p>配置文件：</p>
-<div class="highlight-python"><pre>&lt;!--启动Spring对@AspectJ注解的支持 --&gt;
-&lt;aop:aspectj-autoproxy/&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;!--启动Spring对@AspectJ注解的支持 --&gt;
+&lt;aop:aspectj-autoproxy/&gt;
+</pre></div>
 </div>
 <p>这样就开启spring的aspectj的功能，我们就可以使用代码实现AOP编程了。</p>
 <p>代码实例：</p>
-<div class="highlight-python"><pre>@Component
+<div class="highlight-python"><div class="highlight"><pre><span></span>@Component
 @Aspect
 public class NovaAspectAdvice {
-    @Before(value ="execution(* com.neunn.cloud.*.*(..))")
+    @Before(value =&quot;execution(* com.neunn.cloud.*.*(..))&quot;)
     public void doBefore(JoinPoint jp) {
 
     }
-    @After(value ="execution(* com.neunn.cloud.*.*(..))")
+    @After(value =&quot;execution(* com.neunn.cloud.*.*(..))&quot;)
     public void doAfter(JoinPoint jp) {
 
     }
-    @AfterReturning(value = "execution(* com.neunn.*.create*(..))", returning = "result")
+    @AfterReturning(value = &quot;execution(* com.neunn.*.create*(..))&quot;, returning = &quot;result&quot;)
     public void doAfter(JoinPoint jp, Object result) {
 
     }
-    @Around(value = "execution(* com.neunn.*.create*(..))")
+    @Around(value = &quot;execution(* com.neunn.*.create*(..))&quot;)
     public void doAround(ProceedingJoinPoint pjp) throws Throwable {
 
     }
-    @AfterThrowing(value = "execution(* com.neunn.*.create*(..))", throwing = "e")
+    @AfterThrowing(value = &quot;execution(* com.neunn.*.create*(..))&quot;, throwing = &quot;e&quot;)
     public void doThrow(JoinPoint jp, Throwable e) {
 
     }
-}</pre>
+}
+</pre></div>
 </div>
 <p>这里简单解释下，aspectj只是其中一种实现方法，包括五种方法，before，after，afterreturn，around，afterthrow分别作用在截获方法的开始，之后，返回后，整个执行过程，抛出异常后。
 网上有个参考资料把after return中的参数写成了String类型，导致我开始运行的时候怎么也截获不到AfterReturning方法之内，差点就换其他方式进行截获了。</p>
@@ -639,13 +663,14 @@ public class NovaAspectAdvice {
 <h2>Spring log4j<a class="headerlink" href="#spring-log4j" title="Permalink to this headline">¶</a></h2>
 <p>Spring可以良好的整合其他框架，在Spring中配置log4j是非常简单的事情。</p>
 <p>修改项目中的web.xml文件，加入如下内容：</p>
-<div class="highlight-python"><pre>&lt;context-param&gt;
+<div class="highlight-python"><div class="highlight"><pre><span></span>&lt;context-param&gt;
     &lt;param-name&gt;log4jConfigLocation&lt;/param-name&gt;
     &lt;param-value&gt;/WEB-INF/log4j.properties&lt;/param-value&gt;
-&lt;/context-param&gt;</pre>
+&lt;/context-param&gt;
+</pre></div>
 </div>
 <p>在log4j.properties中加入如下内容</p>
-<div class="highlight-python"><pre>#LOGFILE.PATH=/tmp/log.log
+<div class="highlight-python"><div class="highlight"><pre><span></span>#LOGFILE.PATH=/tmp/log.log
 
 ### set log levels ###
 log4j.rootLogger = debug,stdout
@@ -660,7 +685,7 @@ log4j.appender.stdout.layout = org.apache.log4j.PatternLayout
 log4j.appender.stdout.layout.ConversionPattern = %d{yyyy-MM-dd} %5p %c{1}:%L  - %m%n
 
 #log4j.appender.D = org.apache.log4j.DailyRollingFileAppender
-#log4j.appender.D.DatePattern='.'yyyy-MM-dd
+#log4j.appender.D.DatePattern=&#39;.&#39;yyyy-MM-dd
 #log4j.appender.D.File = ${LOGFILE.PATH}/log.log
 #log4j.appender.D.Append = true
 #log4j.appender.D.Threshold = DEBUG
@@ -668,12 +693,13 @@ log4j.appender.stdout.layout.ConversionPattern = %d{yyyy-MM-dd} %5p %c{1}:%L  - 
 #log4j.appender.D.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} %5p %c{1}:%L  - %m%n
 #
 #log4j.appender.E = org.apache.log4j.DailyRollingFileAppender
-#log4j.appender.E.DatePattern='.'yyyy-MM-dd
+#log4j.appender.E.DatePattern=&#39;.&#39;yyyy-MM-dd
 #log4j.appender.E.File = ${LOGFILE.PATH}/error.log
 #log4j.appender.E.Append = true
 #log4j.appender.E.Threshold = ERROR
 #log4j.appender.E.layout = org.apache.log4j.PatternLayout
-#log4j.appender.E.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} %5p %c{1}:%L  - %m%n</pre>
+#log4j.appender.E.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} %5p %c{1}:%L  - %m%n
+</pre></div>
 </div>
 <p>如果是非Web项目，需要在resource文件夹中加入log4j.properties，就可以使用非常方便的log服务了。</p>
 <p>这里需要注意的是，apache推荐使用DEBUG, INOF, WARN, ERROR这四个等级，建议在release的时候将log等级调整为ERROR或者WARN。</p>
@@ -696,14 +722,14 @@ log4j.appender.stdout.layout.ConversionPattern = %d{yyyy-MM-dd} %5p %c{1}:%L  - 
           <a href="spring_security.html" title="Spring Security"
              >next</a> |</li>
         <li class="right" >
-          <a href="../../web/cas.html" title="Cas"
+          <a href="../../performance/web_performance.html" title="Web Performance"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

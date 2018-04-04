@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -27,7 +25,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
     <link rel="next" title="Shell" href="shell.html" />
-    <link rel="prev" title="Linux FireWall" href="../firewall.html" /> 
+    <link rel="prev" title="Fork Function" href="../fork.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +38,7 @@
           <a href="shell.html" title="Shell"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../firewall.html" title="Linux FireWall"
+          <a href="../fork.html" title="Fork Function"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -60,8 +58,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../firewall.html"
-                        title="previous chapter">Linux FireWall</a></p>
+  <p class="topless"><a href="../fork.html"
+                        title="previous chapter">Fork Function</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="shell.html"
                         title="next chapter">Shell</a></p>
@@ -99,30 +97,34 @@
 <p>Curl stands for command line url viewer.</p>
 <p>Example:</p>
 <p>发送post请求获取openstack的token</p>
-<div class="highlight-python"><pre>curl -X POST  -i -H "Content-Type:application/json" -d '{ "auth" : { "tenantName" : "admin","passwordCredentials" : { "username" : "admin","password" : "admin"}}}' http://192.168.250.222:5000/v2.0/tokens</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>curl -X POST  -i -H &quot;Content-Type:application/json&quot; -d &#39;{ &quot;auth&quot; : { &quot;tenantName&quot; : &quot;admin&quot;,&quot;passwordCredentials&quot; : { &quot;username&quot; : &quot;admin&quot;,&quot;password&quot; : &quot;admin&quot;}}}&#39; http://192.168.250.222:5000/v2.0/tokens
+</pre></div>
 </div>
 <p>发送get请求images信息列表</p>
-<div class="highlight-python"><pre>curl -X GET -H "Content-Type:application/json" -H "X-Auth-Token:..." http://192.168.250.222:9696/v2.0/subnets</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>curl -X GET -H &quot;Content-Type:application/json&quot; -H &quot;X-Auth-Token:...&quot; http://192.168.250.222:9696/v2.0/subnets
+</pre></div>
 </div>
 <p>curl 对于http请求默认的方法是get，利用-X可以显示的指定相应方法，像上述两个例子可以省略-X参数，第一个例子中，加上-d表示为post。</p>
 <p>下载图片</p>
-<div class="highlight-python"><pre>curl -o 1.jpg http://cgi2.tky.3web.ne.jp/~zzh/screen1.JPG
+<div class="highlight-python"><div class="highlight"><pre><span></span>curl -o 1.jpg http://cgi2.tky.3web.ne.jp/~zzh/screen1.JPG
 curl -O http://cgi2.tky.3web.ne.jp/~zzh/screen[1-10].JPG
-curl -o #2_#1.jpg http://cgi2.tky.3web.ne.jp/~{zzh,nick}/[001-201].JPG</pre>
+curl -o #2_#1.jpg http://cgi2.tky.3web.ne.jp/~{zzh,nick}/[001-201].JPG
+</pre></div>
 </div>
 </div>
 <div class="section" id="ping">
 <h2>Ping<a class="headerlink" href="#ping" title="Permalink to this headline">¶</a></h2>
 <p>Ping is the most usual tool we use in network.
 Ping is base on icmp protocol.</p>
-<div class="highlight-python"><pre>Knight-Linux:/home/knight # ping 192.168.250.3
+<div class="highlight-python"><div class="highlight"><pre><span></span>Knight-Linux:/home/knight # ping 192.168.250.3
 PING 192.168.250.3 (192.168.250.3) 56(84) bytes of data.
 64 bytes from 192.168.250.3: icmp_seq=1 ttl=62 time=0.290 ms
 64 bytes from 192.168.250.3: icmp_seq=2 ttl=62 time=0.384 ms
 64 bytes from 192.168.250.3: icmp_seq=3 ttl=62 time=0.387 ms
 ^C
 --- 192.168.250.3 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2000ms</pre>
+3 packets transmitted, 3 received, 0% packet loss, time 2000ms
+</pre></div>
 </div>
 <ol class="arabic simple">
 <li>64bytes 是icmp封包大小的预设值，可以用-s 200等来代替；</li>
@@ -134,10 +136,11 @@ PING 192.168.250.3 (192.168.250.3) 56(84) bytes of data.
 <div class="section" id="netstat">
 <h2>Netstat<a class="headerlink" href="#netstat" title="Permalink to this headline">¶</a></h2>
 <p>例如：</p>
-<div class="highlight-python"><pre>Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+<div class="highlight-python"><div class="highlight"><pre><span></span>Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      -
 tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
-tcp6       0      0 :::22                   :::*                    LISTEN      -</pre>
+tcp6       0      0 :::22                   :::*                    LISTEN      -
+</pre></div>
 </div>
 <ul class="simple">
 <li>如果Local Address写为0.0.0.0:3306表示任何网卡的3306端口都能被其他服务器访问；</li>
@@ -149,11 +152,12 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 <h2>Tcpdump<a class="headerlink" href="#tcpdump" title="Permalink to this headline">¶</a></h2>
 <p>Tcpdump能截获当前所有通过本机网卡的数据包，有着灵活的过滤机制。由于只能截获本机网卡数据，只能用于自检或者在网关的服务器上。</p>
 <p>例如：</p>
-<div class="highlight-python"><pre>tcpdump -i eth0 src host 192.168.0.5
-tcpdump -i eth0 src host 192.168.0.5 and dst port 80</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>tcpdump -i eth0 src host 192.168.0.5
+tcpdump -i eth0 src host 192.168.0.5 and dst port 80
+</pre></div>
 </div>
 <p>在本机上使用 <em>curl -i www.sina.com</em> 访问新浪，监听得到如下结果：</p>
-<div class="highlight-python"><pre>root@192-168-250-222:~# tcpdump -i eth0 dst port 80
+<div class="highlight-python"><div class="highlight"><pre><span></span>root@192-168-250-222:~# tcpdump -i eth0 dst port 80
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
 16:16:45.075410 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [S], seq 899886478, win 14600, options [mss 1460,sackOK,TS val 1276140011 ecr 0,nop,wscale 7], length 0
@@ -164,7 +168,8 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
 16:16:45.421960 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 3223, win 20272, options [nop,nop,TS val 1276140097 ecr 4153792943], length 0
 16:16:45.594158 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 4671, win 23168, options [nop,nop,TS val 1276140140 ecr 4153793115], length 0
 16:16:45.594255 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 6119, win 26064, options [nop,nop,TS val 1276140140 ecr 4153793115], length 0
-16:16:45.594344 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 7567, win 28960, options [nop,nop,TS val 1276140140 ecr 4153793115], length 0</pre>
+16:16:45.594344 IP 192.168.250.222.39382 &gt; 12.130.132.30.http: Flags [.], ack 7567, win 28960, options [nop,nop,TS val 1276140140 ecr 4153793115], length 0
+</pre></div>
 </div>
 </div>
 <div class="section" id="vpn">
@@ -175,28 +180,31 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
 <li>首先安装xl2tp，zypper in xl2tpd ppp (ubuntu和centos使用相应工具)安装。</li>
 <li>配置/etc/ppp/peers/testvpn.l2tpd，修改如下两个配置：</li>
 </ol>
-<div class="highlight-python"><pre>[global]
+<div class="highlight-python"><div class="highlight"><pre><span></span>[global]
 access control = no
 port = 1701
 [lac neunnvpn]
 name = dev
 lns = 61.161.217.98
 pppoptfile = /etc/ppp/peers/neunnvpn.l2tpd
-ppp debug = no</pre>
+ppp debug = no
+</pre></div>
 </div>
 <ol class="arabic simple" start="3">
 <li>配置/etc/xl2tpd/xl2tpd.conf</li>
 <li>启动xl2tp</li>
 </ol>
-<div class="highlight-python"><pre>/etc/init.d/xl2tpd start
-echo 'c client' &gt; /var/run/xl2tpd/l2tp-control</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>/etc/init.d/xl2tpd start
+echo &#39;c client&#39; &gt; /var/run/xl2tpd/l2tp-control
+</pre></div>
 </div>
 <ol class="arabic simple" start="5">
 <li>添加相应路由表</li>
 <li>断开vpn</li>
 </ol>
-<div class="highlight-python"><pre>echo 'd client' &gt; /var/run/xl2tpd/l2tp-control
-/etc/init.d/xl2tpd stop</pre>
+<div class="highlight-python"><div class="highlight"><pre><span></span>echo &#39;d client&#39; &gt; /var/run/xl2tpd/l2tp-control
+/etc/init.d/xl2tpd stop
+</pre></div>
 </div>
 </div>
 </div>
@@ -217,14 +225,14 @@ echo 'c client' &gt; /var/run/xl2tpd/l2tp-control</pre>
           <a href="shell.html" title="Shell"
              >next</a> |</li>
         <li class="right" >
-          <a href="../firewall.html" title="Linux FireWall"
+          <a href="../fork.html" title="Fork Function"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, knight.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

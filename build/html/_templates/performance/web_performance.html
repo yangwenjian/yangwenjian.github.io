@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Web Performance &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Spring" href="../programming/framework/spring.html" />
+    <link rel="prev" title="Cas" href="../web/cas.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../programming/framework/spring.html" title="Spring"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../web/cas.html" title="Cas"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../web/cas.html"
+                        title="previous chapter">Cas</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../programming/framework/spring.html"
+                        title="next chapter">Spring</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/performance/web_performance.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="web-performance">
+<h1>Web Performance<a class="headerlink" href="#web-performance" title="Permalink to this headline">¶</a></h1>
+<p>压力测试注意在以下三个点：</p>
+<ul class="simple">
+<li>如何正确产生压力（符合客户需求的真实场景，从实际环境中提炼）；</li>
+<li>如何确定性能瓶颈（以TPS，响应延时为出发点，确定CPU、内存、IO、网络等问题）；</li>
+<li>如何预估系统的承载能力（通过产生真实压力，对比系统数据预估服务器的处理能力）；</li>
+</ul>
+<p>从产品的角度，应该注意最频繁使用的功能，最消耗资源的功能，设计峰值并发用户数。</p>
+<p>响应时间＝网络响应时间+应用程序响应时间。标准可参考国外的3/5/10原则。</p>
+<p>（1）在3秒钟之内，页面给予用户响应并有所显示，可认为是“很不错的”；</p>
+<p>（2）在3~5秒钟内，页面给予用户响应并有所显示，可认为是“好的”；</p>
+<p>（3）在5~10秒钟内，页面给予用户响应并有所显示，可认为是“勉强接受的”；</p>
+<p>（4）超过10秒就让人有点不耐烦了，用户很可能不会继续等待下去；</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../programming/framework/spring.html" title="Spring"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../web/cas.html" title="Cas"
+             >previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
