@@ -257,6 +257,27 @@ the getOrder() method or by using the @Order annotation.
 * Websocket Routing Filter
 * Gateway Metrics Filter
 
+Websocket Routing
+--------------------------------------------
+可以通过配置文件或者代码中builder的构建指定websocket的路由。
+
+.. code::
+
+   spring:
+      cloud:
+        gateway:
+          routes:
+          # SockJS route
+          - id: websocket_sockjs_route
+            uri: http://localhost:3001
+            predicates:
+            - Path=/websocket/info/**
+          # Normwal Websocket route
+          - id: websocket_route
+            uri: ws://localhost:3001
+            predicates:
+            - Path=/websocket/** 
+
 TLS/SSL
 ---------------------------------------------
 Gateway routes can be routed to both http and https backends.

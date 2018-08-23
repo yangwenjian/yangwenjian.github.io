@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="Spring Security" href="spring_security.html" />
+    <link rel="next" title="Spring Cloud Netflix" href="springcloud_netflix.html" />
     <link rel="prev" title="Spring" href="spring.html" /> 
   </head>
   <body>
@@ -35,7 +35,7 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="spring_security.html" title="Spring Security"
+          <a href="springcloud_netflix.html" title="Spring Cloud Netflix"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="spring.html" title="Spring"
@@ -89,6 +89,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#global-filters">Global Filters</a></li>
+<li><a class="reference internal" href="#websocket-routing">Websocket Routing</a></li>
 <li><a class="reference internal" href="#tls-ssl">TLS/SSL</a></li>
 <li><a class="reference internal" href="#cors-configuration">CORS Configuration</a></li>
 <li><a class="reference internal" href="#using-spring-mvc-or-webflux">Using Spring MVC or Webflux</a></li>
@@ -103,8 +104,8 @@
   <p class="topless"><a href="spring.html"
                         title="previous chapter">Spring</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="spring_security.html"
-                        title="next chapter">Spring Security</a></p>
+  <p class="topless"><a href="springcloud_netflix.html"
+                        title="next chapter">Spring Cloud Netflix</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/framework/springcloud.txt"
@@ -383,6 +384,26 @@ the getOrder() method or by using the &#64;Order annotation.</p>
 <li>Gateway Metrics Filter</li>
 </ul>
 </div>
+<div class="section" id="websocket-routing">
+<h3>Websocket Routing<a class="headerlink" href="#websocket-routing" title="Permalink to this headline">¶</a></h3>
+<p>可以通过配置文件或者代码中builder的构建指定websocket的路由。</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>spring:
+   cloud:
+     gateway:
+       routes:
+       # SockJS route
+       - id: websocket_sockjs_route
+         uri: http://localhost:3001
+         predicates:
+         - Path=/websocket/info/**
+       # Normwal Websocket route
+       - id: websocket_route
+         uri: ws://localhost:3001
+         predicates:
+         - Path=/websocket/**
+</pre></div>
+</div>
+</div>
 <div class="section" id="tls-ssl">
 <h3>TLS/SSL<a class="headerlink" href="#tls-ssl" title="Permalink to this headline">¶</a></h3>
 <p>Gateway routes can be routed to both http and https backends.</p>
@@ -498,7 +519,7 @@ public class AuthFilter implements GlobalFilter {
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="spring_security.html" title="Spring Security"
+          <a href="springcloud_netflix.html" title="Spring Cloud Netflix"
              >next</a> |</li>
         <li class="right" >
           <a href="spring.html" title="Spring"
