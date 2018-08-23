@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Hadoop介绍及基础研究" href="../distribution/hadoop.html" />
+    <link rel="next" title="NoSQL and MongoDB" href="../distribution/mongoDB.html" />
     <link rel="prev" title="Lucene" href="../automation/lucene.html" /> 
   </head>
   <body>
@@ -35,7 +35,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
+          <a href="../distribution/mongoDB.html" title="NoSQL and MongoDB"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../automation/lucene.html" title="Lucene"
@@ -51,6 +51,7 @@
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#docker-architecture">Docker Architecture</a></li>
 <li><a class="reference internal" href="#docker-design">Docker Design</a><ul>
+<li><a class="reference internal" href="#namespace-isolation">namespace isolation</a></li>
 <li><a class="reference internal" href="#the-docker-daemon">The Docker Daemon</a></li>
 <li><a class="reference internal" href="#the-docker-client">The Docker client</a></li>
 <li><a class="reference internal" href="#inside-docker">Inside Docker</a><ul>
@@ -90,8 +91,8 @@
   <p class="topless"><a href="../automation/lucene.html"
                         title="previous chapter">Lucene</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../distribution/hadoop.html"
-                        title="next chapter">Hadoop介绍及基础研究</a></p>
+  <p class="topless"><a href="../distribution/mongoDB.html"
+                        title="next chapter">NoSQL and MongoDB</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/virtualization/docker.txt"
@@ -151,6 +152,49 @@ But there are a lot of differences:</p>
 <h2>Docker Design<a class="headerlink" href="#docker-design" title="Permalink to this headline">¶</a></h2>
 <p>Docker uses a client-server architecture.
 The docker client and daemon communicate via sockets or through restful api.</p>
+<div class="section" id="namespace-isolation">
+<h3>namespace isolation<a class="headerlink" href="#namespace-isolation" title="Permalink to this headline">¶</a></h3>
+<p>namespace的6项隔离</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="33%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">namespace</th>
+<th class="head">parameter</th>
+<th class="head">isolatoin</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>UTS</td>
+<td>CLONE_NEWUTS</td>
+<td>主机与域名</td>
+</tr>
+<tr class="row-odd"><td>IPC</td>
+<td>CLONE_NEWIPC</td>
+<td>信号量、消息队列和共享内存</td>
+</tr>
+<tr class="row-even"><td>PID</td>
+<td>CLONE_NEWPID</td>
+<td>进程编号</td>
+</tr>
+<tr class="row-odd"><td>Network</td>
+<td>CLONE_NEWNET</td>
+<td>网络设备、网络栈、端口等</td>
+</tr>
+<tr class="row-even"><td>Mount</td>
+<td>CLONE_NEWNS</td>
+<td>挂载点</td>
+</tr>
+<tr class="row-odd"><td>User</td>
+<td>CLONE_NEWUSER</td>
+<td>用户和用户组</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="section" id="the-docker-daemon">
 <h3>The Docker Daemon<a class="headerlink" href="#the-docker-daemon" title="Permalink to this headline">¶</a></h3>
 <p>The docker daemon runs on a host machine. The user does not directly interact with the daemon, but instead through the Docker client.</p>
@@ -422,7 +466,7 @@ CMD [&quot;/run.sh&quot;]
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../distribution/hadoop.html" title="Hadoop介绍及基础研究"
+          <a href="../distribution/mongoDB.html" title="NoSQL and MongoDB"
              >next</a> |</li>
         <li class="right" >
           <a href="../automation/lucene.html" title="Lucene"

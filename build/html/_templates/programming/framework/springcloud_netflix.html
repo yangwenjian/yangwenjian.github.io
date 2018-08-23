@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Spring Cloud Netflix &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Spring Security" href="spring_security.html" />
+    <link rel="prev" title="Spring Cloud" href="springcloud.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="spring_security.html" title="Spring Security"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="springcloud.html" title="Spring Cloud"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Spring Cloud Netflix</a><ul>
+<li><a class="reference internal" href="#feature">Feature</a></li>
+<li><a class="reference internal" href="#service-discovery-eureka-clients">Service Discovery: Eureka Clients</a><ul>
+<li><a class="reference internal" href="#registering">Registering</a></li>
+<li><a class="reference internal" href="#stauts-page-and-health-indicator">Stauts Page and Health Indicator</a></li>
+<li><a class="reference internal" href="#health-checks">Health Checks</a></li>
+<li><a class="reference internal" href="#eureka-metadata">Eureka Metadata</a></li>
+<li><a class="reference internal" href="#using-the-eurekaclient">Using the EurekaClient</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#service-discovery-eureka-server">Service Discovery: Eureka Server</a></li>
+<li><a class="reference internal" href="#circuit-breaker-hystrix-clients">Circuit Breaker: Hystrix Clients</a></li>
+<li><a class="reference internal" href="#client-side-load-balancer-ribbon">Client Side Load Balancer: Ribbon</a></li>
+<li><a class="reference internal" href="#external-configuration-archaius">External Configuration: Archaius</a></li>
+<li><a class="reference internal" href="#router-and-filter-zuul">Router and Filter: Zuul</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="springcloud.html"
+                        title="previous chapter">Spring Cloud</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="spring_security.html"
+                        title="next chapter">Spring Security</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/programming/framework/springcloud_netflix.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="spring-cloud-netflix">
+<h1>Spring Cloud Netflix<a class="headerlink" href="#spring-cloud-netflix" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="feature">
+<h2>Feature<a class="headerlink" href="#feature" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Service Discovery: Eureka instances register and clients discover instances using spring-managed beans.</li>
+<li>Service Discovery: embedded Eureka server.</li>
+<li>Circuit Breaker: Hystrix clients(annotation-driven) and hystrix dashboard.</li>
+<li>Declarative REST Clients.</li>
+<li>Client Side Load Balancer: Ribbon.</li>
+<li>External Configuration: bridge from the Spring Environment.</li>
+<li>Router and Filter: Zuul filters.</li>
+</ul>
+</div>
+<div class="section" id="service-discovery-eureka-clients">
+<h2>Service Discovery: Eureka Clients<a class="headerlink" href="#service-discovery-eureka-clients" title="Permalink to this headline">¶</a></h2>
+<p>Eureka is the Netflix Service Discovery Server and Client. The server can be configured and deployed to be highly
+available, with each server replicating state about the registered services to the others.</p>
+<div class="section" id="registering">
+<h3>Registering<a class="headerlink" href="#registering" title="Permalink to this headline">¶</a></h3>
+<p>Client provides meta-data to Eureka(host, port, URL, home page, etc.), Eureka recieve heartbeat.</p>
+<p>Automatically reistering. A client can query the registry to locate other services.</p>
+</div>
+<div class="section" id="stauts-page-and-health-indicator">
+<h3>Stauts Page and Health Indicator<a class="headerlink" href="#stauts-page-and-health-indicator" title="Permalink to this headline">¶</a></h3>
+<p>Default page is &#8216;/info&#8217; and &#8216;/health&#8217;, you can change them.</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>eureka:
+instance:
+statusPageUrlPath: ${server.servletPath}/info
+healthCheckUrlPath: ${server.servletPath}/health
+</pre></div>
+</div>
+</div>
+<div class="section" id="health-checks">
+<h3>Health Checks<a class="headerlink" href="#health-checks" title="Permalink to this headline">¶</a></h3>
+<p>Default, client only send &#8216;UP&#8217; state. 避免出现网络流量占用过多。</p>
+</div>
+<div class="section" id="eureka-metadata">
+<h3>Eureka Metadata<a class="headerlink" href="#eureka-metadata" title="Permalink to this headline">¶</a></h3>
+<p>There is standard metadata for information such as hostname, IP address, port numbers, the status page, and health check.
+Additional metadata can be added to the instance registration in the eureka.instance.metadataMap, and this metadata is
+accessible in the remote clients.</p>
+</div>
+<div class="section" id="using-the-eurekaclient">
+<h3>Using the EurekaClient<a class="headerlink" href="#using-the-eurekaclient" title="Permalink to this headline">¶</a></h3>
+<p>Do not use the EurekaClient in a &#64;PostConstruct method or in a &#64;Scheduled method.</p>
+<p>Spring Cloud has support for Feign (a REST client builder) and Spring RestTemplate through the logical Eureka service
+identifiers (VIPs) instead of physical URLs.</p>
+</div>
+</div>
+<div class="section" id="service-discovery-eureka-server">
+<h2>Service Discovery: Eureka Server<a class="headerlink" href="#service-discovery-eureka-server" title="Permalink to this headline">¶</a></h2>
+<p>You can add multiple peers to a system, and, as long as they are all connected to each other by at least one edge, they
+synchronize the registrations amongst themselves.</p>
+<p>You can secure your Eureka server simply by adding Spring Security to your server’s classpath via spring-boot-starter-security.</p>
+</div>
+<div class="section" id="circuit-breaker-hystrix-clients">
+<h2>Circuit Breaker: Hystrix Clients<a class="headerlink" href="#circuit-breaker-hystrix-clients" title="Permalink to this headline">¶</a></h2>
+<p>A service failure in the lower level of services can cause cascading failure all the way up to the user.
+(failure percentage default 50%, rolling window 10 seconds).</p>
+<p>The state of the connected circuit breakers are also exposed in the /health endpoint of the calling application,</p>
+<p>When using Hystrix commands that wrap Ribbon clients you want to make sure your Hystrix timeout is configured to be longer than
+the configured Ribbon timeout, including any potential retries that might be made.</p>
+</div>
+<div class="section" id="client-side-load-balancer-ribbon">
+<h2>Client Side Load Balancer: Ribbon<a class="headerlink" href="#client-side-load-balancer-ribbon" title="Permalink to this headline">¶</a></h2>
+<p>Ribbon is a client-side load balancer that gives you a lot of control over the behavior of HTTP and TCP clients. Feign already uses Ribbon.</p>
+</div>
+<div class="section" id="external-configuration-archaius">
+<h2>External Configuration: Archaius<a class="headerlink" href="#external-configuration-archaius" title="Permalink to this headline">¶</a></h2>
+<p>Archaius is the Netflix client-side configuration library. It is the library used by all of the Netflix OSS components for configuration.</p>
+</div>
+<div class="section" id="router-and-filter-zuul">
+<h2>Router and Filter: Zuul<a class="headerlink" href="#router-and-filter-zuul" title="Permalink to this headline">¶</a></h2>
+<p>Zuul is a JVM-based router and server-side load balancer from Netflix.
+Add dependency with &#8216;spring-cloud-starter-netflix-zuul&#8217;.</p>
+<ul class="simple">
+<li>Authentication</li>
+<li>Insights</li>
+<li>Stress Testing</li>
+<li>Canary Testing</li>
+<li>Dynamic Routing</li>
+<li>Service Migration</li>
+<li>Load Shedding</li>
+<li>Security</li>
+<li>Static Response handling</li>
+<li>Active/Active traffic management</li>
+</ul>
+<p>the Zuul starter does not include a discovery client, so, for routes based on service IDs, you need to provide one of those on the classpath as well (Eureka is one choice).</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>zuul:
+  routes:
+    echo:
+      path: /myusers/**
+      serviceId: myusers-service
+      stripPrefix: true
+
+hystrix:
+  command:
+    myusers-service:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: ...
+
+myusers-service:
+  ribbon:
+    NIWSServerListClassName: com.netflix.loadbalancer.ConfigurationBasedServerList
+    listOfServers: http://example1.com,http://example2.com
+    ConnectTimeout: 1000
+    ReadTimeout: 3000
+    MaxTotalHttpConnections: 500
+    MaxConnectionsPerHost: 100
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="spring_security.html" title="Spring Security"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="springcloud.html" title="Spring Cloud"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

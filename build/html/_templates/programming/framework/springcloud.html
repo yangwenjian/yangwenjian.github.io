@@ -1,0 +1,514 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Spring Cloud &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Spring Security" href="spring_security.html" />
+    <link rel="prev" title="Spring" href="spring.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="spring_security.html" title="Spring Security"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="spring.html" title="Spring"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Spring Cloud</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#feature">Feature</a></li>
+<li><a class="reference internal" href="#main-project">Main Project</a><ul>
+<li><a class="reference internal" href="#spring-cloud-config">Spring Cloud Config</a></li>
+<li><a class="reference internal" href="#spring-cloud-netflix">Spring Cloud Netflix</a></li>
+<li><a class="reference internal" href="#spring-cloud-bus">Spring Cloud Bus</a></li>
+<li><a class="reference internal" href="#spring-cloud-for-cloud-foundry">Spring Cloud for Cloud foundry</a></li>
+<li><a class="reference internal" href="#spring-cloud-cluster">Spring Cloud Cluster</a></li>
+<li><a class="reference internal" href="#spring-cloud-open-service-broker">Spring Cloud Open Service Broker</a></li>
+<li><a class="reference internal" href="#spring-cloud-consul">Spring Cloud Consul</a></li>
+<li><a class="reference internal" href="#spring-cloud-security">Spring Cloud Security</a></li>
+<li><a class="reference internal" href="#spring-cloud-sleuth">Spring Cloud Sleuth</a></li>
+<li><a class="reference internal" href="#spring-cloud-data-flow">Spring Cloud Data Flow</a></li>
+<li><a class="reference internal" href="#spring-cloud-stream">Spring Cloud Stream</a></li>
+<li><a class="reference internal" href="#spring-cloud-stream-app-starters">Spring Cloud Stream App Starters</a></li>
+<li><a class="reference internal" href="#spring-cloud-task">Spring Cloud Task</a></li>
+<li><a class="reference internal" href="#spring-cloud-task-app-starters">Spring Cloud Task App Starters</a></li>
+<li><a class="reference internal" href="#spring-cloud-zookeeper">Spring Cloud Zookeeper</a></li>
+<li><a class="reference internal" href="#spring-cloud-for-amazon-web-services">Spring Cloud for Amazon Web Services</a></li>
+<li><a class="reference internal" href="#spring-cloud-connectors">Spring Cloud Connectors</a></li>
+<li><a class="reference internal" href="#spring-cloud-starters">Spring Cloud Starters</a></li>
+<li><a class="reference internal" href="#spring-cloud-cli">Spring Cloud CLI</a></li>
+<li><a class="reference internal" href="#spring-cloud-contract">Spring Cloud Contract</a></li>
+<li><a class="reference internal" href="#spring-cloud-gateway">Spring Cloud Gateway</a></li>
+<li><a class="reference internal" href="#spring-cloud-openfeign">Spring Cloud OpenFeign</a></li>
+<li><a class="reference internal" href="#spring-cloud-pipelines">Spring Cloud Pipelines</a></li>
+<li><a class="reference internal" href="#spring-cloud-function">Spring Cloud Function</a></li>
+<li><a class="reference internal" href="#id1">个人理解</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">Spring Cloud Gateway</a><ul>
+<li><a class="reference internal" href="#glossary">Glossary</a></li>
+<li><a class="reference internal" href="#how-it-works">How it works</a></li>
+<li><a class="reference internal" href="#route-predicate-factories">Route Predicate Factories</a></li>
+<li><a class="reference internal" href="#gatewayfilter-factories">GatewayFilter Factories</a><ul>
+<li><a class="reference internal" href="#redis-ratelimiter">Redis RateLimiter</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#global-filters">Global Filters</a></li>
+<li><a class="reference internal" href="#tls-ssl">TLS/SSL</a></li>
+<li><a class="reference internal" href="#cors-configuration">CORS Configuration</a></li>
+<li><a class="reference internal" href="#using-spring-mvc-or-webflux">Using Spring MVC or Webflux</a></li>
+<li><a class="reference internal" href="#id3">最佳实践</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="spring.html"
+                        title="previous chapter">Spring</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="spring_security.html"
+                        title="next chapter">Spring Security</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/programming/framework/springcloud.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="spring-cloud">
+<h1>Spring Cloud<a class="headerlink" href="#spring-cloud" title="Permalink to this headline">¶</a></h1>
+<p>Main Framework of building micro-service based on java.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Spring Cloud is based on Spring boot.</p>
+<div class="section" id="feature">
+<h3>Feature<a class="headerlink" href="#feature" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Distributed/versioned configuration</li>
+<li>Service registration and discovery</li>
+<li>Routing</li>
+<li>Service-to-service calls</li>
+<li>Load balancing</li>
+<li>Circuit Breakers</li>
+<li>Global locks</li>
+<li>Leadership election and cluster state</li>
+<li>Distributed messaging</li>
+</ul>
+</div>
+<div class="section" id="main-project">
+<h3>Main Project<a class="headerlink" href="#main-project" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="spring-cloud-config">
+<h4>Spring Cloud Config<a class="headerlink" href="#spring-cloud-config" title="Permalink to this headline">¶</a></h4>
+<p>Centralized external configuration management backed by a git repository. 类似CMDB配置管理数据库抽象服务。</p>
+</div>
+<div class="section" id="spring-cloud-netflix">
+<h4>Spring Cloud Netflix<a class="headerlink" href="#spring-cloud-netflix" title="Permalink to this headline">¶</a></h4>
+<p>Integration with various Netflix OSS components (Eureka, Hystrix, Zuul, Archaius, etc.).</p>
+</div>
+<div class="section" id="spring-cloud-bus">
+<h4>Spring Cloud Bus<a class="headerlink" href="#spring-cloud-bus" title="Permalink to this headline">¶</a></h4>
+<p>An event bus, distributed messaging.</p>
+</div>
+<div class="section" id="spring-cloud-for-cloud-foundry">
+<h4>Spring Cloud for Cloud foundry<a class="headerlink" href="#spring-cloud-for-cloud-foundry" title="Permalink to this headline">¶</a></h4>
+<p>Integrates with Pivotal Cloud Foundry.</p>
+</div>
+<div class="section" id="spring-cloud-cluster">
+<h4>Spring Cloud Cluster<a class="headerlink" href="#spring-cloud-cluster" title="Permalink to this headline">¶</a></h4>
+<p>Leadership election and common stateful patterns.(Zookeeper, Redis, hazelcast, Consul).</p>
+</div>
+<div class="section" id="spring-cloud-open-service-broker">
+<h4>Spring Cloud Open Service Broker<a class="headerlink" href="#spring-cloud-open-service-broker" title="Permalink to this headline">¶</a></h4>
+<p>Provides a starting point for building a service broker that implements the Open Service Broker API.</p>
+</div>
+<div class="section" id="spring-cloud-consul">
+<h4>Spring Cloud Consul<a class="headerlink" href="#spring-cloud-consul" title="Permalink to this headline">¶</a></h4>
+<p>Service discovery and configuration management with Hashicorp Consul.</p>
+</div>
+<div class="section" id="spring-cloud-security">
+<h4>Spring Cloud Security<a class="headerlink" href="#spring-cloud-security" title="Permalink to this headline">¶</a></h4>
+<p>Provides support for load-balanced OAuth2 rest client and authentication header relays in a Zuul proxy.</p>
+</div>
+<div class="section" id="spring-cloud-sleuth">
+<h4>Spring Cloud Sleuth<a class="headerlink" href="#spring-cloud-sleuth" title="Permalink to this headline">¶</a></h4>
+<p>Distributed tracing for Spring Cloud applications, compatible with Zipkin, HTrace and log-based (e.g. ELK) tracing.</p>
+</div>
+<div class="section" id="spring-cloud-data-flow">
+<h4>Spring Cloud Data Flow<a class="headerlink" href="#spring-cloud-data-flow" title="Permalink to this headline">¶</a></h4>
+<p>A cloud-native orchestration service for composable microservice applications on modern runtimes. Easy-to-use DSL,
+drag-and-drop GUI, and REST-APIs together simplifies the overall orchestration of microservice based data pipelines.</p>
+</div>
+<div class="section" id="spring-cloud-stream">
+<h4>Spring Cloud Stream<a class="headerlink" href="#spring-cloud-stream" title="Permalink to this headline">¶</a></h4>
+<p>A lightweight event-driven microservices framework to quickly build applications that can connect to external systems.
+Simple declarative model to send and receive messages using Apache Kafka or RabbitMQ between Spring Boot apps.</p>
+</div>
+<div class="section" id="spring-cloud-stream-app-starters">
+<h4>Spring Cloud Stream App Starters<a class="headerlink" href="#spring-cloud-stream-app-starters" title="Permalink to this headline">¶</a></h4>
+<p>Spring Cloud Stream App Starters are Spring Boot based Spring Integration applications that provide integration with
+external systems.</p>
+</div>
+<div class="section" id="spring-cloud-task">
+<h4>Spring Cloud Task<a class="headerlink" href="#spring-cloud-task" title="Permalink to this headline">¶</a></h4>
+<p>A short-lived microservices framework to quickly build applications that perform finite amounts of data processing.
+Simple declarative for adding both functional and non-functional features to Spring Boot apps.</p>
+</div>
+<div class="section" id="spring-cloud-task-app-starters">
+<h4>Spring Cloud Task App Starters<a class="headerlink" href="#spring-cloud-task-app-starters" title="Permalink to this headline">¶</a></h4>
+<p>Spring Cloud Task App Starters are Spring Boot applications that may be any process including Spring Batch jobs that
+do not run forever, and they end/stop after a finite period of data processing.</p>
+</div>
+<div class="section" id="spring-cloud-zookeeper">
+<h4>Spring Cloud Zookeeper<a class="headerlink" href="#spring-cloud-zookeeper" title="Permalink to this headline">¶</a></h4>
+<p>Service discovery and configuration management with Apache Zookeeper.</p>
+</div>
+<div class="section" id="spring-cloud-for-amazon-web-services">
+<h4>Spring Cloud for Amazon Web Services<a class="headerlink" href="#spring-cloud-for-amazon-web-services" title="Permalink to this headline">¶</a></h4>
+<p>Easy integration with hosted Amazon Web Services. It offers a convenient way to interact with AWS provided services
+using well-known Spring idioms and APIs, such as the messaging or caching API. Developers can build their application
+around the hosted services without having to care about infrastructure or maintenance.</p>
+</div>
+<div class="section" id="spring-cloud-connectors">
+<h4>Spring Cloud Connectors<a class="headerlink" href="#spring-cloud-connectors" title="Permalink to this headline">¶</a></h4>
+<p>Makes it easy for PaaS applications in a variety of platforms to connect to backend services like databases and message
+brokers (the project formerly known as &#8220;Spring Cloud&#8221;).</p>
+</div>
+<div class="section" id="spring-cloud-starters">
+<h4>Spring Cloud Starters<a class="headerlink" href="#spring-cloud-starters" title="Permalink to this headline">¶</a></h4>
+<p>Spring Boot-style starter projects to ease dependency management for consumers of Spring Cloud. (Discontinued as a project
+and merged with the other projects after Angel.SR2.)</p>
+</div>
+<div class="section" id="spring-cloud-cli">
+<h4>Spring Cloud CLI<a class="headerlink" href="#spring-cloud-cli" title="Permalink to this headline">¶</a></h4>
+<p>Spring Boot CLI plugin for creating Spring Cloud component applications quickly in Groovy.</p>
+</div>
+<div class="section" id="spring-cloud-contract">
+<h4>Spring Cloud Contract<a class="headerlink" href="#spring-cloud-contract" title="Permalink to this headline">¶</a></h4>
+<p>Spring Cloud Contract is an umbrella project holding solutions that help users in successfully implementing the Consumer
+Driven Contracts approach.</p>
+</div>
+<div class="section" id="spring-cloud-gateway">
+<h4>Spring Cloud Gateway<a class="headerlink" href="#spring-cloud-gateway" title="Permalink to this headline">¶</a></h4>
+<p>Spring Cloud Gateway is an intelligent and programmable router based on Project Reactor.</p>
+</div>
+<div class="section" id="spring-cloud-openfeign">
+<h4>Spring Cloud OpenFeign<a class="headerlink" href="#spring-cloud-openfeign" title="Permalink to this headline">¶</a></h4>
+<p>Spring Cloud OpenFeign provides integrations for Spring Boot apps through autoconfiguration and binding to the Spring Environment
+and other Spring programming model idioms.</p>
+</div>
+<div class="section" id="spring-cloud-pipelines">
+<h4>Spring Cloud Pipelines<a class="headerlink" href="#spring-cloud-pipelines" title="Permalink to this headline">¶</a></h4>
+<p>Spring Cloud Pipelines provides an opinionated deployment pipeline with steps to ensure that your application can be deployed in
+zero downtime fashion and easilly rolled back of something goes wrong.</p>
+</div>
+<div class="section" id="spring-cloud-function">
+<h4>Spring Cloud Function<a class="headerlink" href="#spring-cloud-function" title="Permalink to this headline">¶</a></h4>
+<p>Spring Cloud Function promotes the implementation of business logic via functions. It supports a uniform programming model across
+serverless providers, as well as the ability to run standalone (locally or in a PaaS).</p>
+</div>
+<div class="section" id="id1">
+<h4>个人理解<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>个人认为，如下几个服务是必要的：服务的自动注册和发现，负载均衡</li>
+<li>大型系统同时还需要：服务监控，服务链路跟踪，融断器</li>
+<li>外网服务的系统还需要：网关服务，认证服务</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>Spring Cloud Gateway<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Spring Cloud Gateway requires the Netty runtime provided by Spring Boot and Spring Webflux. It does not work in a traditional Servlet Container or built as a WAR.</p>
+<div class="section" id="glossary">
+<h3>Glossary<a class="headerlink" href="#glossary" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Route: route the basic building block.</li>
+<li>Predicate: match on anything from the HTTP request.</li>
+<li>Filter: requests and responses can be modified before or after sending the downstream request.</li>
+</ul>
+</div>
+<div class="section" id="how-it-works">
+<h3>How it works<a class="headerlink" href="#how-it-works" title="Permalink to this headline">¶</a></h3>
+<p>Gateway Client -&gt; Gateway Handler Mapping(determines match route or not) -&gt; Gateway Web Handler(send to filter) -&gt; Filter chain(execute logic
+before the proxy request is sent or after) -&gt; Proxied Service -&gt; Filter chain().</p>
+<img alt="../../../_images/spring_cloud_gateway_diagram.png" src="../../../_images/spring_cloud_gateway_diagram.png" />
+</div>
+<div class="section" id="route-predicate-factories">
+<h3>Route Predicate Factories<a class="headerlink" href="#route-predicate-factories" title="Permalink to this headline">¶</a></h3>
+<p>Many build-in Route Predicate Factories match on different attributes of the HTTP request.</p>
+<ul class="simple">
+<li>After Route Predicate Factory(datetime)</li>
+<li>Before Route Predicate Factory</li>
+<li>Between Route Predicate Factory</li>
+<li>Cookie Route Predicate Factory(cookie name and regular expression value)</li>
+<li>Header Route Predicate Factory(header name and regular expression value)</li>
+<li>Method Route Predicate Factory(GET, POST)</li>
+<li>Path Route Predicate Factory</li>
+<li>Query Route Predicate Factory</li>
+<li>RemoteAddr Route Predicate Factory</li>
+</ul>
+<p>If RemoteAddr Route does not work because Gateway sits behind a proxy layer, use RemoteAddressResolve instead.</p>
+<p>XForwardedRemoteAddressResolver::trustAll check IP in X-Forwared-For;</p>
+<p>XForwardedRemoteAddressResolver::maxTrustedIndex check numbers of infrastructure in front of Gateway.</p>
+</div>
+<div class="section" id="gatewayfilter-factories">
+<h3>GatewayFilter Factories<a class="headerlink" href="#gatewayfilter-factories" title="Permalink to this headline">¶</a></h3>
+<p>Route filters allow the modification of the incoming HTTP request or outgoing HTTP response in some manner.</p>
+<p>Spring Cloud Gateway includes many built-in GatewayFilter Factories.只要添加适当的配置即可使用。</p>
+<ul class="simple">
+<li>AddRequestHeader GatewayFilter Factory(all matching request)</li>
+<li>AddRequestParameter GatewayFilter Factory</li>
+<li>AddResponseHeader GatewayFilter Factor</li>
+<li>Hystrix GatewayFilter Factory(add dependency)</li>
+</ul>
+<p>you can use &#8216;- Hystrix=myCommandName&#8217; or fallbackuri.</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>spring:
+    cloud:
+    gateway:
+    routes:
+    - id: hystrix_route
+        uri: lb://backing-service:8088
+        predicates:
+        - Path=/consumingserviceendpoint
+        filters:
+        - name: Hystrix
+        args:
+            name: fallbackcmd
+            fallbackUri: forward:/incaseoffailureusethis
+        - RewritePath=/consumingserviceendpoint, /backingserviceendpoint
+</pre></div>
+</div>
+<ul class="simple">
+<li>PrefixPath GatewayFilter Factory(add prefixpath)</li>
+<li>PreserveHostHeader GatewayFilter Factory(set original host header)</li>
+<li>RequestRateLimiter GatewayFilter Factory</li>
+<li>RedirectTo GatewayFilter Factory</li>
+<li>RemoveNonProxyHeaders GatewayFilter Factory</li>
+<li>RemoveRequestHeader GatewayFilter Factory</li>
+<li>RemoveResponseHeader GatewayFilter Factory</li>
+<li>RewritePath GatewayFilter Factory</li>
+<li>SaveSession GatewayFilter Factory(Spring Sesion 必备)</li>
+<li>SetPath GatewayFilter Factory</li>
+<li>SetResponseHeader GatewayFilter Factory</li>
+<li>SetStatus GatewayFilter Factory</li>
+<li>StripPrefix GatewayFilter Factory</li>
+<li>Retry GatewayFilter Factory</li>
+</ul>
+<div class="section" id="redis-ratelimiter">
+<h4>Redis RateLimiter<a class="headerlink" href="#redis-ratelimiter" title="Permalink to this headline">¶</a></h4>
+<p>The algorithm used is the Token Bucket Algorithm.</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>spring:
+  cloud:
+    gateway:
+      routes:
+      - id: requestratelimiter_route
+        uri: http://example.org
+        filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 10 #桶的回填速率
+            redis-rate-limiter.burstCapacity: 20 #桶的回填速率
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="global-filters">
+<h3>Global Filters<a class="headerlink" href="#global-filters" title="Permalink to this headline">¶</a></h3>
+<p>The GlobalFilter interface has the same signature as GatewayFilter.</p>
+<p>This combined filter chain is sorted by the org.springframework.core.Ordered interface, which can be set by implementing
+the getOrder() method or by using the &#64;Order annotation.</p>
+<ul class="simple">
+<li>Forward Routing Filter</li>
+<li>LoadBalancerClient Filter</li>
+<li>Netty Routing Filter</li>
+<li>Netty Write Response Filter</li>
+<li>RouteToRequestUrl Filter</li>
+<li>Websocket Routing Filter</li>
+<li>Gateway Metrics Filter</li>
+</ul>
+</div>
+<div class="section" id="tls-ssl">
+<h3>TLS/SSL<a class="headerlink" href="#tls-ssl" title="Permalink to this headline">¶</a></h3>
+<p>Gateway routes can be routed to both http and https backends.</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>server:
+  ssl:
+    enabled: true
+    key-alias: scg
+    key-store-password: scg1234
+    key-store: classpath:scg-keystore.p12
+    key-store-type: PKCS12
+
+spring:
+  cloud:
+    gateway:
+      httpclient:
+        ssl:
+          trustedX509Certificates:
+          - cert1.pem
+          - cert2.pem
+</pre></div>
+</div>
+</div>
+<div class="section" id="cors-configuration">
+<h3>CORS Configuration<a class="headerlink" href="#cors-configuration" title="Permalink to this headline">¶</a></h3>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          &#39;[/\**]&#39;:
+            allowedOrigins: &quot;docs.spring.io&quot;
+            allowedMethods:
+            - GET
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-spring-mvc-or-webflux">
+<h3>Using Spring MVC or Webflux<a class="headerlink" href="#using-spring-mvc-or-webflux" title="Permalink to this headline">¶</a></h3>
+<p>Spring Cloud Gateway provides a utility object called ProxyExchange which you can use inside a regular Spring web handler as a method parameter.</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>//spring-cloud-gateway-mvc:
+@RestController
+@SpringBootApplication
+public class GatewaySampleApplication {
+
+    @Value(&quot;${remote.home}&quot;)
+    private URI home;
+
+    @GetMapping(&quot;/test&quot;)
+    public ResponseEntity&lt;?&gt; proxy(ProxyExchange&lt;byte[]&gt; proxy) throws Exception {
+        return proxy.uri(home.toString() + &quot;/image/png&quot;).get();
+    }
+
+}
+
+//spring-cloud-gateway-weflux:
+@RestController
+@SpringBootApplication
+public class GatewaySampleApplication {
+
+    @Value(&quot;${remote.home}&quot;)
+    private URI home;
+
+    @GetMapping(&quot;/test&quot;)
+    public Mono&lt;ResponseEntity&lt;?&gt;&gt; proxy(ProxyExchange&lt;byte[]&gt; proxy) throws Exception {
+        return proxy.uri(home.toString() + &quot;/image/png&quot;).get();
+    }
+
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>自定义filter</p>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>@Service
+public class AuthFilter implements GlobalFilter {
+
+    private String remoteOauthServer = &quot;http://172.27.63.11:8080/oauth/check_token?token=&quot;;
+    @Override
+    public Mono&lt;Void&gt; filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        System.out.println(&quot;进入AuthFilter&quot;);
+        boolean isAllow = checkOauthToken(exchange.getRequest());
+        if (isAllow) {
+            return chain.filter(exchange);
+        } else {
+        //设置status和body
+        return Mono.defer(() -&gt; {
+            setResponseStatus(exchange, HttpStatus.UNAUTHORIZED);
+            final ServerHttpResponse response = exchange.getResponse();
+            byte[] bytes = &quot;Token invalidate&quot;.getBytes(StandardCharsets.UTF_8);
+            DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
+            return response.writeWith(Flux.just(buffer));
+            });
+        }
+    }
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="spring_security.html" title="Spring Security"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="spring.html" title="Spring"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

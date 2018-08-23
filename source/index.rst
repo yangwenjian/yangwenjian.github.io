@@ -109,6 +109,7 @@ Sulotion of Distribution
 .. toctree::
    :maxdepth: 1
   
+   _templates/distribution/mongoDB
    _templates/distribution/hadoop
    _templates/distribution/storage
    _templates/distribution/zookeeper
@@ -144,6 +145,8 @@ Programming Framework
    :maxdepth: 1
  
    _templates/programming/framework/spring
+   _templates/programming/framework/springcloud
+   _templates/programming/framework/springcloud_netflix
    _templates/programming/framework/spring_security
    _templates/programming/framework/netty
    _templates/programming/java/guice

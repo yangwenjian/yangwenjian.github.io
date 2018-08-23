@@ -37,6 +37,26 @@ Docker Design
 Docker uses a client-server architecture.
 The docker client and daemon communicate via sockets or through restful api.
 
+namespace isolation
+---------------------------------------
+namespace的6项隔离
+
++-------------------+-----------------------+----------------------------+
+| namespace         | parameter             | isolatoin                  |
++===================+=======================+============================+
+| UTS               | CLONE_NEWUTS          | 主机与域名                 |
++-------------------+-----------------------+----------------------------+
+| IPC               | CLONE_NEWIPC          | 信号量、消息队列和共享内存 |
++-------------------+-----------------------+----------------------------+
+| PID               | CLONE_NEWPID          | 进程编号                   |
++-------------------+-----------------------+----------------------------+
+| Network           | CLONE_NEWNET          | 网络设备、网络栈、端口等   |
++-------------------+-----------------------+----------------------------+
+| Mount             | CLONE_NEWNS           | 挂载点                     |
++-------------------+-----------------------+----------------------------+
+| User              | CLONE_NEWUSER         | 用户和用户组               |
++-------------------+-----------------------+----------------------------+
+
 The Docker Daemon
 -----------------------------------
 The docker daemon runs on a host machine. The user does not directly interact with the daemon, but instead through the Docker client.

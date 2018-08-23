@@ -7,6 +7,21 @@ Spring Security
 Spring Security基于Spring框架，提供了一套Web应用安全性的完整解决方案。
 包括Web应用的用户认证（Authentication）和用户授权（Authorization）两个部分。
 
+Spring Security架构
+================================================
+
+Authentication and Access Control
+------------------------------------------------
+An AuthenticationManager can do one of 3 things in its authenticate() method:
+
+1. return an Authentication (normally with authenticated=true) if it can verify that the input represents a valid principal.
+2. throw an AuthenticationException if it believes that the input represents an invalid principal.
+3. return null if it can’t decide.
+
+AuthenticationProvider is a bit like an AuthenticationManager but it has an extra method to allow the caller to query if it 
+supports a given Authentication type.
+
+
 Spring Security如何控制权限
 ================================================
 Spring Security使用Filter组成的Chain来判断权限，主要是有AccessDecisionManager中的AccessDecisionVoter(AuthenticationVoter, 
@@ -60,7 +75,7 @@ Spring预定义了很多out-of-boxed filter供开发者直接使用。
 -----------------------------------------------
 1. 使用最简单的配置方式，直接写在xml文件中；
 2. 使用dataSource进行配置，数据库中需要有相应的表进行对应；
-3. 提供表和查询sql，又Spring Security自己进行查询；
+3. 提供表和查询sql，由Spring Security自己进行查询；
 4. 自定义filter和voter等，进行扩展；
 
 参考资料
