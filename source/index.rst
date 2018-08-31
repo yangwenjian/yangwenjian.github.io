@@ -180,6 +180,7 @@ Java On Roll
    _templates/programming/java/synchronous
    _templates/programming/java/java_code_style
    _templates/programming/java/log_and_exception
+   _templates/programming/java/btrace
 
 Work
 =======================================

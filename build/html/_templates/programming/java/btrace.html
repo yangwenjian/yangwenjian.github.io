@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Btrace &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="NetStone数据整合方案" href="../../work/netstone_shell.html" />
+    <link rel="prev" title="日志及异常规范定义" href="log_and_exception.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../work/netstone_shell.html" title="NetStone数据整合方案"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="log_and_exception.html" title="日志及异常规范定义"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Btrace</a><ul>
+<li><a class="reference internal" href="#id1">功能</a></li>
+<li><a class="reference internal" href="#api">API</a></li>
+<li><a class="reference internal" href="#id2">限制</a><ul>
+<li><a class="reference internal" href="#id3">最佳实践</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="log_and_exception.html"
+                        title="previous chapter">日志及异常规范定义</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../work/netstone_shell.html"
+                        title="next chapter">NetStone数据整合方案</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/programming/java/btrace.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="btrace">
+<h1>Btrace<a class="headerlink" href="#btrace" title="Permalink to this headline">¶</a></h1>
+<p>BTrace是Java的安全可靠的动态跟踪工具。 他的工作原理是通过 instrument + asm 来对正在运行的java程序中的class类进行动态增强。</p>
+<p>虚拟机其实提供了一个hook，那就是Instrumentation，可以将独立于应用程序的代理程序agent程序随着着应用程序一起启动或者attach
+挂载到正在运行中的应用程序。而在代理程序中可以对class进行修改或者重新定义。</p>
+<p>其本质是利用JVM的hotspot特性，改变jvm加载的类文件，通过类似AOP的方式进行拦截，也可以想象成解释型语言的机制，动态编译。</p>
+<div class="section" id="id1">
+<h2>功能<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>接口性能变慢，分析每个方法的耗时情况；</li>
+<li>当在Map中插入大量数据，分析其扩容情况；</li>
+<li>分析哪个方法调用了某个函数，调用栈如何；</li>
+<li>执行某个方法抛出异常时，分析运行时参数；</li>
+</ul>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>Method Annotations
+@com.sun.btrace.annotations.OnMethod //探测点
+@com.sun.btrace.annotations.OnTimer //定时器
+@com.sun.btrace.annotations.OnError //发生异常时回调
+@com.sun.btrace.annotations.OnExit //代码调用exit
+@com.sun.btrace.annotations.OnEvent //用户端事件
+@com.sun.btrace.annotations.OnLowMemory //内存低于阈值
+@com.sun.btrace.annotations.OnProbe //支持xml格式声明探测点
+Argument Annotations
+@com.sun.btrace.annotations.Self
+@com.sun.btrace.annotations.Return
+@com.sun.btrace.annotations.CalledInstance
+@com.sun.btrace.annotations.CalledMethod
+Field Annotations
+@com.sun.btrace.annotations.Export
+@com.sun.btrace.annotations.Property
+@com.sun.btrace.annotations.TLS
+Class Annotations
+@com.sun.btrace.annotations.DTrace
+@com.sun.btrace.annotations.DTraceRef
+@com.sun.btrace.annotations.BTrace
+</pre></div>
+</div>
+<ul class="simple">
+<li>clazz: 全路径类名，支持正则表达式，格式为/正则表达式/ +类名 匹配子类 &#64;前缀 匹配anotation声明的类</li>
+<li>method: 方法名，支持正则表达式，格式为/正则表达式/， anotation使用* &#64;</li>
+<li>location: 用* &#64;Location来表明在什么时候时候去执行脚本</li>
+<li>Kind.ENTRY 进入方法时</li>
+<li>Kind.RETURN 方法返回时，只有把拦截位置定义为Kind.RETURN，才能获取方法的返回结果&#64;Return和执行时间&#64;Duration</li>
+<li>Kind.THROW 抛出异常时</li>
+<li>Kind.ARRAY_SET 设置数组元素时</li>
+<li>Kind.ARRAY_GET 获取数组元素时</li>
+<li>Kind.NEWARRAY 创建新数组时</li>
+<li>Kind.NEW 创建新对象时</li>
+<li>Kind.CALL 分析方法中调用其它方法的执行情况，比如在execute方法中，想获取add方法的执行耗时，必须把where设置成Where.AFTER</li>
+<li>Kind.CATCH 捕获异常时</li>
+<li>Kind.FIELD_SET 获取对象属性时</li>
+<li>Kind.FIELD_SET 设置对象属性时</li>
+<li>Kind.ERROR 方法由于发生未被捕获的异常结束时</li>
+<li>Kind.SYNC_ENTRY 进入同步块时</li>
+<li>Kind.SYNC_EXIT 离开同步块时</li>
+<li>Kind.LINE 通过设置line，可以监控代码是否执行到指定的位置</li>
+<li>type 方法类型， 不含方法名、参数民、异常声明。</li>
+</ul>
+<p>class example:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>使用全限定名：clazz=&quot;com.metty.rpc.common.BtraceCase&quot;, method=&quot;add&quot;
+使用正则表达式：clazz=&quot;/javax.swing../&quot;, method=&quot;/./&quot;
+使用接口：clazz=&quot;+com.ctrip.demo.Filter&quot;, method=&quot;doFilter&quot;
+使用注解：clazz=&quot;@javax.jws.WebService&quot;, method=&quot;&quot;@javax.jws.WebMethod&quot;
+如果需要分析构造方法，需要指定method=&quot;&quot;
+</pre></div>
+</div>
+<p>Kind.LINE example, who called CaseObject line 5:</p>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>import static com.sun.btrace.BTraceUtils.*;
+import com.sun.btrace.annotations.*;
+
+@BTrace public class TraceMethodLine{
+   @OnMethod(
+      clazz=&quot;CaseObject&quot;,
+      location=@Location(value=Kind.LINE,line=5)
+   )
+   public static void traceExecute(@ProbeClassName String pcn,@ProbeMethodNameString pmn,int line){
+     println(strcat(strcat(strcat(&quot;call &quot;,pcn),&quot;.&quot;),pmn));
+   }
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>限制<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>不能创建对象</li>
+<li>不能创建数组</li>
+<li>不能抛出和捕获异常</li>
+<li>不能调用任何对象方法和静态方法</li>
+<li>不能给目标程序中的类静态属性和对象的属性进行赋值</li>
+<li>不能有外部、内部和嵌套类</li>
+<li>不能有同步块和同步方法</li>
+<li>不能有循环(for, while, do..while)</li>
+<li>不能继承任何的类</li>
+<li>不能实现接口</li>
+<li>不能包含assert断言语句</li>
+</ul>
+<p>这些限制其实是可以使用unsafe模式绕过。通过声明*&#64;BTrace(unsafe = true) annotation 并且以unsafe 模式-u运行btrace</p>
+<p>实际使用非安全模式跟踪时，发现一个问题，一个进程如果被安全模式btrace探测过一次， 后面再使用非安全模式进行探测时非安全模式不生效。</p>
+<div class="section" id="id3">
+<h3>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>/* BTrace Script Template */
+ import com.sun.btrace.annotations.*;
+ import static com.sun.btrace.BTraceUtils.*;
+
+ @BTrace
+ public class TracingScript {
+ /* put your code here */
+ /*指明要查看的方法，类*/
+     @OnMethod(
+         clazz=&quot;com.linlong.platform.versionmanage.managerservice.VersionService&quot;,
+         method=&quot;deleteVersion&quot;,
+         location=@Location(Kind.RETURN)
+     )
+ /*主要两个参数是对象自己的引用 和 返回值，其它参数都是方法调用时传入的参数*/
+     public static void traceExecute(@Self com.linlong.platform.versionmanage.managerservice.VersionService object,Long id, @Return boolean result){
+         println(&quot;调用堆栈！！&quot;);
+         println(strcat(&quot;返回结果是：&quot;,str(result)));//打印结果
+         jstack();
+         println(str(id));//打印参数
+         println(&quot;over&quot;);
+    }
+
+ }
+
+ import static com.sun.btrace.BTraceUtils.*;
+ import com.sun.btrace.BTraceUtils;
+ import com.sun.btrace.annotations.*;
+
+ @BTrace
+ public class TraceAllDelegate {
+
+     @TLS
+     private static long startTime = 0;
+
+     @OnMethod(clazz = &quot;/com//.crm//.components//..*Delegate.*/&quot;, method = &quot;/.*/&quot;)
+     public static void startMethod(){
+         startTime = BTraceUtils.timeMillis();
+     }
+
+     @OnMethod(clazz = &quot;/com//.crm//.components//..*Delegate.*/&quot;, method = &quot;/.*/&quot;, location = @Location(Kind.RETURN))
+     public static void endMethod(){
+         println(strcat(&quot;time taken=&gt;&quot;,str(BTraceUtils.timeMillis()-startTime)));
+         println(&quot;--------------------------------------&quot;);
+     }
+
+     @OnMethod(clazz = &quot;/com//.crm//.components//..*Delegate.*/&quot;, method = &quot;/.*/&quot;, location = @Location(Kind.RETURN))
+     public static void print(@ProbeClassName String pcn,@ProbeMethodName String pmn) {
+         println(pcn);
+         println(pmn);
+     }
+ }
+ //Kind.LINE
+ import com.sun.btrace.annotations.*;
+ import static com.sun.btrace.BTraceUtils.*;
+
+ @BTrace
+ public class AllLines {
+     @OnMethod(
+         clazz=&quot;com.linlong.platform.versionmanage.managerservice.VersionService&quot;,
+         location=@Location(value=Kind.LINE, line=0)
+     )
+     public static void online(@ProbeClassName String pcn, @ProbeMethodName String pmn, int line) {
+         println(pcn + &quot;.&quot; + pmn +  &quot;:&quot; + line);
+     }
+ }
+
+ //print field example
+     public static void traceExecute(@Self com.linlong.platform.versionmanage.managerservice.VersionService object, Long id, @Return com.linlong.platform.entity.VersionManagerEntity result){
+         println(&quot;调用堆栈！！&quot;);
+         println(strcat(&quot;返回结果是：&quot;,str(result)));
+         println(result);
+         printFields(result);
+         println(get(field(&quot;com.linlong.platform.entity.VersionManagerEntity&quot;,&quot;versionName&quot;), result));
+         //jstack();
+         //println(str(id));
+         println(&quot;over&quot;);
+     }
+ // call method:
+ @BTrace
+ public class ExpandCapacityBtrace {
+     @OnMethod(clazz = &quot;java.util.HashMap&quot;, method = &quot;resize&quot;,
+             location = @Location(value = Kind.CALL, clazz = &quot;/.*/&quot;, method = &quot;/.*/&quot;))
+     public static void traceMapExpandCapacity(@ProbeClassName String probeClass, @ProbeMethodName String probeMethod,
+                                               @Self Object self,int newCapacity) {
+         String point = Strings.strcat(Strings.strcat(probeClass, &quot;.&quot;), probeMethod);//java/util/HashMap.resize
+         Class clazz = classForName(&quot;java.util.HashMap&quot;);
+         println(Strings.strcat(point, &quot;======&quot;));
+         //获取实例protected变量
+         Map.Entry[] table= (Map.Entry[]) get(field(clazz, &quot;table&quot;, true), self);
+         int threshold = getInt(field(clazz, &quot;threshold&quot;, true), self);
+         int size = getInt(field(clazz, &quot;size&quot;, true), self);
+         println(Strings.strcat(&quot;newCapacity:&quot;, str(newCapacity)));
+         println(Strings.strcat(&quot;table.length:&quot;, str(table.length)));
+         println(Strings.strcat(&quot;size:&quot;, str(size)));
+         println(Strings.strcat(&quot;threshold:&quot;, str(threshold)));
+         println(Strings.strcat(point, &quot;------------&quot;));
+     }
+ }
+</pre></div>
+</div>
+<p>执行命令：</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>#btrace [-I &lt;include-path&gt;] [-p &lt;port&gt;] [-cp &lt;classpath&gt;] &lt;pid&gt; &lt;btrace-script&gt; [&lt;args&gt;]
+#include-path指定头文件的路径，用于脚本预处理功能，可选；
+#port指定BTrace agent的服务端监听端口号，用来监听clients，默认为2020，可选；
+#classpath用来指定类加载路径，默认为当前路径，可选；
+#pid表示进程号，可通过jps命令获取；
+#btrace-script btrace脚本如果以.java结尾，会先编译再提交执行。可使用btracec命令对脚本进行预编译。
+#args是BTrace脚本可选参数，在脚本中可通过$和$length获取参数信息
+
+./bin/btrace -classpath /opt/apache-tomcat-8.0.50/webapps/CLL-Platform-Manager/WEB-INF/classes/ 31374 TracingScript.java
+#必须将自己的class文件加入到classpath中，否则会出现找不到包或者类的情况
+
+#btracec [-I &lt;include-path&gt;] [-cp &lt;classpath&gt;] [-d &lt;directory&gt;] &lt;one-or-more-BTrace-.java-files&gt;
+btracer &lt;pre-compiled-btrace.class&gt; &lt;application-main-class&gt; &lt;application-args&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../work/netstone_shell.html" title="NetStone数据整合方案"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="log_and_exception.html" title="日志及异常规范定义"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

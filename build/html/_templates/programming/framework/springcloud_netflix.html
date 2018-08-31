@@ -61,7 +61,10 @@
 <li><a class="reference internal" href="#circuit-breaker-hystrix-clients">Circuit Breaker: Hystrix Clients</a></li>
 <li><a class="reference internal" href="#client-side-load-balancer-ribbon">Client Side Load Balancer: Ribbon</a></li>
 <li><a class="reference internal" href="#external-configuration-archaius">External Configuration: Archaius</a></li>
-<li><a class="reference internal" href="#router-and-filter-zuul">Router and Filter: Zuul</a></li>
+<li><a class="reference internal" href="#router-and-filter-zuul">Router and Filter: Zuul</a><ul>
+<li><a class="reference internal" href="#custom-zuul-filter-examples">Custom Zuul Filter Examples</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -211,6 +214,113 @@ myusers-service:
     MaxTotalHttpConnections: 500
     MaxConnectionsPerHost: 100
 </pre></div>
+</div>
+<div class="section" id="custom-zuul-filter-examples">
+<h3>Custom Zuul Filter Examples<a class="headerlink" href="#custom-zuul-filter-examples" title="Permalink to this headline">¶</a></h3>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public class QueryParamPreFilter extends ZuulFilter {
+    @Override
+    public int filterOrder() {
+        return PRE_DECORATION_FILTER_ORDER - 1; // run before PreDecoration
+    }
+    @Override
+    public String filterType() {
+        return PRE_TYPE;
+    }
+    @Override
+    public boolean shouldFilter() {
+        RequestContext ctx = RequestContext.getCurrentContext();
+        return !ctx.containsKey(FORWARD_TO_KEY) // a filter has already forwarded
+                &amp;&amp; !ctx.containsKey(SERVICE_ID_KEY); // a filter has already determined serviceId
+    }
+    @Override
+    public Object run() {
+        RequestContext ctx = RequestContext.getCurrentContext();
+        HttpServletRequest request = ctx.getRequest();
+        if (request.getParameter(&quot;sample&quot;) != null) {
+            // put the serviceId in `RequestContext`
+            ctx.put(SERVICE_ID_KEY, request.getParameter(&quot;foo&quot;));
+        }
+        return null;
+    }
+}
+
+public class OkHttpRoutingFilter extends ZuulFilter {
+    @Autowired
+    private ProxyRequestHelper helper;
+
+    @Override
+    public String filterType() {
+        return ROUTE_TYPE;
+    }
+
+    @Override
+    public int filterOrder() {
+        return SIMPLE_HOST_ROUTING_FILTER_ORDER - 1;
+    }
+
+    @Override
+    public boolean shouldFilter() {
+        return RequestContext.getCurrentContext().getRouteHost() != null
+                &amp;&amp; RequestContext.getCurrentContext().sendZuulResponse();
+    }
+
+    @Override
+    public Object run() {
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                // customize
+                .build();
+
+        RequestContext context = RequestContext.getCurrentContext();
+        HttpServletRequest request = context.getRequest();
+
+        String method = request.getMethod();
+
+        String uri = this.helper.buildZuulRequestURI(request);
+
+        Headers.Builder headers = new Headers.Builder();
+        Enumeration&lt;String&gt; headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            Enumeration&lt;String&gt; values = request.getHeaders(name);
+
+            while (values.hasMoreElements()) {
+                String value = values.nextElement();
+                headers.add(name, value);
+            }
+        }
+
+        InputStream inputStream = request.getInputStream();
+
+        RequestBody requestBody = null;
+        if (inputStream != null &amp;&amp; HttpMethod.permitsRequestBody(method)) {
+            MediaType mediaType = null;
+            if (headers.get(&quot;Content-Type&quot;) != null) {
+                mediaType = MediaType.parse(headers.get(&quot;Content-Type&quot;));
+            }
+            requestBody = RequestBody.create(mediaType, StreamUtils.copyToByteArray(inputStream));
+        }
+
+        Request.Builder builder = new Request.Builder()
+                .headers(headers.build())
+                .url(uri)
+                .method(method, requestBody);
+
+        Response response = httpClient.newCall(builder.build()).execute();
+
+        LinkedMultiValueMap&lt;String, String&gt; responseHeaders = new LinkedMultiValueMap&lt;&gt;();
+
+        for (Map.Entry&lt;String, List&lt;String&gt;&gt; entry : response.headers().toMultimap().entrySet()) {
+            responseHeaders.put(entry.getKey(), entry.getValue());
+        }
+
+        this.helper.setResponse(response.code(), response.body().byteStream(),
+                responseHeaders);
+        context.setRouteHost(null); // prevent SimpleHostRoutingFilter from running
+        return null;
+    }
+}
+</pre></div>
+</div>
 </div>
 </div>
 </div>
