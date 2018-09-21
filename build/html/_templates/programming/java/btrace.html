@@ -92,10 +92,12 @@
             
   <div class="section" id="btrace">
 <h1>Btrace<a class="headerlink" href="#btrace" title="Permalink to this headline">¶</a></h1>
+<p>Safe, dynamic tracing tool for Java. BTrace works by dynamically (bytecode) instrumenting classes of a running Java program.
+BTrace inserts tracing actions into the classes of a running Java program and hotswaps the traced program classes.</p>
 <p>BTrace是Java的安全可靠的动态跟踪工具。 他的工作原理是通过 instrument + asm 来对正在运行的java程序中的class类进行动态增强。</p>
 <p>虚拟机其实提供了一个hook，那就是Instrumentation，可以将独立于应用程序的代理程序agent程序随着着应用程序一起启动或者attach
 挂载到正在运行中的应用程序。而在代理程序中可以对class进行修改或者重新定义。</p>
-<p>其本质是利用JVM的hotspot特性，改变jvm加载的类文件，通过类似AOP的方式进行拦截，也可以想象成解释型语言的机制，动态编译。</p>
+<p>其本质是利用JVM的JVMTI特性，改变jvm加载的类文件，通过类似AOP的方式进行拦截，也可以想象成解释型语言的机制，动态编译。</p>
 <div class="section" id="id1">
 <h2>功能<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -194,6 +196,7 @@ import com.sun.btrace.annotations.*;
 <p>实际使用非安全模式跟踪时，发现一个问题，一个进程如果被安全模式btrace探测过一次， 后面再使用非安全模式进行探测时非安全模式不生效。</p>
 <div class="section" id="id3">
 <h3>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>打印堆栈和参数</p>
 <div class="code java highlight-python"><div class="highlight"><pre><span></span>/* BTrace Script Template */
  import com.sun.btrace.annotations.*;
  import static com.sun.btrace.BTraceUtils.*;
@@ -217,81 +220,86 @@ import com.sun.btrace.annotations.*;
     }
 
  }
+</pre></div>
+</div>
+<p>打印执行时间</p>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>import static com.sun.btrace.BTraceUtils.*;
+import com.sun.btrace.BTraceUtils;
+import com.sun.btrace.annotations.*;
 
- import static com.sun.btrace.BTraceUtils.*;
- import com.sun.btrace.BTraceUtils;
- import com.sun.btrace.annotations.*;
+@BTrace
+public class TraceAllDelegate {
 
- @BTrace
- public class TraceAllDelegate {
+    @TLS
+    private static long startTime = 0;
 
-     @TLS
-     private static long startTime = 0;
+    @OnMethod(clazz = &quot;/com//.crm//.components//..*Delegate.*/&quot;, method = &quot;/.*/&quot;)
+    public static void startMethod(){
+        startTime = BTraceUtils.timeMillis();
+    }
 
-     @OnMethod(clazz = &quot;/com//.crm//.components//..*Delegate.*/&quot;, method = &quot;/.*/&quot;)
-     public static void startMethod(){
-         startTime = BTraceUtils.timeMillis();
-     }
+    @OnMethod(clazz = &quot;/com//.crm//.components//..*Delegate.*/&quot;, method = &quot;/.*/&quot;, location = @Location(Kind.RETURN))
+    public static void endMethod(){
+        println(strcat(&quot;time taken=&gt;&quot;,str(BTraceUtils.timeMillis()-startTime)));
+        println(&quot;--------------------------------------&quot;);
+    }
 
-     @OnMethod(clazz = &quot;/com//.crm//.components//..*Delegate.*/&quot;, method = &quot;/.*/&quot;, location = @Location(Kind.RETURN))
-     public static void endMethod(){
-         println(strcat(&quot;time taken=&gt;&quot;,str(BTraceUtils.timeMillis()-startTime)));
-         println(&quot;--------------------------------------&quot;);
-     }
+    @OnMethod(clazz = &quot;/com//.crm//.components//..*Delegate.*/&quot;, method = &quot;/.*/&quot;, location = @Location(Kind.RETURN))
+    public static void print(@ProbeClassName String pcn,@ProbeMethodName String pmn) {
+        println(pcn);
+        println(pmn);
+    }
+}
+</pre></div>
+</div>
+<p>打印执行到哪行，对象的属性，map扩容信息</p>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Kind.LINE
+import com.sun.btrace.annotations.*;
+import static com.sun.btrace.BTraceUtils.*;
 
-     @OnMethod(clazz = &quot;/com//.crm//.components//..*Delegate.*/&quot;, method = &quot;/.*/&quot;, location = @Location(Kind.RETURN))
-     public static void print(@ProbeClassName String pcn,@ProbeMethodName String pmn) {
-         println(pcn);
-         println(pmn);
-     }
- }
- //Kind.LINE
- import com.sun.btrace.annotations.*;
- import static com.sun.btrace.BTraceUtils.*;
+@BTrace
+public class AllLines {
+    @OnMethod(
+        clazz=&quot;com.linlong.platform.versionmanage.managerservice.VersionService&quot;,
+        location=@Location(value=Kind.LINE, line=0)
+    )
+    public static void online(@ProbeClassName String pcn, @ProbeMethodName String pmn, int line) {
+        println(pcn + &quot;.&quot; + pmn +  &quot;:&quot; + line);
+    }
+}
 
- @BTrace
- public class AllLines {
-     @OnMethod(
-         clazz=&quot;com.linlong.platform.versionmanage.managerservice.VersionService&quot;,
-         location=@Location(value=Kind.LINE, line=0)
-     )
-     public static void online(@ProbeClassName String pcn, @ProbeMethodName String pmn, int line) {
-         println(pcn + &quot;.&quot; + pmn +  &quot;:&quot; + line);
-     }
- }
-
- //print field example
-     public static void traceExecute(@Self com.linlong.platform.versionmanage.managerservice.VersionService object, Long id, @Return com.linlong.platform.entity.VersionManagerEntity result){
-         println(&quot;调用堆栈！！&quot;);
-         println(strcat(&quot;返回结果是：&quot;,str(result)));
-         println(result);
-         printFields(result);
-         println(get(field(&quot;com.linlong.platform.entity.VersionManagerEntity&quot;,&quot;versionName&quot;), result));
-         //jstack();
-         //println(str(id));
-         println(&quot;over&quot;);
-     }
- // call method:
- @BTrace
- public class ExpandCapacityBtrace {
-     @OnMethod(clazz = &quot;java.util.HashMap&quot;, method = &quot;resize&quot;,
-             location = @Location(value = Kind.CALL, clazz = &quot;/.*/&quot;, method = &quot;/.*/&quot;))
-     public static void traceMapExpandCapacity(@ProbeClassName String probeClass, @ProbeMethodName String probeMethod,
-                                               @Self Object self,int newCapacity) {
-         String point = Strings.strcat(Strings.strcat(probeClass, &quot;.&quot;), probeMethod);//java/util/HashMap.resize
-         Class clazz = classForName(&quot;java.util.HashMap&quot;);
-         println(Strings.strcat(point, &quot;======&quot;));
-         //获取实例protected变量
-         Map.Entry[] table= (Map.Entry[]) get(field(clazz, &quot;table&quot;, true), self);
-         int threshold = getInt(field(clazz, &quot;threshold&quot;, true), self);
-         int size = getInt(field(clazz, &quot;size&quot;, true), self);
-         println(Strings.strcat(&quot;newCapacity:&quot;, str(newCapacity)));
-         println(Strings.strcat(&quot;table.length:&quot;, str(table.length)));
-         println(Strings.strcat(&quot;size:&quot;, str(size)));
-         println(Strings.strcat(&quot;threshold:&quot;, str(threshold)));
-         println(Strings.strcat(point, &quot;------------&quot;));
-     }
- }
+//print field example
+    public static void traceExecute(@Self com.linlong.platform.versionmanage.managerservice.VersionService object, Long id, @Return com.linlong.platform.entity.VersionManagerEntity result){
+        println(&quot;调用堆栈！！&quot;);
+        println(strcat(&quot;返回结果是：&quot;,str(result)));
+        println(result);
+        printFields(result);
+        println(get(field(&quot;com.linlong.platform.entity.VersionManagerEntity&quot;,&quot;versionName&quot;), result));
+        //jstack();
+        //println(str(id));
+        println(&quot;over&quot;);
+    }
+// call method:
+@BTrace
+public class ExpandCapacityBtrace {
+    @OnMethod(clazz = &quot;java.util.HashMap&quot;, method = &quot;resize&quot;,
+            location = @Location(value = Kind.CALL, clazz = &quot;/.*/&quot;, method = &quot;/.*/&quot;))
+    public static void traceMapExpandCapacity(@ProbeClassName String probeClass, @ProbeMethodName String probeMethod,
+                                              @Self Object self,int newCapacity) {
+        String point = Strings.strcat(Strings.strcat(probeClass, &quot;.&quot;), probeMethod);//java/util/HashMap.resize
+        Class clazz = classForName(&quot;java.util.HashMap&quot;);
+        println(Strings.strcat(point, &quot;======&quot;));
+        //获取实例protected变量
+        Map.Entry[] table= (Map.Entry[]) get(field(clazz, &quot;table&quot;, true), self);
+        int threshold = getInt(field(clazz, &quot;threshold&quot;, true), self);
+        int size = getInt(field(clazz, &quot;size&quot;, true), self);
+        println(Strings.strcat(&quot;newCapacity:&quot;, str(newCapacity)));
+        println(Strings.strcat(&quot;table.length:&quot;, str(table.length)));
+        println(Strings.strcat(&quot;size:&quot;, str(size)));
+        println(Strings.strcat(&quot;threshold:&quot;, str(threshold)));
+        println(Strings.strcat(point, &quot;------------&quot;));
+    }
+}
 </pre></div>
 </div>
 <p>执行命令：</p>
@@ -303,11 +311,12 @@ import com.sun.btrace.annotations.*;
 #btrace-script btrace脚本如果以.java结尾，会先编译再提交执行。可使用btracec命令对脚本进行预编译。
 #args是BTrace脚本可选参数，在脚本中可通过$和$length获取参数信息
 
-./bin/btrace -classpath /opt/apache-tomcat-8.0.50/webapps/CLL-Platform-Manager/WEB-INF/classes/ 31374 TracingScript.java
-#必须将自己的class文件加入到classpath中，否则会出现找不到包或者类的情况
-
-#btracec [-I &lt;include-path&gt;] [-cp &lt;classpath&gt;] [-d &lt;directory&gt;] &lt;one-or-more-BTrace-.java-files&gt;
+btracec [-I &lt;include-path&gt;] [-cp &lt;classpath&gt;] [-d &lt;directory&gt;] &lt;one-or-more-BTrace-.java-files&gt;
 btracer &lt;pre-compiled-btrace.class&gt; &lt;application-main-class&gt; &lt;application-args&gt;
+</pre></div>
+</div>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>./bin/btrace -classpath lib/CLL-Platform-Entity-1.0.1-20180718.021537-185.jar:/opt/apache-tomcat-8.0.50/webapps/CLL-Platform-Manager/WEB-INF/classes/ 31374 TracingScript.java
+#必须将自己的class文件加入到classpath中，否则会出现找不到包或者类的情况
 </pre></div>
 </div>
 </div>

@@ -3,12 +3,15 @@
 =======================================
 Btrace
 =======================================
+Safe, dynamic tracing tool for Java. BTrace works by dynamically (bytecode) instrumenting classes of a running Java program. 
+BTrace inserts tracing actions into the classes of a running Java program and hotswaps the traced program classes.
+
 BTrace是Java的安全可靠的动态跟踪工具。 他的工作原理是通过 instrument + asm 来对正在运行的java程序中的class类进行动态增强。
 
 虚拟机其实提供了一个hook，那就是Instrumentation，可以将独立于应用程序的代理程序agent程序随着着应用程序一起启动或者attach
 挂载到正在运行中的应用程序。而在代理程序中可以对class进行修改或者重新定义。
 
-其本质是利用JVM的hotspot特性，改变jvm加载的类文件，通过类似AOP的方式进行拦截，也可以想象成解释型语言的机制，动态编译。
+其本质是利用JVM的JVMTI特性，改变jvm加载的类文件，通过类似AOP的方式进行拦截，也可以想象成解释型语言的机制，动态编译。
 
 功能
 ---------------------------------------
@@ -111,6 +114,7 @@ Kind.LINE example, who called CaseObject line 5:
 
 最佳实践
 =======================================
+打印堆栈和参数
 
 .. code:: java
 
@@ -137,7 +141,11 @@ Kind.LINE example, who called CaseObject line 5:
        }
 
     }
-    
+
+打印执行时间
+   
+.. code:: java
+
     import static com.sun.btrace.BTraceUtils.*;
     import com.sun.btrace.BTraceUtils;
     import com.sun.btrace.annotations.*;
@@ -165,6 +173,11 @@ Kind.LINE example, who called CaseObject line 5:
             println(pmn);
         }
     }
+
+打印执行到哪行，对象的属性，map扩容信息
+
+.. code:: java
+
     //Kind.LINE
     import com.sun.btrace.annotations.*;
     import static com.sun.btrace.BTraceUtils.*;
@@ -226,9 +239,12 @@ Kind.LINE example, who called CaseObject line 5:
     #pid表示进程号，可通过jps命令获取；
     #btrace-script btrace脚本如果以.java结尾，会先编译再提交执行。可使用btracec命令对脚本进行预编译。
     #args是BTrace脚本可选参数，在脚本中可通过$和$length获取参数信息
+    
+    btracec [-I <include-path>] [-cp <classpath>] [-d <directory>] <one-or-more-BTrace-.java-files>
+    btracer <pre-compiled-btrace.class> <application-main-class> <application-args>
 
-    ./bin/btrace -classpath /opt/apache-tomcat-8.0.50/webapps/CLL-Platform-Manager/WEB-INF/classes/ 31374 TracingScript.java
+.. code::
+
+    ./bin/btrace -classpath lib/CLL-Platform-Entity-1.0.1-20180718.021537-185.jar:/opt/apache-tomcat-8.0.50/webapps/CLL-Platform-Manager/WEB-INF/classes/ 31374 TracingScript.java
     #必须将自己的class文件加入到classpath中，否则会出现找不到包或者类的情况
 
-    #btracec [-I <include-path>] [-cp <classpath>] [-d <directory>] <one-or-more-BTrace-.java-files>
-    btracer <pre-compiled-btrace.class> <application-main-class> <application-args>
