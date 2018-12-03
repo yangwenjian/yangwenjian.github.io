@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>RabbitMQ &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Netty" href="netty.html" />
+    <link rel="prev" title="Cas" href="../web/cas.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="netty.html" title="Netty"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../web/cas.html" title="Cas"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">RabbitMQ</a><ul>
+<li><a class="reference internal" href="#exchange">Exchange</a><ul>
+<li><a class="reference internal" href="#direct-exchange">Direct Exchange</a></li>
+<li><a class="reference internal" href="#fanout-exchange">Fanout Exchange</a></li>
+<li><a class="reference internal" href="#topic-exchange">Topic Exchange</a></li>
+<li><a class="reference internal" href="#headers-exchange">Headers Exchange</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id1">最佳实践</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../web/cas.html"
+                        title="previous chapter">Cas</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="netty.html"
+                        title="next chapter">Netty</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/communication/rabbitMQ.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="rabbitmq">
+<h1>RabbitMQ<a class="headerlink" href="#rabbitmq" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Broker：简单来说就是消息队列服务器实体。</li>
+<li>Exchange：消息交换机，它指定消息按什么规则，路由到哪个队列。</li>
+<li>Queue：消息队列载体，每个消息都会被投入到一个或多个队列。</li>
+<li>Binding：绑定，它的作用就是把exchange和queue按照路由规则绑定起来。</li>
+<li>Routing Key：路由关键字，exchange根据这个关键字进行消息投递。</li>
+<li>Producer：消息生产者，就是投递消息的程序。</li>
+<li>Consumer：消息消费者，就是接受消息的程序。</li>
+<li>Channel：消息通道，在客户端的每个连接里，可建立多个channel，每个channel代表一个会话任务。</li>
+</ul>
+<div class="section" id="exchange">
+<h2>Exchange<a class="headerlink" href="#exchange" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>客户端连接到消息队列服务器，打开一个channel。</li>
+<li>客户端声明一个exchange，并设置相关属性。</li>
+<li>客户端声明一个queue，并设置相关属性。</li>
+<li>客户端使用routing key，在exchange和queue之间建立好绑定关系。</li>
+<li>客户端投递消息到exchange。</li>
+<li>exchange接收到消息后，就根据消息的key和已经设置的binding，进行消息路由，将消息投递到一个或多个队列里。</li>
+</ul>
+<div class="section" id="direct-exchange">
+<h3>Direct Exchange<a class="headerlink" href="#direct-exchange" title="Permalink to this headline">¶</a></h3>
+<img alt="../../_images/rabbitmq_direct_exchange.png" src="../../_images/rabbitmq_direct_exchange.png" />
+<p>这种类型的Exchange，通常是将同一个message以一种循环的方式分发到不同的Queue，即不同的消费者手中，使用这种方式，值得注意的是message在消费者之间做了一个均衡，而不是说message在Queues之间做了均衡</p>
+</div>
+<div class="section" id="fanout-exchange">
+<h3>Fanout Exchange<a class="headerlink" href="#fanout-exchange" title="Permalink to this headline">¶</a></h3>
+<img alt="../../_images/rabbitmq_fanout_exchange.png" src="../../_images/rabbitmq_fanout_exchange.png" />
+<p>使用这种类型的Exchange，会忽略routing key的存在，直接将message广播到所有的Queue中。
+第一：大型玩家在玩在线游戏的时候，可以用它来广播重大消息。这让我想到电影微微一笑很倾城中，有款游戏需要在世界上公布玩家重大消息，也许这个就是用的MQ实现的。这让我不禁佩服肖奈，人家在大学的时候就知道RabbitMQ的这种特性了。
+第二：体育新闻实时更新到手机客户端。
+第三：群聊功能，广播消息给当前群聊中的所有人。</p>
+</div>
+<div class="section" id="topic-exchange">
+<h3>Topic Exchange<a class="headerlink" href="#topic-exchange" title="Permalink to this headline">¶</a></h3>
+<p>Topic Exchange是根据routing key和Exchange的类型将message发送到一个或者多个Queue中，我们经常拿他来实现各种publish/subscribe，即发布订阅，这也是我们经常使用到的ExchangeType。</p>
+<p>首先建立queue和exchange，然后将两者按照routingkey进行绑定，之后按自定义的规则发送到该exchange，绑定时符合的queue将会收到该信息。
+另外rabbitMQ对于同一队列的多个消费者，采用轮循的机制进行分发消息。</p>
+<p>新闻的分类更新
+同意任务多个工作者协调完成
+同一问题需要特定人员知晓
+Topic Exchange的使用场景很多，我们公司就在使用这种模式，将足球事件信息发布，需要使用这些事件消息的人只需要绑定对应的Exchange就可以获取最新消息。</p>
+</div>
+<div class="section" id="headers-exchange">
+<h3>Headers Exchange<a class="headerlink" href="#headers-exchange" title="Permalink to this headline">¶</a></h3>
+<p>Headers Exchange不同于上面三种Exchange，它是根据Message的一些头部信息来分发过滤Message，忽略routing key的属性，如果Header信息和message消息的头信息相匹配，那么这条消息就匹配上了。</p>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>@Component
+@RabbitListener(queues = &quot;topic.messages&quot;)
+public class TopicMessagesReceiver {
+        // 接受者
+        @RabbitHandler
+        public void process(User user) {
+                System.out.println(&quot;TopicMessagesReceiver Consumer 2 : &quot; + user);
+        }
+
+}
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="netty.html" title="Netty"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../web/cas.html" title="Cas"
+             >previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

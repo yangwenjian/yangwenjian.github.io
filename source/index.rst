@@ -16,60 +16,15 @@ The Will of Knight
    :maxdepth: 1
  
    _templates/knight/oath
-   _templates/knight/resume_zh
-   _templates/knight/resume
 
-System Structure of Knowledge
+Theoretical Knowledge
 ======================================
 
 .. toctree::
    :maxdepth: 1
 
    _templates/knight/structure_of_knowledge
-
-
-Solution of Cloud Base Layer
-======================================
-
-.. toctree::
-   :maxdepth: 1
-
-   _templates/cloud/cloudOS
-   _templates/cloud/openstack_base
-   _templates/cloud/openstack_base_manager
-   _templates/cloud/jclouds
-   _templates/cloud/openstack/openstack
-   _templates/cloud/openstack/nova
-   _templates/cloud/openstack/neutron
-
-
-Sulotion of Linux&Unix
-======================================
-
-.. toctree::
-   :maxdepth: 1
-   
-   _templates/linux/regularExpressions
-   _templates/linux/lvm
-   _templates/linux/memory
-   _templates/linux/network
-   _templates/linux/firewall
-   _templates/linux/fork
-
-Linux Tools
---------------------------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   _templates/linux/tools/networktool
-   _templates/linux/tools/shell
-   _templates/linux/tools/git
-   _templates/linux/tools/vim
-   _templates/linux/tools/mysql
-   _templates/linux/tools/varnish
-   _templates/linux/tools/solr
-   _templates/linux/tools/elk
+   _templates/knight/architecture
 
 Architecture
 ======================================
@@ -111,11 +66,15 @@ Sulotion of Distribution
   
    _templates/distribution/mongoDB
    _templates/distribution/hadoop
+   _templates/distribution/hbase
    _templates/distribution/storage
    _templates/distribution/zookeeper
+   _templates/distribution/storm
    _templates/distribution/elastic
    _templates/distribution/micro_service
 
+Monitor
+=======================================
 
 Sulotion of Web Service
 ======================================
@@ -129,6 +88,15 @@ Sulotion of Web Service
    _templates/web/json
    _templates/web/webpage
    _templates/web/cas
+
+Middleware
+=======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/communication/rabbitMQ.rst
+   _templates/communication/netty.rst
 
 Performance
 =======================================
@@ -145,10 +113,11 @@ Programming Framework
    :maxdepth: 1
  
    _templates/programming/framework/spring
+   _templates/programming/framework/spring_boot
    _templates/programming/framework/springcloud
    _templates/programming/framework/springcloud_netflix
+   _templates/programming/framework/spring_data_jpa
    _templates/programming/framework/spring_security
-   _templates/programming/framework/netty
    _templates/programming/java/guice
    _templates/programming/framework/spring_aop
 
@@ -167,7 +136,7 @@ Programming Skill
    _templates/programming/common/debug
    _templates/programming/c/thinking_in_c
 
-Java On Roll
+Java And JVM
 --------------------------------------
 
 .. toctree::
@@ -177,10 +146,53 @@ Java On Roll
    _templates/programming/java/annotation
    _templates/programming/java/memory_manage
    _templates/programming/java/junit
+   _templates/programming/java/thread
    _templates/programming/java/synchronous
    _templates/programming/java/java_code_style
    _templates/programming/java/log_and_exception
    _templates/programming/java/btrace
+
+Cloud Computing
+======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/cloud/cloudOS
+   _templates/cloud/openstack_base
+   _templates/cloud/openstack_base_manager
+   _templates/cloud/jclouds
+   _templates/cloud/openstack/openstack
+   _templates/cloud/openstack/nova
+   _templates/cloud/openstack/neutron
+
+Tools
+=======================================
+
+.. toctree::
+   :maxdepth: 1
+
+   _templates/linux/tools/networktool
+   _templates/linux/tools/shell
+   _templates/linux/tools/git
+   _templates/linux/tools/vim
+   _templates/linux/tools/mysql
+   _templates/linux/tools/varnish
+   _templates/linux/tools/solr
+   _templates/linux/tools/elk
+
+Linux&Unix
+======================================
+
+.. toctree::
+   :maxdepth: 1
+   
+   _templates/linux/regularExpressions
+   _templates/linux/lvm
+   _templates/linux/memory
+   _templates/linux/network
+   _templates/linux/firewall
+   _templates/linux/fork
 
 Work
 =======================================

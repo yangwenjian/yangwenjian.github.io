@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Netty &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Web Performance" href="../performance/web_performance.html" />
+    <link rel="prev" title="RabbitMQ" href="rabbitMQ.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../performance/web_performance.html" title="Web Performance"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="rabbitMQ.html" title="RabbitMQ"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Netty</a><ul>
+<li><a class="reference internal" href="#socketio">SocketIO</a></li>
+<li><a class="reference internal" href="#nio">NIO</a><ul>
+<li><a class="reference internal" href="#channelfuture">channelFuture</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id1">最佳实践</a><ul>
+<li><a class="reference internal" href="#genericfuturelistener">GenericFutureListener</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="rabbitMQ.html"
+                        title="previous chapter">RabbitMQ</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../performance/web_performance.html"
+                        title="next chapter">Web Performance</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/_templates/communication/netty.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="netty">
+<h1>Netty<a class="headerlink" href="#netty" title="Permalink to this headline">¶</a></h1>
+<p>Netty is an asynchronous event-driven network application framework for rapid development of maintainable high
+performance protocol servers &amp; clients.</p>
+<p>Netty is a NIO client server framework which enables quick and easy development of network applications such as protocol servers and clients.</p>
+<p>Please keep in mind that it is the handler&#8217;s responsibility to release any reference-counted object passed to the handler.</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span><span class="n">ReferenceCountUtil</span><span class="o">.</span><span class="n">release</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="socketio">
+<h2>SocketIO<a class="headerlink" href="#socketio" title="Permalink to this headline">¶</a></h2>
+<p>SocketIO是用同步的方式等待客户端连接，当有客户端连接时，分配一个Handler进行处理。</p>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>while(true){
+    Socket socket = serverSocket.accept();
+    // Pass the socket to the RequestHandler thread for processing
+    RequestHandler requestHandler = new RequestHandler(socket);
+    requestHandler.start();
+}
+
+class RequestHandler extends Thread{
+    ...
+    public void run(){
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter out = new PrintWriter(socket.getOutputStream());
+        out.println(&quot;Echo Server 1.0&quot;);
+        out.flush();
+        String line = in.readLine();
+        while (line != null &amp;&amp; line.length() &gt; 0) {
+            out.println(&quot;Server Echo: &quot; + line);
+            out.flush();
+           line = in.readLine();
+        }
+        in.close();
+        out.close();
+        socket.close();
+    }
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="nio">
+<h2>NIO<a class="headerlink" href="#nio" title="Permalink to this headline">¶</a></h2>
+<p>NIO的本质是Socket连接，但使用了JDK7提供的异步处理框架FutureTask，调用后立即返回，避免阻塞。</p>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>final AsynchronousServerSocketChannel listener = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(8017));
+listener.accept(null, new CompletionHandler&lt;AsynchronousSocketChannel, Void&gt;() {
+    public void completed(AsynchronousSocketChannel ch, Void att) {
+        //accept the next connection
+        listener.accept(null, this);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
+        try{
+            int bytesRead = ch.read(byteBuffer).get(20, TimeUnit.SECONDS);
+            boolean running = true;
+            while (bytesRead != -1 &amp;&amp; running) {
+                if (byteBuffer.position() &gt; 2) {
+                    byteBuffer.flip();
+                    byte[] lineBytes = new byte[bytesRead];
+                    byteBuffer.get(lineBytes, 0, bytesRead);
+                    String line = new String(lineBytes);
+                    ch.write(ByteBuffer.wrap(line.getBytes()));
+                    byteBuffer.clear();
+                    bytesRead = ch.read(byteBuffer).get(20, TimeUnit.SECONDS);
+                }else{
+                    running = false;
+                }
+            }
+        }catch(Exception e){
+            ...//handle exception
+        }
+        ...//close ch
+    }
+});
+</pre></div>
+</div>
+<div class="section" id="channelfuture">
+<h3>channelFuture<a class="headerlink" href="#channelfuture" title="Permalink to this headline">¶</a></h3>
+<p>在Netty中所有的IO操作都是异步的。这意味着所有的IO调用将立即返回，但不保证在调用结束时请求的IO操作都已经执行完毕。而是在请求操作处理完成、失败或者取消时返回一个ChannelFuture来通知。</p>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>使用netty作为web前端推送消息框架。
+在云医院的web项目中，因为前台定时刷新数据库带来的性能问题比较严重，因此选择使用推送方式发送消息。
+（其实我觉得是设计的问题，因为前台完全可以读redis而不去读取数据库内容，这样就可以提高效率）</li>
+</ol>
+<p>使用netty框架也能解决问题，利用前台的JS客户端进行连接，有消息的话进行推送。</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>socket = io.connect(&#39;http://10.32.170.68:9082&#39;);
+socket.on(&#39;receive&#39;, function(data){
+    var type = $.parseJSON(data).type;
+    ...
+})
+</pre></div>
+</div>
+<p>这里加入的认证机制，通过用户第一次登录时需要进行身份认证，认证后，建立session与client的映射关系，保存到缓存中。</p>
+<p>}</p>
+<div class="section" id="genericfuturelistener">
+<h3>GenericFutureListener<a class="headerlink" href="#genericfuturelistener" title="Permalink to this headline">¶</a></h3>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public synchronized ListenableFuture&lt;Void&gt; connect ()
+{
+    if ( this.connectFuture != null )
+    {
+        return this.connectFuture;
+    }
+
+    final ChannelFuture channelFuture = this.bootstrap.connect ( this.address );
+    this.connectFuture = SettableFuture.create ();
+
+    channelFuture.addListener ( new GenericFutureListener&lt;ChannelFuture&gt; () {
+
+        @Override
+        public void operationComplete ( final ChannelFuture future ) throws Exception
+        {
+            handleOperationComplete ( Client.this.connectFuture, future );
+        }
+    } );
+
+    return this.connectFuture;
+}
+</pre></div>
+</div>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>protected void setupWithTest() {
+  ChannelFuture future = boot.connect(uri.host(), port);
+  future.addListener(
+      new GenericFutureListener&lt;ChannelFuture&gt;() {
+
+        public void operationComplete(ChannelFuture f) {
+          if (f.isSuccess()) {
+            channel = (HTTPChannel) f.channel();
+            testConnection();
+            onTestBell.promise(onConnectBell);
+          } else {
+            onConnectBell.ring(f.cause());
+          }
+        }
+      });
+}
+</pre></div>
+</div>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>public void kickPlayerFromServer(String reason)
+{
+    final ChatComponentText chatcomponenttext = new ChatComponentText(reason);
+    this.netManager.sendPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener &lt; Future &lt;? super Void &gt;&gt; ()
+    {
+        public void operationComplete(Future &lt;? super Void &gt; p_operationComplete_1_) throws Exception
+        {
+            NetHandlerPlayServer.this.netManager.closeChannel(chatcomponenttext);
+        }
+    }, new GenericFutureListener[0]);
+    this.netManager.disableAutoRead();
+    Futures.getUnchecked(this.serverController.addScheduledTask(new Runnable()
+    {
+        public void run()
+        {
+            NetHandlerPlayServer.this.netManager.checkDisconnected();
+        }
+    }));
+}
+</pre></div>
+</div>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+
+            public ChannelPipeline getPipeline() {
+                return Channels.pipeline(new ObjectEncoder(),
+                        new SimpleChannelUpstreamHandler(){
+                    @Override
+                    public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
+                        println(&quot;D          bootstrap.connect();
+                            }
+                        }, NettyClient.RECONNECT_DELAY, TimeUnit.SECONDS);
+                    }
+
+                    @Override
+                    public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
+                        if (startTime &lt; 0) {
+                            startTime = System.currentTimeMillis();
+                        }
+                        println(&quot;连接到: &quot; + getRemoteAddress());
+                        flag=true;
+                        channel = e.getChannel();
+                    }
+
+                    @Override
+                    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
+                        Throwable cause = e.getCause();
+                        if (cause instanceof ConnectException) {
+                            startTime = -1;
+                            println(&quot;连接失败，原因: &quot; + cause.getMessage());
+                        }
+                        if (cause instanceof ReadTimeoutException) {
+                            //连接是好的，但是超时
+                            println(&quot;超时...&quot;);
+                        } else {
+                            cause.printStackTrace();
+                        }
+                        ctx.getChannel().close();
+                    }
+                });
+
+            }
+        });
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>参考资料<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://netty.io/">http://netty.io/</a>
+<a class="reference external" href="https://waylau.com/netty-websocket-chat/">https://waylau.com/netty-websocket-chat/</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../performance/web_performance.html" title="Web Performance"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="rabbitMQ.html" title="RabbitMQ"
+             >previous</a> |</li>
+        <li><a href="../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

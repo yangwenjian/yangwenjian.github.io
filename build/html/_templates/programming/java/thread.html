@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ThreadPoolExecutor &mdash; knight 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ThreadPoolExecutor</a><ul>
+<li><a class="reference internal" href="#id1">构造函数参数</a></li>
+<li><a class="reference internal" href="#id2">任务执行顺序</a></li>
+<li><a class="reference internal" href="#id3">阻塞队列</a></li>
+<li><a class="reference internal" href="#id4">拒绝策略</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/_templates/programming/java/thread.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="threadpoolexecutor">
+<h1>ThreadPoolExecutor<a class="headerlink" href="#threadpoolexecutor" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>构造函数参数<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>corePoolSize 核心线程数大小，当线程数 &lt; corePoolSize ，会创建线程执行 runnable</li>
+<li>maximumPoolSize 最大线程数， 当线程数 &gt;= corePoolSize的时候，会把 runnable 放入 workQueue中</li>
+<li>keepAliveTime 保持存活时间，当线程数大于corePoolSize的空闲线程能保持的最大时间。</li>
+<li>unit 时间单位</li>
+<li>workQueue 保存任务的阻塞队列</li>
+<li>threadFactory 创建线程的工厂</li>
+<li>handler 拒绝策略</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>任务执行顺序<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>当线程数小于 corePoolSize时，创建线程执行任务。</li>
+<li>当线程数大于等于 corePoolSize并且 workQueue 没有满时，放入workQueue中</li>
+<li>线程数大于等于 corePoolSize并且当 workQueue 满时，新任务新建线程运行，线程总数要小于 maximumPoolSize</li>
+<li>当线程总数等于 maximumPoolSize 并且 workQueue 满了的时候执行 handler 的 rejectedExecution。也就是拒绝策略。</li>
+</ol>
+</div>
+<div class="section" id="id3">
+<h2>阻塞队列<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="16%" />
+<col width="19%" />
+<col width="14%" />
+<col width="29%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">方法处理方式</th>
+<th class="head">抛出异常</th>
+<th class="head">返回特殊值</th>
+<th class="head">一直阻塞</th>
+<th class="head">超时退出</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>插入方法</td>
+<td>add(e)</td>
+<td>offer(e)</td>
+<td>put(e)</td>
+<td>offer(e,time,unit)</td>
+</tr>
+<tr class="row-odd"><td>移除方法</td>
+<td>remove()</td>
+<td>poll()</td>
+<td>take()</td>
+<td>poll(time,unit)</td>
+</tr>
+<tr class="row-even"><td>检查方法</td>
+<td>element()</td>
+<td>peek()</td>
+<td>不可用</td>
+<td>不可用</td>
+</tr>
+</tbody>
+</table>
+<p>1. ArrayBlockingQueue 数组结构组成的有界阻塞队列。
+此队列按照先进先出（FIFO）的原则对元素进行排序，但是默认情况下不保证线程公平的访问队列，即如果队列满了，那么被阻塞在外面的线程对队列访问的顺序是不能保证线程公平（即先阻塞，先插入）的。
+2. LinkedBlockingQueue一个由链表结构组成的有界阻塞队列
+此队列按照先出先进的原则对元素进行排序
+3. PriorityBlockingQueue支持优先级的无界阻塞队列
+4. DelayQueue支持延时获取元素的无界阻塞队列，即可以指定多久才能从队列中获取当前元素
+5. SynchronousQueue不存储元素的阻塞队列，每一个put必须等待一个take操作，否则不能继续添加元素。并且他支持公平访问队列。
+6. LinkedTransferQueue由链表结构组成的无界阻塞TransferQueue队列。相对于其他阻塞队列，多了tryTransfer和transfer方法
+transfer方法：
+如果当前有消费者正在等待接收元素（take或者待时间限制的poll方法），transfer可以把生产者传入的元素立刻传给消费者。如果没有消费者等待接收元素，则将元素放在队列的tail节点，并等到该元素被消费者消费了才返回。
+tryTransfer方法：
+用来试探生产者传入的元素能否直接传给消费者。，如果没有消费者在等待，则返回false。和上述方法的区别是该方法无论消费者是否接收，方法立即返回。而transfer方法是必须等到消费者消费了才返回。
+7. LinkedBlockingDeque链表结构的双向阻塞队列，优势在于多线程入队时，减少一半的竞争。</p>
+</div>
+<div class="section" id="id4">
+<h2>拒绝策略<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>ThreadPoolExecutor默认有四个拒绝策略：
+1、ThreadPoolExecutor.AbortPolicy() 直接抛出异常RejectedExecutionException
+2、ThreadPoolExecutor.CallerRunsPolicy() 直接调用run方法并且阻塞执行
+3、ThreadPoolExecutor.DiscardPolicy() 直接丢弃后来的任务
+4、ThreadPoolExecutor.DiscardOldestPolicy() 丢弃在队列中队首的任务
+当然可以自己继承RejectedExecutionHandler来写拒绝策略.</p>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>    ThreadPoolExecutor threadPool = new ThreadPoolExecutor(5, 6, 3,
+    TimeUnit.SECONDS, new ArrayBlockingQueue&lt;Runnable&gt;(3)
+);
+    threadPool.execute(new SelfRunnable(&quot;name&quot;));
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
