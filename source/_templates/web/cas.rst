@@ -118,6 +118,229 @@ Cas Security
 7. 支持login throttling，但建议使用认证服务器自身的throttling；
 8. 对于long term session，使用Force Authentication进行保护；
 
+Zabbix组件
+Zabbix Server：负责接收agent发送的报告信息的核心组件，所有配置、统计数据及操作数据均由其组织进行
+Database Storage：专用于存储所有配置信息，以及有zabbix收集的数据
+Web interface（frontend）：zabbix的GUI接口，通常与server运行在同一台机器上
+Proxy：可选组件，常用于分布式监控环境中，代理Server收集部分被监控数据并统一发往Server端
+Agent：部署在被监控主机上，负责收集本地数据并发往Server端或者Proxy端
+
+
+CAS Server搭建（5.3.X）
+=======================================
+新版本的CasServer是基于Spring Boot开发的，因此配置起来和之前有比较大的区别，主要集中在初始化配置部分。
+
+.. code::
+
+    调试时请务必修改service ticket的有效时间，否则在利用调试功能解析协议的时候，一定会由于超时而导致验证ticket失败。
+
+1. 自定义配置
+---------------------------------------
+建立spring.factories，将自定义的@Configuration文件放入其中
+
+.. code::
+
+    org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    org.apereo.cas.config.CasEmbeddedContainerTomcatConfiguration,\
+    org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration,\
+    com.neusoft.cbus.cas.config.CbusScanConfig
+
+2. 自定义认证策略
+---------------------------------------
+
+官网给出的自定义认证策略代码有问题，首先建立自己的认证handler，继承自AbstractUsernamePasswordAuthenticationHandler，
+
+.. code::
+    
+    //MyAuthenticationHandler.class
+    public class MyAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+    public MyAuthenticationHandler(String name, ServicesManager servicesManager, PrincipalFactory principalFactory, Integer order) {
+        super(name, servicesManager, principalFactory, order);
+    }
+
+    @Override
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword) {
+        UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+        //获取传递过来的用户名和密码
+        String username = usernamePasswordCredential.getUsername();
+        String password = usernamePasswordCredential.getPassword();
+        
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("username",username);
+        map.put("password",password);
+        return createHandlerResult(credential,principalFactory.createPrincipal("hello",map),new ArrayList<>(0));
+    }
+    
+.. code::
+
+    注意createHandlerResult的最后一个参数warnings，不能传null，如果传null则会抛出异常，导致当前handler失效，又会被默认的
+    AcceptUsersAuthenticationHandler接收进行再次认证，这样就覆盖了当前自己写的设置属性的方法。
+
+在自定义认证中，必须将自定义的handerl加入到认证执行计划中，通过实现AuthenticationEventExecutionPlanConfigurer进行设置。
+初始化handler时，必须使用上下文中的serviceManager，还有principalFactory（可以使用null或者DefaultPrincipalFactory），
+最后的order指定为1，这样handler上下文优先使用我们自定的handler进行认证解析，默认的AcceptUsersAuthenticationHandlerhanderl的order是个大于1的随机数，
+如果我们order设置的不合理，就会被默认的handler解析而跳过自定义的handler。
+
+如果这个handler不能处理或者抛出异常，则上下文继续调用其他handler进行解析，以order的顺序。
+
+.. code:: java
+
+    //CbusScanConfig.class
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
+    @Bean
+    public AuthenticationHandler myAuthenticationHandler(){
+        final MyAuthenticationHandler handler = new MyAuthenticationHandler(MyAuthenticationHandler.class.getName(),servicesManager,new DefaultPrincipalFactory(),1);
+        return handler;
+    }
+
+    @Override
+    public void configureAuthenticationExecutionPlan(AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+        authenticationEventExecutionPlan.registerAuthenticationHandler(myAuthenticationHandler());
+    }
+    
+不要看官网写的代码，上面不知道哪个大神修改的，那个代码只能拿来看意思，并不能直接使用。
+
+    
+3. 设置属性返回策略
+---------------------------------------
+
+返回所有属性，name和id组成这个文件的名字，cbus_10000.json
+
+.. code::
+
+    {
+      "@class": "org.apereo.cas.services.RegexRegisteredService",
+      "serviceId": "^(https|imaps|http)://127.0.0.1.*",
+      "name": "cbus",
+      "description" : "asaaaaaaaaaaa.",
+      "id": 1000,
+      "evaluationOrder": 10,
+      "attributeReleasePolicy" : {
+        "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+      }
+    }
+
+4. 修改客户端协议
+---------------------------------------
+当实现了一切接口以后，还是不能返回自定义属性，根据官方文档，自定义属性的返回在serverValidate服务中返回，在调试时我重点看验证ST的返回，
+在response中怎么也没有属性的字段，以为是attributeReleasePolicy，在server端调试，发现server端代码没有问题，一切都按带属性的principal进行返回。
+
+原来，在2.0协议中，只能返回username和pgt的属性，再仔细看官方文档，说只有cas3.0才能有自定义属性返回。调试时手动修改cas协议url，
+发现service ticket无效，还是中了有效时间的坑。直接改为Cas30ServiceTicketValidator进行票据解析，其实这个类继承自Cas20ServiceTicketValidator，
+
+最后，直接改为Cas30ServiceTicketValidator进行票据解析，其实这个类继承自Cas20ServiceTicketValidator，
+唯一的不同就是getUrlSuffix()返回的是带有p3协议的url前缀。
+
+.. code::
+
+    @Configuration
+    @EnableWebSecurity //启用web权限
+    @EnableGlobalMethodSecurity(prePostEnabled = true) //启用方法验证
+    public class SecurityConfig extends WebSecurityConfigurerAdapter {
+        @Autowired
+        private CasProperties casProperties;
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            super.configure(auth);
+            auth.authenticationProvider(casAuthenticationProvider());
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.authorizeRequests()//配置安全策略
+                    .anyRequest().authenticated()//其余的所有请求都需要验证
+                    .and()
+                    .logout()
+                    .permitAll()//定义logout不需要验证
+                    .and()
+                    .formLogin();//使用form表单登录
+            http.exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint());
+            http.addFilter(casAuthenticationFilter())
+                    .addFilterBefore(casLogoutFilter(), LogoutFilter.class)
+                    .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class);
+        }
+
+        @Bean
+        public CasAuthenticationEntryPoint casAuthenticationEntryPoint() {
+            CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();
+            casAuthenticationEntryPoint.setLoginUrl(casProperties.getCasServerLoginUrl());
+            casAuthenticationEntryPoint.setServiceProperties(serviceProperties());
+            return casAuthenticationEntryPoint;
+        }
+
+        @Bean
+        public ServiceProperties serviceProperties() {
+            ServiceProperties serviceProperties = new ServiceProperties();
+            serviceProperties.setService(casProperties.getAppServerUrl() + casProperties.getAppLoginUrl());
+            serviceProperties.setAuthenticateAllArtifacts(true);
+            return serviceProperties;
+        }
+
+        @Bean
+        public CasAuthenticationFilter casAuthenticationFilter() throws Exception {
+            System.out.println("**********"+casProperties.getAppLoginUrl());
+            CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
+            casAuthenticationFilter.setAuthenticationManager(authenticationManager());
+            casAuthenticationFilter.setContinueChainBeforeSuccessfulAuthentication(false);
+            casAuthenticationFilter.setFilterProcessesUrl(casProperties.getAppLoginUrl());
+            System.out.println("**********"+casAuthenticationFilter.getFilterConfig());
+            return casAuthenticationFilter;
+        }
+
+        @Bean
+        public CasAuthenticationProvider casAuthenticationProvider() {
+            CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
+            casAuthenticationProvider.setAuthenticationUserDetailsService(customUserDetailsService());
+            //casAuthenticationProvider.setUserDetailsService(customUserDetailsService()); //这里只是接口类型，实现的接口不一样，都可以的。
+            casAuthenticationProvider.setServiceProperties(serviceProperties());
+            casAuthenticationProvider.setTicketValidator(cas30ServiceTicketValidator());
+            casAuthenticationProvider.setKey("casAuthenticationProviderKey");
+            return casAuthenticationProvider;
+        }
+
+        @Bean
+        public AuthenticationUserDetailsService<CasAssertionAuthenticationToken> customUserDetailsService() {
+            return new CustomUserDetailsService();
+        }
+
+        @Bean
+        public Cas30ServiceTicketValidator cas30ServiceTicketValidator() {
+            return new Cas30ServiceTicketValidator(casProperties.getCasServerUrl());
+        }
+
+        @Bean
+        public SingleSignOutFilter singleSignOutFilter() {
+            SingleSignOutFilter singleSignOutFilter = new SingleSignOutFilter();
+            singleSignOutFilter.setCasServerUrlPrefix(casProperties.getCasServerUrl());
+            singleSignOutFilter.setIgnoreInitConfiguration(true);
+            return singleSignOutFilter;
+        }
+
+        @Bean
+        public LogoutFilter casLogoutFilter() {
+            LogoutFilter logoutFilter = new LogoutFilter(casProperties.getCasServerLogoutUrl(), new SecurityContextLogoutHandler());
+            logoutFilter.setFilterProcessesUrl(casProperties.getAppLogoutUrl());
+            return logoutFilter;
+        }
+    }
+
+.. code:: java
+
+    @Override
+    public UserDetails loadUserDetails(CasAssertionAuthenticationToken casAssertionAuthenticationToken) throws UsernameNotFoundException {
+        User user = new User();
+        String username = casAssertionAuthenticationToken.getName();
+        Map<String,Object> map = casAssertionAuthenticationToken.getAssertion().getPrincipal().getAttributes();
+        user.setLoginName(map.get("username").toString());
+        return new MyUserDetails(user);
+    }
+
+
+
 最佳实践
 ==============================================================================================================
 通过配置来实现自己的Handler
@@ -507,3 +730,4 @@ https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/
 
 http://blog.csdn.net/dongdong_java/article/details/22293377
 
+https://apereo.github.io/cas/4.2.x/protocol/CAS-Protocol-Specification.html

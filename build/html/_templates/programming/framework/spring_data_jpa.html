@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>最佳实践 &mdash; knight 1.0.1 documentation</title>
+    <title>Spring-data-jpa &mdash; knight 1.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -45,6 +45,29 @@
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Spring-data-jpa</a><ul>
+<li><a class="reference internal" href="#spring-jpa">spring jpa</a><ul>
+<li><a class="reference internal" href="#onetoone">OneToOne</a></li>
+<li><a class="reference internal" href="#onetomanymanytoone">OneToMany和ManyToOne</a><ul>
+<li><a class="reference internal" href="#id1">查询</a></li>
+<li><a class="reference internal" href="#id2">更新</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#manytomany">ManyToMany</a><ul>
+<li><a class="reference internal" href="#id3">查询</a></li>
+<li><a class="reference internal" href="#id4">更新</a></li>
+<li><a class="reference internal" href="#id5">删除</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6">最佳实践</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="springcloud_netflix.html"
                         title="previous chapter">Spring Cloud Netflix</a></p>
@@ -77,9 +100,98 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <p>Spring-data-jpa</p>
+  <div class="section" id="spring-data-jpa">
+<h1>Spring-data-jpa<a class="headerlink" href="#spring-data-jpa" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="spring-jpa">
+<h2>spring jpa<a class="headerlink" href="#spring-jpa" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="onetoone">
+<h3>OneToOne<a class="headerlink" href="#onetoone" title="Permalink to this headline">¶</a></h3>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Husband.class
+@OneToOne
+@JoinColumn(name=&quot;wife&quot;)
+private Wife wife;
+
+//Wife.class
+@OneToOne(mappedBy=&quot;wife&quot;)
+private Husband husband
+</pre></div>
+</div>
+<p>在这个例子中，对应数据库中的体现，是husband表中有一个wife的外键，这是因为我们在定义关系的时候，指定了维护关系为Husband端；</p>
+<p>那么，在wife中查找husband，通过双向关系mappedBy查找，必须是Husband对象中的wife属性，由JPA来查找。</p>
+</div>
+<div class="section" id="onetomanymanytoone">
+<h3>OneToMany和ManyToOne<a class="headerlink" href="#onetomanymanytoone" title="Permalink to this headline">¶</a></h3>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//Device.class
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = &quot;device_type&quot;, insertable = false, updatable = false)
+private DeviceType deviceType;
+
+//DeviceType.class
+@OneToMany(mappedBy = &quot;deviceType&quot;, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+private List&lt;Device&gt; deviceList;
+</pre></div>
+</div>
+<p>在这个例子中，我们定义了关系的维护端在Device类中，在数据库中，可以看到device表中有外键进行关联，同样是通过mappedBy进行双向关系关联；</p>
+<p>但由于是一对多的关系，DeviceType类中，拥有Device的集合；</p>
+<p>这里指定获取方式为LAZY方式，指在需要的时候进行加载该属性对象，具体实现是再通过一条select语句实现，这里由于有Hibernate连接池和Hibernate多级缓存的缘故，效率并不是很慢（未亲测）；</p>
 <div class="section" id="id1">
-<h1>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<h4>查询<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>由于是LAZY加载方式，一旦Hibernate的session关闭，访问该属性会报相应的异常，于是通过如下方式进行解决:</p>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>@Query(value=&quot;select d from DeviceType d inner join d.deviceList as device where device.department.id = :deptId group by d.id &quot;)
+Page&lt;DeviceType&gt; findByDeviceType(@Param(&quot;deptId&quot;) String deptId, Pageable pageable);
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h4>更新<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>更新时使用Device类进行save即可</p>
+</div>
+</div>
+<div class="section" id="manytomany">
+<h3>ManyToMany<a class="headerlink" href="#manytomany" title="Permalink to this headline">¶</a></h3>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//User.class
+@ManyToMany(fetch = FetchType.LAZY)
+@Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+@JoinTable(name = &quot;cbus_user_role&quot;,
+        joinColumns = {@JoinColumn(name = &quot;user_id&quot;)},
+        inverseJoinColumns = {@JoinColumn(name = &quot;role_id&quot;)})
+private Set&lt;RoleInfo&gt; roles;
+
+//RoleInfo.class
+@ManyToMany(mappedBy = &quot;roles&quot;, fetch = FetchType.LAZY)
+private Set&lt;User&gt; users;
+</pre></div>
+</div>
+<p>这个例子中，Hibernate通过建立关系表cbus_user_role来实现多对多的映射关系，这里我们指定一端为维护端，另一端称为inverse端，在&#64;JoinTable中可以清晰的看到，并同时指定了关联的列名；</p>
+<p>这里在实际使用中，经常在findone时发生stackoverflow，反复的select user和role这两张表里的内容，第一中方式是放弃双向关系，将RoleInfo里的那内容注释掉；</p>
+<p>后来经过google才得知，正常不会出现infinite loop这种情况，但由于我使用了lombok工具包，其中复写hashCode()方法时，是使用所有属性的hashCode进行计算，这样就会一直加载其中的属性，造成栈溢出。也会调用其中的toString()方法，也会造成溢出，目前的解决方案是重写这两个方法。</p>
+<div class="section" id="id3">
+<h4>查询<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>通过查询某一个对象，Hibernate会简单进行select，如果你调用了里面的对象属性，Hibernate会提前select其中属性进行赋值。</p>
+<p>这其中，Hibernate虽然语句多，但也会有些优化，比较明显的是，当查处的对象和将要保存的对象一致时，不会进行insert或者update语句。</p>
+</div>
+<div class="section" id="id4">
+<h4>更新<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>这里还加入了级联操作关系Cascade，和我喜欢歌星一个名，好嗓子，音域宽，长得稍微可参了点；注明是SAVE_UPDATE时会将关联的关系同步存入到关系表中，如果存储的RoleInfoId不存在，则抛出JpaObjectRetrievalFailureException；</p>
+<p>如果将Cascade改为ALL，则不仅会更新关系表，而且会将roleinfo表都对应更新，具体的实现操作如下：</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>- insert into cbus_role_info (app_id, is_delete, role_name, role_remark, id) values (?, ?, ?, ?, ?)
+- insert into cbus_role_info (app_id, is_delete, role_name, role_remark, id) values (?, ?, ?, ?, ?)
+- delete from cbus_user_role where user_id=? and role_id=?
+- delete from cbus_user_role where user_id=? and role_id=?
+- insert into cbus_user_role (user_id, role_id) values (?, ?)
+- insert into cbus_user_role (user_id, role_id) values (?, ?)
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h4>删除<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p>如果删除配置端，这里删除user，则关系表中的数据也会被删除；但如果删除roleinfo，则会抛出有外键，不能删除的异常。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>最佳实践<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+</div>
 </div>
 
 

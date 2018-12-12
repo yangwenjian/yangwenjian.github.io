@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Web Performance" href="../performance/web_performance.html" />
+    <link rel="next" title="RabbitMQ" href="../communication/rabbitMQ.html" />
     <link rel="prev" title="Web Page Design" href="webpage.html" /> 
   </head>
   <body>
@@ -35,7 +35,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../performance/web_performance.html" title="Web Performance"
+          <a href="../communication/rabbitMQ.html" title="RabbitMQ"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="webpage.html" title="Web Page Design"
@@ -55,13 +55,20 @@
 <li><a class="reference internal" href="#id3">Cas流程</a></li>
 <li><a class="reference internal" href="#cas-ha-deployment">Cas HA Deployment</a></li>
 <li><a class="reference internal" href="#cas-security">Cas Security</a></li>
-<li><a class="reference internal" href="#id4">最佳实践</a><ul>
+<li><a class="reference internal" href="#cas-server-5-3-x">CAS Server搭建（5.3.X）</a><ul>
+<li><a class="reference internal" href="#id4">1. 自定义配置</a></li>
+<li><a class="reference internal" href="#id5">2. 自定义认证策略</a></li>
+<li><a class="reference internal" href="#id6">3. 设置属性返回策略</a></li>
+<li><a class="reference internal" href="#id7">4. 修改客户端协议</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id8">最佳实践</a><ul>
 <li><a class="reference internal" href="#spring">Spring配置文件:</a></li>
 <li><a class="reference internal" href="#spring-cas-client">Spring cas client关键代码</a></li>
 <li><a class="reference internal" href="#q-a">Q&amp;A</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id5">参考资料</a></li>
+<li><a class="reference internal" href="#id9">参考资料</a></li>
 </ul>
 </li>
 </ul>
@@ -70,8 +77,8 @@
   <p class="topless"><a href="webpage.html"
                         title="previous chapter">Web Page Design</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../performance/web_performance.html"
-                        title="next chapter">Web Performance</a></p>
+  <p class="topless"><a href="../communication/rabbitMQ.html"
+                        title="next chapter">RabbitMQ</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/web/cas.txt"
@@ -189,9 +196,212 @@ Active/Standby模式下，切换的时候可能会导致票据验证不通过，
 <li>支持login throttling，但建议使用认证服务器自身的throttling；</li>
 <li>对于long term session，使用Force Authentication进行保护；</li>
 </ol>
+<p>Zabbix组件
+Zabbix Server：负责接收agent发送的报告信息的核心组件，所有配置、统计数据及操作数据均由其组织进行
+Database Storage：专用于存储所有配置信息，以及有zabbix收集的数据
+Web interface（frontend）：zabbix的GUI接口，通常与server运行在同一台机器上
+Proxy：可选组件，常用于分布式监控环境中，代理Server收集部分被监控数据并统一发往Server端
+Agent：部署在被监控主机上，负责收集本地数据并发往Server端或者Proxy端</p>
+</div>
+<div class="section" id="cas-server-5-3-x">
+<h2>CAS Server搭建（5.3.X）<a class="headerlink" href="#cas-server-5-3-x" title="Permalink to this headline">¶</a></h2>
+<p>新版本的CasServer是基于Spring Boot开发的，因此配置起来和之前有比较大的区别，主要集中在初始化配置部分。</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>调试时请务必修改service ticket的有效时间，否则在利用调试功能解析协议的时候，一定会由于超时而导致验证ticket失败。
+</pre></div>
 </div>
 <div class="section" id="id4">
-<h2>最佳实践<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h3>1. 自定义配置<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>建立spring.factories，将自定义的&#64;Configuration文件放入其中</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span><span class="n">org</span><span class="o">.</span><span class="n">springframework</span><span class="o">.</span><span class="n">boot</span><span class="o">.</span><span class="n">autoconfigure</span><span class="o">.</span><span class="n">EnableAutoConfiguration</span><span class="o">=</span>\
+<span class="n">org</span><span class="o">.</span><span class="n">apereo</span><span class="o">.</span><span class="n">cas</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">CasEmbeddedContainerTomcatConfiguration</span><span class="p">,</span>\
+<span class="n">org</span><span class="o">.</span><span class="n">apereo</span><span class="o">.</span><span class="n">cas</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">CasEmbeddedContainerTomcatFiltersConfiguration</span><span class="p">,</span>\
+<span class="n">com</span><span class="o">.</span><span class="n">neusoft</span><span class="o">.</span><span class="n">cbus</span><span class="o">.</span><span class="n">cas</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">CbusScanConfig</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>2. 自定义认证策略<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>官网给出的自定义认证策略代码有问题，首先建立自己的认证handler，继承自AbstractUsernamePasswordAuthenticationHandler，</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>//MyAuthenticationHandler.class
+public class MyAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+public MyAuthenticationHandler(String name, ServicesManager servicesManager, PrincipalFactory principalFactory, Integer order) {
+    super(name, servicesManager, principalFactory, order);
+}
+
+@Override
+protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                    final String originalPassword) {
+    UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+    //获取传递过来的用户名和密码
+    String username = usernamePasswordCredential.getUsername();
+    String password = usernamePasswordCredential.getPassword();
+
+    Map&lt;String,Object&gt; map = new HashMap&lt;String, Object&gt;();
+    map.put(&quot;username&quot;,username);
+    map.put(&quot;password&quot;,password);
+    return createHandlerResult(credential,principalFactory.createPrincipal(&quot;hello&quot;,map),new ArrayList&lt;&gt;(0));
+}
+</pre></div>
+</div>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>注意createHandlerResult的最后一个参数warnings，不能传null，如果传null则会抛出异常，导致当前handler失效，又会被默认的
+AcceptUsersAuthenticationHandler接收进行再次认证，这样就覆盖了当前自己写的设置属性的方法。
+</pre></div>
+</div>
+<p>在自定义认证中，必须将自定义的handerl加入到认证执行计划中，通过实现AuthenticationEventExecutionPlanConfigurer进行设置。
+初始化handler时，必须使用上下文中的serviceManager，还有principalFactory（可以使用null或者DefaultPrincipalFactory），
+最后的order指定为1，这样handler上下文优先使用我们自定的handler进行认证解析，默认的AcceptUsersAuthenticationHandlerhanderl的order是个大于1的随机数，
+如果我们order设置的不合理，就会被默认的handler解析而跳过自定义的handler。</p>
+<p>如果这个handler不能处理或者抛出异常，则上下文继续调用其他handler进行解析，以order的顺序。</p>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>//CbusScanConfig.class
+@Autowired
+@Qualifier(&quot;servicesManager&quot;)
+private ServicesManager servicesManager;
+
+@Bean
+public AuthenticationHandler myAuthenticationHandler(){
+    final MyAuthenticationHandler handler = new MyAuthenticationHandler(MyAuthenticationHandler.class.getName(),servicesManager,new DefaultPrincipalFactory(),1);
+    return handler;
+}
+
+@Override
+public void configureAuthenticationExecutionPlan(AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+    authenticationEventExecutionPlan.registerAuthenticationHandler(myAuthenticationHandler());
+}
+</pre></div>
+</div>
+<p>不要看官网写的代码，上面不知道哪个大神修改的，那个代码只能拿来看意思，并不能直接使用。</p>
+</div>
+<div class="section" id="id6">
+<h3>3. 设置属性返回策略<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>返回所有属性，name和id组成这个文件的名字，cbus_10000.json</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;@class&quot;</span><span class="p">:</span> <span class="s2">&quot;org.apereo.cas.services.RegexRegisteredService&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;serviceId&quot;</span><span class="p">:</span> <span class="s2">&quot;^(https|imaps|http)://127.0.0.1.*&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;cbus&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;description&quot;</span> <span class="p">:</span> <span class="s2">&quot;asaaaaaaaaaaa.&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+  <span class="s2">&quot;evaluationOrder&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+  <span class="s2">&quot;attributeReleasePolicy&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;@class&quot;</span> <span class="p">:</span> <span class="s2">&quot;org.apereo.cas.services.ReturnAllAttributeReleasePolicy&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>4. 修改客户端协议<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>当实现了一切接口以后，还是不能返回自定义属性，根据官方文档，自定义属性的返回在serverValidate服务中返回，在调试时我重点看验证ST的返回，
+在response中怎么也没有属性的字段，以为是attributeReleasePolicy，在server端调试，发现server端代码没有问题，一切都按带属性的principal进行返回。</p>
+<p>原来，在2.0协议中，只能返回username和pgt的属性，再仔细看官方文档，说只有cas3.0才能有自定义属性返回。调试时手动修改cas协议url，
+发现service ticket无效，还是中了有效时间的坑。直接改为Cas30ServiceTicketValidator进行票据解析，其实这个类继承自Cas20ServiceTicketValidator，</p>
+<p>最后，直接改为Cas30ServiceTicketValidator进行票据解析，其实这个类继承自Cas20ServiceTicketValidator，
+唯一的不同就是getUrlSuffix()返回的是带有p3协议的url前缀。</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>@Configuration
+@EnableWebSecurity //启用web权限
+@EnableGlobalMethodSecurity(prePostEnabled = true) //启用方法验证
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private CasProperties casProperties;
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        super.configure(auth);
+        auth.authenticationProvider(casAuthenticationProvider());
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()//配置安全策略
+                .anyRequest().authenticated()//其余的所有请求都需要验证
+                .and()
+                .logout()
+                .permitAll()//定义logout不需要验证
+                .and()
+                .formLogin();//使用form表单登录
+        http.exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint());
+        http.addFilter(casAuthenticationFilter())
+                .addFilterBefore(casLogoutFilter(), LogoutFilter.class)
+                .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class);
+    }
+
+    @Bean
+    public CasAuthenticationEntryPoint casAuthenticationEntryPoint() {
+        CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();
+        casAuthenticationEntryPoint.setLoginUrl(casProperties.getCasServerLoginUrl());
+        casAuthenticationEntryPoint.setServiceProperties(serviceProperties());
+        return casAuthenticationEntryPoint;
+    }
+
+    @Bean
+    public ServiceProperties serviceProperties() {
+        ServiceProperties serviceProperties = new ServiceProperties();
+        serviceProperties.setService(casProperties.getAppServerUrl() + casProperties.getAppLoginUrl());
+        serviceProperties.setAuthenticateAllArtifacts(true);
+        return serviceProperties;
+    }
+
+    @Bean
+    public CasAuthenticationFilter casAuthenticationFilter() throws Exception {
+        System.out.println(&quot;**********&quot;+casProperties.getAppLoginUrl());
+        CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
+        casAuthenticationFilter.setAuthenticationManager(authenticationManager());
+        casAuthenticationFilter.setContinueChainBeforeSuccessfulAuthentication(false);
+        casAuthenticationFilter.setFilterProcessesUrl(casProperties.getAppLoginUrl());
+        System.out.println(&quot;**********&quot;+casAuthenticationFilter.getFilterConfig());
+        return casAuthenticationFilter;
+    }
+
+    @Bean
+    public CasAuthenticationProvider casAuthenticationProvider() {
+        CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
+        casAuthenticationProvider.setAuthenticationUserDetailsService(customUserDetailsService());
+        //casAuthenticationProvider.setUserDetailsService(customUserDetailsService()); //这里只是接口类型，实现的接口不一样，都可以的。
+        casAuthenticationProvider.setServiceProperties(serviceProperties());
+        casAuthenticationProvider.setTicketValidator(cas30ServiceTicketValidator());
+        casAuthenticationProvider.setKey(&quot;casAuthenticationProviderKey&quot;);
+        return casAuthenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationUserDetailsService&lt;CasAssertionAuthenticationToken&gt; customUserDetailsService() {
+        return new CustomUserDetailsService();
+    }
+
+    @Bean
+    public Cas30ServiceTicketValidator cas30ServiceTicketValidator() {
+        return new Cas30ServiceTicketValidator(casProperties.getCasServerUrl());
+    }
+
+    @Bean
+    public SingleSignOutFilter singleSignOutFilter() {
+        SingleSignOutFilter singleSignOutFilter = new SingleSignOutFilter();
+        singleSignOutFilter.setCasServerUrlPrefix(casProperties.getCasServerUrl());
+        singleSignOutFilter.setIgnoreInitConfiguration(true);
+        return singleSignOutFilter;
+    }
+
+    @Bean
+    public LogoutFilter casLogoutFilter() {
+        LogoutFilter logoutFilter = new LogoutFilter(casProperties.getCasServerLogoutUrl(), new SecurityContextLogoutHandler());
+        logoutFilter.setFilterProcessesUrl(casProperties.getAppLogoutUrl());
+        return logoutFilter;
+    }
+}
+</pre></div>
+</div>
+<div class="code java highlight-python"><div class="highlight"><pre><span></span>@Override
+public UserDetails loadUserDetails(CasAssertionAuthenticationToken casAssertionAuthenticationToken) throws UsernameNotFoundException {
+    User user = new User();
+    String username = casAssertionAuthenticationToken.getName();
+    Map&lt;String,Object&gt; map = casAssertionAuthenticationToken.getAssertion().getPrincipal().getAttributes();
+    user.setLoginName(map.get(&quot;username&quot;).toString());
+    return new MyUserDetails(user);
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>最佳实践<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p>通过配置来实现自己的Handler</p>
 <div class="section" id="spring">
 <h3>Spring配置文件:<a class="headerlink" href="#spring" title="Permalink to this headline">¶</a></h3>
@@ -549,11 +759,12 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 </ol>
 </div>
 </div>
-<div class="section" id="id5">
-<h2>参考资料<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h2>参考资料<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="http://docs.spring.io/spring-security/site/docs/3.1.6.RELEASE/reference/cas.html">http://docs.spring.io/spring-security/site/docs/3.1.6.RELEASE/reference/cas.html</a></p>
 <p><a class="reference external" href="https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/">https://www.ibm.com/developerworks/cn/opensource/os-cn-cas/</a></p>
 <p><a class="reference external" href="http://blog.csdn.net/dongdong_java/article/details/22293377">http://blog.csdn.net/dongdong_java/article/details/22293377</a></p>
+<p><a class="reference external" href="https://apereo.github.io/cas/4.2.x/protocol/CAS-Protocol-Specification.html">https://apereo.github.io/cas/4.2.x/protocol/CAS-Protocol-Specification.html</a></p>
 </div>
 </div>
 
@@ -570,7 +781,7 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../performance/web_performance.html" title="Web Performance"
+          <a href="../communication/rabbitMQ.html" title="RabbitMQ"
              >next</a> |</li>
         <li class="right" >
           <a href="webpage.html" title="Web Page Design"

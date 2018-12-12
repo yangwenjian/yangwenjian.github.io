@@ -76,6 +76,11 @@ Sulotion of Distribution
 Monitor
 =======================================
 
+.. toctree::
+   :maxdepth: 1
+
+   _templates/monitor/zabbix
+
 Sulotion of Web Service
 ======================================
 
