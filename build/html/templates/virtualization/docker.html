@@ -1,0 +1,453 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Docker &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Docker</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#docker-architecture">Docker Architecture</a></li>
+<li><a class="reference internal" href="#docker-design">Docker Design</a><ul>
+<li><a class="reference internal" href="#namespace-isolation">namespace isolation</a></li>
+<li><a class="reference internal" href="#the-docker-daemon">The Docker Daemon</a></li>
+<li><a class="reference internal" href="#the-docker-client">The Docker client</a></li>
+<li><a class="reference internal" href="#inside-docker">Inside Docker</a><ul>
+<li><a class="reference internal" href="#docker-images">Docker Images</a></li>
+<li><a class="reference internal" href="#docker-registries">Docker Registries</a></li>
+<li><a class="reference internal" href="#docker-containers">Docker Containers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-underlying-technology">The Underlying Technology</a><ul>
+<li><a class="reference internal" href="#namespace">Namespace</a></li>
+<li><a class="reference internal" href="#control-groups">Control Groups</a></li>
+<li><a class="reference internal" href="#union-file-system">Union File System</a></li>
+<li><a class="reference internal" href="#container-format">Container Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#exersice">Exersice</a><ul>
+<li><a class="reference internal" href="#id1">Docker实践中遇到的问题</a><ul>
+<li><a class="reference internal" href="#id2">Docker中的进程</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">Docker容器调优</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id4">Docker参考手册</a><ul>
+<li><a class="reference internal" href="#using-docker">Using Docker</a></li>
+<li><a class="reference internal" href="#docker-tomcat">Docker 开机自启动tomcat服务</a></li>
+<li><a class="reference internal" href="#reference">reference</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/virtualization/docker.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="docker">
+<h1>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h1>
+<p>Docker is a virtualization tool Based on Linux Container(LXC).
+Useful and easy-to-use.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Docker is application container, to some extent, like virtual machines.
+But there are a lot of differences:</p>
+<ul class="simple">
+<li>Virtualization is based on physical cpu and memory, while docker is based on OS, using containerization technique, even running on virtual machine.</li>
+<li>Virtualization refers to system image, called ‘system’, while docker is called ‘container’, which is more suitable for light application, such as redis, or memcached.</li>
+<li>Virtualization uses snapshot to save the state. Docker is lower cost and protable. Docker imports code version control, which is more easy to switch between versions.</li>
+<li>Virtualization is more complex at building system. Docker uses dockerfile to build containers, which is faster. Dockerfile can access on the host, which is more convenient.</li>
+</ul>
+<p>Docker’s features:</p>
+<ul class="simple">
+<li>File system isolation.</li>
+<li>Resource isolation, like cpu and memory.</li>
+<li>Network isolation: every container has its own network interface and ip.</li>
+<li>Writing copy: makes deploy faster, save more disk space and memory space.</li>
+<li>Log system.</li>
+<li>Change management.</li>
+<li>Interactive shell.</li>
+</ul>
+</div>
+<div class="section" id="docker-architecture">
+<h2>Docker Architecture<a class="headerlink" href="#docker-architecture" title="Permalink to this headline">¶</a></h2>
+<p>Docker is an open platform for developing,shipping and running applications.</p>
+</div>
+<div class="section" id="docker-design">
+<h2>Docker Design<a class="headerlink" href="#docker-design" title="Permalink to this headline">¶</a></h2>
+<p>Docker uses a client-server architecture.
+The docker client and daemon communicate via sockets or through restful api.</p>
+<div class="section" id="namespace-isolation">
+<h3>namespace isolation<a class="headerlink" href="#namespace-isolation" title="Permalink to this headline">¶</a></h3>
+<p>namespace的6项隔离</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="33%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">namespace</th>
+<th class="head">parameter</th>
+<th class="head">isolatoin</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>UTS</td>
+<td>CLONE_NEWUTS</td>
+<td>主机与域名</td>
+</tr>
+<tr class="row-odd"><td>IPC</td>
+<td>CLONE_NEWIPC</td>
+<td>信号量、消息队列和共享内存</td>
+</tr>
+<tr class="row-even"><td>PID</td>
+<td>CLONE_NEWPID</td>
+<td>进程编号</td>
+</tr>
+<tr class="row-odd"><td>Network</td>
+<td>CLONE_NEWNET</td>
+<td>网络设备、网络栈、端口等</td>
+</tr>
+<tr class="row-even"><td>Mount</td>
+<td>CLONE_NEWNS</td>
+<td>挂载点</td>
+</tr>
+<tr class="row-odd"><td>User</td>
+<td>CLONE_NEWUSER</td>
+<td>用户和用户组</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-docker-daemon">
+<h3>The Docker Daemon<a class="headerlink" href="#the-docker-daemon" title="Permalink to this headline">¶</a></h3>
+<p>The docker daemon runs on a host machine. The user does not directly interact with the daemon, but instead through the Docker client.</p>
+</div>
+<div class="section" id="the-docker-client">
+<h3>The Docker client<a class="headerlink" href="#the-docker-client" title="Permalink to this headline">¶</a></h3>
+<p>The Docker client, in the form of the docker binary, is the primary user interface to Docker.
+It accepts commands from the user and communicates back and forth with a Docker daemon.</p>
+</div>
+<div class="section" id="inside-docker">
+<h3>Inside Docker<a class="headerlink" href="#inside-docker" title="Permalink to this headline">¶</a></h3>
+<p>Docker contains these parts:</p>
+<ol class="arabic simple">
+<li>Docker images. Docker images are the build components of docker. It can easily created, downloaded, updated.</li>
+<li>Docker registries. Docker registries hold images, like public or private stores.</li>
+<li>Docker containers. Docker containers are the run compontes of docker, like directory, but are isolated and secure application platform.</li>
+</ol>
+<div class="section" id="docker-images">
+<h4>Docker Images<a class="headerlink" href="#docker-images" title="Permalink to this headline">¶</a></h4>
+<p>Each docker images consists of a series of layes.
+Docker makes use of union file system to combine these layers into a single image.
+Union file systems allow files and directories of separate file system, known as branches, to be transparently overlaid, forming a single coherent file system.</p>
+<p>One of the reasons docker is so lightweight is because of these layers. When we change a docker image–for example, update an application to a new version–a new layer was built.
+With only that layer built, docker is faster than virtual machines.</p>
+</div>
+<div class="section" id="docker-registries">
+<h4>Docker Registries<a class="headerlink" href="#docker-registries" title="Permalink to this headline">¶</a></h4>
+<p>Docker Hub provides both public and private storage for images. Public storage is searchable and can be downloaded by anyone. Private storage is excluded from search results and only you and your users can pull images down and use them to build containers.</p>
+</div>
+<div class="section" id="docker-containers">
+<h4>Docker Containers<a class="headerlink" href="#docker-containers" title="Permalink to this headline">¶</a></h4>
+<p>A container consists of an operating system, user-added files, and meta-data.
+When we run <em>docker run -i -t ubuntu /bin/bash</em> , docker does the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="p">)</span> <span class="n">pulls</span> <span class="n">the</span> <span class="n">ubuntu</span> <span class="n">image</span><span class="p">;</span>
+<span class="mi">2</span><span class="p">)</span> <span class="n">create</span> <span class="n">a</span> <span class="n">new</span> <span class="n">container</span><span class="p">;</span>
+<span class="mi">3</span><span class="p">)</span> <span class="n">Allocate</span> <span class="n">a</span> <span class="n">file</span> <span class="n">system</span> <span class="ow">and</span> <span class="n">mounts</span> <span class="n">a</span> <span class="n">read</span><span class="o">-</span><span class="n">write</span> <span class="n">layer</span><span class="p">;</span>
+<span class="mi">4</span><span class="p">)</span> <span class="n">Allocate</span> <span class="n">a</span> <span class="n">network</span><span class="o">/</span><span class="n">bridge</span> <span class="n">interface</span><span class="p">,</span> <span class="n">allowing</span> <span class="n">docker</span> <span class="n">containers</span> <span class="n">talk</span> <span class="n">to</span> <span class="n">the</span> <span class="n">host</span><span class="p">;</span>
+<span class="mi">5</span><span class="p">)</span> <span class="n">Sets</span> <span class="n">up</span> <span class="n">an</span> <span class="n">IP</span> <span class="n">address</span><span class="p">;</span>
+<span class="mi">6</span><span class="p">)</span> <span class="n">Excutes</span> <span class="n">a</span> <span class="n">process</span> <span class="n">that</span> <span class="n">you</span> <span class="n">specify</span><span class="p">;</span>
+<span class="mi">7</span><span class="p">)</span> <span class="n">Captures</span> <span class="ow">and</span> <span class="n">provides</span> <span class="n">application</span> <span class="n">output</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-underlying-technology">
+<h2>The Underlying Technology<a class="headerlink" href="#the-underlying-technology" title="Permalink to this headline">¶</a></h2>
+<p>Docker is written in Go and makes use of serveral Linux kernel features to deliver the functionality we have seen.</p>
+<div class="section" id="namespace">
+<h3>Namespace<a class="headerlink" href="#namespace" title="Permalink to this headline">¶</a></h3>
+<p>Docker use namespace to isolate the workspace.</p>
+<p>Some of the namespaces that docker uses are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="p">)</span> <span class="n">The</span> <span class="n">pid</span> <span class="n">namespace</span><span class="p">:</span> <span class="n">used</span> <span class="k">for</span> <span class="n">process</span> <span class="n">isolation</span><span class="p">;</span>
+<span class="mi">2</span><span class="p">)</span> <span class="n">The</span> <span class="n">net</span> <span class="n">namespace</span><span class="p">:</span> <span class="n">used</span> <span class="k">for</span> <span class="n">managing</span> <span class="n">network</span> <span class="n">interfaces</span><span class="p">;</span>
+<span class="mi">3</span><span class="p">)</span> <span class="n">The</span> <span class="n">ipc</span> <span class="n">namespace</span><span class="p">:</span> <span class="n">used</span> <span class="k">for</span> <span class="n">managing</span> <span class="n">access</span> <span class="n">to</span> <span class="n">IPC</span> <span class="n">resources</span><span class="p">;</span>
+<span class="mi">4</span><span class="p">)</span> <span class="n">The</span> <span class="n">mnt</span> <span class="n">namespace</span><span class="p">:</span> <span class="n">used</span> <span class="k">for</span> <span class="n">managing</span> <span class="n">mounting</span> <span class="n">point</span><span class="p">;</span>
+<span class="mi">5</span><span class="p">)</span> <span class="n">The</span> <span class="n">uts</span> <span class="n">namespace</span><span class="p">:</span> <span class="n">used</span> <span class="k">for</span> <span class="n">isolating</span> <span class="n">kernel</span> <span class="ow">and</span> <span class="n">version</span> <span class="n">identifiers</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="control-groups">
+<h3>Control Groups<a class="headerlink" href="#control-groups" title="Permalink to this headline">¶</a></h3>
+<p>Control groups allow Docker to share available hardware resources to containers and, if required, set up limits and constraints.
+For example, limiting the memory available to a specific container.</p>
+</div>
+<div class="section" id="union-file-system">
+<h3>Union File System<a class="headerlink" href="#union-file-system" title="Permalink to this headline">¶</a></h3>
+<p>Docker can make use of several union file system variants including: AUFS, btrfs, vfs, and DeviceMapper.</p>
+<p>这里关于AUFS和DeviceMapper简单介绍一下：</p>
+<ol class="arabic simple">
+<li>AUFS是一种Union FS，简单来说是将不同的目录挂载在一个虚拟文件系统下，优点是支持容器间共享可执行及可共享的运行库。在ubuntu中，docker就使用aufs driver，我们可以通过目录来看到docker容器里的文件。</li>
+<li>DeviceMappper是一种逻辑设备到物理设备的映射框架机制（注意，这里是机制，而策略是用户层的概念，linux主张策略与机制分开）。我们熟悉的LVM就是在DeviceMapper框架下运行的。在opensuse中，docker就使用DeviceMapper driver，我们可以看见一个大块的文件（100G），每个容器在10G之内（关于DeviceMapper的介绍在Linux LVM部分）。</li>
+</ol>
+</div>
+<div class="section" id="container-format">
+<h3>Container Format<a class="headerlink" href="#container-format" title="Permalink to this headline">¶</a></h3>
+<p>Docker combines these components into a wrapper we call a container format. The default container format is called libcontainer.
+Docker also supports traditional Linux containers using LXC.
+In the future, Docker may support other container formats, for example, by integrating with BSD Jails or Solaris Zones</p>
+</div>
+</div>
+<div class="section" id="exersice">
+<h2>Exersice<a class="headerlink" href="#exersice" title="Permalink to this headline">¶</a></h2>
+<p>今天将base层接口迁移到新的更大的openstack环境中，这个环境下，所有的endpoint都是用主机名表示的，这样的好处是便于维护和区分各个主机的作用。</p>
+<p>但引发一个问题，base层是部在dokcer容器中，docker不支持/etc/hosts主机名解析，这个文件根本就是readonly的。于是我请教我的同事。
+可以在docker启动的时候加入参数</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">start</span> <span class="n">DOCKER_ID</span> <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">hosts</span><span class="p">:</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">hosts</span><span class="p">:</span><span class="n">ro</span>
+</pre></div>
+</div>
+<p>今天（2014.09.17）Docker1.2版本发布，支持/etc/hosts文件解析主机名IP，这正好满足了我今天的需求。
+由于ubuntu官方的源daocker不是最新版的，只能将docker官方源加入到源中：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">echo</span> <span class="n">deb</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">get</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">ubuntu</span> <span class="n">docker</span> <span class="n">main</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">docker</span><span class="o">.</span><span class="n">list</span>
+</pre></div>
+</div>
+<p>重新安装后，docker进程重新启动，所有的容器都停止了（之前应该做些备份处理的）。</p>
+<p>这里有个小插曲：</p>
+<p>Docker每次重启的时候都会DHCP一个新的IP，这次升级后它的ssh私钥发生了变化，原来的免密码登陆失效了，而且直接报错。
+这里是这样的，ssh在连接的时候将server端的public key保存到本地的~/.ssh/know_hosts文件中，只要删除这个文件中的相应内容，就可以重新密码连接了。</p>
+<p>其实完全可以用其他工具进行连接容器，这里推荐使用nsenter，轻量级连接docker工具，简单易用。
+安装（这里暂不推荐最新版2.25,编译的时候有问题，没解决）：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>curl https://www.kernel.org/pub/linux/utils/util-linux/v2.24/util-linux-2.24.tar.gz | tar -zxf-
+cd ../util-linux-2.24/
+./configure --without-ncurses
+make nsenter
+cp nsenter /usr/local/bin
+docker ps -a
+PID=$(docker inspect --format &#39;{{.State.Pid}}&#39; bfcd9910faee)
+nsenter --target $PID --mount --uts --ipc --net --pid
+</pre></div>
+</div>
+<p>之后就跟ssh上去一样，可以操作容器了。</p>
+<div class="section" id="id1">
+<h3>Docker实践中遇到的问题<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>今天base和portal第一个版本发布，我将部署docker容器作为发布的运行容器。
+第一次写dockerfile，参考了同事的资料：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FROM</span> <span class="n">ubuntu</span>
+<span class="n">MAINTAINER</span> <span class="n">yangwenjian</span> <span class="o">&lt;</span><span class="n">yangwj</span><span class="nd">@neunn</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
+
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="n">ADD</span> <span class="n">tomcat7</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span>
+<span class="n">ADD</span> <span class="n">jdk1</span><span class="o">.</span><span class="mf">7.0_55</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span>
+<span class="n">ADD</span> <span class="n">profile</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span>
+<span class="n">EXPOSE</span> <span class="mi">8888</span> <span class="mi">22</span>
+</pre></div>
+</div>
+<p>build后产生新的镜像，结果怎么run这个镜像也跑不起来，直接镜像就退出，通过docker logs也看不出什么。</p>
+<p>运行我镜像列表的里的所有镜像，发现都是同一个毛病，求助于同事，同事查看了一通后也没发现明显的问题。他只是觉得镜像有问题，最后发现是我在构建的时候下载镜像的过程中断网了，结果镜像没有下去，有问题，当时就被公司的网络耍了一把。</p>
+<p>用了新的镜像后发现docker file有些内容没有写进去，profile是写进去了，但是tomcat和jdk都没有进入文件系统中，其实是我的dockerfile写法有问题，ADD添加文件夹的时候和我们观念上的copy文件夹不同，需要给文件夹指定名称。正确的写法如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#his is a docker file to create container for base/portal deployment</span>
+<span class="n">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="n">neunn</span>
+<span class="n">MAINTAINER</span> <span class="n">yangwenjian</span> <span class="o">&lt;</span><span class="n">yangwj</span><span class="nd">@neunn</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
+
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="n">ADD</span> <span class="n">tomcat7</span><span class="o">/</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">tomcat7</span>
+<span class="n">ADD</span> <span class="n">jdk1</span><span class="o">.</span><span class="mf">7.0_55</span><span class="o">/</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jdk1</span><span class="o">.</span><span class="mf">7.0_55</span>
+<span class="n">ADD</span> <span class="n">profile</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span>
+<span class="n">EXPOSE</span> <span class="mi">8888</span> <span class="mi">22</span>
+</pre></div>
+</div>
+<p>这里启动后会自动加载/etc/profile文件，就想linux系统启动一样。</p>
+<p>某天突然停电，重新启动服务器后，再启动所有docker容器，发现base层服务出现连接超时！
+原因是docker容器再重新启动后会覆写/etc/hosts文件，之前加的host与IP的对应表都消失了！
+这是docker的一种特性吧，这里推荐在启动时加入-v挂载本地文件到docker容器中，这样就会永久生效。</p>
+<div class="section" id="id2">
+<h4>Docker中的进程<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>Docker虽然将各个容器进行隔离，但是在宿主机中依然能观测到docker中的各种进程。</p>
+<p>某天我在调物理服务器的数据库，因为我shutdown mysql后发现还有mysql进程，我当时以为没有正常关闭就kill掉了（事后才知道是某个docker中的mysql进程）；
+第二天测试工程师来找我问我有没有动过他的数据库，我说我调的物理服务器的数据库，并没有动你docker内部的数据库，我进去调试发现mysql进程根本没启动，我就说你这进程都没了，肯定不好使啊。</p>
+<p>后来我突然意识到可能是当天的一个kill动作产生的结果，就在物理服务器中查看mysql进程，果然有两个：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>root      7647  0.0  0.0   4444   752 ?        S    Feb26   0:00 /bin/sh /usr/bin/mysqld_safe
+mysql     8059  1.8  0.2 13835468 377860 ?     Sl   Feb26 100:52 /usr/sbin/mysqld --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=/var/log/mysql/error.log --pid-file=/var/run/mysqld/mysqld.pid --socket=/var/run/mysqld/mysqld.sock --port=3306
+root      8294  0.0  0.0   4444   752 ?        S    03:11   0:00 /bin/sh /usr/bin/mysqld_safe
+landsca+  8651  0.2  0.0 689568 60520 ?        Sl   03:11   0:00 /usr/sbin/mysqld --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=/var/log/mysql/error.log --pid-file=/var/run/mysqld/mysqld.pid --socket=/var/run/mysqld/mysqld.sock --port=3306
+mysql     9310  0.1  0.0 381052 33496 ?        Ssl  03:14   0:00 /usr/sbin/mysqld
+</pre></div>
+</div>
+<p>我不死心，又去看ssh进程，这下就都明白了：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>root      1992  0.0  0.0  61364  2280 ?        Ss    2014   1:41 /usr/sbin/sshd -D
+root      2789  0.0  0.0  61364  1176 ?        Ss   Feb12   0:00 /usr/sbin/sshd
+root      4340  0.0  0.0  61364  1068 ?        Ss   Feb12   0:00 /usr/sbin/sshd
+root      4753  0.0  0.0  61364  1072 ?        Ss   Feb12   0:00 /usr/sbin/sshd
+root      7733  0.0  0.0  61364  1300 ?        Ss   Feb12   0:00 /usr/sbin/sshd
+root      9885  0.0  0.0 105628  4316 ?        Ss   03:15   0:00 sshd: root@pts/5
+root     10152  0.0  0.0  10468   916 pts/5    S+   03:15   0:00 grep --color=auto ssh
+root     13235  0.0  0.0  61364  1652 ?        S    Feb10   0:00 /usr/sbin/sshd -D
+root     16146  0.0  0.0  61364  1636 ?        S    Feb10   0:00 /usr/sbin/sshd -D
+root     16638  0.0  0.0  61364  1636 ?        S    Feb10   0:00 /usr/sbin/sshd -D
+sshd     26085  0.6  0.0 551020 46384 ?        Sl   Feb10 186:52 /usr/bin/mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongodb.conf run
+root     31001  0.0  0.0  61364  1148 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+root     31064  0.0  0.0  61364  1284 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+root     31134  0.0  0.0  61364  1288 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+root     31225  0.0  0.0  61364  1144 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+root     41461  0.0  0.0  61364  1148 ?        Ss   Feb09   0:00 /usr/sbin/sshd -D
+root     43786  0.0  0.0 106856  5548 ?        Ss   01:52   0:02 sshd: root@pts/12
+root     43904  0.0  0.0  13040  1192 ?        Ss   01:52   0:00 /usr/lib/openssh/sftp-server
+root     44953  0.0  0.0  44140  2956 pts/12   S+   01:55   0:00 ssh root@172.17.0.20
+root     44954  0.0  0.0  63436  3520 ?        Ss   01:55   0:00 sshd: root@pts/0
+root     45353  0.0  0.0  61364  1680 ?        Ss   Feb11   0:00 /usr/sbin/sshd -D
+root     46987  0.0  0.0  61364  1144 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+root     51025  0.0  0.0  61364  1152 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+root     51678  0.0  0.0  61364  1140 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+root     52817  0.0  0.0  61364  1148 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+root     61143  0.0  0.0  61364  1144 ?        Ss   Feb10   0:00 /usr/sbin/sshd -D
+root     63108  0.0  0.0  61364  1184 ?        Ss   Jan13   0:00 /usr/sbin/sshd -D
+root     64920  0.0  0.0  61364  1148 ?        Ss    2014   0:00 /usr/sbin/sshd -D
+</pre></div>
+</div>
+<p>因此发觉docker中的所有进程，在宿主机中是可见的，这样比较容易误操作。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Docker容器调优<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>我先抛出问题，我们Base组利用docker进行部署几个服务，包括Base服务，NeunnManager服务，NeunnPortal服务，
+但是问题是经常发现docker中的tomcat无缘无故的自动退出，当然，这里也有OutOfMemory和OutOfPermgenSpace，
+但是这两个问题可以通过Tomcat参数调优进行解决，也可以进行Docker的参数调优。</p>
+<p>但是自动退出这个问题，由于没有合适的监控，没有任何日志信息，这里没有任何解决办法，
+目前的策略是将每个服务进行彻底分离，并将Bamboo的Agent与服务部署的容器进行分离，避免相互干扰。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>Docker参考手册<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>这里填写一些命令参考，供翻阅。</p>
+<div class="section" id="using-docker">
+<h3>Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h3>
+<p>Install docker on OpenSuse:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$sudo zypper ar -f http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/ Virtualization
+$sudo rpm --import http://download.opensuse.org/repositories/Virtualization/openSUSE_13.1/repodata/repomd.xml.key
+$ssudo zypper in docker
+$sudo systemctl start docker
+$sudo systemctl enable docker(optional)
+</pre></div>
+</div>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$sudo docker run [option] [imagename] [command]
+$sudo docker run -t -i ubuntu:14.04 /bin/bash (-t means create a terminal, -i means we can interact with stdin)
+$sudo docker run -d ubuntu:14.04 /bin/bash (-d means run in deamon process)
+$sudo docker run -t -i -p localhost:8080:80 ubuntu:14.04 /bin/bash(port mapping the container 80 port to host 8080 port)
+$docker attach [containerId]
+$docker logs [containerId]
+$docker commit [containerId] name/imagename:versionId
+</pre></div>
+</div>
+<p>NAT with iptables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">iptables</span> <span class="o">-</span><span class="n">t</span> <span class="n">nat</span> <span class="o">-</span><span class="n">A</span>  <span class="n">DOCKER</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">--</span><span class="n">dport</span>   <span class="o">&lt;</span><span class="n">local</span> <span class="n">port</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">j</span> <span class="n">DNAT</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="n">destination</span> <span class="o">&lt;</span><span class="n">docker</span> <span class="n">ip</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="n">docker</span> <span class="n">port</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="docker-tomcat">
+<h3>Docker 开机自启动tomcat服务<a class="headerlink" href="#docker-tomcat" title="Permalink to this headline">¶</a></h3>
+<p>这里的镜像是从tumtu下载的带有ssh服务的ubuntu镜像，他的dockerfile如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="n">latest</span>
+<span class="n">MAINTAINER</span> <span class="n">Knight</span><span class="o">/</span><span class="n">basic</span><span class="p">:</span><span class="mf">0.1</span><span class="o">&lt;</span><span class="n">yangwj</span><span class="nd">@neunn</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
+
+<span class="c1"># Install packages</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> <span class="o">&amp;&amp;</span> <span class="n">DEBIAN_FRONTEND</span><span class="o">=</span><span class="n">noninteractive</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">openssh</span><span class="o">-</span><span class="n">server</span> <span class="n">pwgen</span>
+<span class="n">RUN</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">sshd</span> <span class="o">&amp;&amp;</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s2">&quot;s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="o">/</span><span class="n">sshd_config</span> <span class="o">&amp;&amp;</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s2">&quot;s/UsePAM.*/UsePAM no/g&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="o">/</span><span class="n">sshd_config</span> <span class="o">&amp;&amp;</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s2">&quot;s/PermitRootLogin.*/PermitRootLogin yes/g&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="o">/</span><span class="n">sshd_config</span>
+<span class="n">ADD</span> <span class="n">jdk1</span><span class="o">.</span><span class="mf">7.0_55</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jdk1</span><span class="o">.</span><span class="mf">7.0_55</span>
+<span class="n">ADD</span> <span class="n">tomcat7</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">tomcat7</span>
+<span class="n">ADD</span> <span class="n">profile</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span>
+<span class="n">ADD</span> <span class="n">hosts</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">hosts</span>
+<span class="n">ADD</span> <span class="n">set_root_pw</span><span class="o">.</span><span class="n">sh</span> <span class="o">/</span><span class="n">set_root_pw</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">ADD</span> <span class="n">run</span><span class="o">.</span><span class="n">sh</span> <span class="o">/</span><span class="n">run</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">ENV</span> <span class="n">JAVA_HOME</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jdk1</span><span class="o">.</span><span class="mf">7.0_55</span>
+<span class="n">RUN</span> <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="o">/*.</span><span class="n">sh</span>
+
+<span class="n">EXPOSE</span> <span class="mi">22</span> <span class="mi">8888</span>
+<span class="n">CMD</span> <span class="p">[</span><span class="s2">&quot;/run.sh&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reference">
+<h3>reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://www.widuu.com/chinese_docker/installation/opensuse.html">http://www.widuu.com/chinese_docker/installation/opensuse.html</a>
+<a class="reference external" href="http://www.pchou.info/open-source/2014/03/29/docker-introduction.html">http://www.pchou.info/open-source/2014/03/29/docker-introduction.html</a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,323 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Btrace &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Btrace</a><ul>
+<li><a class="reference internal" href="#id1">功能</a></li>
+<li><a class="reference internal" href="#api">API</a></li>
+<li><a class="reference internal" href="#id2">限制</a><ul>
+<li><a class="reference internal" href="#id3">最佳实践</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/programming/java/btrace.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="btrace">
+<h1>Btrace<a class="headerlink" href="#btrace" title="Permalink to this headline">¶</a></h1>
+<p>Safe, dynamic tracing tool for Java. BTrace works by dynamically (bytecode) instrumenting classes of a running Java program.
+BTrace inserts tracing actions into the classes of a running Java program and hotswaps the traced program classes.</p>
+<p>BTrace是Java的安全可靠的动态跟踪工具。 他的工作原理是通过 instrument + asm 来对正在运行的java程序中的class类进行动态增强。</p>
+<p>虚拟机其实提供了一个hook，那就是Instrumentation，可以将独立于应用程序的代理程序agent程序随着着应用程序一起启动或者attach
+挂载到正在运行中的应用程序。而在代理程序中可以对class进行修改或者重新定义。</p>
+<p>其本质是利用JVM的JVMTI特性，改变jvm加载的类文件，通过类似AOP的方式进行拦截，也可以想象成解释型语言的机制，动态编译。</p>
+<div class="section" id="id1">
+<h2>功能<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>接口性能变慢，分析每个方法的耗时情况；</li>
+<li>当在Map中插入大量数据，分析其扩容情况；</li>
+<li>分析哪个方法调用了某个函数，调用栈如何；</li>
+<li>执行某个方法抛出异常时，分析运行时参数；</li>
+</ul>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Method</span> <span class="n">Annotations</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">OnMethod</span> <span class="o">//</span><span class="n">探测点</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">OnTimer</span> <span class="o">//</span><span class="n">定时器</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">OnError</span> <span class="o">//</span><span class="n">发生异常时回调</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">OnExit</span> <span class="o">//</span><span class="n">代码调用exit</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">OnEvent</span> <span class="o">//</span><span class="n">用户端事件</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">OnLowMemory</span> <span class="o">//</span><span class="n">内存低于阈值</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">OnProbe</span> <span class="o">//</span><span class="n">支持xml格式声明探测点</span>
+<span class="n">Argument</span> <span class="n">Annotations</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">Self</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">Return</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">CalledInstance</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">CalledMethod</span>
+<span class="n">Field</span> <span class="n">Annotations</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">Export</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">Property</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">TLS</span>
+<span class="n">Class</span> <span class="n">Annotations</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">DTrace</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">DTraceRef</span>
+<span class="nd">@com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">BTrace</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>clazz: 全路径类名，支持正则表达式，格式为/正则表达式/ +类名 匹配子类 &#64;前缀 匹配anotation声明的类</li>
+<li>method: 方法名，支持正则表达式，格式为/正则表达式/， anotation使用* &#64;</li>
+<li>location: 用* &#64;Location来表明在什么时候时候去执行脚本</li>
+<li>Kind.ENTRY 进入方法时</li>
+<li>Kind.RETURN 方法返回时，只有把拦截位置定义为Kind.RETURN，才能获取方法的返回结果&#64;Return和执行时间&#64;Duration</li>
+<li>Kind.THROW 抛出异常时</li>
+<li>Kind.ARRAY_SET 设置数组元素时</li>
+<li>Kind.ARRAY_GET 获取数组元素时</li>
+<li>Kind.NEWARRAY 创建新数组时</li>
+<li>Kind.NEW 创建新对象时</li>
+<li>Kind.CALL 分析方法中调用其它方法的执行情况，比如在execute方法中，想获取add方法的执行耗时，必须把where设置成Where.AFTER</li>
+<li>Kind.CATCH 捕获异常时</li>
+<li>Kind.FIELD_SET 获取对象属性时</li>
+<li>Kind.FIELD_SET 设置对象属性时</li>
+<li>Kind.ERROR 方法由于发生未被捕获的异常结束时</li>
+<li>Kind.SYNC_ENTRY 进入同步块时</li>
+<li>Kind.SYNC_EXIT 离开同步块时</li>
+<li>Kind.LINE 通过设置line，可以监控代码是否执行到指定的位置</li>
+<li>type 方法类型， 不含方法名、参数民、异常声明。</li>
+</ul>
+<p>class example:</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span>使用全限定名：clazz=&quot;com.metty.rpc.common.BtraceCase&quot;, method=&quot;add&quot;
+使用正则表达式：clazz=&quot;/javax.swing../&quot;, method=&quot;/./&quot;
+使用接口：clazz=&quot;+com.ctrip.demo.Filter&quot;, method=&quot;doFilter&quot;
+使用注解：clazz=&quot;@javax.jws.WebService&quot;, method=&quot;&quot;@javax.jws.WebMethod&quot;
+如果需要分析构造方法，需要指定method=&quot;&quot;
+</pre></div>
+</div>
+<p>Kind.LINE example, who called CaseObject line 5:</p>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">static</span> <span class="n">com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">BTraceUtils</span><span class="o">.*</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.sun.btrace.annotations.</span><span class="o">*</span><span class="p">;</span>
+
+<span class="nd">@BTrace</span> <span class="n">public</span> <span class="k">class</span> <span class="nc">TraceMethodLine</span><span class="p">{</span>
+   <span class="nd">@OnMethod</span><span class="p">(</span>
+      <span class="n">clazz</span><span class="o">=</span><span class="s2">&quot;CaseObject&quot;</span><span class="p">,</span>
+      <span class="n">location</span><span class="o">=</span><span class="nd">@Location</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">Kind</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span><span class="n">line</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+   <span class="p">)</span>
+   <span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">traceExecute</span><span class="p">(</span><span class="nd">@ProbeClassName</span> <span class="n">String</span> <span class="n">pcn</span><span class="p">,</span><span class="nd">@ProbeMethodNameString</span> <span class="n">pmn</span><span class="p">,</span><span class="nb">int</span> <span class="n">line</span><span class="p">){</span>
+     <span class="n">println</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span><span class="s2">&quot;call &quot;</span><span class="p">,</span><span class="n">pcn</span><span class="p">),</span><span class="s2">&quot;.&quot;</span><span class="p">),</span><span class="n">pmn</span><span class="p">));</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>限制<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>不能创建对象</li>
+<li>不能创建数组</li>
+<li>不能抛出和捕获异常</li>
+<li>不能调用任何对象方法和静态方法</li>
+<li>不能给目标程序中的类静态属性和对象的属性进行赋值</li>
+<li>不能有外部、内部和嵌套类</li>
+<li>不能有同步块和同步方法</li>
+<li>不能有循环(for, while, do..while)</li>
+<li>不能继承任何的类</li>
+<li>不能实现接口</li>
+<li>不能包含assert断言语句</li>
+</ul>
+<p>这些限制其实是可以使用unsafe模式绕过。通过声明*&#64;BTrace(unsafe = true) annotation 并且以unsafe 模式-u运行btrace</p>
+<p>实际使用非安全模式跟踪时，发现一个问题，一个进程如果被安全模式btrace探测过一次， 后面再使用非安全模式进行探测时非安全模式不生效。</p>
+<div class="section" id="id3">
+<h3>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>打印堆栈和参数</p>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span>/* BTrace Script Template */
+ import com.sun.btrace.annotations.*;
+ import static com.sun.btrace.BTraceUtils.*;
+
+ @BTrace
+ public class TracingScript {
+ /* put your code here */
+ /*指明要查看的方法，类*/
+     @OnMethod(
+         clazz=&quot;com.linlong.platform.versionmanage.managerservice.VersionService&quot;,
+         method=&quot;deleteVersion&quot;,
+         location=@Location(Kind.RETURN)
+     )
+ /*主要两个参数是对象自己的引用 和 返回值，其它参数都是方法调用时传入的参数*/
+     public static void traceExecute(@Self com.linlong.platform.versionmanage.managerservice.VersionService object,Long id, @Return boolean result){
+         println(&quot;调用堆栈！！&quot;);
+         println(strcat(&quot;返回结果是：&quot;,str(result)));//打印结果
+         jstack();
+         println(str(id));//打印参数
+         println(&quot;over&quot;);
+    }
+
+ }
+</pre></div>
+</div>
+<p>打印执行时间</p>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">static</span> <span class="n">com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">BTraceUtils</span><span class="o">.*</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.sun.btrace.BTraceUtils</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">com.sun.btrace.annotations.</span><span class="o">*</span><span class="p">;</span>
+
+<span class="nd">@BTrace</span>
+<span class="n">public</span> <span class="k">class</span> <span class="nc">TraceAllDelegate</span> <span class="p">{</span>
+
+    <span class="nd">@TLS</span>
+    <span class="n">private</span> <span class="n">static</span> <span class="n">long</span> <span class="n">startTime</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="nd">@OnMethod</span><span class="p">(</span><span class="n">clazz</span> <span class="o">=</span> <span class="s2">&quot;/com//.crm//.components//..*Delegate.*/&quot;</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;/.*/&quot;</span><span class="p">)</span>
+    <span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">startMethod</span><span class="p">(){</span>
+        <span class="n">startTime</span> <span class="o">=</span> <span class="n">BTraceUtils</span><span class="o">.</span><span class="n">timeMillis</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="nd">@OnMethod</span><span class="p">(</span><span class="n">clazz</span> <span class="o">=</span> <span class="s2">&quot;/com//.crm//.components//..*Delegate.*/&quot;</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;/.*/&quot;</span><span class="p">,</span> <span class="n">location</span> <span class="o">=</span> <span class="nd">@Location</span><span class="p">(</span><span class="n">Kind</span><span class="o">.</span><span class="n">RETURN</span><span class="p">))</span>
+    <span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">endMethod</span><span class="p">(){</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span><span class="s2">&quot;time taken=&gt;&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">BTraceUtils</span><span class="o">.</span><span class="n">timeMillis</span><span class="p">()</span><span class="o">-</span><span class="n">startTime</span><span class="p">)));</span>
+        <span class="n">println</span><span class="p">(</span><span class="s2">&quot;--------------------------------------&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nd">@OnMethod</span><span class="p">(</span><span class="n">clazz</span> <span class="o">=</span> <span class="s2">&quot;/com//.crm//.components//..*Delegate.*/&quot;</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;/.*/&quot;</span><span class="p">,</span> <span class="n">location</span> <span class="o">=</span> <span class="nd">@Location</span><span class="p">(</span><span class="n">Kind</span><span class="o">.</span><span class="n">RETURN</span><span class="p">))</span>
+    <span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="nb">print</span><span class="p">(</span><span class="nd">@ProbeClassName</span> <span class="n">String</span> <span class="n">pcn</span><span class="p">,</span><span class="nd">@ProbeMethodName</span> <span class="n">String</span> <span class="n">pmn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">pcn</span><span class="p">);</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">pmn</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>打印执行到哪行，对象的属性，map扩容信息</p>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Kind</span><span class="o">.</span><span class="n">LINE</span>
+<span class="kn">import</span> <span class="nn">com.sun.btrace.annotations.</span><span class="o">*</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">btrace</span><span class="o">.</span><span class="n">BTraceUtils</span><span class="o">.*</span><span class="p">;</span>
+
+<span class="nd">@BTrace</span>
+<span class="n">public</span> <span class="k">class</span> <span class="nc">AllLines</span> <span class="p">{</span>
+    <span class="nd">@OnMethod</span><span class="p">(</span>
+        <span class="n">clazz</span><span class="o">=</span><span class="s2">&quot;com.linlong.platform.versionmanage.managerservice.VersionService&quot;</span><span class="p">,</span>
+        <span class="n">location</span><span class="o">=</span><span class="nd">@Location</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">Kind</span><span class="o">.</span><span class="n">LINE</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">online</span><span class="p">(</span><span class="nd">@ProbeClassName</span> <span class="n">String</span> <span class="n">pcn</span><span class="p">,</span> <span class="nd">@ProbeMethodName</span> <span class="n">String</span> <span class="n">pmn</span><span class="p">,</span> <span class="nb">int</span> <span class="n">line</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">pcn</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">pmn</span> <span class="o">+</span>  <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">line</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">//</span><span class="nb">print</span> <span class="n">field</span> <span class="n">example</span>
+    <span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">traceExecute</span><span class="p">(</span><span class="nd">@Self</span> <span class="n">com</span><span class="o">.</span><span class="n">linlong</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">versionmanage</span><span class="o">.</span><span class="n">managerservice</span><span class="o">.</span><span class="n">VersionService</span> <span class="nb">object</span><span class="p">,</span> <span class="n">Long</span> <span class="nb">id</span><span class="p">,</span> <span class="nd">@Return</span> <span class="n">com</span><span class="o">.</span><span class="n">linlong</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">VersionManagerEntity</span> <span class="n">result</span><span class="p">){</span>
+        <span class="n">println</span><span class="p">(</span><span class="s2">&quot;调用堆栈！！&quot;</span><span class="p">);</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">strcat</span><span class="p">(</span><span class="s2">&quot;返回结果是：&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)));</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+        <span class="n">printFields</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;com.linlong.platform.entity.VersionManagerEntity&quot;</span><span class="p">,</span><span class="s2">&quot;versionName&quot;</span><span class="p">),</span> <span class="n">result</span><span class="p">));</span>
+        <span class="o">//</span><span class="n">jstack</span><span class="p">();</span>
+        <span class="o">//</span><span class="n">println</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">));</span>
+        <span class="n">println</span><span class="p">(</span><span class="s2">&quot;over&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="o">//</span> <span class="n">call</span> <span class="n">method</span><span class="p">:</span>
+<span class="nd">@BTrace</span>
+<span class="n">public</span> <span class="k">class</span> <span class="nc">ExpandCapacityBtrace</span> <span class="p">{</span>
+    <span class="nd">@OnMethod</span><span class="p">(</span><span class="n">clazz</span> <span class="o">=</span> <span class="s2">&quot;java.util.HashMap&quot;</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;resize&quot;</span><span class="p">,</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="nd">@Location</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">Kind</span><span class="o">.</span><span class="n">CALL</span><span class="p">,</span> <span class="n">clazz</span> <span class="o">=</span> <span class="s2">&quot;/.*/&quot;</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;/.*/&quot;</span><span class="p">))</span>
+    <span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">traceMapExpandCapacity</span><span class="p">(</span><span class="nd">@ProbeClassName</span> <span class="n">String</span> <span class="n">probeClass</span><span class="p">,</span> <span class="nd">@ProbeMethodName</span> <span class="n">String</span> <span class="n">probeMethod</span><span class="p">,</span>
+                                              <span class="nd">@Self</span> <span class="n">Object</span> <span class="bp">self</span><span class="p">,</span><span class="nb">int</span> <span class="n">newCapacity</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">String</span> <span class="n">point</span> <span class="o">=</span> <span class="n">Strings</span><span class="o">.</span><span class="n">strcat</span><span class="p">(</span><span class="n">Strings</span><span class="o">.</span><span class="n">strcat</span><span class="p">(</span><span class="n">probeClass</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">),</span> <span class="n">probeMethod</span><span class="p">);</span><span class="o">//</span><span class="n">java</span><span class="o">/</span><span class="n">util</span><span class="o">/</span><span class="n">HashMap</span><span class="o">.</span><span class="n">resize</span>
+        <span class="n">Class</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">classForName</span><span class="p">(</span><span class="s2">&quot;java.util.HashMap&quot;</span><span class="p">);</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">Strings</span><span class="o">.</span><span class="n">strcat</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;======&quot;</span><span class="p">));</span>
+        <span class="o">//</span><span class="n">获取实例protected变量</span>
+        <span class="n">Map</span><span class="o">.</span><span class="n">Entry</span><span class="p">[]</span> <span class="n">table</span><span class="o">=</span> <span class="p">(</span><span class="n">Map</span><span class="o">.</span><span class="n">Entry</span><span class="p">[])</span> <span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="s2">&quot;table&quot;</span><span class="p">,</span> <span class="n">true</span><span class="p">),</span> <span class="bp">self</span><span class="p">);</span>
+        <span class="nb">int</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">getInt</span><span class="p">(</span><span class="n">field</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="n">true</span><span class="p">),</span> <span class="bp">self</span><span class="p">);</span>
+        <span class="nb">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">getInt</span><span class="p">(</span><span class="n">field</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="n">true</span><span class="p">),</span> <span class="bp">self</span><span class="p">);</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">Strings</span><span class="o">.</span><span class="n">strcat</span><span class="p">(</span><span class="s2">&quot;newCapacity:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">newCapacity</span><span class="p">)));</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">Strings</span><span class="o">.</span><span class="n">strcat</span><span class="p">(</span><span class="s2">&quot;table.length:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">length</span><span class="p">)));</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">Strings</span><span class="o">.</span><span class="n">strcat</span><span class="p">(</span><span class="s2">&quot;size:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">)));</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">Strings</span><span class="o">.</span><span class="n">strcat</span><span class="p">(</span><span class="s2">&quot;threshold:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">threshold</span><span class="p">)));</span>
+        <span class="n">println</span><span class="p">(</span><span class="n">Strings</span><span class="o">.</span><span class="n">strcat</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;------------&quot;</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>执行命令：</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#btrace [-I &lt;include-path&gt;] [-p &lt;port&gt;] [-cp &lt;classpath&gt;] &lt;pid&gt; &lt;btrace-script&gt; [&lt;args&gt;]</span>
+<span class="c1">#include-path指定头文件的路径，用于脚本预处理功能，可选；</span>
+<span class="c1">#port指定BTrace agent的服务端监听端口号，用来监听clients，默认为2020，可选；</span>
+<span class="c1">#classpath用来指定类加载路径，默认为当前路径，可选；</span>
+<span class="c1">#pid表示进程号，可通过jps命令获取；</span>
+<span class="c1">#btrace-script btrace脚本如果以.java结尾，会先编译再提交执行。可使用btracec命令对脚本进行预编译。</span>
+<span class="c1">#args是BTrace脚本可选参数，在脚本中可通过$和$length获取参数信息</span>
+
+<span class="n">btracec</span> <span class="p">[</span><span class="o">-</span><span class="n">I</span> <span class="o">&lt;</span><span class="n">include</span><span class="o">-</span><span class="n">path</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">cp</span> <span class="o">&lt;</span><span class="n">classpath</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span> <span class="o">&lt;</span><span class="n">directory</span><span class="o">&gt;</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">one</span><span class="o">-</span><span class="ow">or</span><span class="o">-</span><span class="n">more</span><span class="o">-</span><span class="n">BTrace</span><span class="o">-.</span><span class="n">java</span><span class="o">-</span><span class="n">files</span><span class="o">&gt;</span>
+<span class="n">btracer</span> <span class="o">&lt;</span><span class="n">pre</span><span class="o">-</span><span class="n">compiled</span><span class="o">-</span><span class="n">btrace</span><span class="o">.</span><span class="n">class</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">application</span><span class="o">-</span><span class="n">main</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">application</span><span class="o">-</span><span class="n">args</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">btrace</span> <span class="o">-</span><span class="n">classpath</span> <span class="n">lib</span><span class="o">/</span><span class="n">CLL</span><span class="o">-</span><span class="n">Platform</span><span class="o">-</span><span class="n">Entity</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span><span class="o">-</span><span class="mf">20180718.021537</span><span class="o">-</span><span class="mf">185.</span><span class="n">jar</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">apache</span><span class="o">-</span><span class="n">tomcat</span><span class="o">-</span><span class="mf">8.0</span><span class="o">.</span><span class="mi">50</span><span class="o">/</span><span class="n">webapps</span><span class="o">/</span><span class="n">CLL</span><span class="o">-</span><span class="n">Platform</span><span class="o">-</span><span class="n">Manager</span><span class="o">/</span><span class="n">WEB</span><span class="o">-</span><span class="n">INF</span><span class="o">/</span><span class="n">classes</span><span class="o">/</span> <span class="mi">31374</span> <span class="n">TracingScript</span><span class="o">.</span><span class="n">java</span>
+<span class="c1">#必须将自己的class文件加入到classpath中，否则会出现找不到包或者类的情况</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

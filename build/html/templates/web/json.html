@@ -1,0 +1,145 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Json Object &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/web/json.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="json-object">
+<h1>Json Object<a class="headerlink" href="#json-object" title="Permalink to this headline">¶</a></h1>
+<p>Json是JavaScrip Object Notaion的缩写，是轻量级的数据交换格式。
+Json非常适合用于网络传输，传出的格式如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+   <span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Yang Wenjian&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;sex&quot;</span> <span class="p">:</span> <span class="s2">&quot;male&quot;</span><span class="p">,</span>
+   <span class="o">......</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>也可以使用带有root name的Json格式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+   <span class="s2">&quot;Person&quot;</span> <span class="p">:</span> <span class="p">{</span>
+       <span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Yang Wenjian&quot;</span><span class="p">,</span>
+       <span class="s2">&quot;sex&quot;</span> <span class="p">:</span> <span class="s2">&quot;male&quot;</span><span class="p">,</span>
+       <span class="o">......</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们在构建Restful的接口中经常使用Json作为返回结果，这样可以通过简单的JAVA对象即可接收。</p>
+<p>常用的第三方工具包有gson包，还有Jackson-mapper包等。</p>
+<p>这里简单比较下使用两个包的一些心得：</p>
+<p>gson包简单明了，易于使用，包里类和目录很少，比较容易上手。代码示例如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Gson</span> <span class="n">gson</span> <span class="o">=</span> <span class="n">new</span> <span class="n">GsonBuilder</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">excludeFieldsWithModifiers</span><span class="p">(</span><span class="n">Modifier</span><span class="o">.</span><span class="n">STATIC</span><span class="p">,</span><span class="n">Modifier</span><span class="o">.</span><span class="n">TRANSIENT</span><span class="p">,</span> <span class="n">Modifier</span><span class="o">.</span><span class="n">VOLATILE</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">enableComplexMapKeySerialization</span><span class="p">()</span> <span class="o">//</span> <span class="n">支持Map的key为复杂对象的形式</span>
+    <span class="o">.</span><span class="n">setPrettyPrinting</span><span class="p">()</span> <span class="o">//</span> <span class="n">对json结果格式化</span>
+    <span class="o">.</span><span class="n">setDateFormat</span><span class="p">(</span><span class="s2">&quot;yyyy-MM-dd HH:mm:ss:SSS&quot;</span><span class="p">)</span><span class="o">//</span> <span class="n">时间转化为特定格式</span>
+    <span class="o">.</span><span class="n">create</span><span class="p">();</span>
+<span class="n">T</span> <span class="n">entity</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+<span class="k">try</span> <span class="p">{</span>
+    <span class="n">entity</span> <span class="o">=</span> <span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="n">gson</span><span class="o">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">jsonData</span><span class="p">,</span> <span class="n">returnType</span><span class="p">);</span>
+<span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="ne">Exception</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">throw</span> <span class="n">new</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error With traslation.&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>相比之下，JackSon包中的ObjectMapper对于上面第二种带有root name的json序列化或者反序列话支持较好，
+有自己封装好的Annotation–&#64;JsonRootName标记在类名之前，易于解析而且不容易出错。代码示例如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ObjectMapper</span> <span class="n">DEFAULT_MAPPER</span> <span class="o">=</span> <span class="n">new</span> <span class="n">ObjectMapper</span><span class="p">();</span>
+<span class="n">DEFAULT_MAPPER</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">SerializationConfig</span><span class="o">.</span><span class="n">Feature</span><span class="o">.</span><span class="n">WRAP_ROOT_VALUE</span><span class="p">);</span>
+<span class="n">DEFAULT_MAPPER</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">DeserializationConfig</span><span class="o">.</span><span class="n">Feature</span><span class="o">.</span><span class="n">UNWRAP_ROOT_VALUE</span><span class="p">);</span>
+<span class="n">DEFAULT_MAPPER</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">DeserializationConfig</span><span class="o">.</span><span class="n">Feature</span><span class="o">.</span><span class="n">FAIL_ON_UNKNOWN_PROPERTIES</span><span class="p">);</span>
+
+<span class="n">T</span> <span class="n">entity</span> <span class="o">=</span> <span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="n">DEFAULT_MAPPER</span><span class="o">.</span><span class="n">readValue</span><span class="p">(</span><span class="n">jsonData</span><span class="p">,</span> <span class="n">returnType</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果想要使用Gson进行带有root name的序列化或者反序列化，需要使用JsonObject。代码示例如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>//序列化对象
+JsonElement je = gson.toJsonTree(object);
+JsonObject jo = new JsonObject();
+jo.add(CostRecordDetails.class.getSimpleName(), je);//类似于一个Mapper，在最外层再加入一个键值对；
+System.out.println(jo.toString());
+
+//反序列化
+JsonElement je2 = new JsonParser().parse(jsonData);
+JsonElement je3 = je2.getAsJsonObject().get(returnType.getSimpleName());
+T entity = (T) gson.fromJson(je3, returnType);
+</pre></div>
+</div>
+<p>如果在序列化或者反序列化中有Enum类型，并且其json值并非enum的名称的时候，我们需要做额外的工作：
+首先实现Enum的fromValue方法，然后写一个Adapter继承自JsonSerializer&lt;Enum.class&gt;，实现deserialize方法和serialize方法；
+之后使用GsonBuilder注册这个Adapter即可。</p>
+<p>使用ObjectMapper也是同样的原理，实现JsonDeserializer接口，并在bean的set方法前加入注释&#64;JsonDeserialize(using = MyDeserializer.class)即可。</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

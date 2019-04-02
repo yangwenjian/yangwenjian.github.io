@@ -16,6 +16,8 @@ The Will of Knight
    :maxdepth: 1
  
    _templates/knight/oath
+   _templates/knight/book
+   _templates/knight/speech
 
 Theoretical Knowledge
 ======================================
@@ -25,6 +27,7 @@ Theoretical Knowledge
 
    _templates/knight/structure_of_knowledge
    _templates/knight/architecture
+   _templates/knight/big_data_time
 
 Architecture
 ======================================
@@ -33,7 +36,6 @@ Architecture
    :maxdepth: 1
 
    _templates/architecture/mvc
-   _templates/architecture/monitoring_system
    _templates/architecture/operation
 
 Sulotion of Autamation
@@ -80,6 +82,7 @@ Monitor
    :maxdepth: 1
 
    _templates/monitor/zabbix
+   _templates/monitor/monitoring_system
 
 Sulotion of Web Service
 ======================================

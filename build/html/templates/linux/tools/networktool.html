@@ -1,0 +1,209 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Linux Network Tool &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Linux Network Tool</a><ul>
+<li><a class="reference internal" href="#curl">Curl</a></li>
+<li><a class="reference internal" href="#ping">Ping</a></li>
+<li><a class="reference internal" href="#netstat">Netstat</a></li>
+<li><a class="reference internal" href="#tcpdump">Tcpdump</a></li>
+<li><a class="reference internal" href="#vpn">VPN</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/linux/tools/networktool.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="linux-network-tool">
+<h1>Linux Network Tool<a class="headerlink" href="#linux-network-tool" title="Permalink to this headline">¶</a></h1>
+<p>Linux has planty of tools of network, I will introduce some of them which are used in my develop work.</p>
+<div class="section" id="curl">
+<h2>Curl<a class="headerlink" href="#curl" title="Permalink to this headline">¶</a></h2>
+<p>Curl stands for command line url viewer.</p>
+<p>Example:</p>
+<p>发送post请求获取openstack的token</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span>  <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">H</span> <span class="s2">&quot;Content-Type:application/json&quot;</span> <span class="o">-</span><span class="n">d</span> <span class="s1">&#39;{ &quot;auth&quot; : { &quot;tenantName&quot; : &quot;admin&quot;,&quot;passwordCredentials&quot; : { &quot;username&quot; : &quot;admin&quot;,&quot;password&quot; : &quot;admin&quot;}}}&#39;</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="p">:</span><span class="mi">5000</span><span class="o">/</span><span class="n">v2</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">tokens</span>
+</pre></div>
+</div>
+<p>发送get请求images信息列表</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">GET</span> <span class="o">-</span><span class="n">H</span> <span class="s2">&quot;Content-Type:application/json&quot;</span> <span class="o">-</span><span class="n">H</span> <span class="s2">&quot;X-Auth-Token:...&quot;</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="p">:</span><span class="mi">9696</span><span class="o">/</span><span class="n">v2</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">subnets</span>
+</pre></div>
+</div>
+<p>curl 对于http请求默认的方法是get，利用-X可以显示的指定相应方法，像上述两个例子可以省略-X参数，第一个例子中，加上-d表示为post。</p>
+<p>下载图片</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">o</span> <span class="mf">1.</span><span class="n">jpg</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">cgi2</span><span class="o">.</span><span class="n">tky</span><span class="o">.</span><span class="mi">3</span><span class="n">web</span><span class="o">.</span><span class="n">ne</span><span class="o">.</span><span class="n">jp</span><span class="o">/~</span><span class="n">zzh</span><span class="o">/</span><span class="n">screen1</span><span class="o">.</span><span class="n">JPG</span>
+<span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">cgi2</span><span class="o">.</span><span class="n">tky</span><span class="o">.</span><span class="mi">3</span><span class="n">web</span><span class="o">.</span><span class="n">ne</span><span class="o">.</span><span class="n">jp</span><span class="o">/~</span><span class="n">zzh</span><span class="o">/</span><span class="n">screen</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">JPG</span>
+<span class="n">curl</span> <span class="o">-</span><span class="n">o</span> <span class="c1">#2_#1.jpg http://cgi2.tky.3web.ne.jp/~{zzh,nick}/[001-201].JPG</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ping">
+<h2>Ping<a class="headerlink" href="#ping" title="Permalink to this headline">¶</a></h2>
+<p>Ping is the most usual tool we use in network.
+Ping is base on icmp protocol.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Knight</span><span class="o">-</span><span class="n">Linux</span><span class="p">:</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">knight</span> <span class="c1"># ping 192.168.250.3</span>
+<span class="n">PING</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.3</span> <span class="p">(</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">250.3</span><span class="p">)</span> <span class="mi">56</span><span class="p">(</span><span class="mi">84</span><span class="p">)</span> <span class="nb">bytes</span> <span class="n">of</span> <span class="n">data</span><span class="o">.</span>
+<span class="mi">64</span> <span class="nb">bytes</span> <span class="kn">from</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.3</span><span class="p">:</span> <span class="n">icmp_seq</span><span class="o">=</span><span class="mi">1</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">62</span> <span class="n">time</span><span class="o">=</span><span class="mf">0.290</span> <span class="n">ms</span>
+<span class="mi">64</span> <span class="nb">bytes</span> <span class="kn">from</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.3</span><span class="p">:</span> <span class="n">icmp_seq</span><span class="o">=</span><span class="mi">2</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">62</span> <span class="n">time</span><span class="o">=</span><span class="mf">0.384</span> <span class="n">ms</span>
+<span class="mi">64</span> <span class="nb">bytes</span> <span class="kn">from</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.3</span><span class="p">:</span> <span class="n">icmp_seq</span><span class="o">=</span><span class="mi">3</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">62</span> <span class="n">time</span><span class="o">=</span><span class="mf">0.387</span> <span class="n">ms</span>
+<span class="o">^</span><span class="n">C</span>
+<span class="o">---</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.3</span> <span class="n">ping</span> <span class="n">statistics</span> <span class="o">---</span>
+<span class="mi">3</span> <span class="n">packets</span> <span class="n">transmitted</span><span class="p">,</span> <span class="mi">3</span> <span class="n">received</span><span class="p">,</span> <span class="mi">0</span><span class="o">%</span> <span class="n">packet</span> <span class="n">loss</span><span class="p">,</span> <span class="n">time</span> <span class="mi">2000</span><span class="n">ms</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>64bytes 是icmp封包大小的预设值，可以用-s 200等来代替；</li>
+<li>icmp_seq=1 意识是侦测次数；</li>
+<li>ttl=62 每经过一个带有mac的节点，如router，bridge等，ttl就减少1,预设值为255,可以用-t 200等来设置；</li>
+<li>time=0.387ms 回应时间，越小说明网络环境越好。</li>
+</ol>
+</div>
+<div class="section" id="netstat">
+<h2>Netstat<a class="headerlink" href="#netstat" title="Permalink to this headline">¶</a></h2>
+<p>例如：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Proto</span> <span class="n">Recv</span><span class="o">-</span><span class="n">Q</span> <span class="n">Send</span><span class="o">-</span><span class="n">Q</span> <span class="n">Local</span> <span class="n">Address</span>           <span class="n">Foreign</span> <span class="n">Address</span>         <span class="n">State</span>       <span class="n">PID</span><span class="o">/</span><span class="n">Program</span> <span class="n">name</span>
+<span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">3306</span>            <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="o">-</span>
+<span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">22</span>              <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="o">-</span>
+<span class="n">tcp6</span>       <span class="mi">0</span>      <span class="mi">0</span> <span class="p">:::</span><span class="mi">22</span>                   <span class="p">:::</span><span class="o">*</span>                    <span class="n">LISTEN</span>      <span class="o">-</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>如果Local Address写为0.0.0.0:3306表示任何网卡的3306端口都能被其他服务器访问；</li>
+<li>如果Local Address写为192.168.250.3,表示只有这个IP所在网卡能被外部服务器访问；</li>
+<li>如果Local Address写为127.0.0.1:3306，表示只有本机可以访问这个端口。</li>
+</ul>
+</div>
+<div class="section" id="tcpdump">
+<h2>Tcpdump<a class="headerlink" href="#tcpdump" title="Permalink to this headline">¶</a></h2>
+<p>Tcpdump能截获当前所有通过本机网卡的数据包，有着灵活的过滤机制。由于只能截获本机网卡数据，只能用于自检或者在网关的服务器上。</p>
+<p>例如：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tcpdump</span> <span class="o">-</span><span class="n">i</span> <span class="n">eth0</span> <span class="n">src</span> <span class="n">host</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">0.5</span>
+<span class="n">tcpdump</span> <span class="o">-</span><span class="n">i</span> <span class="n">eth0</span> <span class="n">src</span> <span class="n">host</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">0.5</span> <span class="ow">and</span> <span class="n">dst</span> <span class="n">port</span> <span class="mi">80</span>
+</pre></div>
+</div>
+<p>在本机上使用 <em>curl -i www.sina.com</em> 访问新浪，监听得到如下结果：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@192</span><span class="o">-</span><span class="mi">168</span><span class="o">-</span><span class="mi">250</span><span class="o">-</span><span class="mi">222</span><span class="p">:</span><span class="o">~</span><span class="c1"># tcpdump -i eth0 dst port 80</span>
+<span class="n">tcpdump</span><span class="p">:</span> <span class="n">verbose</span> <span class="n">output</span> <span class="n">suppressed</span><span class="p">,</span> <span class="n">use</span> <span class="o">-</span><span class="n">v</span> <span class="ow">or</span> <span class="o">-</span><span class="n">vv</span> <span class="k">for</span> <span class="n">full</span> <span class="n">protocol</span> <span class="n">decode</span>
+<span class="n">listening</span> <span class="n">on</span> <span class="n">eth0</span><span class="p">,</span> <span class="n">link</span><span class="o">-</span><span class="nb">type</span> <span class="n">EN10MB</span> <span class="p">(</span><span class="n">Ethernet</span><span class="p">),</span> <span class="n">capture</span> <span class="n">size</span> <span class="mi">65535</span> <span class="nb">bytes</span>
+<span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mf">45.075410</span> <span class="n">IP</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="o">.</span><span class="mi">39382</span> <span class="o">&gt;</span> <span class="mf">12.130</span><span class="o">.</span><span class="mf">132.30</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">Flags</span> <span class="p">[</span><span class="n">S</span><span class="p">],</span> <span class="n">seq</span> <span class="mi">899886478</span><span class="p">,</span> <span class="n">win</span> <span class="mi">14600</span><span class="p">,</span> <span class="n">options</span> <span class="p">[</span><span class="n">mss</span> <span class="mi">1460</span><span class="p">,</span><span class="n">sackOK</span><span class="p">,</span><span class="n">TS</span> <span class="n">val</span> <span class="mi">1276140011</span> <span class="n">ecr</span> <span class="mi">0</span><span class="p">,</span><span class="n">nop</span><span class="p">,</span><span class="n">wscale</span> <span class="mi">7</span><span class="p">],</span> <span class="n">length</span> <span class="mi">0</span>
+<span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mf">45.247567</span> <span class="n">IP</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="o">.</span><span class="mi">39382</span> <span class="o">&gt;</span> <span class="mf">12.130</span><span class="o">.</span><span class="mf">132.30</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">Flags</span> <span class="p">[</span><span class="o">.</span><span class="p">],</span> <span class="n">ack</span> <span class="mi">4291915039</span><span class="p">,</span> <span class="n">win</span> <span class="mi">14600</span><span class="p">,</span> <span class="n">options</span> <span class="p">[</span><span class="n">nop</span><span class="p">,</span><span class="n">nop</span><span class="p">,</span><span class="n">TS</span> <span class="n">val</span> <span class="mi">1276140054</span> <span class="n">ecr</span> <span class="mi">4153792769</span><span class="p">],</span> <span class="n">length</span> <span class="mi">0</span>
+<span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mf">45.247686</span> <span class="n">IP</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="o">.</span><span class="mi">39382</span> <span class="o">&gt;</span> <span class="mf">12.130</span><span class="o">.</span><span class="mf">132.30</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">Flags</span> <span class="p">[</span><span class="n">P</span><span class="o">.</span><span class="p">],</span> <span class="n">seq</span> <span class="mi">0</span><span class="p">:</span><span class="mi">76</span><span class="p">,</span> <span class="n">ack</span> <span class="mi">1</span><span class="p">,</span> <span class="n">win</span> <span class="mi">14600</span><span class="p">,</span> <span class="n">options</span> <span class="p">[</span><span class="n">nop</span><span class="p">,</span><span class="n">nop</span><span class="p">,</span><span class="n">TS</span> <span class="n">val</span> <span class="mi">1276140054</span> <span class="n">ecr</span> <span class="mi">4153792769</span><span class="p">],</span> <span class="n">length</span> <span class="mi">76</span>
+<span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mf">45.421770</span> <span class="n">IP</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="o">.</span><span class="mi">39382</span> <span class="o">&gt;</span> <span class="mf">12.130</span><span class="o">.</span><span class="mf">132.30</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">Flags</span> <span class="p">[</span><span class="o">.</span><span class="p">],</span> <span class="n">ack</span> <span class="mi">327</span><span class="p">,</span> <span class="n">win</span> <span class="mi">15544</span><span class="p">,</span> <span class="n">options</span> <span class="p">[</span><span class="n">nop</span><span class="p">,</span><span class="n">nop</span><span class="p">,</span><span class="n">TS</span> <span class="n">val</span> <span class="mi">1276140097</span> <span class="n">ecr</span> <span class="mi">4153792943</span><span class="p">],</span> <span class="n">length</span> <span class="mi">0</span>
+<span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mf">45.421810</span> <span class="n">IP</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="o">.</span><span class="mi">39382</span> <span class="o">&gt;</span> <span class="mf">12.130</span><span class="o">.</span><span class="mf">132.30</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">Flags</span> <span class="p">[</span><span class="o">.</span><span class="p">],</span> <span class="n">ack</span> <span class="mi">1775</span><span class="p">,</span> <span class="n">win</span> <span class="mi">17376</span><span class="p">,</span> <span class="n">options</span> <span class="p">[</span><span class="n">nop</span><span class="p">,</span><span class="n">nop</span><span class="p">,</span><span class="n">TS</span> <span class="n">val</span> <span class="mi">1276140097</span> <span class="n">ecr</span> <span class="mi">4153792943</span><span class="p">],</span> <span class="n">length</span> <span class="mi">0</span>
+<span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mf">45.421960</span> <span class="n">IP</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="o">.</span><span class="mi">39382</span> <span class="o">&gt;</span> <span class="mf">12.130</span><span class="o">.</span><span class="mf">132.30</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">Flags</span> <span class="p">[</span><span class="o">.</span><span class="p">],</span> <span class="n">ack</span> <span class="mi">3223</span><span class="p">,</span> <span class="n">win</span> <span class="mi">20272</span><span class="p">,</span> <span class="n">options</span> <span class="p">[</span><span class="n">nop</span><span class="p">,</span><span class="n">nop</span><span class="p">,</span><span class="n">TS</span> <span class="n">val</span> <span class="mi">1276140097</span> <span class="n">ecr</span> <span class="mi">4153792943</span><span class="p">],</span> <span class="n">length</span> <span class="mi">0</span>
+<span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mf">45.594158</span> <span class="n">IP</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="o">.</span><span class="mi">39382</span> <span class="o">&gt;</span> <span class="mf">12.130</span><span class="o">.</span><span class="mf">132.30</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">Flags</span> <span class="p">[</span><span class="o">.</span><span class="p">],</span> <span class="n">ack</span> <span class="mi">4671</span><span class="p">,</span> <span class="n">win</span> <span class="mi">23168</span><span class="p">,</span> <span class="n">options</span> <span class="p">[</span><span class="n">nop</span><span class="p">,</span><span class="n">nop</span><span class="p">,</span><span class="n">TS</span> <span class="n">val</span> <span class="mi">1276140140</span> <span class="n">ecr</span> <span class="mi">4153793115</span><span class="p">],</span> <span class="n">length</span> <span class="mi">0</span>
+<span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mf">45.594255</span> <span class="n">IP</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="o">.</span><span class="mi">39382</span> <span class="o">&gt;</span> <span class="mf">12.130</span><span class="o">.</span><span class="mf">132.30</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">Flags</span> <span class="p">[</span><span class="o">.</span><span class="p">],</span> <span class="n">ack</span> <span class="mi">6119</span><span class="p">,</span> <span class="n">win</span> <span class="mi">26064</span><span class="p">,</span> <span class="n">options</span> <span class="p">[</span><span class="n">nop</span><span class="p">,</span><span class="n">nop</span><span class="p">,</span><span class="n">TS</span> <span class="n">val</span> <span class="mi">1276140140</span> <span class="n">ecr</span> <span class="mi">4153793115</span><span class="p">],</span> <span class="n">length</span> <span class="mi">0</span>
+<span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mf">45.594344</span> <span class="n">IP</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="o">.</span><span class="mi">39382</span> <span class="o">&gt;</span> <span class="mf">12.130</span><span class="o">.</span><span class="mf">132.30</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">Flags</span> <span class="p">[</span><span class="o">.</span><span class="p">],</span> <span class="n">ack</span> <span class="mi">7567</span><span class="p">,</span> <span class="n">win</span> <span class="mi">28960</span><span class="p">,</span> <span class="n">options</span> <span class="p">[</span><span class="n">nop</span><span class="p">,</span><span class="n">nop</span><span class="p">,</span><span class="n">TS</span> <span class="n">val</span> <span class="mi">1276140140</span> <span class="n">ecr</span> <span class="mi">4153793115</span><span class="p">],</span> <span class="n">length</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vpn">
+<h2>VPN<a class="headerlink" href="#vpn" title="Permalink to this headline">¶</a></h2>
+<p>VPN: virtual private network</p>
+<p>xl2tpd客户端配置，适用于各种Linux发行版。</p>
+<ol class="arabic simple">
+<li>首先安装xl2tp，zypper in xl2tpd ppp (ubuntu和centos使用相应工具)安装。</li>
+<li>配置/etc/ppp/peers/testvpn.l2tpd，修改如下两个配置：</li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="n">access</span> <span class="n">control</span> <span class="o">=</span> <span class="n">no</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">1701</span>
+<span class="p">[</span><span class="n">lac</span> <span class="n">neunnvpn</span><span class="p">]</span>
+<span class="n">name</span> <span class="o">=</span> <span class="n">dev</span>
+<span class="n">lns</span> <span class="o">=</span> <span class="mf">61.161</span><span class="o">.</span><span class="mf">217.98</span>
+<span class="n">pppoptfile</span> <span class="o">=</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ppp</span><span class="o">/</span><span class="n">peers</span><span class="o">/</span><span class="n">neunnvpn</span><span class="o">.</span><span class="n">l2tpd</span>
+<span class="n">ppp</span> <span class="n">debug</span> <span class="o">=</span> <span class="n">no</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>配置/etc/xl2tpd/xl2tpd.conf</li>
+<li>启动xl2tp</li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">xl2tpd</span> <span class="n">start</span>
+<span class="n">echo</span> <span class="s1">&#39;c client&#39;</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">xl2tpd</span><span class="o">/</span><span class="n">l2tp</span><span class="o">-</span><span class="n">control</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li>添加相应路由表</li>
+<li>断开vpn</li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">echo</span> <span class="s1">&#39;d client&#39;</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">xl2tpd</span><span class="o">/</span><span class="n">l2tp</span><span class="o">-</span><span class="n">control</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">xl2tpd</span> <span class="n">stop</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

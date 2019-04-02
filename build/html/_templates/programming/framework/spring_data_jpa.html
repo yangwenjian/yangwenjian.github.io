@@ -191,6 +191,12 @@ private Set&lt;User&gt; users;
 </div>
 <div class="section" id="id6">
 <h2>最佳实践<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>//Hibernate4规范，在5中不生效，后两者为Hibernate5中配置参数
+//properties.put(&quot;hibernate.ejb.naming_strategy&quot;, ImprovedNamingStrategy.class.getName());
+properties.put(&quot;hibernate.physical_naming_strategy&quot;, &quot;org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&quot;);
+properties.put(&quot;hibernate.implicit_naming_strategy&quot;, &quot;org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy&quot;);
+</pre></div>
+</div>
 </div>
 </div>
 

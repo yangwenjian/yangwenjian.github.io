@@ -1,0 +1,135 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>基础架构 &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">基础架构</a><ul>
+<li><a class="reference internal" href="#id2">前言</a><ul>
+<li><a class="reference internal" href="#id3">数据库设计</a><ul>
+<li><a class="reference internal" href="#id4">技术选型</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id5">箴言</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/architecture/mvc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>基础架构<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>任何细节都有可能是大坑，尽量完美你的程序吧！</p>
+<div class="section" id="id2">
+<h2>前言<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>在工作过程中，我们需要经常进行数据库表设计，包设计，层次结构设计，如何进行隔离，如何设置依赖；
+这段代码是应该放在业务层，还是数据层，还是界面层，三层的结构如何封装；
+如果将来某一层进行改造升级，对其他层的影响如何能减到最小；
+如何定义业务bean，是用多字段的单一bean，还是利用DTO组合各类bean；
+如何进行数据库表设计，使得业务接口能简单明了的操作数据库，而不是一动就一堆表等着更新；
+如何进习架构，使得就算需求有变更的情况下，依然能复用之前的代码，而不是让之前的代码成为负担？</p>
+<p>这些问题，我想成为架构师必须得解决的。</p>
+<div class="section" id="id3">
+<h3>数据库设计<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>在云医院的架构设计中，表设计有医生，医院，医生医院关系表，标签表，医生标签关系表等。
+例如要查询医生，数据库交互有如下两种方式：</p>
+<p>1.复合查询，利用sql语句将需要的表关联查询，得出想要的结果，并用一个复杂的含有多字段的bean进行接收结果，特点是效率高，开发容易；
+但是代码只能给当前方法用，很难维护，而且一旦里面有任何一个表发生变动，整个大方法都会变动，代码不能服用；
+更糟的是，返回的bean字段非常乱套，像一个大集合，而且字段乱飞，很难维护。</p>
+<p>2.单表查询，首先查医生，然后根据医生医院关系表查医院，再根据医生标签关系表查询标签，最后组合成一个DTO返回，特点是代码清晰，复用性强；
+但是查询会变得非常繁琐，往往要几次单表查询才能有理想的结果，</p>
+<p>在熙康的组织机构查询中，我们使用的第二种方法。
+可我经常会遇到这种情况，我就想加一个医院名称到返回的医生信息里，但是要多查两个表，</p>
+<p>在随访的设计中，我们有随访记录表follow_up_record，随访标签表follow_up_tag，</p>
+<div class="section" id="id4">
+<h4>技术选型<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>spring提供多种数据库操作方式，Hibernate,Spring JPA, JDBCTemplate等，其实他们实现的方式都是基于preparestatement，
+只是封装的程度不同，应用场景不同，这里区别就不说了，在我的应用中，需要经常使用联表查询，使用JDBCTemplate比较方便。</p>
+<p>在经常使用单表查询的情况下，使用Hibernate似乎更为简便。但从效率上讲，JDBCTemplate应该是最快的。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>箴言<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>想象一下自己5年后或者10年后的情景，慢慢的就会向自己的目标靠拢。
+架构师的评判标准就在于能否在编码之前就解决很多关键的代码问题。
+看一个人的责任心，主要看他在意这个事情到多远。</p>
+<p>个人看法：</p>
+<p>关于是否重构或者重做，我坚持认为能重构的情况下不能重新写，之前的代码虽然不尽完美，但是却是经过严格测试的，不能轻易摸掉。
+如果不重新考虑良好的架构，重写未必比原来好。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

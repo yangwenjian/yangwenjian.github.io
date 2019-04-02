@@ -1,0 +1,116 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Debug Skills &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Debug Skills</a><ul>
+<li><a class="reference internal" href="#eclipsedebug">eclipse的debug工具</a></li>
+<li><a class="reference internal" href="#bug">Bug维护</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/programming/common/debug.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="debug-skills">
+<h1>Debug Skills<a class="headerlink" href="#debug-skills" title="Permalink to this headline">¶</a></h1>
+<p>Debug是所有程序员都需要做的事情，也是我最喜欢做的事情之一，因为debug就像是一点一点的揭秘，刺激。</p>
+<p>最先是网上资料给出的3点提示：</p>
+<ol class="arabic simple">
+<li>不要使用System.out.println作为调试工具</li>
+<li>把所有涉及到的组件日志级别激活并使用</li>
+<li>使用日志分析器来读取日志</li>
+</ol>
+<p>我个人的态度是System.out.println是最简单的一种调试器，因为其在程序中，可以避免一些运行时发生而调试时很难发现的一些bug，建议配合使用。
+日志级别的设定会产生大量的冗余信息，配合日志分析工具能有效的查看问题的所在，如果不能配合使用，你会被密密麻麻的日志看疯的。</p>
+<div class="section" id="eclipsedebug">
+<h2>eclipse的debug工具<a class="headerlink" href="#eclipsedebug" title="Permalink to this headline">¶</a></h2>
+<p>eclipse提供非常强大的调试工具，之前没用过真是太可惜了。</p>
+<ol class="arabic simple">
+<li>条件断点：eclipse可以在断点加入条件判断属性，当true的时候执行断点，如果为false则直接跳过断点；</li>
+<li>异常断电：允许你在碰到Exception时能继续调试；</li>
+<li>修改变量：在调试中允许修改变量值，及其方便；</li>
+<li>重新调试：利用Drop to Frame方法可以不用重新调试而回退到任何栈重新开始调试，但注意如果有数据库操作，这个方式是有副作用的；</li>
+<li>分布过滤：使用Step Filtering可以在F5步入的时候跳过一些基础包。</li>
+</ol>
+<p>其余一些比较基本调试方法，这里就不介绍了。</p>
+</div>
+<div class="section" id="bug">
+<h2>Bug维护<a class="headerlink" href="#bug" title="Permalink to this headline">¶</a></h2>
+<p>修复Bug的同时非常容易引起新的bug，这是非常常见的一种编程问题。
+如果代码易于维护而且模块化，并且单元测试覆盖率高的话，就能避免这类问题。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

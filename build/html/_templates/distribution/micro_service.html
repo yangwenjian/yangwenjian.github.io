@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../index.html" />
-    <link rel="next" title="Web工程配置" href="../web/config.html" />
+    <link rel="next" title="Zabbix" href="../monitor/zabbix.html" />
     <link rel="prev" title="Elastic" href="elastic.html" /> 
   </head>
   <body>
@@ -35,7 +35,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../web/config.html" title="Web工程配置"
+          <a href="../monitor/zabbix.html" title="Zabbix"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="elastic.html" title="Elastic"
@@ -63,6 +63,8 @@
 <li><a class="reference internal" href="#id10">经验教训</a><ul>
 <li><a class="reference internal" href="#id11">架构演化步骤</a></li>
 <li><a class="reference internal" href="#id12">服务拆分原则</a></li>
+<li><a class="reference internal" href="#id13">微服务策略</a></li>
+<li><a class="reference internal" href="#netflix-play-api">NetFlix Play API</a></li>
 </ul>
 </li>
 </ul>
@@ -73,8 +75,8 @@
   <p class="topless"><a href="elastic.html"
                         title="previous chapter">Elastic</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../web/config.html"
-                        title="next chapter">Web工程配置</a></p>
+  <p class="topless"><a href="../monitor/zabbix.html"
+                        title="next chapter">Zabbix</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/_templates/distribution/micro_service.txt"
@@ -213,6 +215,25 @@
 严格切分，但实时将数据同步到第三方NoSQL中，以满足业务需求；（适合大规模高并发服务）</dd>
 </dl>
 </div>
+<div class="section" id="id13">
+<h3>微服务策略<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p>采用微服务架构并非易事。它可能会出错，使得实际上损害工程生产力。在本节中，我们将分享早期阶段对我们有益的七个策略：</p>
+<p>构建具有明确价值的新服务
+单一的持久存储是有害的
+解耦“构建服务”和“运行服务”
+详尽和一致的可观察性
+无需从头构建新服务
+重视发生的故障
+从一开始就避免“微服务综合症”</p>
+</div>
+<div class="section" id="netflix-play-api">
+<h3>NetFlix Play API<a class="headerlink" href="#netflix-play-api" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>服务身份：为什么服务存在，单一身份</li>
+<li>1型决策（重要不可逆转的决策，包括适当耦合、同步与异步通信和数据架构）：考虑具有双向通信的‘瘦’自动生成客户端，并最小化跨服务边界的代码重用；</li>
+<li>确定你的 1 型决策和 2 型决策；把 80% 的时间用于讨论和调整 1 型决策。</li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -229,7 +250,7 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../web/config.html" title="Web工程配置"
+          <a href="../monitor/zabbix.html" title="Zabbix"
              >next</a> |</li>
         <li class="right" >
           <a href="elastic.html" title="Elastic"

@@ -64,6 +64,7 @@
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#mongodb">mongodb高级特性</a></li>
 </ul>
 </li>
 </ul>
@@ -216,6 +217,108 @@ during transmission, excessive amount of bandwidth.</p>
 </ul>
 </div>
 </div>
+</div>
+<div class="section" id="mongodb">
+<h2>mongodb高级特性<a class="headerlink" href="#mongodb" title="Permalink to this headline">¶</a></h2>
+<p>关系维护：MongoDB 引用有两种：手动引用（Manual References）/DBRefs；</p>
+<p>MongoDB 覆盖索引查询
+&gt;db.users.ensureIndex({gender:1,user_name:1})
+&gt;db.users.find({gender:&#8221;M&#8221;},{user_name:1,_id:0})
+也就是说，对于上述查询，MongoDB的不会去数据库文件中查找。相反，它会从索引中提取数据，这是非常快速的数据查询
+下面的实例没有排除_id，查询就不会被覆盖：
+&gt;db.users.find({gender:&#8221;M&#8221;},{user_name:1})</p>
+<p>mongodb不支持事务，所以，在你的项目中应用时，要注意这点。无论什么设计，都不要要求mongodb保证数据的完整性。
+但是mongodb提供了许多原子操作，比如文档的保存，修改，删除等，都是原子操作
+.. code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="s2">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Los Angeles&quot;</span><span class="p">,</span>
+<span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;California&quot;</span><span class="p">,</span>
+<span class="s2">&quot;pincode&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span>
+<span class="p">},</span>
+<span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span>
+<span class="s2">&quot;music&quot;</span><span class="p">,</span>
+<span class="s2">&quot;cricket&quot;</span><span class="p">,</span>
+<span class="s2">&quot;blogs&quot;</span>
+<span class="p">],</span>
+<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Tom Benzamin&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用以下命令创建数组索引：
+&gt;db.users.ensureIndex({&#8220;tags&#8221;:1})
+创建索引后，我们可以这样检索集合的 tags 字段：
+&gt;db.users.find({tags:&#8221;cricket&#8221;})
+为了验证我们使用使用了索引，可以使用 explain 命令：
+&gt;db.users.find({tags:&#8221;cricket&#8221;}).explain()
+以上命令执行结果中会显示 &#8220;cursor&#8221; : &#8220;BtreeCursor tags_1&#8221; ，则表示已经使用了索引。</p>
+<p>索引子文档字段
+假设我们需要通过city、state、pincode字段来检索文档，由于这些字段是子文档的字段，所以我们需要对子文档建立索引。
+为子文档的三个字段创建索引，命令如下：
+&gt;db.users.ensureIndex({&#8220;address.city&#8221;:1,&#8221;address.state&#8221;:1,&#8221;address.pincode&#8221;:1})
+一旦创建索引，我们可以使用子文档的字段来检索数据：
+&gt;db.users.find({&#8220;address.city&#8221;:&#8221;Los Angeles&#8221;})
+查询表达不一定遵循指定的索引的顺序，mongodb 会自动优化。所以上面创建的索引将支持以下查询：
+&gt;db.users.find({&#8220;address.state&#8221;:&#8221;California&#8221;,&#8221;address.city&#8221;:&#8221;Los Angeles&#8221;})</p>
+<p>MongoDB Map Reduce
+Map-Reduce是一种计算模型，简单的说就是将大批量的工作（数据）分解（MAP）执行，然后再将结果合并成最终结果（REDUCE）。MongoDB提供的Map-Reduce非常灵活，对于大规模数据分析也相当实用。</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>db.collection.mapReduce(
+function() {emit(key,value);}, //map 函数
+function(key,values) {return reduceFunction}, //reduce 函数
+{
+out: collection,
+query: document,
+sort: document,
+limit: number
+}
+)
+</pre></div>
+</div>
+<p>使用 MapReduce 要实现两个函数 Map 函数和 Reduce 函数,Map 函数调用 emit(key, value), 遍历 collection 中所有的记录, 将 key 与 value 传递给 Reduce 函数进行处理。
+Map 函数必须调用 emit(key, value) 返回键值对。
+参数说明:
+map ：映射函数 (生成键值对序列,作为 reduce 函数参数)。
+reduce 统计函数，reduce函数的任务就是将key-values变成key-value，也就是把values数组变成一个单一的值value。。
+out 统计结果存放集合 (不指定则使用临时集合,在客户端断开后自动删除)。
+query 一个筛选条件，只有满足条件的文档才会调用map函数。（query。limit，sort可以随意组合）
+sort 和limit结合的sort排序参数（也是在发往map函数前给文档排序），可以优化分组机制
+limit 发往map函数的文档数量的上限（要是没有limit，单独使用sort的用处不大）</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>&gt;db.posts.mapReduce(
+function() { emit(this.user_name,1); },
+function(key, values) {return Array.sum(values)},
+{
+query:{status:&quot;active&quot;},
+out:&quot;post_total&quot;
+}
+)
+
+{
+&quot;result&quot; : &quot;post_total&quot;,
+&quot;timeMillis&quot; : 23,
+&quot;counts&quot; : {
+&quot;input&quot; : 5,
+&quot;emit&quot; : 5,
+&quot;reduce&quot; : 1,
+&quot;output&quot; : 2
+},
+&quot;ok&quot; : 1
+}
+</pre></div>
+</div>
+<p>MongoDB 全文检索
+全文检索对每一个词建立一个索引，指明该词在文章中出现的次数和位置，当用户查询时，检索程序就根据事先建立的索引进行查找，并将查找的结果反馈给用户的检索方式。
+这个过程类似于通过字典中的检索字表查字的过程。</p>
+<p>MongoDB 正则表达式
+正则表达式是使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。
+许多程序设计语言都支持利用正则表达式进行字符串操作。
+MongoDB 使用 $regex 操作符来设置匹配字符串的正则表达式。
+MongoDB使用PCRE (Perl Compatible Regular Expression) 作为正则表达式语言。
+&gt;db.posts.find({post_text:{$regex:&#8221;runoob&#8221;}})</p>
+<p>如果你的文档中字段设置了索引，那么使用索引相比于正则表达式匹配查找所有的数据查询速度更快。
+如果正则表达式是前缀表达式，所有匹配的数据将以指定的前缀字符串为开始。例如： 如果正则表达式为 ^tut ，查询语句将查找以 tut 为开头的字符串。
+这里面使用正则表达式有两点需要注意：
+正则表达式中使用变量。一定要使用eval将组合的字符串进行转换，不能直接将字符串拼接后传入给表达式。否则没有报错信息，只是结果为空！实例如下：
+var name=eval(&#8220;/&#8221; + 变量值key +&#8221;/i&#8221;);</p>
 </div>
 </div>
 

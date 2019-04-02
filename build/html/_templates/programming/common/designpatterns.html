@@ -74,10 +74,12 @@
 <li><a class="reference internal" href="#id18">状态模式</a></li>
 <li><a class="reference internal" href="#mediator">中介者模式（Mediator）：</a></li>
 <li><a class="reference internal" href="#interceptor">解释器模型（Interceptor）：</a></li>
-<li><a class="reference internal" href="#id19">模式的模式</a></li>
+<li><a class="reference internal" href="#id19">访问者模式</a></li>
+<li><a class="reference internal" href="#ioreactorproactor">IO设计模式之Reactor和Proactor</a></li>
+<li><a class="reference internal" href="#id20">模式的模式</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id20">參考資料：</a></li>
+<li><a class="reference internal" href="#id21">參考資料：</a></li>
 </ul>
 </li>
 </ul>
@@ -164,13 +166,29 @@
 扩展就可以了。当然前提是我们的抽象要合理，要对需求的变更有前瞻性和预见性才行。</p>
 </li>
 </ol>
+<p>简单来说，就以下几点：</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>1. 开闭原则：对任何可能会修改的地方，使用扩展的方式进行修改；
+2. 里氏替换原则：保证良好的开放原则；
+3. 依赖倒转原则：不依赖具体实现，基于接口编程，等着对方来call；
+4. 接口隔离原则：多个隔离接口，降低耦合；
+5. 迪米特法则：减少耦合；
+6. 合成服用原则：尽量使用合成/聚合，少用继承；
+</pre></div>
+</div>
 </div>
 <div class="section" id="id2">
 <h2>创建模型（5种）：<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id3">
 <h3>抽象工厂模式<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p>有多个抽象产品线，有一个抽象工厂类，根据不同具体工厂类型和产品类型生产出多种产。</p>
+<p>含义：工厂的工厂模式，生产一类工厂（产品族），进而生产产品；</p>
 <img alt="../../../_images/abstract_factory.png" src="../../../_images/abstract_factory.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>Usage in JDK:
+javax.xml.parsers.DocumentBuilderFactory#newInstance()
+javax.xml.transform.TransformerFactory#newInstance()
+javax.xml.xpath.XPathFactory#newInstance()
+</pre></div>
+</div>
 </div>
 <div class="section" id="id4">
 <h3>工厂模式<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
@@ -178,18 +196,38 @@
 抽象工厂方法把每个抽象工厂中的生产对象的方式都改为工厂模式，定义了一组产品的接口，工厂方法就潜伏在抽象工厂里，
 依赖倒置原则(Dependency Inversion Principle)的通用原则是：<em>依赖抽象，不要依赖具体类</em>。
 google在这方面走的更进一步，实现了guice(音/&#8217;dgus/)，解决DI(Dependency Injector)问题，具体请参考guice分析与实现。</p>
+<p>场景：日志记录器生成，数据库访问连接生成，连接服务器协议生成；</p>
 <img alt="../../../_images/factory.png" src="../../../_images/factory.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>Usage in JDK:
+java.util.Calendar#getInstance()
+java.util.ResourceBundle#getBundle()
+java.text.NumberFormat#getInstance()
+java.nio.charset.Charset#forName()
+java.net.URLStreamHandlerFactory#createURLStreamHandler(String) (Returns singleton object per protocol)
+java.util.EnumSet#of()
+javax.xml.bind.JAXBContext#createMarshaller() and other similar methods
+</pre></div>
+</div>
 </div>
 <div class="section" id="id5">
 <h3>构建者模式：<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
-<p>私有构造函数，利用静态接口build完成对象的构建。</p>
+<p>意图：创建复杂对象，私有构造函数，利用静态接口build完成对象的构建。</p>
 <p>优点：封装性好，稳定性高，易于扩展。</p>
 <img alt="../../../_images/builder.png" src="../../../_images/builder.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>Usage in JDK:
+java.lang.StringBuilder#append() (unsynchronized)
+java.lang.StringBuffer#append() (synchronized)
+java.nio.ByteBuffer#put() (also on CharBuffer, ShortBuffer, IntBuffer, LongBuffer, FloatBuffer and DoubleBuffer)
+javax.swing.GroupLayout.Group#addComponent()
+All implementations of java.lang.Appendable
+java.util.stream.Stream.Builder
+</pre></div>
+</div>
 </div>
 <div class="section" id="id6">
 <h3>单例模式：<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
-<p>私有构造函数，静态私有变量实例；
-双重检查加锁模式，在getInstance方法中判断对象是否为空，如果为空，对整个类进行加锁，然后创建对象并返回，这样可以避免给整个方法加锁后性能下降的问题。</p>
+<p>关键代码：构造函数是私有的，确保单一对象被创建，静态私有变量实例；</p>
+<p>双重检查加锁模式，在getInstance方法中判断对象是否为空，如果为空，对整个类进行加锁，然后创建对象并返回，这样可以避免给整个方法加锁后性能下降的问题。</p>
 <img alt="../../../_images/singleton.png" src="../../../_images/singleton.png" />
 </div>
 <div class="section" id="prototype">
@@ -197,65 +235,125 @@ google在这方面走的更进一步，实现了guice(音/&#8217;dgus/)，解决
 <p>生产者拥有一个原型对象，利用clone产生新的对象。</p>
 <p>优点：生成对象性能较高，简化对象的创建过程（尤其是大对象）。</p>
 <img alt="../../../_images/prototype.png" src="../../../_images/prototype.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span><span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">Object</span> <span class="o">-</span> <span class="n">clone</span><span class="p">()</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="id7">
 <h3>结构模型（7种）：<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="id8">
 <h3>适配器模式<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>关键代码：适配器继承或依赖已有的对象，实现想要的目标接口；</p>
 <p>不直接拥有被调用者的对象，而是间接拥有，通过适配器类和被调用者类实现同一个接口实现进行调用；
 适配器模式的主要目的是解决接口间不兼容的问题,其定义是将一类的接口，转换成客户期望的另一个接口。
 适配器让原本接口不兼容的类可以合作无间。
 适配器实现目标接口，有一个被适配的类型对象。</p>
 <img alt="../../../_images/adapter.png" src="../../../_images/adapter.png" />
+<p><em>example2:</em></p>
+<img alt="../../../_images/adapter2.jpg" src="../../../_images/adapter2.jpg" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>Usage in JDK:
+java.util.Arrays#asList()
+java.util.Collections#list()
+java.util.Collections#enumeration()
+java.io.InputStreamReader(InputStream) (returns a Reader)
+java.io.OutputStreamWriter(OutputStream) (returns a Writer)
+javax.xml.bind.annotation.adapters.XmlAdapter#marshal() and #unmarshal()
+</pre></div>
+</div>
 </div>
 <div class="section" id="id9">
 <h3>装饰者模式<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>含义：只加修饰，绝不继承；</p>
+<p>主要解决：为一个加扩展功能时，通过has-a避免过度继承，通过包含一个相同父类避免多继承导致的类爆炸；</p>
 <p>拥有一个和自己父类相同的对象，以实现增强自己的目的；
 装饰者模式主要是为解决滥用继承带来的代码混乱的问题，例如不同的咖啡配上不同的佐料，不能一一继承;
 我们可以使用一个简单的嵌套（装饰者），每加一层佐料，就在外层加一套嵌套，每个类不仅继承自A，并且还有拥有一个A对象;
 这样就可以无限的进行扩展，而不会使得代码膨胀，动态地经责任附加到对象上。
 当然这样也有缺点，就是外层对象不知道自己含有什么内容，而且包裹层数多了也不利于可读性。</p>
 <img alt="../../../_images/decorator.png" src="../../../_images/decorator.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>Usage in JDK:
+All subclasses of java.io.InputStream, OutputStream, Reader and Writer have a constructor taking an instance of same type.
+java.util.Collections, the checkedXXX(), synchronizedXXX() and unmodifiableXXX() methods.
+javax.servlet.http.HttpServletRequestWrapper and HttpServletResponseWrapper
+javax.swing.JScrollPane
+</pre></div>
+</div>
 </div>
 <div class="section" id="id10">
 <h3>代理模式：<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>含义：不直接访问对象，通过加入中间层访问，但接口形式与直接访问对象相同；</p>
+<p>关键代码：实现与被代理类组合；</p>
 <p>代理模式就是利用某个抽象类的好的实现代替之前的实现，就是把专业的事情交给专家；
 代理模式为另一个对象提供一个替身或者占位符以控制对这个对象的访问。
 具体是生成一个代理对象，用户调用它就像调用真正的对象一样，代理对象进行权限和访问控制。
 代理和适配器模式的区别在于适配器转换了真正对象的接口，而代理则实现相同的接口。
 Java的RMI正式远程代理的一个实现。</p>
 <img alt="../../../_images/proxy.png" src="../../../_images/proxy.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>java.lang.reflect.Proxy
+java.rmi.*
+javax.ejb.EJB (explanation here)
+javax.inject.Inject (explanation here)
+javax.persistence.PersistenceContext
+</pre></div>
+</div>
 </div>
 <div class="section" id="id11">
 <h3>桥接模式：<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
-<p>抽象层的简单聚合，到了实现层则视为桥接模式；</p>
+<p>关键代码：抽象类之间的依赖关系（简单的聚合has-a），在实现类中使用这种关系；</p>
+<p>主要解决：在有多种可能会变化的情况下，用继承会造成类爆炸问题，使用抽象类的has-a关系，提高扩展性；</p>
 <img alt="../../../_images/bridge.png" src="../../../_images/bridge.png" />
+<p><em>example2</em>
+.. image:: images/bridge2.jpg</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>new LinkedHashMap(LinkedHashSet&lt;K&gt;, List&lt;V&gt;)
+</pre></div>
+</div>
 </div>
 <div class="section" id="id12">
 <h3>组合模式:<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p>关键代码：树形结构，自己包含一个自己类型的集合；</p>
+<p>主要解决：在树型结构的问题中，可以像处理简单元素一样来处理复杂元素，从而使得客户程序与复杂元素的内部结构解耦；</p>
 <p>就是一群某个抽象的具体实现像树一样的聚集在这个抽象类之中，其中有一个共同的方法，递归式的调用到每个叶子节点；
 组合模式允许你将对象组合成树形结构来表现“整体/部分”层次结构。组合能让客户以一致的方式处理个别对象以及对象组合。
 其本质是利用组合形成递归原则，将叶子和子节点一视同仁，进行操作。</p>
 <img alt="../../../_images/composite.png" src="../../../_images/composite.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span><span class="n">java</span><span class="o">.</span><span class="n">awt</span><span class="o">.</span><span class="n">Container</span><span class="c1">#add(Component) (practically all over Swing thus)</span>
+<span class="n">javax</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">UIComponent</span><span class="c1">#getChildren() (practically all over JSF UI thus)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="flyweight">
 <h3>享元模式（FlyWeight)：<a class="headerlink" href="#flyweight" title="Permalink to this headline">¶</a></h3>
+<p>主要解决：避免创建过多对象，运用共享技术有效地支持大量细粒度的对象；</p>
+<p>关键代码：用 HashMap 存储这些对象；</p>
 <p>就是一个抽象的具体实现对象的集合，实现对象池的模式；</p>
 <img alt="../../../_images/flyweight.png" src="../../../_images/flyweight.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>String字符串与数据库连接池，类似于缓存池；
+java.lang.Integer#valueOf(int) (also on Boolean, Byte, Character, Short, Long and BigDecimal)
+</pre></div>
+</div>
 </div>
 <div class="section" id="facade">
 <h3>外观模式（Facade）：<a class="headerlink" href="#facade" title="Permalink to this headline">¶</a></h3>
+<p>主要解决：重写接口，简化复杂接口，为复杂的模块或子系统提供外界访问的模块；</p>
+<p>关键代码：在客户端和复杂系统之间再加一层，这一层将调用顺序、依赖关系等处理好；</p>
 <p>利用同一的外观类进行封装，降低耦合度；
-提供了一个统一的接口，用来访问子系统中的一群接口。外观模式定义了一个高层接口，让子系统更容易使用。
-<strong>设计原则&#8211;最少知识原则：只和你的密友谈话。(减少耦合)</strong></p>
+提供了一个统一的接口，用来访问子系统中的一群接口。外观模式定义了一个高层接口，让子系统更容易使用。</p>
+<p><strong>设计原则&#8211;最少知识原则：只和你的密友谈话。(减少耦合)</strong></p>
 <img alt="../../../_images/facade.png" src="../../../_images/facade.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>javax.faces.context.FacesContext, it internally uses among others the abstract/interface types  LifeCycle, ViewHandler, NavigationHandler and many more without that the enduser has to worry about it (which are however overrideable by injection).
+javax.faces.context.ExternalContext, which internally uses ServletContext, HttpSession, HttpServletRequest, HttpServletResponse, etc.
+</pre></div>
+</div>
 </div>
 <div class="section" id="id13">
 <h3>行为模型（11种）：<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="command">
 <h3>命令模式（Command）：<a class="headerlink" href="#command" title="Permalink to this headline">¶</a></h3>
+<p>主要解决：在软件系统中，行为请求者与行为实现者通常是一种紧耦合的关系，但某些场合，比如需要对行
+为进行记录、撤销或重做、事务等处理时，这种无法抵御变化的紧耦合的设计就不太合适；</p>
+<p>关键代码：1、received 真正的命令执行对象 2、Command 3、invoker 使用命令对象的入口；隐藏和包装；</p>
 <p>某个对象不直接调用其他对象，而是通过Command解耦的方式进行调用，command.excute(target)进行调用；
 命令模式是为了解耦调用者和被调用者实现而设计的。其基础是以下接口：</p>
 <div class="code java highlight-python"><div class="highlight"><pre><span></span>public interface Command{
@@ -267,75 +365,170 @@ Java的RMI正式远程代理的一个实现。</p>
 <p>也可以进行组合命令，实现一个组合命令继承自Command，拥有一个command数组，之后通过这个数组实现一系列命令，进行多命令的实现。
 命令模式可以用作队列请求。</p>
 <img alt="../../../_images/command.png" src="../../../_images/command.png" />
+<p><em>example2</em></p>
+<img alt="../../../_images/command2.png" src="../../../_images/command2.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>All implementations of java.lang.Runnable
+All implementations of javax.swing.Action
+</pre></div>
+</div>
 </div>
 <div class="section" id="id14">
 <h3>模板模式<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p>含义：写好抽象方法的架构，再重写细节方法；</p>
+<p>关键代码：在抽象类实现，其他步骤在子类实现;</p>
 <p>与策略模式基本类似，先写好M方法的流程m1;m2;m3...，然后不同的实现由具体的对象决定；
 在一个方法中定义一个算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某些步骤。
 例如将一段算法中的某个步骤提炼为一个抽象方法，而骨架不变，其他设置成final不可覆盖，子类实现这个抽象方法即可。
 也可以在算法的骨架中设计一个hook，一个bool被子类覆盖的bool方法，这样可以实现控制某些算法是否执行。
 钩子是一种方法，它在抽象类中不做事，或者只做默认的事情，子类可以选择要不要去覆盖它。</p>
 <img alt="../../../_images/template_method.png" src="../../../_images/template_method.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>All non-abstract methods of java.io.InputStream, java.io.OutputStream, java.io.Reader and java.io.Writer.
+All non-abstract methods of java.util.AbstractList, java.util.AbstractSet and java.util.AbstractMap.
+javax.servlet.http.HttpServlet, all the doXXX() methods by default sends a HTTP 405 &quot;Method Not Allowed&quot; error to the response. You&#39;re free to implement none or any of them.
+</pre></div>
+</div>
 <p><strong>设计原则&#8211;好莱坞原则：别调用（打电话给）我们，我们会调用（打电话给）你。</strong></p>
 <p>好莱坞原则提供给我们一个防止“依赖腐败”的方法。（高层组件依赖底层组件，底层组件依赖高层组件，高层组件依赖边侧组件，鞭策组件又依赖底层组建）在好莱坞的原则下，底层组件使用hook挂钩到系统之上，底层系统不调用高层系统，让高层系统调用底层系统。Applet就是一个子类使用hook的好例子，包括init、repaint、start、stop、paint等。</p>
 </div>
 <div class="section" id="id15">
 <h3>迭代器模式<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<p>意图：提供一种方法顺序访问一个聚合对象中各个元素, 而又无须暴露该对象的内部表示；</p>
+<p>关键代码：定义接口：hasNext, next；</p>
 <p>集合可以根据不同的类型创建出不同的迭代器，用来遍历集合；
-迭代器模式是为解决集合具体实现的不同来统一封装遍历的接口。不论是哪种具体类型的集合，只要实现createIterator接口即可，然后使用iterator的hasNext和next方法进行调用
-<strong>设计原则：一个类应该只有一个引起变化的原因</strong></p>
+迭代器模式是为解决集合具体实现的不同来统一封装遍历的接口。不论是哪种具体类型的集合，只要实现createIterator接口即可，然后使用iterator的hasNext和next方法进行调用</p>
+<p><strong>设计原则：一个类应该只有一个引起变化的原因</strong></p>
 <img alt="../../../_images/iterator.png" src="../../../_images/iterator.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>All implementations of java.util.Iterator (thus among others also java.util.Scanner!).
+All implementations of java.util.Enumeration
+</pre></div>
+</div>
 </div>
 <div class="section" id="chain-of-responsibility">
 <h3>责任链模式（Chain of Responsibility):<a class="headerlink" href="#chain-of-responsibility" title="Permalink to this headline">¶</a></h3>
+<p>主要解决：职责链将请求的发送者和请求的处理者解耦了，职责链上的处理者负责处理请求；</p>
+<p>关键代码：Handler 里面聚合它自己，在 HandlerRequest 里判断是否合适，如果没达到条件则向下传递；</p>
+<p>应用场景：Encode链和decode链，链式处理；</p>
 <p>每个Handler持有下一个Handler对象，逐级进行处理，用户不知道哪层进行了处理，隐藏了实现；</p>
 <img alt="../../../_images/chain.png" src="../../../_images/chain.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span><span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="c1">#log()</span>
+<span class="n">javax</span><span class="o">.</span><span class="n">servlet</span><span class="o">.</span><span class="n">Filter</span><span class="c1">#doFilter()</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="id16">
 <h3>策略模式<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<p>含义：将算法封装到策略中，通过不同的策略产生不同的效果，任意替换，避免写过多的if/else；</p>
+<p>优点：算法可以自由切换，避免使用多重条件判断，扩展性良好；</p>
 <p>同一个对象O拥有不同的某个接口I的实现，O的同一个方法调用利用之前留好的I的接口调用，实现其接口I即可有丰富的实现；
 将不变的属性作为继承，将变化的属性作为接口并拥有，可以减少变化带来的麻烦，减少代码工作量
 鸭子将本身属性种类，羽毛等作为基类的属性，将行为单独抽象为一个接口，并按具体的行为实现这个接口
 所有鸭子都有setBehavior方法，进行具体的行为设置</p>
 <img alt="../../../_images/strategy.png" src="../../../_images/strategy.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>java.util.Comparator#compare(), executed by among others Collections#sort().
+javax.servlet.http.HttpServlet, the service() and all doXXX() methods take HttpServletRequest and HttpServletResponse and the implementor has to process them (and not to get hold of them as instance variables!).
+javax.servlet.Filter#doFilter()
+</pre></div>
+</div>
 </div>
 <div class="section" id="id17">
 <h3>观察者模式<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<p>关键代码：在抽象类里有一个 ArrayList 存放观察者们；</p>
+<p>注意事项：如果顺序执行，某一观察者错误会导致系统卡壳，一般采用异步方式；</p>
 <p>就像订阅消息一样，所有想得到通知的对象实现Observer接口，等待变化的对象调用这个update接口；
 观察者模式是将观察者加入到主题的观察者列表中，如果有更新或者发现，可以推送给每个观察者;
 或者让观察者拥有我们的当前主题，观察者可以自行拉取想要的内容;</p>
 <img alt="../../../_images/observer.png" src="../../../_images/observer.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>java.util.Observer/java.util.Observable (rarely used in real world though)
+All implementations of java.util.EventListener (practically all over Swing thus)
+javax.servlet.http.HttpSessionBindingListener
+javax.servlet.http.HttpSessionAttributeListener
+javax.faces.event.PhaseListener
+</pre></div>
+</div>
 </div>
 <div class="section" id="memento">
 <h3>备忘录模式（Memento）：<a class="headerlink" href="#memento" title="Permalink to this headline">¶</a></h3>
+<p>关键代码：客户不与备忘录类耦合，与备忘录管理类耦合；</p>
+<p>应用场景：游戏存档，数据库事务，撤销方法都是用备忘录模式；</p>
 <p>通过将保存对象的某一状态封装为一个对象并存储的方式，即为备忘录模式；</p>
 <img alt="../../../_images/memento.png" src="../../../_images/memento.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>java.util.Date (the setter methods do that, Date is internally represented by a long value)
+All implementations of java.io.Serializable
+All implementations of javax.faces.component.StateHolder
+</pre></div>
+</div>
 </div>
 <div class="section" id="id18">
 <h3>状态模式<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<p>含义：上下文对象和状态对象互相持有，这样状态改变引起行为的改变；</p>
 <p>O对象还有一个状态对象OS，当对象状态改变时，O对象的行为也发生变化，具体在OS的具体实现中体现；
-状态模式允许对象在内部状态改变时改变它的行为，对想看起来好像修改了它的类。
+状态模式允许对象在内部状态改变时改变它的行为，对象看起来好像修改了它的类。
 直观来说，是一个类里包含了自己的几种状态，通过外部调用进而切换自己的状态。</p>
 <img alt="../../../_images/state.png" src="../../../_images/state.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span><span class="n">javax</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">lifecycle</span><span class="o">.</span><span class="n">LifeCycle</span><span class="c1">#execute() (controlled by FacesServlet, the behaviour is dependent on current phase (state) of JSF lifecycle)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="mediator">
 <h3>中介者模式（Mediator）：<a class="headerlink" href="#mediator" title="Permalink to this headline">¶</a></h3>
+<p>关键代码：对象 Colleague 之间的通信封装到一个类中单独处理；</p>
+<p>应用场景：就像聊天室一样，隔离和联系各个用户；</p>
 <p>为了防止两个对象互相持有对方对象产生的耦合，中介者模式实现了同时持有这两个对象，避免两个对象互相持有的耦合；</p>
 <img alt="../../../_images/mediator.png" src="../../../_images/mediator.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>java.util.Timer (all scheduleXXX() methods)
+java.util.concurrent.Executor#execute()
+java.util.concurrent.ExecutorService (the invokeXXX() and submit() methods)
+java.util.concurrent.ScheduledExecutorService (all scheduleXXX() methods)
+java.lang.reflect.Method#invoke()
+</pre></div>
+</div>
 </div>
 <div class="section" id="interceptor">
 <h3>解释器模型（Interceptor）：<a class="headerlink" href="#interceptor" title="Permalink to this headline">¶</a></h3>
+<p>键代码：构件环境类，包含解释器之外的一些全局信息，一般是 HashMap；</p>
 <p>在波兰表达式中常用，或者是词法分析工具中；</p>
 <img alt="../../../_images/interpreter.png" src="../../../_images/interpreter.png" />
+<div class="code highlight-python"><div class="highlight"><pre><span></span>java.util.Pattern
+java.text.Normalizer
+All subclasses of java.text.Format
+All subclasses of javax.el.ELResolver
+</pre></div>
+</div>
 </div>
 <div class="section" id="id19">
-<h3>模式的模式<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<h3>访问者模式<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<p>关键代码：在数据基础类里面有一个方法接受访问者，将自身引用传入访问者</p>
+<p>应用场景：一旦访问整个城市，自然就访问城市的每个名胜；</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span><span class="n">javax</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">AnnotationValue</span> <span class="ow">and</span> <span class="n">AnnotationValueVisitor</span>
+<span class="n">javax</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">Element</span> <span class="ow">and</span> <span class="n">ElementVisitor</span>
+<span class="n">javax</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">TypeMirror</span> <span class="ow">and</span> <span class="n">TypeVisitor</span>
+<span class="n">java</span><span class="o">.</span><span class="n">nio</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">FileVisitor</span> <span class="ow">and</span> <span class="n">SimpleFileVisitor</span>
+<span class="n">javax</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">visit</span><span class="o">.</span><span class="n">VisitContext</span> <span class="ow">and</span> <span class="n">VisitCallback</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ioreactorproactor">
+<h3>IO设计模式之Reactor和Proactor<a class="headerlink" href="#ioreactorproactor" title="Permalink to this headline">¶</a></h3>
+<p>Linux epoll 使用 Reactor 模式。Reactor 模式使用同步 I/O（一般来说）。Reactor 的标准（典型）的工作方式是：</p>
+<p>（1）应用程序注册读就绪事件和相关联的事件处理器</p>
+<p>（2）Reactor阻塞等待内核事件通知</p>
+<p>（3）Reactor收到通知，然后分发可读写事件（读写准备就绪）到用户事件处理函数</p>
+<p>（4）用户读取数据，并处理数据</p>
+<p>（5）事件处理器完成实际的读操作，处理读到的数据，注册新的事件，然后返还控制权。</p>
+<p>1.描述符（handle）：由操作系统提供，用于识别每一个事件，如Socket描述符、文件描述符等。在Linux中，它用一个整数来表示。事件可以来自外部，如来自客户端的连接请求、数据等。事件也可以来自内部，如定时器事件。
+2.同步事件分离器（demultiplexer）：是一个函数，用来等待一个或多个事件的发生。调用者会被阻塞，直到分离器分离的描述符集上有事件发生。Linux的select函数是一个经常被使用的分离器。
+3.事件处理器接口（event handler）：是由一个或多个模板函数组成的接口。这些模板函数描述了和应用程序相关的对某个事件的操作。
+4.具体的事件处理器：是事件处理器接口的实现。它实现了应用程序提供的某个服务。每个具体的事件处理器总和一个描述符相关。它使用描述符来识别事件、识别应用程序提供的服务。
+5.Reactor 管理器（reactor）：定义了一些接口，用于应用程序控制事件调度，以及应用程序注册、删除事件处理器和相关的描述符。它是事件处理器的调度核心。 Reactor管理器使用同步事件分离器来等待事件的发生。一旦事件发生，Reactor管理器先是分离每个事件，然后调度事件处理器，最后调用相关的模 板函数来处理这个事件</p>
+</div>
+<div class="section" id="id20">
+<h3>模式的模式<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
 <p>模式通常被一起使用，并被组合在一个设计模式解决方案中。
 符合模式在一个解决方案中结合两个或者多个模式，以解决一般或重复发生的问题。</p>
 </div>
 </div>
-<div class="section" id="id20">
-<h2>參考資料：<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id21">
+<h2>參考資料：<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/iluwatar/java-design-patterns">https://github.com/iluwatar/java-design-patterns</a>
 <a class="reference external" href="http://www.uml.org.cn/sjms/201211023.asp">http://www.uml.org.cn/sjms/201211023.asp</a></p>
 </div>

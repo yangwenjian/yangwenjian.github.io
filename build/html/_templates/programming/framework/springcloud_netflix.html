@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
-    <link rel="next" title="Spring Security" href="spring_security.html" />
+    <link rel="next" title="Spring-data-jpa" href="spring_data_jpa.html" />
     <link rel="prev" title="Spring Cloud" href="springcloud.html" /> 
   </head>
   <body>
@@ -35,7 +35,7 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="spring_security.html" title="Spring Security"
+          <a href="spring_data_jpa.html" title="Spring-data-jpa"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="springcloud.html" title="Spring Cloud"
@@ -49,6 +49,7 @@
   <ul>
 <li><a class="reference internal" href="#">Spring Cloud Netflix</a><ul>
 <li><a class="reference internal" href="#feature">Feature</a></li>
+<li><a class="reference internal" href="#eureka">Eureka</a></li>
 <li><a class="reference internal" href="#service-discovery-eureka-clients">Service Discovery: Eureka Clients</a><ul>
 <li><a class="reference internal" href="#registering">Registering</a></li>
 <li><a class="reference internal" href="#stauts-page-and-health-indicator">Stauts Page and Health Indicator</a></li>
@@ -73,8 +74,8 @@
   <p class="topless"><a href="springcloud.html"
                         title="previous chapter">Spring Cloud</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="spring_security.html"
-                        title="next chapter">Spring Security</a></p>
+  <p class="topless"><a href="spring_data_jpa.html"
+                        title="next chapter">Spring-data-jpa</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/framework/springcloud_netflix.txt"
@@ -114,6 +115,32 @@
 <li>External Configuration: bridge from the Spring Environment.</li>
 <li>Router and Filter: Zuul filters.</li>
 </ul>
+</div>
+<div class="section" id="eureka">
+<h2>Eureka<a class="headerlink" href="#eureka" title="Permalink to this headline">¶</a></h2>
+<p>ZK 的设计原则是 CP，即强一致性和分区容错性。他保证数据的强一致性，但舍弃了可用性，如果出现网络问题可能会影响 ZK 的选举，导致 ZK 注册中心的不可用。</p>
+<p>Eureka 的设计原则是 AP，即可用性和分区容错性。他保证了注册中心的可用性，但舍弃了数据一致性，各节点上的数据有可能是不一致的（会最终一致）</p>
+<img alt="../../../_images/eureka.png" src="../../../_images/eureka.png" />
+<p>Eureka 的数据存储分了两层：数据存储层和缓存层。</p>
+<p>Eureka Client 在拉取服务信息时，先从缓存层获取（相当于 Redis），如果获取不到，先把数据存储层的数据加载到缓存中（相当于 Mysql），再从缓存中获取。值得注意的是，数据存储层的数据结构是服务信息，而缓存中保存的是经过处理加工过的、可以直接传输到 Eureka Client 的数据结构。</p>
+<p>Eureka 这样的数据结构设计是把内部的数据存储结构与对外的数据结构隔离开了，就像是我们平时在进行接口设计一样，对外输出的数据结构和数据库中的数据结构往往都是不一样的。</p>
+<p>删除二级缓存：</p>
+<p>Eureka Client 发送 register、renew 和 cancel 请求并更新 registry 注册表之后，删除二级缓存；
+Eureka Server 自身的 Evict Task 剔除服务后，删除二级缓存；
+二级缓存本身设置了 guava 的失效机制，隔一段时间后自己自动失效；
+加载二级缓存：</p>
+<p>Eureka Client 发送 getRegistry 请求后，如果二级缓存中没有，就触发 guava 的 load，即从 registry 中获取原始服务信息后进行处理加工，再加载到二级缓存中。
+Eureka Server 更新一级缓存的时候，如果二级缓存没有数据，也会触发 guava 的 load。
+更新一级缓存：</p>
+<p>Eureka Server 内置了一个 TimerTask，定时将二级缓存中的数据同步到一级缓存（这个动作包括了删除和加载）。</p>
+<p>关于缓存的实现参考 ResponseCacheImpl</p>
+<p>注册中心服务接收到 register 请求后：</p>
+<p>保存服务信息，将服务信息保存到 registry 中；
+更新队列，将此事件添加到更新队列中，供 Eureka Client 增量同步服务信息使用。
+清空二级缓存，即 readWriteCacheMap，用于保证数据的一致性。
+更新阈值，供剔除服务使用。
+同步服务信息，将此事件同步至其他的 Eureka Server 节点。</p>
+<p>自我保护阈值 = 服务总数 * （60S/ 客户端续约间隔） * 自我保护阈值因子。</p>
 </div>
 <div class="section" id="service-discovery-eureka-clients">
 <h2>Service Discovery: Eureka Clients<a class="headerlink" href="#service-discovery-eureka-clients" title="Permalink to this headline">¶</a></h2>
@@ -338,7 +365,7 @@ public class OkHttpRoutingFilter extends ZuulFilter {
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="spring_security.html" title="Spring Security"
+          <a href="spring_data_jpa.html" title="Spring-data-jpa"
              >next</a> |</li>
         <li class="right" >
           <a href="springcloud.html" title="Spring Cloud"

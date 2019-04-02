@@ -1,0 +1,127 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Solr And Redis &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Solr And Redis</a><ul>
+<li><a class="reference internal" href="#id1">基本介绍</a></li>
+<li><a class="reference internal" href="#redis">redis高级用法</a></li>
+<li><a class="reference internal" href="#id2">实践</a></li>
+<li><a class="reference internal" href="#id3">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/linux/tools/solr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="solr-and-redis">
+<h1>Solr And Redis<a class="headerlink" href="#solr-and-redis" title="Permalink to this headline">¶</a></h1>
+<p>Solr是针对大量非结构化文本，返回最近的搜索结果的一种搜索引擎。</p>
+<div class="section" id="id1">
+<h2>基本介绍<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Solr是一个文件存储和检索引擎，提交Solr处理的每条记录都是一个文档。</p>
+<p>Solr是基于Lucene开发，其提供了单独部署，restful API，更多集成的，良好的服务接口，包括界面，独立部署等等。</p>
+</div>
+<div class="section" id="redis">
+<h2>redis高级用法<a class="headerlink" href="#redis" title="Permalink to this headline">¶</a></h2>
+<p>事务：</p>
+<p>在multi开始后，所有命令都不会执行，而是全部暂时保存起来，在执行exec命令后会按照命令保存的顺序依次执行各个命令。</p>
+<p>如果事务执行过程中存在失败的情况下（某一个命令执行失败后其他命令会继续执行），需要开发人员自行处理后果</p>
+<p>watch：</p>
+<p>watch命令可以监控一个或多个键值的变化，一旦其中一个键被改变，之后的事务就不会执行，而且监控会一直持续到exec命令；</p>
+<p>发布/订阅模式</p>
+<p>管道
+redis的底层通信协议对管道提供了支持。通过管道可以一次性发送多条命令并在执行完后一次性将结果返回，当一组命令中每条命令都不依赖之前命令的执行结果时就可以将这组命令一起通过管道发出。管道通过减少客户端与redis的通信次数来实现降低往返实验累计值的目的</p>
+<p>节省空间
+（1）精简键名和键值
+（2）redis为每种数据类型提供了两种内部编码。例如散列类型的存储是通过散列表来实现的，redis会根据数据的多少来选择编码类型，当数据较少的时候会采用紧凑但性能稍差的内部编码方式，而数据变多时会把编码方式改为散列表</p>
+</div>
+<div class="section" id="id2">
+<h2>实践<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>例如在查找buying a book中，可能想要的搜索结果包含buying a new book这个使用数据库实现起来困难而且低效，因此提出使用solr。</p>
+<p>在云医院的项目中，为了加快搜索速度，加快相应速度，启用Solr进行优化。</p>
+<p>关于solr我们所使用的是spring集成好的jar包，使用起来和JPA一样方便，无需担心内部实现，只需要向数据库操作一样调用即可，性能方面的优势暂未实际测量；
+关于redis我们所使用的是也是spring集成好的jar包，再底层是jedis包，使用起来如同嵌套的HashMap一样方面，性能方面跟存在内存中调用相当。
+当然，这里是spring简化了两种工具的操作内容。</p>
+<p>solr是为解决搜索使用的一种方案，在云医院的设计中，并没有搜索商品等相关功能，这里使用solr并没有达到快速查找的效果，反而会因为和数据库的同步
+问题引起很多bug。建议在下一版提出搜索商品。</p>
+</div>
+<div class="section" id="id3">
+<h2>参考资料<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://lucene.apache.org/solr/quickstart.html">http://lucene.apache.org/solr/quickstart.html</a>
+<a class="reference external" href="http://www.data321.com/ed8c254d">http://www.data321.com/ed8c254d</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

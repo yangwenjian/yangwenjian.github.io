@@ -1,0 +1,213 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>MySQL Exercise &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">MySQL Exercise</a><ul>
+<li><a class="reference internal" href="#mysql">MySQL配置</a><ul>
+<li><a class="reference internal" href="#binlog">binlog</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/linux/tools/mysql.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="mysql-exercise">
+<h1>MySQL Exercise<a class="headerlink" href="#mysql-exercise" title="Permalink to this headline">¶</a></h1>
+<p>Mysql作为免费的最流行数据库，当然收到程序员的关注。</p>
+<div class="section" id="mysql">
+<h2>MySQL配置<a class="headerlink" href="#mysql" title="Permalink to this headline">¶</a></h2>
+<p>以下是基本配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[client]
+port            = 3306
+socket          = /var/run/mysqld/mysqld.sock
+default-character-set = utf8
+
+# This was formally known as [safe_mysqld]. Both versions are currently parsed.
+[mysqld_safe]
+socket          = /var/run/mysqld/mysqld.sock
+nice            = 0
+
+[mysqld]
+# * Basic Settings
+default-storage-engine=INNODB
+max_allowed_packet=32M
+sql_mode = NO_AUTO_VALUE_ON_ZERO
+character-set-server=utf8
+collation-server=utf8_bin
+user            = mysql
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+port            = 3306
+basedir         = /usr
+datadir         = /var/data/mysql
+tmpdir          = /tmp
+lc-messages-dir = /usr/share/mysql
+skip-external-locking
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+#bind-address            = 192.168.2.84
+
+# * Fine Tuning
+#key_buffer             = 16M
+key_buffer_size         = 16M
+max_allowed_packet      = 16M
+thread_stack            = 192K
+thread_cache_size       = 8
+# This replaces the startup script and checks MyISAM tables if needed
+# the first time they are touched
+myisam-recover         = BACKUP
+max_connections        = 100
+#table_cache            = 64
+#thread_concurrency     = 10
+# * Query Cache Configuration
+query_cache_limit       = 1M
+query_cache_size        = 16M
+
+# * Logging and Replication
+# Both location gets rotated by the cronjob.
+# Be aware that this log type is a performance killer.
+# As of 5.1 you can enable the log at runtime!
+general_log_file        = /var/log/mysql/mysql.log
+log-error=/var/log/mysql.err
+#general_log             = 1
+#
+# Error logging goes to syslog due to /etc/mysql/conf.d/mysqld_safe_syslog.cnf.
+#
+# Here you can see queries with especially long duration
+#log_slow_queries       = /var/log/mysql/mysql-slow.log
+#long_query_time = 2
+#log-queries-not-using-indexes
+#
+# The following can be used as easy to replay backup logs or for replication.
+# note: if you are setting up a replication slave, see README.Debian about
+#       other settings you may need to change.
+#开启log-bin，后面的名称可以任意起
+log-bin=mysql-bin
+server-id = 1
+log_bin                 = /var/log/mysql/mysql-bin.log
+expire_logs_days        = 10
+max_binlog_size         = 100M
+binlog_format           = row
+#binlog_do_db           = include_database_name
+#binlog_ignore_db       = include_database_name
+#
+# * InnoDB
+#
+# InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.
+# Read the manual for more InnoDB related options. There are many!
+#
+# * Security Features
+#
+# Read the manual, too, if you want chroot!
+# chroot = /var/lib/mysql/
+#
+# For generating SSL certificates I recommend the OpenSSL GUI &quot;tinyca&quot;.
+#
+# ssl-ca=/etc/mysql/cacert.pem
+# ssl-cert=/etc/mysql/server-cert.pem
+# ssl-key=/etc/mysql/server-key.pem
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet      = 16M
+
+[mysql]
+#no-auto-rehash # faster start of mysql but no tab completition
+
+[isamchk]
+key_buffer              = 16M
+
+#
+# * IMPORTANT: Additional settings that can override those from this file!
+#   The files must end with &#39;.cnf&#39;, otherwise they&#39;ll be ignored.
+#
+!includedir /etc/mysql/conf.d/
+</pre></div>
+</div>
+<div class="section" id="binlog">
+<h3>binlog<a class="headerlink" href="#binlog" title="Permalink to this headline">¶</a></h3>
+<p>binlog是mysql带的二进制日志文件，可以通过binlog来进行mysql的备份和恢复。</p>
+<p>binlog_format支持三种格式：
+1. statement 根据sql语句进行记录，这样每条语句都会生成一条记录，但也需要记录上下文信息；
+2. row 根据每个条目的变化进行记录，这样在update和alter table的时候会产生大量记录；
+3. mixed两种方法的结合，根据语句的内容自动选择使用哪种binlog方式，是一种优化的记录方式；</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

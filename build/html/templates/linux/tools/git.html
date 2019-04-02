@@ -1,0 +1,158 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Git &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Git</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#id1">基本原理</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#git-exercise">Git Exercise</a></li>
+<li><a class="reference internal" href="#git-branch">Git Branch</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/linux/tools/git.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="git">
+<h1>Git<a class="headerlink" href="#git" title="Permalink to this headline">¶</a></h1>
+<p>Git是当前最火的版本管理工具，GitHub也成为程序员最喜欢的代码仓库管理网站。</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Git是一种分布式代码管理工具，其特点是本地有一份远程仓库的clone，即使远程服务器挂了也不会丢失代码。</p>
+<p>Git是直接记录所有文件的快照，并非比较差异进行记录。</p>
+<p>Git有三种状态：已提交，已修改，已暂存。</p>
+<p>常用命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">add</span>        <span class="n">Add</span> <span class="n">file</span> <span class="n">contents</span> <span class="n">to</span> <span class="n">the</span> <span class="n">index</span>
+<span class="n">bisect</span>     <span class="n">Find</span> <span class="n">by</span> <span class="n">binary</span> <span class="n">search</span> <span class="n">the</span> <span class="n">change</span> <span class="n">that</span> <span class="n">introduced</span> <span class="n">a</span> <span class="n">bug</span>
+<span class="n">branch</span>     <span class="n">List</span><span class="p">,</span> <span class="n">create</span><span class="p">,</span> <span class="ow">or</span> <span class="n">delete</span> <span class="n">branches</span>
+<span class="n">checkout</span>   <span class="n">Checkout</span> <span class="n">a</span> <span class="n">branch</span> <span class="ow">or</span> <span class="n">paths</span> <span class="n">to</span> <span class="n">the</span> <span class="n">working</span> <span class="n">tree</span>
+<span class="n">clone</span>      <span class="n">Clone</span> <span class="n">a</span> <span class="n">repository</span> <span class="n">into</span> <span class="n">a</span> <span class="n">new</span> <span class="n">directory</span>
+<span class="n">commit</span>     <span class="n">Record</span> <span class="n">changes</span> <span class="n">to</span> <span class="n">the</span> <span class="n">repository</span>
+<span class="n">diff</span>       <span class="n">Show</span> <span class="n">changes</span> <span class="n">between</span> <span class="n">commits</span><span class="p">,</span> <span class="n">commit</span> <span class="ow">and</span> <span class="n">working</span> <span class="n">tree</span><span class="p">,</span> <span class="n">etc</span>
+<span class="n">fetch</span>      <span class="n">Download</span> <span class="n">objects</span> <span class="ow">and</span> <span class="n">refs</span> <span class="kn">from</span> <span class="nn">another</span> <span class="n">repository</span>
+<span class="n">grep</span>       <span class="n">Print</span> <span class="n">lines</span> <span class="n">matching</span> <span class="n">a</span> <span class="n">pattern</span>
+<span class="n">init</span>       <span class="n">Create</span> <span class="n">an</span> <span class="n">empty</span> <span class="n">Git</span> <span class="n">repository</span> <span class="ow">or</span> <span class="n">reinitialize</span> <span class="n">an</span> <span class="n">existing</span> <span class="n">one</span>
+<span class="n">log</span>        <span class="n">Show</span> <span class="n">commit</span> <span class="n">logs</span>
+<span class="n">merge</span>      <span class="n">Join</span> <span class="n">two</span> <span class="ow">or</span> <span class="n">more</span> <span class="n">development</span> <span class="n">histories</span> <span class="n">together</span>
+<span class="n">mv</span>         <span class="n">Move</span> <span class="ow">or</span> <span class="n">rename</span> <span class="n">a</span> <span class="n">file</span><span class="p">,</span> <span class="n">a</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">or</span> <span class="n">a</span> <span class="n">symlink</span>
+<span class="n">pull</span>       <span class="n">Fetch</span> <span class="kn">from</span> <span class="nn">and</span> <span class="n">integrate</span> <span class="k">with</span> <span class="n">another</span> <span class="n">repository</span> <span class="ow">or</span> <span class="n">a</span> <span class="n">local</span> <span class="n">branch</span>
+<span class="n">push</span>       <span class="n">Update</span> <span class="n">remote</span> <span class="n">refs</span> <span class="n">along</span> <span class="k">with</span> <span class="n">associated</span> <span class="n">objects</span>
+<span class="n">rebase</span>     <span class="n">Forward</span><span class="o">-</span><span class="n">port</span> <span class="n">local</span> <span class="n">commits</span> <span class="n">to</span> <span class="n">the</span> <span class="n">updated</span> <span class="n">upstream</span> <span class="n">head</span>
+<span class="n">reset</span>      <span class="n">Reset</span> <span class="n">current</span> <span class="n">HEAD</span> <span class="n">to</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">state</span>
+<span class="n">rm</span>         <span class="n">Remove</span> <span class="n">files</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">working</span> <span class="n">tree</span> <span class="ow">and</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">index</span>
+<span class="n">show</span>       <span class="n">Show</span> <span class="n">various</span> <span class="n">types</span> <span class="n">of</span> <span class="n">objects</span>
+<span class="n">status</span>     <span class="n">Show</span> <span class="n">the</span> <span class="n">working</span> <span class="n">tree</span> <span class="n">status</span>
+<span class="n">tag</span>        <span class="n">Create</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">delete</span> <span class="ow">or</span> <span class="n">verify</span> <span class="n">a</span> <span class="n">tag</span> <span class="nb">object</span> <span class="n">signed</span> <span class="k">with</span> <span class="n">GPG</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>基本原理<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Git的基本原理是比对发生变化的文件，例如一个git库中有3个文件，一个团队共同维护这个库。
+如果A修改了文件a，B修改了文件b，他们先后提交，那么git的流程是这样的：
+State1(origin)–&gt;State2(a,changed)–&gt;State3(b,changed)–State4(merged)</p>
+</div>
+</div>
+<div class="section" id="git-exercise">
+<h2>Git Exercise<a class="headerlink" href="#git-exercise" title="Permalink to this headline">¶</a></h2>
+<p>Git ignore文件的写法：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># 此为注释 – 将被 Git 忽略
+# 忽略所有 .a 结尾的文件
+*.a
+# 但 lib.a 除外
+!lib.a
+# 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir/TODO
+/TODO
+# 忽略 build/ 目录下的所有文件
+build/
+# 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt
+doc/*.txt
+# ignore all .txt files in the doc/ directory
+doc/**/*.txt
+</pre></div>
+</div>
+</div>
+<div class="section" id="git-branch">
+<h2>Git Branch<a class="headerlink" href="#git-branch" title="Permalink to this headline">¶</a></h2>
+<p>使用Git可以创建一个新的分支，并且可以通过checkout命令在新分支与master进行来回切换。
+同时你可以提交到新的分支，测试通过后再与master合并。</p>
+<p>当合并分支遇到冲突后，git就会在合并处停止，等你解决冲突。
+注意标记表示，HEAD部分表示你当前指针所在部分，其余比较表示拉取过来的部分。
+可以用git status查看冲突，之后一旦进行git add操作进行暂存，Git就会认为你解决好了冲突并准备重新提交了。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

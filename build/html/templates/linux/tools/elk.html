@@ -1,0 +1,186 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Elastic Logstash Kibana &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Elastic Logstash Kibana</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#elastic">Elastic</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#logstash">Logstash</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/linux/tools/elk.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="elastic-logstash-kibana">
+<h1>Elastic Logstash Kibana<a class="headerlink" href="#elastic-logstash-kibana" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="elastic">
+<h3>Elastic<a class="headerlink" href="#elastic" title="Permalink to this headline">¶</a></h3>
+<p>Features：</p>
+<ul class="simple">
+<li>Real-Time Data</li>
+<li>Real-Time Advanced Analytics</li>
+<li>Massively Distributed</li>
+<li>High Availability</li>
+<li>Multitenancy</li>
+<li>Full-Text Search</li>
+<li>Document-Oriented</li>
+<li>Schema-Free</li>
+<li>Developer-Friendly, RESTful API</li>
+<li>Per-Operation Persistence</li>
+<li>Apache 2 Open Source License</li>
+<li>Build on Apache Lucene</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Download and start</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="o">-</span><span class="n">O</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">.</span><span class="n">elastic</span><span class="o">.</span><span class="n">co</span><span class="o">/</span><span class="n">elasticsearch</span><span class="o">/</span><span class="n">release</span><span class="o">/</span><span class="n">org</span><span class="o">/</span><span class="n">elasticsearch</span><span class="o">/</span><span class="n">distribution</span><span class="o">/</span><span class="n">tar</span><span class="o">/</span><span class="n">elasticsearch</span><span class="o">/</span><span class="mf">2.1</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">elasticsearch</span><span class="o">-</span><span class="mf">2.1</span><span class="o">.</span><span class="mf">1.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">tar</span> <span class="o">-</span><span class="n">xvf</span> <span class="n">elasticsearch</span><span class="o">-</span><span class="mf">2.1</span><span class="o">.</span><span class="mf">1.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">cd</span> <span class="n">elasticsearch</span><span class="o">-</span><span class="mf">2.1</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="nb">bin</span>
+<span class="o">./</span><span class="n">elasticsearch</span>
+</pre></div>
+</div>
+<p>We can check the cluster’s health.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="s1">&#39;localhost:9200/_cat/health?v&#39;</span>
+</pre></div>
+</div>
+<p>We can CRUD the indices. Since there is only one node in our cluster, the health would be yellow, because elastic can not write indices replicas.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="s1">&#39;localhost:9200/_cat/indices?v&#39;</span>
+<span class="n">curl</span> <span class="o">-</span><span class="n">XPUT</span> <span class="s1">&#39;localhost:9200/customer?pretty&#39;</span>
+</pre></div>
+</div>
+<div class="section" id="logstash">
+<h3>Logstash<a class="headerlink" href="#logstash" title="Permalink to this headline">¶</a></h3>
+<p>Download and start</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="o">-</span><span class="n">O</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">.</span><span class="n">elastic</span><span class="o">.</span><span class="n">co</span><span class="o">/</span><span class="n">logstash</span><span class="o">/</span><span class="n">logstash</span><span class="o">/</span><span class="n">logstash</span><span class="o">-</span><span class="mf">2.1</span><span class="o">.</span><span class="mf">1.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">tar</span> <span class="o">-</span><span class="n">xvf</span> <span class="n">logstash</span><span class="o">-</span><span class="mf">2.1</span><span class="o">.</span><span class="mf">1.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+<p>Prepare and edit logstash.conf.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">input</span><span class="p">{</span>
+        <span class="n">file</span><span class="p">{</span>
+                <span class="n">path</span><span class="o">=&gt;</span><span class="s2">&quot;/home/knight/software/enviroment/apache-tomcat-8.0.30/logs/catalina.out&quot;</span>
+        <span class="p">}</span>
+        <span class="n">file</span><span class="p">{</span>
+                <span class="n">path</span><span class="o">=&gt;</span><span class="s2">&quot;/home/knight/downloads/test.log&quot;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nb">filter</span> <span class="p">{</span>
+        <span class="n">grok</span> <span class="p">{</span>
+                <span class="n">match</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s2">&quot;message&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;%</span><span class="si">{COMBINEDAPACHELOG}</span><span class="s2">&quot;</span> <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">geoip</span> <span class="p">{</span>
+                <span class="n">source</span> <span class="o">=&gt;</span> <span class="s2">&quot;clientip&quot;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">output</span><span class="p">{</span>
+        <span class="n">elasticsearch</span> <span class="p">{</span>
+                <span class="n">hosts</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s2">&quot;localhost:9200&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">stdout</span><span class="p">{</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Start logstash.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">logstash</span> <span class="n">agent</span> <span class="o">-</span><span class="n">f</span> <span class="n">logstash</span><span class="o">.</span><span class="n">conf</span>
+</pre></div>
+</div>
+<p>Start Kibana.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">Kibana</span>
+</pre></div>
+</div>
+<p>Create a index in elasticsearch.</p>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.elastic.co/products/elasticsearch">https://www.elastic.co/products/elasticsearch</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

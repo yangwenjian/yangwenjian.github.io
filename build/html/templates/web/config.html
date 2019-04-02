@@ -1,0 +1,199 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Web工程配置 &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Web工程配置</a><ul>
+<li><a class="reference internal" href="#id1">Web工程记载配置文件</a><ul>
+<li><a class="reference internal" href="#id2">加载环境变量</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">Web工程启动初始化</a></li>
+<li><a class="reference internal" href="#filters">Filters</a></li>
+<li><a class="reference internal" href="#url-pattern">url-pattern</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/web/config.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="web">
+<h1>Web工程配置<a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>Web工程记载配置文件<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>context-param用来描述webapp本身的属性，而且在有ServletContext能取值，在servlets、filters、listeners中其配置作用。</p>
+<p>利用context-param，加载spring配置文件：</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">context</span><span class="o">-</span><span class="n">param</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">param</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="n">contextConfigLocation</span><span class="o">&lt;/</span><span class="n">param</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">param</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span><span class="n">classpath</span><span class="o">*</span><span class="p">:</span><span class="n">conf</span><span class="o">/</span>\<span class="o">*</span>\<span class="o">*/</span><span class="n">spring</span><span class="o">-</span><span class="n">context</span>\<span class="o">*.</span><span class="n">xml</span><span class="o">&lt;/</span><span class="n">param</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">context</span><span class="o">-</span><span class="n">param</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>上面是Web工程能识别的字段，为contextConfigLocation，如果想自定义字段，需要添加读取配置的代码：</p>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">在contextListener中</span>
+<span class="n">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">servletConfig</span><span class="o">.</span><span class="n">getServletContext</span><span class="p">()</span><span class="o">.</span><span class="n">getInitParameter</span><span class="p">(</span><span class="s2">&quot;myParam&quot;</span><span class="p">);</span>
+<span class="o">//</span><span class="n">在Servlet中</span>
+<span class="n">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">getSession</span><span class="p">()</span><span class="o">.</span><span class="n">getServletContext</span><span class="p">()</span><span class="o">.</span><span class="n">getInitParameter</span><span class="p">(</span><span class="s2">&quot;myParam&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h3>加载环境变量<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Environment entries are available via JNDI which may be useful when you don’t have a ServletContext directly at hands,
+such as in EJBs. The one in the web.xml is actually the last in precedence chain as to overridding environment entires.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">env</span><span class="o">-</span><span class="n">entry</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">env</span><span class="o">-</span><span class="n">entry</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="n">dbhost</span><span class="o">&lt;/</span><span class="n">env</span><span class="o">-</span><span class="n">entry</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">env</span><span class="o">-</span><span class="n">entry</span><span class="o">-</span><span class="nb">type</span><span class="o">&gt;</span><span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">String</span><span class="o">&lt;/</span><span class="n">env</span><span class="o">-</span><span class="n">entry</span><span class="o">-</span><span class="nb">type</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">env</span><span class="o">-</span><span class="n">entry</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span><span class="n">localhost</span><span class="o">&lt;/</span><span class="n">env</span><span class="o">-</span><span class="n">entry</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">env</span><span class="o">-</span><span class="n">entry</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Get</span> <span class="n">the</span> <span class="n">base</span> <span class="n">naming</span> <span class="n">context</span>
+<span class="n">Context</span> <span class="n">env</span> <span class="o">=</span> <span class="p">(</span><span class="n">Context</span><span class="p">)</span><span class="n">new</span> <span class="n">InitialContext</span><span class="p">()</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="s2">&quot;java:comp/env&quot;</span><span class="p">);</span>
+<span class="o">//</span> <span class="n">Get</span> <span class="n">a</span> <span class="n">single</span> <span class="n">value</span>
+<span class="n">String</span> <span class="n">dbhost</span> <span class="o">=</span> <span class="p">(</span><span class="n">String</span><span class="p">)</span><span class="n">env</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="s2">&quot;dbhost&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>Web工程启动初始化<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Web容器的线程启动listerner:</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">listener</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">listener</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;</span><span class="n">com</span><span class="o">.</span><span class="n">xikang</span><span class="o">.</span><span class="n">ch</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">listener</span><span class="o">.</span><span class="n">SiteConfigureListener</span><span class="o">&lt;/</span><span class="n">listener</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">listener</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">listener</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">listener</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;</span><span class="n">com</span><span class="o">.</span><span class="n">xikang</span><span class="o">.</span><span class="n">ch</span><span class="o">.</span><span class="n">portal</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">CloudHospitalListenerConfigurator</span><span class="o">&lt;/</span><span class="n">listener</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">listener</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="filters">
+<h2>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h2>
+<p>Filter的作用是在servlet接收前对其进行预处理，在response返回给客户端之前也可以进行头和数据的处理。
+一个filter可以拦截多个请求，一个请求也能被多个filter拦截。</p>
+<p>Filter的执行顺序是由web.xml中filter-mapping的书写顺序决定的。</p>
+<p>Spring Security 配置：</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="nb">filter</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nb">filter</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="n">springSecurityFilterChain</span><span class="o">&lt;/</span><span class="nb">filter</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nb">filter</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="n">springframework</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">DelegatingFilterProxy</span><span class="o">&lt;/</span><span class="nb">filter</span><span class="o">-</span><span class="n">class</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nb">filter</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>In Spring Security, the filter classes are also Spring beans defined in the application context and thus able to take advantage
+of Spring’s rich dependency-injection facilities and lifecycle interfaces. Spring’s DelegatingFilterProxy provides the link
+between web.xml and the application context.</p>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="n">protected</span> <span class="n">void</span> <span class="n">initFilterBean</span><span class="p">()</span> <span class="n">throws</span> <span class="n">ServletException</span> <span class="p">{</span>
+    <span class="n">synchronized</span> <span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">delegateMonitor</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">delegate</span> <span class="o">==</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="o">//</span> <span class="n">If</span> <span class="n">no</span> <span class="n">target</span> <span class="n">bean</span> <span class="n">name</span> <span class="n">specified</span><span class="p">,</span> <span class="n">use</span> <span class="nb">filter</span> <span class="n">name</span><span class="o">.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">targetBeanName</span> <span class="o">==</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">this</span><span class="o">.</span><span class="n">targetBeanName</span> <span class="o">=</span> <span class="n">getFilterName</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="o">//</span> <span class="n">Fetch</span> <span class="n">Spring</span> <span class="n">root</span> <span class="n">application</span> <span class="n">context</span> <span class="ow">and</span> <span class="n">initialize</span> <span class="n">the</span> <span class="n">delegate</span> <span class="n">early</span><span class="p">,</span>
+            <span class="o">//</span> <span class="k">if</span> <span class="n">possible</span><span class="o">.</span> <span class="n">If</span> <span class="n">the</span> <span class="n">root</span> <span class="n">application</span> <span class="n">context</span> <span class="n">will</span> <span class="n">be</span> <span class="n">started</span> <span class="n">after</span> <span class="n">this</span>
+            <span class="o">//</span> <span class="nb">filter</span> <span class="n">proxy</span><span class="p">,</span> <span class="n">we</span><span class="s1">&#39;ll have to resort to lazy initialization.</span>
+            <span class="n">WebApplicationContext</span> <span class="n">wac</span> <span class="o">=</span> <span class="n">findWebApplicationContext</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">wac</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">this</span><span class="o">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">initDelegate</span><span class="p">(</span><span class="n">wac</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果使用默认配置，targetBeanName为springSecurityFilterChain，web上下文按web.xml加载进来。</p>
+</div>
+<div class="section" id="url-pattern">
+<h2>url-pattern<a class="headerlink" href="#url-pattern" title="Permalink to this headline">¶</a></h2>
+<p>当请求发送到servlet容器的时候，容器先会将请求的url减去当前应用上下文的路径作为servlet的映射url，比如我访问的是
+<a class="reference external" href="http://localhost/test/aaa.html">http://localhost/test/aaa.html</a>， 我的应用上下文是test，容器会将http://localhost/test去掉， 剩下的/aaa.html部分拿来做servlet的
+映射匹配。这个映射匹配过程是有顺序的，而且当有一个servlet匹配成功以后，就不会去理会剩下 的servlet了（filter不同，后文会提到）。</p>
+<p>匹配类型：</p>
+<ol class="arabic simple">
+<li>结尾为’/*’;</li>
+<li>开头为’*.’;</li>
+<li>为’/’;</li>
+<li>其他精确匹配;</li>
+</ol>
+<p>url-pattern遵循如下规则：
+1. 精确路径匹配，使用contextVersion的exactWrappers;
+2. 前缀匹配，使用contextVersion的wildcardWrappers;
+3. 扩展匹配，使用contextVersion的extensionWrappers;
+4. 使用资源文件来处理servlet，使用contextVersion的welcomeResources属性，这个属性是个字符串数组;
+5. 使用默认的servlet，使用contextVersion的defaultWrapper;</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,800 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Java Code Style &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Java Code Style</a><ul>
+<li><a class="reference internal" href="#sonar">Sonar</a><ul>
+<li><a class="reference internal" href="#id1">Sonar典型问题</a></li>
+<li><a class="reference internal" href="#id2">Sonar其他问题</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/programming/java/java_code_style.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="java-code-style">
+<h1>Java Code Style<a class="headerlink" href="#java-code-style" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="sonar">
+<h2>Sonar<a class="headerlink" href="#sonar" title="Permalink to this headline">¶</a></h2>
+<p>SonarQube为我们提供了很多关于编程规范的建议，具体可以参考sonar官方网站。
+这里摘录一些常见的错误。</p>
+<div class="section" id="id1">
+<h3>Sonar典型问题<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li><em>&lt;Architecture&gt;</em> Don’t break the Law of Demeter. Anthor call is ‘Principle of Least Knowledge’. Each unit should have only
+limited knowledge about other units: only units “closely” related to the current unit. Each unit should only
+talk to its friends; don’t talk to strangers. Only talk to your immediate friends.</li>
+<li><em>&lt;Architecture&gt;</em> Classes should not be coupled to too many other classes (Single Responsibility Principle).</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="k">class</span> <span class="nc">Foo</span><span class="p">{</span>
+    <span class="n">T1</span> <span class="n">t1</span><span class="p">;</span>
+    <span class="n">T2</span> <span class="n">t2</span><span class="p">;</span>
+    <span class="n">T3</span> <span class="n">t3</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="n">T4</span> <span class="n">compute</span><span class="p">(</span><span class="n">T5</span> <span class="n">a</span><span class="p">,</span> <span class="n">T6</span> <span class="n">b</span><span class="p">){</span>
+        <span class="n">T7</span> <span class="n">result</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">getResult</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="n">static</span> <span class="k">class</span> <span class="nc">Bar</span><span class="p">{</span>
+        <span class="n">T8</span> <span class="n">t8</span><span class="p">;</span>
+        <span class="n">T9</span> <span class="n">t9</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><dl class="first docutils">
+<dt>Classes should not have too many methods. A class that grows too much tends to aggregate too many responsibilities</dt>
+<dd>and inevitably becomes harder to understand and therefore to maintain.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>“switch” statements should not have too many “case” clauses. A real map structuctor would be more readable and</dt>
+<dd>maintainable.</dd>
+</dl>
+</li>
+<li><em>&lt;Changability&gt;</em> Magic numbers should not be used.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">doSomething</span><span class="p">(){</span>
+    <span class="k">for</span><span class="p">(</span><span class="nb">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="mi">4</span> <span class="ow">is</span> <span class="n">magic</span> <span class="n">number</span> <span class="n">that</span> <span class="n">no</span> <span class="n">ones</span> <span class="n">knows</span><span class="o">.</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+<span class="n">public</span> <span class="n">static</span> <span class="n">final</span> <span class="nb">int</span> <span class="n">NUMBER_OF_CYCLES</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">doSomething</span><span class="p">(){</span>
+    <span class="k">for</span><span class="p">(</span><span class="nb">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">NUMBER_OF_CYCLES</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li>Control flow statements “if”, “for”, “while”, “switch” and “try” should not be nested too deeply.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span>
+<span class="k">if</span><span class="p">(</span><span class="n">condition1</span><span class="p">){</span>
+    <span class="o">...</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">condition2</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="nb">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+            <span class="o">...</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">condition4</span><span class="p">){</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">condition5</span><span class="p">){</span>
+                    <span class="o">...</span>
+                <span class="p">}</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="7">
+<li><em>&lt;Maintainability&gt;</em> A field should not duplicate the name of its containing class.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+public class Foo{
+    private String foo;
+    public String getFoo(){ ... }
+}
+
+Foo foo = new Foo();
+foo.getFoo(); // What does this return?
+</pre></div>
+</div>
+<ol class="arabic simple" start="8">
+<li><em>&lt;Readability&gt;</em> “switch case” clauses should not have too many lines.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">switch</span><span class="p">(</span><span class="n">variable</span><span class="p">){</span>
+    <span class="n">case</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">methodCall1</span><span class="p">();</span>
+        <span class="n">methodCall2</span><span class="p">();</span>
+        <span class="n">methodCall3</span><span class="p">();</span>
+        <span class="o">...</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="n">case</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+
+<span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+<span class="n">switch</span><span class="p">(</span><span class="n">variable</span><span class="p">){</span>
+    <span class="n">case</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">doSomething</span><span class="p">();</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="n">case</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+<span class="n">private</span> <span class="n">void</span> <span class="n">doSomething</span><span class="p">(){</span>
+    <span class="n">methodCall1</span><span class="p">();</span>
+    <span class="n">methodCall2</span><span class="p">();</span>
+    <span class="n">methodCall3</span><span class="p">();</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="9">
+<li><em>&lt;Readability&gt;</em> Variables should not be declared before they are relevant.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">public</span> <span class="n">boolean</span> <span class="n">isCondition</span><span class="p">(</span><span class="nb">int</span> <span class="n">a</span><span class="p">,</span> <span class="nb">int</span> <span class="n">b</span><span class="p">){</span>
+    <span class="nb">int</span> <span class="n">difference</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">;</span>
+    <span class="n">MyClass</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">new</span> <span class="n">MyClass</span><span class="p">(</span><span class="n">a</span><span class="p">);</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">;</span> <span class="ow">not</span> <span class="n">used</span> <span class="n">before</span> <span class="n">the</span> <span class="n">first</span> <span class="k">return</span><span class="o">.</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">difference</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">){</span>
+        <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">isSomething</span><span class="p">()){</span>
+        <span class="k">return</span> <span class="n">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="10">
+<li>Loops should not contain more than a single “break” or “continue” statement.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="k">for</span><span class="p">(</span> <span class="nb">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+        <span class="k">continue</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+        <span class="k">continue</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">System</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;i = &quot;</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="11">
+<li>Methods should not have too many return statements.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">public</span> <span class="n">boolean</span> <span class="n">myMethod</span><span class="p">(){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">condition1</span><span class="p">){</span>
+        <span class="k">return</span> <span class="n">true</span><span class="p">;</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">condition2</span><span class="p">){</span>
+            <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="k">return</span> <span class="n">true</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="12">
+<li>Fields and methods should not have conflicting names.</li>
+<li>Files should not have too many lines.</li>
+<li>The ternary operator should not be used.</li>
+<li>Classes should not be too complex.</li>
+<li>Files should contain only one top-level class or interface each.</li>
+<li>Inner classes should not have too many lines.</li>
+<li>Methods should not have too many lines.</li>
+<li>“switch” statements should not have too many “case” clauses.</li>
+<li>Public methods should not contain selector arguments.</li>
+<li>Dependencies should not have “system” scope.</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h3>Sonar其他问题<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>“equals(Object object)” and “hashCode()” should be overridden in pairs.</li>
+<li>“equals(Object object)” should test
+argument type, because equals() takes a generic object as a parameter.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+<span class="n">public</span> <span class="n">boolean</span> <span class="n">equals</span><span class="p">(</span><span class="n">Object</span> <span class="nb">object</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">object</span> <span class="o">==</span> <span class="n">null</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">getClass</span><span class="p">()</span> <span class="o">!=</span> <span class="nb">object</span><span class="o">.</span><span class="n">getClass</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
+    <span class="n">MyClass</span> <span class="n">mc</span> <span class="o">=</span> <span class="p">(</span><span class="n">MyClass</span><span class="p">)</span> <span class="nb">object</span><span class="p">;</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>“Iterator.hasNext()” should not call “Iterator.next()”, hasNext() method should not have any side effects.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="nd">@Override</span> <span class="o">//</span><span class="n">override</span> <span class="n">Iterator</span> <span class="n">method</span>
+<span class="n">public</span> <span class="n">boolean</span> <span class="n">hasNext</span><span class="p">(){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">next</span><span class="p">()</span> <span class="o">!=</span> <span class="n">null</span><span class="p">){</span>
+        <span class="k">return</span> <span class="n">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li>“Object.wait(…)” should never be called on objects that implement “java.util.concurrent.locks.Condition”,
+should use “Object.await()” method.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">final</span> <span class="n">Lock</span> <span class="n">lock</span> <span class="o">=</span> <span class="n">new</span> <span class="n">ReentrantLock</span><span class="p">();</span>
+<span class="n">final</span> <span class="n">Condition</span> <span class="n">notFull</span> <span class="o">=</span> <span class="n">lock</span><span class="o">.</span><span class="n">newCondition</span><span class="p">();</span>
+<span class="n">notFull</span><span class="o">.</span><span class="n">wait</span><span class="p">();</span>
+
+<span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+<span class="n">notFull</span><span class="o">.</span><span class="k">await</span><span class="p">();</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li>“PreparedStatement” and “ResultSet” methods should be called with valid indices. They all start with 1.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">PreparedStatement</span> <span class="n">ps</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">PreparedStatement</span><span class="p">(</span><span class="s2">&quot;select name from employees where hireDate &gt; ? and salary &lt; ?&quot;</span><span class="p">);</span>
+<span class="n">ps</span><span class="o">.</span><span class="n">setDate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">date</span><span class="p">);</span><span class="o">//</span><span class="n">Noncompliant</span><span class="p">,</span> <span class="n">should</span> <span class="n">be</span> <span class="mf">1.</span>
+<span class="n">ps</span><span class="o">.</span><span class="n">setDouble</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">salary</span><span class="p">);</span><span class="o">//</span><span class="n">Noncompliant</span><span class="p">,</span> <span class="n">should</span> <span class="n">be</span> <span class="mf">2.</span>
+<span class="n">ResultSet</span> <span class="n">rs</span> <span class="o">=</span> <span class="n">ps</span><span class="o">.</span><span class="n">excuteQuery</span><span class="p">();</span>
+<span class="k">while</span><span class="p">(</span><span class="n">rs</span><span class="o">.</span><span class="n">next</span><span class="p">()){</span>
+    <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">getString</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="o">//</span><span class="n">Noncompliant</span><span class="p">,</span> <span class="n">should</span> <span class="n">be</span> <span class="mf">1.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li>“return” statements should not occur in “finally” blocks. Returning from a finally block suppresses the propagation of any unhandled Throwable
+which was thrown in the try or catch block.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">doSthThrowsException</span><span class="p">(){</span>
+    <span class="k">try</span><span class="p">{</span>
+        <span class="n">throw</span> <span class="n">new</span> <span class="n">RuntimeException</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">finally</span><span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span> <span class="o">//</span><span class="n">NonCompliant</span><span class="p">,</span> <span class="n">it</span> <span class="n">will</span> <span class="n">prevent</span> <span class="n">the</span> <span class="n">throw</span> <span class="n">action</span><span class="o">.</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="7">
+<li>“ScheduledThreadPoolExecutor” should not have 0 core threads.</li>
+<li>A “for” loop update clause should move the counter in the right direction, or it will be infinit.</li>
+<li>Blocks synchronized on fields should not contain assignments of new objects to those fields.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">private</span> <span class="n">String</span> <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">;</span>
+<span class="n">private</span> <span class="n">void</span> <span class="n">doSomething</span><span class="p">(){</span>
+    <span class="n">synchronized</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="p">{</span>
+        <span class="o">//</span> <span class="n">lock</span> <span class="ow">is</span> <span class="n">actually</span> <span class="n">on</span> <span class="nb">object</span> <span class="n">instance</span> <span class="s2">&quot;red&quot;</span> <span class="n">referred</span> <span class="n">to</span> <span class="n">by</span> <span class="n">the</span> <span class="n">color</span> <span class="n">variable</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span><span class="p">;</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">;</span> <span class="n">other</span> <span class="n">threads</span> <span class="n">now</span> <span class="n">allowed</span> <span class="n">into</span> <span class="n">this</span> <span class="n">block</span>
+        <span class="o">//</span> <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="10">
+<li>Conditions should not unconditionally evaluate to “TRUE” or to “FALSE”, or it will not called condition.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="k">if</span><span class="p">(</span><span class="n">foo</span> <span class="o">==</span> <span class="n">bar</span> <span class="o">&amp;&amp;</span> <span class="o">...</span> <span class="o">&amp;</span> <span class="n">foo</span> <span class="o">!=</span> <span class="n">bar</span><span class="p">){</span> <span class="o">...</span>  <span class="p">}</span>
+<span class="k">if</span><span class="p">(</span><span class="n">foo</span> <span class="o">==</span> <span class="mi">4</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">foo</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="n">at</span> <span class="n">this</span> <span class="n">point</span> <span class="n">foo</span> <span class="ow">is</span> <span class="n">equal</span> <span class="n">to</span> <span class="mf">4.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="11">
+<li>There should be no cycles in style definitions as this can lead to runtime exceptions.</li>
+<li>Methods “wait(…)”, “notify()” and “notifyAll()” should never be called on Thread instances. For two reasons: Doing so is really confusing. What
+is really expected when calling, for instance, the wait(…) method on a Thread? That the execution of the Thread is suspended, or that acquisition
+of the object monitor is waited for? Internally, the JVM relies on these methods to change the state of the Thread (BLOCKED, WAITING, …), so calling
+them will corrupt the behavior of the JVM.</li>
+<li>Null pointers should not be dereferenced.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="nd">@CheckForNull</span>
+<span class="n">String</span> <span class="n">getName</span><span class="p">(){</span> <span class="o">...</span> <span class="p">}</span>
+<span class="n">public</span> <span class="n">boolean</span> <span class="n">isNameEmpty</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="n">getName</span><span class="p">()</span><span class="o">.</span><span class="n">length</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span> <span class="o">//</span><span class="n">Noncompliant</span><span class="p">;</span> <span class="n">should</span> <span class="n">be</span> <span class="n">null</span><span class="o">-</span><span class="n">checked</span><span class="o">.</span>
+<span class="p">}</span>
+
+<span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+<span class="k">try</span><span class="p">{</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="o">.</span><span class="n">getConnection</span><span class="p">(</span><span class="n">DB_URL</span><span class="p">,</span> <span class="n">USER</span><span class="p">,</span> <span class="n">PASS</span><span class="p">);</span>
+<span class="p">}</span> <span class="n">catch</span><span class="p">(</span><span class="ne">Exception</span> <span class="n">e</span><span class="p">){</span>
+    <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+<span class="p">}</span> <span class="k">finally</span><span class="p">{</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">();</span><span class="o">////</span><span class="n">Noncompliant</span><span class="p">,</span> <span class="n">could</span> <span class="n">be</span> <span class="n">null</span> <span class="k">if</span> <span class="n">an</span> <span class="n">exception</span> <span class="ow">is</span> <span class="n">thrown</span><span class="o">.</span>
+<span class="p">}</span>
+
+<span class="n">private</span> <span class="n">void</span> <span class="n">merge</span><span class="p">(</span><span class="nd">@NonNull</span> <span class="n">Color</span> <span class="n">firstColor</span><span class="p">,</span> <span class="nd">@NonNull</span> <span class="n">Color</span> <span class="n">secondColor</span><span class="p">){</span><span class="o">...</span><span class="p">}</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">append</span><span class="p">(</span><span class="nd">@CheckForNull</span> <span class="n">Color</span> <span class="n">color</span><span class="p">){</span>
+    <span class="n">merge</span><span class="p">(</span><span class="n">currentColor</span><span class="p">,</span> <span class="n">color</span><span class="p">);</span> <span class="o">////</span><span class="n">Noncompliant</span><span class="p">,</span> <span class="n">should</span> <span class="n">be</span> <span class="n">null</span><span class="o">-</span><span class="n">checked</span> <span class="n">because</span> <span class="n">merge</span><span class="p">()</span> <span class="n">doesn</span><span class="s1">&#39;t accept nullable parameters.</span>
+<span class="p">}</span>
+
+<span class="n">void</span> <span class="n">paint</span><span class="p">(</span><span class="n">Color</span> <span class="n">color</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">color</span> <span class="o">==</span> <span class="n">null</span><span class="p">){</span>
+        <span class="n">System</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;color &quot;</span> <span class="o">+</span> <span class="n">color</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; is null!&quot;</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="14">
+<li>Reflection should not used to check non-runtime annotations. Like <a class="reference external" href="mailto:'&#37;&#52;&#48;Override">‘<span>&#64;</span>Override</a>’ annotation, it is marked as RetentionPolicy.SOURCE. Reflectin can only
+read the annotation with ‘RetentionPolicy.SOURCE’ mark.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">Method</span> <span class="n">m</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">getMethod</span><span class="p">(</span><span class="s2">&quot;getBytes&quot;</span><span class="p">,</span> <span class="n">new</span> <span class="n">Class</span><span class="p">[]{</span><span class="nb">int</span><span class="o">.</span><span class="n">class</span><span class="p">,</span> <span class="nb">int</span><span class="o">.</span><span class="n">class</span><span class="p">,</span> <span class="n">byte</span><span class="p">[]</span><span class="o">.</span><span class="n">class</span><span class="p">,</span> <span class="nb">int</span><span class="o">.</span><span class="n">class</span><span class="p">});</span>
+<span class="k">if</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">isAnnotationPresent</span><span class="p">(</span><span class="n">Override</span><span class="o">.</span><span class="n">class</span><span class="p">)){</span><span class="o">...</span><span class="p">}</span> <span class="o">//</span><span class="n">Noncompliant</span><span class="p">,</span> <span class="n">will</span> <span class="n">alaways</span> <span class="k">return</span> <span class="n">false</span><span class="p">,</span> <span class="n">even</span> <span class="nd">@Override</span> <span class="ow">is</span> <span class="n">present</span><span class="o">.</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="15">
+<li>Resources should be closed. Like connections, streams, files and other classes implement the Closeable must be manually close after creation.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">OutputStream</span> <span class="n">stream</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+<span class="k">try</span><span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">String</span> <span class="nb">property</span> <span class="p">:</span> <span class="n">propertyList</span><span class="p">){</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">new</span> <span class="n">FileOutputStream</span><span class="p">(</span><span class="s2">&quot;myfile.txt&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="n">catch</span><span class="p">(</span><span class="ne">Exception</span> <span class="n">e</span><span class="p">){</span>
+<span class="p">}</span> <span class="k">finally</span><span class="p">{</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">();</span><span class="o">//</span><span class="n">Mutiple</span> <span class="n">streams</span> <span class="n">were</span> <span class="n">opened</span><span class="o">.</span> <span class="n">Only</span> <span class="n">the</span> <span class="n">last</span> <span class="ow">is</span> <span class="n">closed</span><span class="o">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="16">
+<li>super.finalize() should be called at the end of Object.finalize() implementations.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">protected</span> <span class="n">void</span> <span class="n">finalize</span><span class="p">(){</span>
+    <span class="nb">super</span><span class="o">.</span><span class="n">finalize</span><span class="p">();</span>   <span class="o">//</span><span class="n">Noncompliant</span><span class="p">;</span> <span class="n">this</span> <span class="n">call</span> <span class="n">should</span> <span class="n">come</span> <span class="n">last</span><span class="o">.</span>
+    <span class="n">releaseSomeResources</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="17">
+<li>Synchronization should not be based on Strings or boxed primitives. It should use object.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">private</span> <span class="n">static</span> <span class="n">final</span> <span class="n">Boolean</span> <span class="n">bLock</span> <span class="o">=</span> <span class="n">Boolean</span><span class="o">.</span><span class="n">FALSE</span><span class="p">;</span>
+<span class="n">private</span> <span class="n">static</span> <span class="n">final</span> <span class="n">Integer</span> <span class="n">iLock</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="n">valueOf</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">private</span> <span class="n">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">sLock</span> <span class="o">=</span> <span class="s2">&quot;LOCK&quot;</span><span class="p">;</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">doSomething</span><span class="p">(){</span>
+    <span class="n">synchronized</span><span class="p">(</span><span class="n">bLock</span><span class="p">){</span><span class="o">...</span> <span class="p">}</span><span class="o">//</span><span class="n">Noncompliant</span>
+    <span class="n">synchronized</span><span class="p">(</span><span class="n">iLock</span><span class="p">){</span><span class="o">...</span> <span class="p">}</span><span class="o">//</span><span class="n">Noncompliant</span>
+    <span class="n">synchronized</span><span class="p">(</span><span class="n">sLock</span><span class="p">){</span><span class="o">...</span> <span class="p">}</span><span class="o">//</span><span class="n">Noncompliant</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="18">
+<li>“equals” should not be used to test values of “Atomic” classes.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">AtomicInteger</span> <span class="n">aInt1</span> <span class="o">=</span> <span class="n">new</span> <span class="n">AtomicInteger</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">AtomicInteger</span> <span class="n">aInt2</span> <span class="o">=</span> <span class="n">new</span> <span class="n">AtomicInteger</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">aInt1</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">aInt2</span><span class="p">))</span> <span class="p">{</span> <span class="o">//</span><span class="n">AtomicClass</span> <span class="n">do</span> <span class="ow">not</span> <span class="n">override</span> <span class="n">equals</span><span class="p">()</span> <span class="n">method</span><span class="o">.</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="19">
+<li>The value returned from a stream read should be checked.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">NonCompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">doSomething</span><span class="p">(){</span>
+    <span class="k">try</span><span class="p">{</span>
+        <span class="n">InputStream</span> <span class="n">istream</span> <span class="o">=</span> <span class="n">new</span> <span class="n">InputStream</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
+        <span class="n">byte</span><span class="p">[]</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">new</span> <span class="n">byte</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
+        <span class="n">istream</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span> <span class="o">//</span><span class="n">Noncompliant</span>
+        <span class="o">/**</span>
+        <span class="o">*</span>   <span class="n">正确代码</span>
+        <span class="o">*</span>   <span class="k">while</span><span class="p">(</span><span class="n">count</span>  <span class="o">=</span> <span class="n">istream</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="o">*/</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="20">
+<li>“read” and “readLine” return values should be used.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">buffReader</span> <span class="o">=</span> <span class="n">new</span> <span class="n">BufferedReader</span><span class="p">(</span><span class="n">new</span> <span class="n">FileReader</span><span class="p">(</span><span class="n">fileName</span><span class="p">));</span>
+<span class="k">while</span><span class="p">(</span><span class="n">BufferedReader</span><span class="o">.</span><span class="n">readLine</span><span class="p">()</span> <span class="o">!=</span> <span class="n">null</span><span class="p">){</span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">should</span> <span class="n">use</span> <span class="n">string</span> <span class="n">to</span> <span class="n">get</span> <span class="n">the</span> <span class="k">return</span> <span class="n">value</span><span class="o">.</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="21">
+<li>Short-circuit logic should be used to prevent null pointer dereferences in conditionals.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="k">if</span><span class="p">(</span><span class="nb">str</span> <span class="o">==</span> <span class="n">null</span> <span class="o">&amp;&amp;</span> <span class="nb">str</span><span class="o">.</span><span class="n">length</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+    <span class="n">System</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;String is empty.&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">if</span><span class="p">(</span><span class="nb">str</span> <span class="o">!=</span> <span class="n">null</span> <span class="o">||</span> <span class="nb">str</span><span class="o">.</span><span class="n">length</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+    <span class="n">System</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="s2">&quot;String is no empty.&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="22">
+<li>Throwable and Error should not be caught.</li>
+<li>“BigDecimal(double)” should not be used. The result can be unpredictable. We should use ‘BigDecimal.valueOf(1.1)’ instead.</li>
+<li>“Calendars” and “DataFormats” should not be static. Because neither of them is thread safe.</li>
+<li>“ConcurrentLinkedQueue.size()” should not be used. It is an expensive operation, and may be inaccurate if the queue is modified during execution.</li>
+<li>“equals” methods should be symmetric and work for subclasses.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+public class Fruit extends Food{
+    private Season ripe;
+    public boolean equals(Object object){
+        if(obj == this){
+            return true;
+        }
+        if(obj == null){
+            return false;
+        }
+        if(Fruit.class == obj.getClass()){ //Noncompliant, broken fro child class.
+            return ripe.equals(((Fruit)obj).getRipe());
+        }
+        if(obj instanceof Fruit){ //Noncompliant, broken fro child class.
+            return ripe.equals(((Fruit)obj).getRipe());
+        }
+    }
+}
+</pre></div>
+</div>
+<ol class="arabic simple" start="27">
+<li>“equals(Object obj)” should be overriden along with the “compareTo(T obj)” method. In java documentation, it strongly recommanded
+that (x.compareTo(y) == 0) == (x.equals(y)).</li>
+<li>“Exception” should not be caught when not required by called methods. Catching “Exception” traps all exception types and so both
+checked and runtime exceptions, casting too broad a net. The exceptions should be explicitly listed in the catch clause.</li>
+<li>“hashCode” and “toString” should not be called on array instances.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">agrs</span><span class="p">){</span>
+    <span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+    <span class="n">String</span> <span class="n">argstr</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">toString</span><span class="p">();</span>
+    <span class="nb">int</span> <span class="n">argHash</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">hashCode</span><span class="p">();</span>
+    <span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+    <span class="n">String</span> <span class="n">argstr1</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="n">toString</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+    <span class="nb">int</span> <span class="n">argHash1</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="n">hasCode</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="30">
+<li>“indexOf” checks should not be for positive numbers. Because “indexOf” can return 0 if it is found at the first place. “indexOf”
+should check ‘ &gt; -1 ‘ or ‘ &gt;= 0 ‘ if you need.</li>
+<li>“notifyAll” should be used. Since “notify” only rouses one, might not wake up the right thread, “notifyAll” should be used instead.</li>
+<li>“object == null” should be used instead of “object.equals(null)”.</li>
+<li>“Object.wait(…)” and “Condition.await(…)” should be called inside a “while” loop.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+synchronized(obj){
+    if(!suitableCondition()){
+        obj.wait(); //the thread can wake up whereas the condition is still false. We should use &#39;while&#39;
+    }
+}
+</pre></div>
+</div>
+<ol class="arabic simple" start="34">
+<li>“public static” fields should be constant. It is used to share a state among several objects.If we don’t make such variables final,
+any object can do whatever it wants, such as making it null.</li>
+<li>“Serializable” inner classes of non-serializable classes should be “static”. Because serializing a non-static inner class will result
+in an attempt at serializing the outer class as well.</li>
+<li>“toString()” and “clone()” methods should not return null.</li>
+<li>“wait(…)” should be used instead of “Thread.sleep(…)” when a lock is held. Calling “Thread.sleep(…)” to hold lock cloud lead to
+performance and scalability issues, or deadlocks.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">doSomething</span><span class="p">(){</span>
+    <span class="n">synchronized</span><span class="p">(</span><span class="n">monitor</span><span class="p">){</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">notReady</span><span class="p">()){</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2000</span><span class="p">);</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="n">should</span> <span class="n">be</span> <span class="s2">&quot;monitor.wait(2000)&quot;</span> <span class="n">instead</span><span class="o">.</span>
+        <span class="p">}</span>
+        <span class="n">process</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="38">
+<li>“wait(…)”, “notify()” and “notifyAll()” methods should only be called when a lock is obviously held on an object. By contract, the method
+Object.wait(…), Object.notify() and Object.notifyAll() should be called by a thread that is the owner of the object’s monitor.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+private void removeElement(){
+    while(!suitableCondition()){
+        obj.wait(); //Noncompliant
+        wait(); //Noncompliant
+    }
+}
+
+//Compliant Code Example 正确代码
+private void removeElement(){
+    synchronized(obj){
+        while(!suitableCondition()){
+            obj.wait(); // Compliant, this thread is the owner of obj.
+        }
+    }
+}
+</pre></div>
+</div>
+<ol class="arabic simple" start="39">
+<li>Collections should not be passed as argument to their own methods.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">objs</span> <span class="o">=</span> <span class="n">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="n">objs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">);</span>
+<span class="n">objs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">objs</span><span class="p">);</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="n">will</span> <span class="n">throw</span> <span class="n">StackOverflowException</span> <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">hashCode</span><span class="p">()</span> <span class="n">called</span><span class="o">.</span>
+<span class="n">objs</span><span class="o">.</span><span class="n">addAll</span><span class="p">(</span><span class="n">objs</span><span class="p">);</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="n">behavior</span> <span class="n">undefined</span><span class="o">.</span>
+<span class="n">objs</span><span class="o">.</span><span class="n">containsAll</span><span class="p">(</span><span class="n">objs</span><span class="p">);</span> <span class="o">//</span><span class="n">Noncompliant</span><span class="p">,</span> <span class="n">always</span> <span class="n">true</span><span class="o">.</span>
+<span class="n">objs</span><span class="o">.</span><span class="n">removeAll</span><span class="p">(</span><span class="n">objs</span><span class="p">);</span> <span class="o">//</span><span class="n">Noncompliant</span><span class="p">,</span> <span class="n">confusing</span><span class="o">.</span> <span class="n">Use</span> <span class="n">clear</span><span class="p">()</span> <span class="n">instead</span><span class="o">.</span>
+<span class="n">objs</span><span class="o">.</span><span class="n">retainAll</span><span class="p">(</span><span class="n">objs</span><span class="p">);</span> <span class="o">//</span><span class="n">Noncompliant</span><span class="p">,</span> <span class="n">NOOP</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="40">
+<li>Dissimilar primitive wrappers should not be used with the ternary operator without explicit casting.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+Integer i = 123456789;
+Float f = 1.0f;
+Number n = condition ? i : f; //Noncompliant, i is coeredto float. n = 1.23456792E8
+//Compliant Code Example 正确代码
+Number n = condition ? (Number) i : f;
+</pre></div>
+</div>
+<ol class="arabic simple" start="41">
+<li>Exception handlers should preserve the orginal exception.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="k">try</span><span class="p">{</span> <span class="o">...</span> <span class="p">}</span><span class="n">catch</span><span class="p">(</span><span class="ne">Exception</span> <span class="n">e</span><span class="p">){</span> <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">);</span> <span class="p">}</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="n">exception</span> <span class="ow">is</span> <span class="n">lost</span><span class="o">.</span>
+<span class="k">try</span><span class="p">{</span> <span class="o">...</span> <span class="p">}</span><span class="n">catch</span><span class="p">(</span><span class="ne">Exception</span> <span class="n">e</span><span class="p">){</span> <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="p">());</span> <span class="p">}</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="n">only</span> <span class="n">message</span> <span class="ow">is</span> <span class="n">preserved</span><span class="o">.</span>
+<span class="k">try</span><span class="p">{</span> <span class="o">...</span> <span class="p">}</span><span class="n">catch</span><span class="p">(</span><span class="ne">Exception</span> <span class="n">e</span><span class="p">){</span> <span class="n">throw</span> <span class="n">new</span> <span class="n">RuntimeException</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">);</span> <span class="p">}</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="n">exception</span> <span class="ow">is</span> <span class="n">lost</span><span class="o">.</span>
+<span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+<span class="k">try</span><span class="p">{</span> <span class="o">...</span> <span class="p">}</span><span class="n">catch</span><span class="p">(</span><span class="ne">Exception</span> <span class="n">e</span><span class="p">){</span> <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">);</span> <span class="p">}</span>
+<span class="k">try</span><span class="p">{</span> <span class="o">...</span> <span class="p">}</span><span class="n">catch</span><span class="p">(</span><span class="ne">Exception</span> <span class="n">e</span><span class="p">){</span> <span class="n">throw</span> <span class="n">new</span> <span class="n">RuntimeException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span> <span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="42">
+<li>Exceptions should not be thrown from servlet methods. Failure to catch exceptions in a servlet cloud leave
+system in a vulnerable state, and send debug message to users.</li>
+<li>Exceptions should not be thrown in finally blocks. Finally blocks should be used to do clean up works.</li>
+<li>Fields in a “Serializable” class should either be tranient or serializable.</li>
+<li>Floating point numbers should not be tested for equality.</li>
+<li>Instance methods should not write to “static” fields. Static fields are only updated from synchronized static
+methods.</li>
+<li>Lazy initialization of “static” fields should be “synchronized”.In a multi-threaded situation, un-synchronized
+lazy initialization of non-volatile fields could mean that a second thread has access to a half-initizliaed
+object while the first thread is still creating it. Allowing such access could cause serious bugs. Instead.
+The initizliation block should be synchronized or the variable made volatile.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span>//Noncompliant Code Example 错误代码
+protected static Object instance = null;
+/**
+* 正确代码应为： protected static volatile Object instance = null;
+*/
+public static Object getInstance(){
+    if(instance != null){
+        return instance;
+    }
+    instance = new Object(); // Noncompliant
+    return instance;
+}
+</pre></div>
+</div>
+<ol class="arabic simple" start="48">
+<li>Locks should be released. The logic in a method should ensure that locks are released in the methods in which
+they were acquired.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">Lock</span> <span class="n">lock</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Lock</span><span class="p">();</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">acquireLock</span><span class="p">(){</span>
+    <span class="n">lock</span><span class="o">.</span><span class="n">lock</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">releaseLock</span><span class="p">(){</span>
+    <span class="n">lock</span><span class="o">.</span><span class="n">unlock</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">doSomething</span><span class="p">(){</span>
+    <span class="n">acquireLock</span><span class="p">();</span>
+    <span class="o">...</span>
+    <span class="n">releaseLock</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+<span class="n">Lock</span> <span class="n">lock</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Lock</span><span class="p">();</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">doSomething</span><span class="p">(){</span>
+    <span class="n">lock</span><span class="o">.</span><span class="n">lock</span><span class="p">();</span>
+    <span class="o">...</span>
+    <span class="n">lock</span><span class="o">.</span><span class="n">unlock</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="49">
+<li>Math operands should be cast before assignments.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="nb">float</span> <span class="n">twoThirds</span> <span class="o">=</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">;</span>
+<span class="n">long</span> <span class="n">millisInYear</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">*</span><span class="mi">3000</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">365</span><span class="p">;</span>
+<span class="n">long</span> <span class="n">bigNum</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="n">MAX_VALUE</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span> <span class="o">//</span> <span class="n">Yields</span> <span class="o">-</span><span class="mi">2147483647</span>
+<span class="n">long</span> <span class="n">bigNegNum</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="n">MIN_VALUE</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">//</span> <span class="n">positive</span> <span class="n">result</span>
+<span class="n">public</span> <span class="n">long</span> <span class="n">compute</span><span class="p">(</span><span class="nb">int</span> <span class="n">factor</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">factor</span> <span class="o">*</span> <span class="mi">10000</span><span class="p">;</span> <span class="o">//</span> <span class="k">if</span> <span class="n">factor</span> <span class="o">&gt;</span> <span class="mi">214748</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="50">
+<li>Math should not be performed on floats.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="nb">float</span> <span class="n">a</span> <span class="o">=</span> <span class="mf">16777216.0</span><span class="n">f</span><span class="p">;</span>
+<span class="nb">float</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">;</span>
+<span class="nb">float</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">;</span> <span class="n">yields</span> <span class="mf">1.6777216E7</span>
+<span class="n">double</span> <span class="n">d</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">;</span> <span class="n">between</span> <span class="n">two</span> <span class="n">floats</span><span class="o">.</span>
+<span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+<span class="n">BigDecimal</span> <span class="n">c</span> <span class="o">=</span> <span class="n">BigDecimal</span><span class="o">.</span><span class="n">valueOf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">BigDecimal</span><span class="o">.</span><span class="n">valueOf</span><span class="p">(</span><span class="n">b</span><span class="p">));</span>
+<span class="n">double</span> <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">double</span><span class="p">)</span> <span class="n">a</span> <span class="o">+</span> <span class="p">(</span><span class="n">double</span><span class="p">)</span> <span class="n">b</span><span class="p">;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="51">
+<li>Modulus results should not be checked for direct equality.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">public</span> <span class="n">boolean</span> <span class="n">isOdd</span><span class="p">(</span><span class="nb">int</span> <span class="n">x</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">//</span><span class="n">Compliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">正确代码</span>
+<span class="n">public</span> <span class="n">boolean</span> <span class="n">isOdd</span><span class="p">(</span><span class="nb">int</span> <span class="n">x</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">//</span> <span class="n">或者</span> <span class="k">return</span> <span class="n">Math</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="52">
+<li>Mutable members should not be stored or returned directly. Or the value will be changed at other class.</li>
+<li>Non-serializable classes should not be written.</li>
+<li>Non-serializable objects should not be stored in “HttpSessions”. Some servers automatically write their
+active sessions out to file at shutdown &amp; deserialize any such sessions at startup.</li>
+<li>Objects should not be created to be dropped immediately without being used.</li>
+<li>Return values should not be ignored when function calls don’t have any side effects.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">handle</span><span class="p">(</span><span class="n">String</span> <span class="n">command</span><span class="p">){</span>
+    <span class="n">command</span><span class="o">.</span><span class="n">toLowerCase</span><span class="p">();</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="n">result</span> <span class="n">will</span> <span class="n">be</span> <span class="n">thrown</span> <span class="n">away</span><span class="o">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="57">
+<li>Servlets should not have mutable instance fields. Because the fields are shared by all users.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">public</span> <span class="n">Class</span> <span class="n">MyServlet</span> <span class="n">extends</span> <span class="n">HttpServlet</span><span class="p">{</span>
+    <span class="n">private</span> <span class="n">String</span> <span class="n">userName</span><span class="p">;</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="o">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="58">
+<li>The Array.equals(Object obj) method should not be used. Because array doesn’t override equals(), ‘equals()’
+is equal to ‘ == ‘. Use Arrays.equals(array1, array2) instead.</li>
+<li>The non-serializable super class of a “Serializable” class should have a no-argument constructor.
+When a Serializable object has a non-serializable ancestor in its inheritance chain, object deserialization
+(re-instantiating the object from file) starts at the first non-serializable class, and proceeds down the
+chain, adding the properties of each subsequent child class, until the final object has been instantiated.</li>
+<li>Thread.run() and Runnable.run() should not be called directly. Calling those methods will cause their code
+to be excuted in the current thread.</li>
+<li>Throwable.printStackTrace(…) should not be called. Use ‘LOGGER.log(“context”, e)’ instead.</li>
+<li>Values passed to OS commands should be sanitized. Values passed to LDAP queries should be sanitized. Values
+passed to SQL commands should be sanitized.</li>
+<li>Values should not be uselessly incremented.</li>
+</ol>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Noncompliant</span> <span class="n">Code</span> <span class="n">Example</span> <span class="n">错误代码</span>
+<span class="n">publi</span> <span class="nb">int</span> <span class="n">incr</span><span class="p">(){</span>
+    <span class="nb">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="nb">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">++</span><span class="p">;</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="n">i</span> <span class="ow">is</span> <span class="mf">0.</span>
+    <span class="k">return</span> <span class="n">j</span><span class="o">++</span><span class="p">;</span> <span class="o">//</span> <span class="n">Noncompliant</span><span class="p">,</span> <span class="k">return</span> <span class="mf">0.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="64">
+<li>“&#64;Override” annotation should be used on any method overriding.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>参考资料<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://nemo.sonarqube.org/coding_rules#languages=java">http://nemo.sonarqube.org/coding_rules#languages=java</a>
+<a class="reference external" href="https://google.github.io/styleguide/javaguide.html">https://google.github.io/styleguide/javaguide.html</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,348 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>OpenStack SDK – JClouds &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">OpenStack SDK – JClouds</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#excercise">Excercise</a><ul>
+<li><a class="reference internal" href="#jclouds">JClouds中的请求</a><ul>
+<li><a class="reference internal" href="#id1">具体请求方法</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#jcloudstoken">JClouds中的token缓存机制</a></li>
+<li><a class="reference internal" href="#jclouds-log">JClouds Log 配置</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">JClouds源代码修改</a><ul>
+<li><a class="reference internal" href="#ip">绑定浮动IP</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/cloud/jclouds.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="openstack-sdk-jclouds">
+<h1>OpenStack SDK – JClouds<a class="headerlink" href="#openstack-sdk-jclouds" title="Permalink to this headline">¶</a></h1>
+<p>JClouds is an SDK of common clouds platform.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>JClouds是一个开源框架，它可帮你在云计算中起步并重用你的Java和Clojure开发技能。
+JClouds的API允许你自由的使用可迁移的抽象或特定的云特性。我们支持多种云环境：Amazon, VMWare, Azure 和 Rackspace</p>
+</div>
+<div class="section" id="excercise">
+<h2>Excercise<a class="headerlink" href="#excercise" title="Permalink to this headline">¶</a></h2>
+<p>We use jclouds as our SDK to build our own cloud system.</p>
+<div class="section" id="jclouds">
+<h3>JClouds中的请求<a class="headerlink" href="#jclouds" title="Permalink to this headline">¶</a></h3>
+<p>JClouds作为Openstack的sdk，不外乎的作用就是将用户请求的接口转换为http的请求，然后将返回的json结果转换为结构化的对象。</p>
+<p>首先jclouds会以用户名和密码请求相应权限的token，这些是是现在getapi请求中。
+之后再利用token请求相应接口，我们看一个示例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@Named</span><span class="p">(</span><span class="s2">&quot;security-groups:create&quot;</span><span class="p">)</span>                                <span class="c1">#方法名称</span>
+<span class="nd">@POST</span>                                                           <span class="c1">#向发送的http请求类型</span>
+<span class="nd">@Path</span><span class="p">(</span><span class="s2">&quot;/ecurity-group-rules&quot;</span><span class="p">)</span>                                   <span class="c1">#发送http请求的路径，一般附在endpoint后</span>
+<span class="nd">@SelectJson</span><span class="p">(</span><span class="s2">&quot;security_group_rule&quot;</span><span class="p">)</span>                              <span class="c1">#返回数据的首元素标志</span>
+<span class="nd">@Fallback</span><span class="p">(</span><span class="n">NullOnNotFoundOr404</span><span class="o">.</span><span class="n">class</span><span class="p">)</span>                            <span class="c1">#返回失败后的处理方式及jclouds的返回结果</span>
+<span class="nd">@Consumes</span><span class="p">(</span><span class="n">MediaType</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">)</span>                           <span class="c1">#request接受类型的格式</span>
+<span class="nd">@Produces</span><span class="p">(</span><span class="n">MediaType</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">)</span>                           <span class="c1">#response的格式</span>
+<span class="nd">@MapBinder</span><span class="p">(</span><span class="n">BindSecurityGroupRuleToJsonPayload</span><span class="o">.</span><span class="n">class</span><span class="p">)</span>            <span class="c1">#将参数转化为json的类名称</span>
+<span class="n">SecurityGroupRule</span> <span class="n">createSecurityGroupRule</span><span class="p">(</span><span class="n">Ingress</span> <span class="n">groupRule</span><span class="p">);</span>   <span class="c1">#接口方法</span>
+</pre></div>
+</div>
+<p>这里就是整个接口的调用方式，利用java的annotation，使用一套调用模板，可以在切面中加入任意的接口，而不会影响之前的任何代码实现。</p>
+<p>这里面，有个地方需要注意，MapBinder是一个接口，是：</p>
+<blockquote>
+<div>&lt;R extends HttpRequest&gt; R bindToRequest(R request, Map&lt;String, Object&gt; postParams);</div></blockquote>
+<p>转换的类必须实现这个接口，如：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>@Singleton
+public class BindSecurityGroupRuleToJsonPayload extends BindToJsonPayload implements MapBinder{
+    @Override
+    public &lt;R extends HttpRequest&gt; R bindToRequest(R request, Map&lt;String, Object&gt; postParams){
+        //获取request，得到参数对象
+        Builder&lt;String, Object&gt; payload = ImmutableMap.builder();
+        payload.putAll(postParams);
+        checkArgument(checkNotNull(request, &quot;request&quot;) instanceof GeneratedHttpRequest,
+            &quot;this binder is only valid for GeneratedHttpRequests!&quot;);
+        GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
+
+        Ingress ingress = Ingress.class.cast(find(gRequest.getInvocation().getArgs(), instanceOf(Ingress.class)));
+        //之后将所有的属性名称和值放入payload中，这里省略很多重复代码
+        if(isNotEmpty(ingress.getProtocol())) {
+            payload.put(&quot;protocol&quot;, ingress.getProtocol());
+        }
+        return super.bindToRequest(request, ImmutableMap.of(&quot;security_group_rule&quot;, payload.build()));
+    }
+}
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h4>具体请求方法<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>具体请求方法在InvokeSyncToAsyncHttpMethod类中，具体方法为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>public Object invoke(Invocation invocation) {
+    String commandName = config.getCommandName(invocation);
+    HttpCommand command = toCommand(commandName, invocation);
+    Function&lt;HttpResponse, ?&gt; transformer = getTransformer(commandName, command);
+    org.jclouds.Fallback&lt;?&gt; fallback = getFallback(commandName, invocation, command);
+    logger.debug(&quot;&gt;&gt; invoking %s&quot;, commandName);
+    try {
+        return transformer.apply(http.invoke(command));
+    } catch (Throwable t) {
+        try {
+            return fallback.createOrPropagate(t);
+        } catch (Exception e) {
+            throw propagate(e);
+        }
+    }
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="jcloudstoken">
+<h3>JClouds中的token缓存机制<a class="headerlink" href="#jcloudstoken" title="Permalink to this headline">¶</a></h3>
+<p>JClouds还有一个重要作用，就是将请求的token进行状态缓存。这是为了充分利用token的有效期，并能有效的减少请求次数。</p>
+<p>将token请求后进行有效的存储。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="n">value</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+<span class="k">try</span> <span class="p">{</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">getUninterruptibly</span><span class="p">(</span><span class="n">newValue</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">throw</span> <span class="n">new</span> <span class="n">InvalidCacheLoadException</span><span class="p">(</span><span class="s2">&quot;CacheLoader returned null for key &quot;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">statsCounter</span><span class="o">.</span><span class="n">recordLoadSuccess</span><span class="p">(</span><span class="n">loadingValueReference</span><span class="o">.</span><span class="n">elapsedNanos</span><span class="p">());</span>
+    <span class="n">storeLoadedValue</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">hash</span><span class="p">,</span> <span class="n">loadingValueReference</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">statsCounter</span><span class="o">.</span><span class="n">recordLoadException</span><span class="p">(</span><span class="n">loadingValueReference</span><span class="o">.</span><span class="n">elapsedNanos</span><span class="p">());</span>
+        <span class="n">removeLoadingValue</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">hash</span><span class="p">,</span> <span class="n">loadingValueReference</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>同时还写了自动刷新token的代码，当请求token的时候，就请求scheduleRefresh方法，这个方法会返回一个有效的token。
+这里使用一个时间记录标记now获得当前时间，然后将now值传入scheduleRfresh中，得到一个现在有效的token。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<span class="o">//</span> <span class="n">read</span><span class="o">-</span><span class="n">volatile</span>
+<span class="o">//</span> <span class="n">don</span><span class="s1">&#39;t call getLiveEntry, which would ignore loading values</span>
+    <span class="n">ReferenceEntry</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">getEntry</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">hash</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">long</span> <span class="n">now</span> <span class="o">=</span> <span class="nb">map</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">read</span><span class="p">();</span>
+        <span class="n">V</span> <span class="n">value</span> <span class="o">=</span> <span class="n">getLiveValue</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">now</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">value</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">recordRead</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">now</span><span class="p">);</span>
+            <span class="n">statsCounter</span><span class="o">.</span><span class="n">recordHits</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="k">return</span> <span class="n">scheduleRefresh</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">hash</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">loader</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">ValueReference</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">valueReference</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">getValueReference</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">valueReference</span><span class="o">.</span><span class="n">isLoading</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">waitForLoadingValue</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">valueReference</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>JClouds将值存储之后进行定时刷新，如果时间超过定时刷新时间，就重新获取value并且返回，如果不是，那么就会返回oldValue。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>V scheduleRefresh(ReferenceEntry&lt;K, V&gt; entry, K key, int hash, V oldValue, long now,
+    CacheLoader&lt;? super K, V&gt; loader) {
+    if (map.refreshes() &amp;&amp; (now - entry.getWriteTime() &gt; map.refreshNanos)
+        &amp;&amp; !entry.getValueReference().isLoading()) {
+        V newValue = refresh(key, hash, loader, true);
+        if (newValue != null) {
+            return newValue;
+        }
+    }
+    return oldValue;
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="jclouds-log">
+<h3>JClouds Log 配置<a class="headerlink" href="#jclouds-log" title="Permalink to this headline">¶</a></h3>
+<p>JClouds本身提供了Log支持，方便使用者在调用的时候调试，使用SLF4J和logback进行log记录。</p>
+<p>我们首先在pom中将两个jar添加进来，之后我们可以使用其默认的配置，比较方便的打印log，只要在初始化的时候写如下代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CinderApi</span> <span class="n">cinderApi</span> <span class="o">=</span> <span class="n">ContextBuilder</span><span class="o">.</span><span class="n">newBuilder</span><span class="p">(</span><span class="s2">&quot;openstack-cinder&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">endpoint</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">modules</span><span class="p">(</span><span class="n">new</span> <span class="n">SLF4JLoggingModule</span><span class="p">())</span><span class="o">.</span><span class="n">buildApi</span><span class="p">(</span><span class="n">CinderApi</span><span class="o">.</span><span class="n">class</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>其实默认的配置已经能满足一般使用者的需求，作为程序员，我们都喜欢自己的配置。
+在当前工程的context path目录下加入文件logback.xml（我这里加入了eclipse的resource文件夹），基本配置如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">configuration</span> <span class="n">scan</span><span class="o">=</span><span class="s2">&quot;false&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">appender</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;STDOUT&quot;</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;ch.qos.logback.core.ConsoleAppender&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">encoder</span><span class="o">&gt;</span>
+            <span class="o">&lt;</span><span class="n">pattern</span><span class="o">&gt;%</span><span class="n">m</span><span class="o">%</span><span class="n">n</span><span class="o">&lt;/</span><span class="n">pattern</span><span class="o">&gt;</span>
+        <span class="o">&lt;/</span><span class="n">encoder</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">appender</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">appender</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;ch.qos.logback.core.FileAppender&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">file</span><span class="o">&gt;</span><span class="n">log</span><span class="o">/</span><span class="n">jclouds</span><span class="o">.</span><span class="n">log</span><span class="o">&lt;/</span><span class="n">file</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">encoder</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">Pattern</span><span class="o">&gt;%</span><span class="n">d</span> <span class="o">%-</span><span class="mi">5</span><span class="n">p</span> <span class="p">[</span><span class="o">%</span><span class="n">c</span><span class="p">]</span> <span class="p">[</span><span class="o">%</span><span class="n">thread</span><span class="p">]</span> <span class="o">%</span><span class="n">m</span><span class="o">%</span><span class="n">n</span><span class="o">&lt;/</span><span class="n">Pattern</span><span class="o">&gt;</span> <span class="o">&lt;/</span><span class="n">encoder</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">appender</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">logger</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jclouds.wire&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">level</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="n">appender</span><span class="o">-</span><span class="n">ref</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;STDOUT&quot;</span> <span class="o">/&gt;</span>
+    <span class="o">&lt;/</span><span class="n">logger</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">logger</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jclouds.headers&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">level</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="n">appender</span><span class="o">-</span><span class="n">ref</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;STDOUT&quot;</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;/</span><span class="n">logger</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">configuration</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>JClouds源代码修改<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>明白了JClouds的工作原理后，我们就可以自己添加相应的openstack接口的java sdk（因为jclouds漏了很多，提bug的页面经常不好使，我们期望它在下一个版本修复）;
+在我们的开发过程中，发现JClouds有写API写得不是很准确，而且有很多OpenStack的restapi没有相应实现，我们边开发，就边进行JClouds的修改，但并没有提交到社区。</p>
+<div class="section" id="ip">
+<h3>绑定浮动IP<a class="headerlink" href="#ip" title="Permalink to this headline">¶</a></h3>
+<p>浮动IP的绑定就是将虚拟机赋予一个外网IP，从而在公网上就可以访问，并且可以提供相应服务了。</p>
+<p>从网络逻辑上是将外部网络（这里是exnet）中的一个IP赋予与之相连的某个子网中的虚拟机，通过路由器将这个IP的包直接送到虚拟机主机所在网卡，进而送到该虚拟机中。</p>
+<p>通过命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">neutron</span> <span class="o">--</span><span class="n">debug</span> <span class="n">floatingip</span><span class="o">-</span><span class="n">associate</span> <span class="n">FLOATING_IP_ID</span> <span class="n">PORT_ID</span>
+</pre></div>
+</div>
+<p>显示结果为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DEBUG</span><span class="p">:</span> <span class="n">neutronclient</span><span class="o">.</span><span class="n">client</span>
+<span class="n">REQ</span><span class="p">:</span>
+<span class="n">curl</span> <span class="o">-</span><span class="n">i</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">250.222</span><span class="p">:</span><span class="mi">9696</span><span class="o">/</span><span class="n">v2</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">floatingips</span><span class="o">/</span><span class="mi">10813711</span><span class="o">-</span><span class="n">a7ab</span><span class="o">-</span><span class="mi">4</span><span class="n">aea</span><span class="o">-</span><span class="mi">92</span><span class="n">d6</span><span class="o">-</span><span class="mi">554</span><span class="n">dd4f7082b</span><span class="o">.</span><span class="n">json</span>
+    <span class="o">-</span><span class="n">X</span> <span class="n">PUT</span> <span class="o">-</span><span class="n">H</span> <span class="s2">&quot;X-Auth-Token:&quot;</span><span class="o">......</span><span class="s2">&quot;</span>
+    <span class="o">-</span><span class="n">H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="o">-</span><span class="n">H</span> <span class="s2">&quot;Accept: application/json&quot;</span>
+    <span class="o">-</span><span class="n">H</span> <span class="s2">&quot;User-Agent: python-neutronclient&quot;</span>
+    <span class="o">-</span><span class="n">d</span> <span class="s1">&#39;{</span>
+            <span class="s2">&quot;floatingip&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;port_id&quot;</span><span class="p">:</span> <span class="s2">&quot;94da9cf4-1948-44ae-b2ae-8fba464aada8&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+<span class="n">RESP</span><span class="p">:</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="s1">&#39;Tue,</span>
+        <span class="mi">16</span><span class="n">Sep201407</span><span class="p">:</span> <span class="mi">16</span><span class="p">:</span> <span class="mi">58</span><span class="n">GMT</span><span class="s1">&#39;,</span>
+        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;content-length&#39;</span><span class="p">:</span> <span class="s1">&#39;376&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;content-type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json;charset=UTF-8&#39;</span>
+    <span class="p">}{</span>
+     <span class="s2">&quot;floatingip&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;router_id&quot;</span><span class="p">:</span> <span class="s2">&quot;cbd8cebf-6688-44cb-a4f6-ece233af0108&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;DOWN&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tenant_id&quot;</span><span class="p">:</span> <span class="s2">&quot;51b1873935554545bb9b953e4055a997&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;floating_network_id&quot;</span><span class="p">:</span> <span class="s2">&quot;ec8b7335-ee0f-45b1-add5-9b6cafb72660&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed_ip_address&quot;</span><span class="p">:</span> <span class="s2">&quot;192.168.20.200&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;floating_ip_address&quot;</span><span class="p">:</span> <span class="s2">&quot;192.168.252.192&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;port_id&quot;</span><span class="p">:</span> <span class="s2">&quot;94da9cf4-1948-44ae-b2ae-8fba464aada8&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;10813711-a7ab-4aea-92d6-554dd4f7082b&quot;</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>根据debug的结果，则相应的API为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@Path</span><span class="p">(</span><span class="s2">&quot;/v2.0/floatingips&quot;</span><span class="p">)</span>
+<span class="nd">@RequestFilters</span><span class="p">(</span><span class="n">AuthenticateRequest</span><span class="o">.</span><span class="n">class</span><span class="p">)</span>
+<span class="nd">@Consumes</span><span class="p">(</span><span class="n">MediaType</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">)</span>
+<span class="n">public</span> <span class="n">interface</span> <span class="n">FloatingIPApi</span> <span class="p">{</span>
+
+    <span class="o">/**</span>
+    <span class="o">*</span> <span class="n">为虚拟机绑定浮动IP</span>
+    <span class="o">*</span> <span class="nd">@parm</span> <span class="n">floatingip_id</span><span class="p">,</span> <span class="n">port_id</span>
+    <span class="o">*/</span>
+    <span class="nd">@Named</span><span class="p">(</span><span class="s2">&quot;floatingip:associate&quot;</span><span class="p">)</span>
+    <span class="nd">@PUT</span>
+    <span class="nd">@PATH</span><span class="p">(</span><span class="s2">&quot;/</span><span class="si">{floatingip_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nd">@Consumes</span><span class="p">(</span><span class="n">MediaType</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">)</span>
+    <span class="nd">@Produces</span><span class="p">(</span><span class="n">MediaType</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">)</span>
+    <span class="nd">@Payload</span><span class="p">(</span><span class="s2">&quot;%7B</span><span class="se">\&quot;</span><span class="s2">floatingip</span><span class="se">\&quot;</span><span class="s2">:%7B</span><span class="se">\&quot;</span><span class="s2">port_id</span><span class="se">\&quot;</span><span class="s2">:</span><span class="se">\&quot;</span><span class="si">{port_id}</span><span class="se">\&quot;</span><span class="s2">%7D%7D&quot;</span><span class="p">)</span>
+    <span class="n">FloatingIP</span> <span class="n">associateIp</span><span class="p">(</span><span class="nd">@PathParam</span><span class="p">(</span><span class="n">floatingip_id</span><span class="p">)</span> <span class="n">String</span> <span class="n">floatingip_id</span><span class="p">,</span> <span class="nd">@PayloadParam</span><span class="p">(</span><span class="n">port_id</span><span class="p">)</span> <span class="n">String</span> <span class="n">port_id</span><span class="p">)</span>
+
+    <span class="o">/**</span>
+    <span class="o">*</span> <span class="n">为虚拟机解绑浮动IP</span>
+    <span class="o">*</span> <span class="nd">@parm</span> <span class="n">floatingip_id</span>
+    <span class="o">*/</span>
+    <span class="nd">@Named</span><span class="p">(</span><span class="s2">&quot;floatingip:disassociate&quot;</span><span class="p">)</span>
+    <span class="nd">@PUT</span>
+    <span class="nd">@PATH</span><span class="p">(</span><span class="s2">&quot;/</span><span class="si">{floatingip_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nd">@Consumes</span><span class="p">(</span><span class="n">MediaType</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">)</span>
+    <span class="nd">@Produces</span><span class="p">(</span><span class="n">MediaType</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">)</span>
+    <span class="nd">@Payload</span><span class="p">(</span><span class="s2">&quot;%7B</span><span class="se">\&quot;</span><span class="s2">floatingip</span><span class="se">\&quot;</span><span class="s2">:%7B</span><span class="se">\&quot;</span><span class="s2">port_id</span><span class="se">\&quot;</span><span class="s2">:null%7D%7D&quot;</span><span class="p">)</span>
+    <span class="n">FloatingIP</span> <span class="n">disassociateIp</span><span class="p">(</span><span class="nd">@PathParam</span><span class="p">(</span><span class="n">floatingip_id</span><span class="p">)</span> <span class="n">String</span> <span class="n">floatingip_id</span><span class="p">)</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Opticks and Envi(IDL) &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Encoding and Decoding" href="encode.html" />
+    <link rel="prev" title="Neunn XCloud Base Release Note(Version 0.6)" href="../cloud/openstack_base_releasenote.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="encode.html" title="Encoding and Decoding"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../cloud/openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../cloud/openstack_base_releasenote.html"
+                        title="previous chapter">Neunn XCloud Base Release Note(Version 0.6)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="encode.html"
+                        title="next chapter">Encoding and Decoding</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/other/opticksandenvi.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="opticks-and-envi-idl">
+<h1>Opticks and Envi(IDL)<a class="headerlink" href="#opticks-and-envi-idl" title="Permalink to this headline">¶</a></h1>
+<p>做了两个月的opticks汉化和idl的开发，现在梳理一下，做一个简单的总结</p>
+<p>Opticks是opticks社区开发的一款开源的遥感图像处理软件，使用c++进行编写，qt作为界面库，现在社区活跃度比较低，</p>
+<p>Envi是全球公认非常强大好用的遥感图像处理系统，涵盖了几乎所有的图像处理方法，而且有二次开发的接口，使用IDL可以进行轻松的Envi调用</p>
+<p>简单做一下对比，以及两款其他软件：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="23%" />
+<col width="21%" />
+<col width="34%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">软件名称</th>
+<th class="head">开源/收费</th>
+<th class="head">开发语言</th>
+<th class="head">架构</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Opticks</td>
+<td>开源</td>
+<td>C++</td>
+<td>插件式扩展</td>
+</tr>
+<tr class="row-odd"><td>Envi</td>
+<td>收费</td>
+<td>C++</td>
+<td>未知</td>
+</tr>
+<tr class="row-even"><td>Ossim</td>
+<td>开源</td>
+<td>C++</td>
+<td>未知</td>
+</tr>
+<tr class="row-odd"><td>OpenRS</td>
+<td>开源</td>
+<td>C++</td>
+<td>动态插件式扩展</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="encode.html" title="Encoding and Decoding"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../cloud/openstack_base_releasenote.html" title="Neunn XCloud Base Release Note(Version 0.6)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

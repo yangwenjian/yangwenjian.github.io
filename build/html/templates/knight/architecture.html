@@ -1,0 +1,171 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Architecture &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Architecture</a><ul>
+<li><a class="reference internal" href="#id1">软件架构概念，作用，意义</a></li>
+<li><a class="reference internal" href="#rup">RUP过程</a></li>
+<li><a class="reference internal" href="#id2">架构模式与风格</a></li>
+<li><a class="reference internal" href="#id3">组件</a></li>
+<li><a class="reference internal" href="#soa">SOA</a></li>
+<li><a class="reference internal" href="#id4">微服务</a></li>
+<li><a class="reference internal" href="#id5">可复用性，可修改性，可用性，安全性</a></li>
+<li><a class="reference internal" href="#id6">架构视图，架构机制</a><ul>
+<li><a class="reference internal" href="#id7">逻辑结构</a></li>
+<li><a class="reference internal" href="#id8">进程架构</a></li>
+<li><a class="reference internal" href="#id9">开发架构</a></li>
+<li><a class="reference internal" href="#id10">物理架构</a></li>
+<li><a class="reference internal" href="#id11">场景</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/knight/architecture.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
+<p>软件架构 ＝ {元素，形式，关系/约束}</p>
+<div class="section" id="id1">
+<h2>软件架构概念，作用，意义<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="rup">
+<h2>RUP过程<a class="headerlink" href="#rup" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id2">
+<h2>架构模式与风格<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id3">
+<h2>组件<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="soa">
+<h2>SOA<a class="headerlink" href="#soa" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id4">
+<h2>微服务<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id5">
+<h2>可复用性，可修改性，可用性，安全性<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id6">
+<h2>架构视图，架构机制<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>软件架构涉及到抽象、分解和组合、风格和美学。我们用由多个视图或视角组成的模型来描述它。为了最终处理大型的、富有挑战性的架构，该模型包含五个主要的视图:</p>
+<img alt="../../_images/views.jpg" src="../../_images/views.jpg" />
+<ul class="simple">
+<li>逻辑视图（Logical View）          —&gt;    逻辑架构    —&gt;        设计的对象模型（使用面向对象的设计方法时）</li>
+<li>开发视图（Process View）          —&gt;    系统组件    —&gt;        描述了在开发环境中软件的静态组织结构</li>
+<li>物理视图（Physical View）         —&gt;    系统拓扑    —&gt;        描述了软件到硬件的映射，反映了分布式特性</li>
+<li>运行视图（Development View）      —&gt;    流程        —&gt;        捕捉设计的并发和同步特征。</li>
+<li>业务场景视图（Scenario View）     —&gt;    原型        —&gt;        用例 （use cases）或场景(scenarios)</li>
+</ul>
+<div class="section" id="id7">
+<h3>逻辑结构<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>面向对象的分解</p>
+<p>逻辑架构主要支持功能性需求――即在为用户提供服务方面系统所应该提供的功能。系统分解为一系列的关键抽象，（大多数）来自于问题域，表现为对象或对象类的形式。它们采用抽象、封装和继承的原理。分解并不仅仅是为了功能分析，而且用来识别遍布系统各个部分的通用机制和设计元素。</p>
+<p>在逻辑视图中，我们认为每个对象均是主动的，具有潜在的”并发性”，即与其他对象具有”平行的”行为，我们并不考虑所要达到的确切并发程度。因此，逻辑结构所考虑的仅是需求的功能性方面。</p>
+</div>
+<div class="section" id="id8">
+<h3>进程架构<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>过程分解</p>
+<p>进程架构考虑一些非功能性的需求，如性能和可用性。它解决并发性、分布性、系统完整性、容错性的问题，以及逻辑视图的主要抽象如何与进程结构相配合在一起－即在哪个控制线程上，对象的操作被实际执行。</p>
+<p>进程架构可以在几种层次的抽象上进行描述，每个层次针对不同的问题。在最高的层次上，进程架构可以视为一组独立执行的通信程序（叫作”processes”）的逻辑网络，它们分布在整个一组硬件资源上，这些资源通过 LAN 或者 WAN 连接起来。多个逻辑网络可能同时并存，共享相同的物理资源。例如，独立的逻辑网络可能用于支持离线系统与在线系统的分离，或者支持软件的模拟版本和测试版本的共存。</p>
+</div>
+<div class="section" id="id9">
+<h3>开发架构<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>子系统分解</p>
+<p>开发架构关注软件开发环境下实际模块的组织。软件打包成小的程序块（程序库或子系统），它们可以由一位或几位开发人员来开发。子系统可以组织成分层结构，每个层为上一层提供良好定义的接口。</p>
+<p>系统的开发架构用模块和子系统图来表达，显示了”输出”和”输入”关系。完整的开发架构只有当所有软件元素被识别后才能加以描述。但是，可以列出控制开发架构的规则：分块、分组和可见性。</p>
+</div>
+<div class="section" id="id10">
+<h3>物理架构<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>软件至硬件的映射</p>
+<p>物理架构主要关注系统非功能性的需求，如可用性、可靠性（容错性），性能（吞吐量）和可伸缩性。软件在计算机网络或处理节点上运行，被识别的各种元素（网络、过程、任务和对象），需要被映射至不同的节点；我们希望使用不同的物理配置：一些用于开发和测试，另外一些则用于不同地点和不同客户的部署。因此软件至节点的映射需要高度的灵活性及对源代码产生最小的影响。</p>
+<p>物理蓝图的表示法</p>
+<p>大型系统中的物理蓝图会变得非常混乱，所以它们可以采用多种形式，有或者没有来自进程视图的映射均可。</p>
+</div>
+<div class="section" id="id11">
+<h3>场景<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>综合所有的视图</p>
+<p>四种视图的元素通过数量比较少的一组重要场景（更常见的是用例）进行无缝协同工作，我们为场景描述相应的脚本（对象之间和过程之间的交互序列）。正如 Rubin 和 Goldberg 所描述的那样6。</p>
+<p>在某种意义上场景是最重要的需求抽象，它们的设计使用对象场景图和对象交互图来表示4。</p>
+<p>该视图是其他视图的冗余（因此”＋1”），但它起到了两个作用：</p>
+<p>作为一项驱动因素来发现架构设计过程中的架构元素，这一点将在下文中讨论。
+作为架构设计结束后的一项验证和说明功能，既以视图的角度来说明又作为架构原型测试的出发点</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

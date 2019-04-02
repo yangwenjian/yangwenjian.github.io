@@ -1,0 +1,237 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>微服务 &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">微服务</a><ul>
+<li><a class="reference internal" href="#id2">微服务介绍</a><ul>
+<li><a class="reference internal" href="#id3">概念</a></li>
+<li><a class="reference internal" href="#id4">微服务的优缺点</a></li>
+<li><a class="reference internal" href="#id5">微服务的应用场景</a></li>
+<li><a class="reference internal" href="#id6">避免使用微服务的场景：</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id7">麟龙微服务的设计</a><ul>
+<li><a class="reference internal" href="#id8">微服务中的角色</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9">最佳实践</a></li>
+<li><a class="reference internal" href="#id10">经验教训</a><ul>
+<li><a class="reference internal" href="#id11">架构演化步骤</a></li>
+<li><a class="reference internal" href="#id12">服务拆分原则</a></li>
+<li><a class="reference internal" href="#id13">微服务策略</a></li>
+<li><a class="reference internal" href="#netflix-play-api">NetFlix Play API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/distribution/micro_service.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>微服务<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id2">
+<h2>微服务介绍<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>微服务是一种架构风格，一个大型复杂软件应用由一个或多个微服务组成，系统中的各个微服务可被独立部署，各个微服务之间是松耦合的。</p>
+<div class="section" id="id3">
+<h3>概念<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>微服务是人们提出新的思路，将原来组件化的代码模块进行服务化，将原来基于接口的编程</p>
+<ol class="arabic simple">
+<li>通过服务实现应用的组件化，微服务架构中将组件定义为可被独立替换和升级的软件单元，在应用架构设计中通过将整体应用切分成可独立部署及升级的微服务方式进行组件化设计；</li>
+<li>围绕业务能力组织服务，微服务架构采取以业务能力为出发点组织服务的策略，因此微服务团队的组织结构必须是跨功能的（如：既管应用，也管数据库）、强搭配的DevOps开发运维一体化团队；</li>
+<li>团队负责整个微服务的生命周期，包括开发、部署、运营、运维；</li>
+<li>通讯机制或组件应该尽量简单及松耦合，RESTful HTTP协议和仅提供消息路由功能的轻量级异步机制是微服务架构中最常用的通讯机制；</li>
+<li>每个微服务考虑各自最适合的平台和工具、环境及数据库等；</li>
+<li>微服务架构所带来的一个后果是必须考虑每个服务的失败容错机制。因此，微服务非常重视建立架构及业务相关指标的实时监控和日志机制；</li>
+</ol>
+</div>
+<div class="section" id="id4">
+<h3>微服务的优缺点<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>优点：</p>
+<ol class="arabic simple">
+<li>微服务可以为开发者提供独立开发和部署的便利；</li>
+<li>微服务可以由相当小的团队进行开发；</li>
+<li>不同服务的代码可以用不同语言来写（虽然很多人忽略这点）；</li>
+<li>更容易集成和自动化部署（利用开源的CI软件，如Jenkins、Hudson等）</li>
+<li>开发者可以充分使用最新技术；</li>
+<li>代码按照业务更准确的切分；</li>
+<li>能更快的使用web容器，因此部署更便捷；</li>
+<li>当应用的某部分发生变化时，只有相关的服务需要进行相应的改变，而不需要修改或者重新部署整个应用；</li>
+<li>更好的错误隔离：如果其中一个微服务出现错误，其余微服务仍然继续正常工作（而单体架构中某个错误会使整个应用错误）；</li>
+<li>更容易扩展、集成第三方服务；</li>
+<li>无需长期跟踪技术堆栈；</li>
+</ol>
+<p>缺点：</p>
+<ol class="arabic simple">
+<li>由于是分布式部署，测试变得繁重而复杂；</li>
+<li>分布式的部署带来的固有复杂性，包括环境、消息传递等；</li>
+<li>运维、测试成本的突增；</li>
+</ol>
+</div>
+<div class="section" id="id5">
+<h3>微服务的应用场景<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>大型系统的应用搭建；</li>
+<li>明确未来发展的复杂架构方向；</li>
+</ol>
+</div>
+<div class="section" id="id6">
+<h3>避免使用微服务的场景：<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>小型系统，业务内聚程度高；</li>
+<li>开发团队能力有限，部署、异步消息等过度依赖运维团队；</li>
+</ol>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>麟龙微服务的设计<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h3>微服务中的角色<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>服务中心Service Center：负责服务的注册、发现、监控、卸载；</li>
+<li>服务网关Service Gateway：负责统一的服务接口；</li>
+<li>认证授权中心Authentication&amp;Authorization Center：负责管理用户信息和权限；</li>
+<li>客户端程序Consumer/Client：客户端组件，调用服务网关的接口；</li>
+<li>微服务组件Micro Service：以轻量级的协议提供服务的单元；</li>
+</ol>
+<p>各个组件之间的依赖关系：</p>
+<a class="reference internal image-reference" href="../../_images/component0.png"><img alt="../../_images/component0.png" src="../../_images/component0.png" style="width: 1000px;" /></a>
+<p>服务注册时序图：</p>
+<a class="reference internal image-reference" href="../../_images/sequence0.png"><img alt="../../_images/sequence0.png" src="../../_images/sequence0.png" style="width: 1000px;" /></a>
+<p>服务请求时序图：</p>
+<a class="reference internal image-reference" href="../../_images/sequence1.png"><img alt="../../_images/sequence1.png" src="../../_images/sequence1.png" style="width: 1000px;" /></a>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>最佳实践<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>使用Netflix相关组件可以构建完整的微服务框架，同时Java开发者可以使用Spring Cloud来实现微服务是当前比较流行的趋势。</p>
+<ul class="simple">
+<li>Eureka:　服务注册发现框架</li>
+<li>Zuul:　服务网关</li>
+<li>Karyon:　服务端框架</li>
+<li>Ribbon:　客户端框架</li>
+<li>Hystrix: 服务容错组件</li>
+<li>Archaius: 服务配置组件</li>
+<li>Servo: Metrics组件</li>
+<li>Blitz4j: 日志组件</li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h2>经验教训<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id11">
+<h3>架构演化步骤<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>先梳理平台的服务，对不同的服务进行分类，以确认演化的节奏，例如基础服务，业务服务，rest服务，组合服务。
+先熟悉Spring Boot，再进行Spring Cloud的改造。
+优先在新项目上使用Spring Boot，再改造小项目，最后加大改造范围，注意节奏。
+传统项目和微服务项目共存是常见的，核心项目不建议过度改造。</li>
+</ul>
+</div>
+<div class="section" id="id12">
+<h3>服务拆分原则<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p>横向拆分：按业务类别进行拆分，形成独立的业务领域；
+纵向才分：按层次进行拆分，公共服务下沉，形成相对独立的原子服务层；
+做好分层：梳理和抽取核心应用，公共应用；
+服务拆分的规模：服务内部高内聚，服务之间低耦合；</p>
+<dl class="docutils">
+<dt>当业务需要联合微服务之间的库进行查询时，可以采取：</dt>
+<dd>严格切分数据，利用代码进行数据处理与合并关联；（适合小规模服务）
+业务关联紧密的表存入同一个数据库中；（适合传统改造中的服务）
+严格切分，但实时将数据同步到第三方NoSQL中，以满足业务需求；（适合大规模高并发服务）</dd>
+</dl>
+</div>
+<div class="section" id="id13">
+<h3>微服务策略<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p>采用微服务架构并非易事。它可能会出错，使得实际上损害工程生产力。在本节中，我们将分享早期阶段对我们有益的七个策略：</p>
+<p>构建具有明确价值的新服务
+单一的持久存储是有害的
+解耦“构建服务”和“运行服务”
+详尽和一致的可观察性
+无需从头构建新服务
+重视发生的故障
+从一开始就避免“微服务综合症”</p>
+</div>
+<div class="section" id="netflix-play-api">
+<h3>NetFlix Play API<a class="headerlink" href="#netflix-play-api" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>服务身份：为什么服务存在，单一身份</li>
+<li>1型决策（重要不可逆转的决策，包括适当耦合、同步与异步通信和数据架构）：考虑具有双向通信的‘瘦’自动生成客户端，并最小化跨服务边界的代码重用；</li>
+<li>确定你的 1 型决策和 2 型决策；把 80% 的时间用于讨论和调整 1 型决策。</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

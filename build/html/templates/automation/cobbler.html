@@ -1,0 +1,148 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>自动化安装操作系统 &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">自动化安装操作系统</a><ul>
+<li><a class="reference internal" href="#id2">知识梳理</a><ul>
+<li><a class="reference internal" href="#pxe">pxe</a></li>
+<li><a class="reference internal" href="#cobbler">cobbler</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">cobbler配置</a></li>
+<li><a class="reference internal" href="#id4">cobbler源码分析</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/automation/cobbler.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>自动化安装操作系统<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>cobbler自动化安装操作系统
+cobbler是redhat公司开发的自动化部署操作系统的工具，使用python编写，轻量级，利用pxe自动进行操作系统的安装。</p>
+<div class="section" id="id2">
+<h2>知识梳理<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pxe">
+<h3>pxe<a class="headerlink" href="#pxe" title="Permalink to this headline">¶</a></h3>
+<p>在cobbler出现之前，操作系统都是使用pxe自动安装的，pxe是preboot excute enviroment，由intel公司进行设计开发的预执行环境，是cpu的特性，pxe的主要原理是在开机的过程进行网卡启动引导，根据TFTP和DHCP协议发出请求，收到应答后可以建立连接进行内核引导文件的传输，这部分数据首先放到网卡的内存当中，再由内存装载，之后根据FTP协议进行大量镜像数据的传输，将安装操作系统的所有文件复制到内存中，进行启动安装。</p>
+<p>被安装的计算机必须有支持PXE启动的网卡，其中包含PXE client，当计算机引导启动时，BIOS把PXE client调入内存中执行，通过远端服务器将文件下载到本地。
+运行PXE client需要设置DHCP服务器和TFTP服务器，DHCP服务器负责分配IP地址，tftp服务器则负责存储相关文件。</p>
+<p>TFTP服务器中存储如下文件：pxelinux.0，镜像下pxeboot中的initrd.img和vmlinux，ioslinux下的所有.msg文件，以及pxelinux.cfg目录下default文件。</p>
+</div>
+<div class="section" id="cobbler">
+<h3>cobbler<a class="headerlink" href="#cobbler" title="Permalink to this headline">¶</a></h3>
+<p>cobbler本身只是一个壳子，其关键的技术还是使用PXE引导启动和kickstart进行无人值守的配置，但使用cobbler可以大大简化这个过程，并在配置好的基础上可以“一键安装”，非常方便。目前对RedHat系列支持的很好，对其他操作系统也能自动化安装，但是配置起来相对繁琐一些。现在ubuntu也推出了集成化工具MASS，也相当好用，并且与OpenStack有很高程度的集成，进行基础配置后甚至可以一键安装OpenStack。</p>
+<p>作用包括如下几点：快速设置网络安装环境的Linux安装服务器，管理配置，管理DNS，HDCP，TFTP和rsync，软件包升级和电源管理。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>cobbler配置<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>现在各大发版都有cobbler的源，直接安装即可，可以进行简单的配置，打开cobbler的配置文件，我们看到一系列的说明项目和后面的配置值，配置值可以填0或者1，0表示不由cobbler监管，1表示由cobbler监管，比如dchp服务，tftp服务等等。</p>
+<p>几条命令：</p>
+<p>cobbler check（检查配置）会告诉你现有的cobbler的配置有什么问题，
+cobbler sync（同步配置）会将现有的cobbler配置导入，</p>
+<img alt="../../_images/pxe_installation.jpg" src="../../_images/pxe_installation.jpg" />
+<p>为了印证启动时发生的情况，我们使用抓包工具对这期间的网络包进行分析，结果如下：</p>
+<img alt="../../_images/pxe_installation2.jpg" src="../../_images/pxe_installation2.jpg" />
+</div>
+<div class="section" id="id4">
+<h2>cobbler源码分析<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>cobbler的源代码从开始，首先读取conf配置文件。</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cobbler.cli</span> <span class="k">as</span> <span class="nn">app</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">PROFILING</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">if</span> <span class="n">PROFILING</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="s2">&quot;** PROFILING **&quot;</span>
+    <span class="kn">import</span> <span class="nn">hotshot</span>
+    <span class="kn">import</span> <span class="nn">hotshot.stats</span>
+    <span class="n">prof</span> <span class="o">=</span> <span class="n">hotshot</span><span class="o">.</span><span class="n">Profile</span><span class="p">(</span><span class="s2">&quot;cobbler.prof&quot;</span><span class="p">)</span>
+    <span class="n">prof</span><span class="o">.</span><span class="n">runcall</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">main</span><span class="p">)</span>
+    <span class="n">prof</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">hotshot</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;cobbler.prof&quot;</span><span class="p">)</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">strip_dirs</span><span class="p">()</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s2">&quot;** REPORT **&quot;</span>
+    <span class="n">stats</span><span class="o">.</span><span class="n">print_stats</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

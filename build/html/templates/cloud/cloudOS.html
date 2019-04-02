@@ -1,0 +1,147 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cloud OS 总结 &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cloud OS 总结</a><ul>
+<li><a class="reference internal" href="#id1">基本概念</a><ul>
+<li><a class="reference internal" href="#id2">华为平台</a></li>
+<li><a class="reference internal" href="#aclome">东信Aclome</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">总结</a></li>
+<li><a class="reference internal" href="#id4">软件开发模式</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/cloud/cloudOS.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cloud-os">
+<h1>Cloud OS 总结<a class="headerlink" href="#cloud-os" title="Permalink to this headline">¶</a></h1>
+<p>商用云平台的架构和设计。</p>
+<div class="section" id="id1">
+<h2>基本概念<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>IaaS: Infrastructure as a Service
+PaaS: Plantform as a Service
+SaaS: Software as a Service
+VPNaaS: Virtual Private Network as a Serivce
+LBaaS: Load Balance as a Service
+SDNaaS: Software Define Network as a Service
+编排：根据业务需求自动产生相应配置的虚拟机</p>
+<div class="section" id="id2">
+<h3>华为平台<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>华为依靠Xen虚拟化技术，在开源的SLES11SP1的基础之上对操作系统进行修改，加入自己的agent进行监控管理，
+节点的镜像都是自己修改过的，具有很高的可靠性和稳定性，适用于小型的数据中心。
+之所以这样说，是因为华为的云平台在网络部署上只支持vlan的模式，这就限制了子网的个数，不能超过4096。</p>
+<img alt="../../_images/manageone.jpg" src="../../_images/manageone.jpg" />
+<p>华为的ManageOne解决方案包括如下几个组件：
+FC, FusionCompute负责管理底层虚拟化资源，包括主机、存储、网络的虚拟化管理，可以直接操作底层硬件与虚拟化资源池
+FM, FusionManager负责资源的进一步抽象，加入租户的概念，南向与FC对接，直接控制FC，北向与CSB进行对接，属于中间层
+CSB, 运营平台（暂时称之为运营管理平台）
+IT服务管理平台（ITIL）
+用户门户
+整个架构还是很值得学习的，资源管理与业务分离，运营与运维平台分离，并且有一整套的业务流程规范在里面。</p>
+</div>
+<div class="section" id="aclome">
+<h3>东信Aclome<a class="headerlink" href="#aclome" title="Permalink to this headline">¶</a></h3>
+<p>Aclome平台是由CloudStack+XenServer搭建的一套虚拟化平台，东信主要是修改前台并加入了动环的监控，并能与施耐德的设备进行集成（意味着动环管理不能集成其他厂商），具有良好的界面及动环监控能力。
+但东信本身的实质还是简单的开源产品，并没有经过仔细的改造和测试，类似这样的东西是不能进行商用的。并且重启后很多服务要手动重新调试，增加了部署和调试的难度。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>总结<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>经过几轮的测试和学习，总结下云平台的几个要素：</p>
+<ol class="arabic simple">
+<li>资源的监控能力（重要****）</li>
+<li>虚拟机的管理能力（重要***** 虚拟机为重要能力，能否商业化的前提之一）</li>
+<li>弹性扩展和收缩能力（重要* autoscaling）</li>
+<li>网络的管理扩展能力（重要** SDN）</li>
+<li>租户的管理与隔离（重要** VPC业务）</li>
+<li>块的动态挂载和扩展（重要***）</li>
+<li>镜像的管理能力（重要*** 镜像市场，自动扩展镜像）</li>
+<li>网络安全与虚拟机安全防护能力（重要*****）</li>
+<li>负载均衡能力（重要**）</li>
+<li>对象存储（重要** 云盘业务）</li>
+<li>强大的API机制及相应的SDK（重要*）</li>
+</ol>
+</div>
+<div class="section" id="id4">
+<h2>软件开发模式<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>这里因为第一篇文章，也是我第一个接触到的成品软件，我这里发个小漫画，警醒我们这个行业的世人，莫学错了路。</p>
+<img alt="../../_images/software.jpg" src="../../_images/software.jpg" />
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Project Management Tools &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Maven" href="../programming/java/maven.html" />
+    <link rel="prev" title="Welcome to Knight’s Documentation!" href="../../index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../programming/java/maven.html" title="Maven"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../index.html" title="Welcome to Knight’s Documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Project Management Tools</a><ul>
+<li><a class="reference internal" href="#project-management">Project Management</a><ul>
+<li><a class="reference internal" href="#atlassian-confluence">Atlassian Confluence</a><ul>
+<li><a class="reference internal" href="#id1">最佳实践</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#atlassian-jira">Atlassian Jira</a></li>
+<li><a class="reference internal" href="#atlassian-bamboo">Atlassian Bamboo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../../index.html"
+                        title="previous chapter">Welcome to Knight’s Documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../programming/java/maven.html"
+                        title="next chapter">Maven</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/other/projectManagement.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="project-management-tools">
+<h1>Project Management Tools<a class="headerlink" href="#project-management-tools" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="project-management">
+<h2>Project Management<a class="headerlink" href="#project-management" title="Permalink to this headline">¶</a></h2>
+<p>Project Management is an important part in software engineering.We use it to control the process of our software development.
+这里我推荐使用atlassian的产品，包括confluence, jira, bamboo, fisheye+crucible, crowd等等。</p>
+<p>破解的方法网上都有，基本逻辑都是替换atlassian-extra-2.*.jar，利用kengen生成新的lisence，安装的时候配置这些。
+这里我不赞成使用盗版方式，atlassian的产品按用户收费，其实费用也不是很高，如果利用率高的话建议买正版授权，如果想少花点建议减少用户数量。</p>
+<div class="section" id="atlassian-confluence">
+<h3>Atlassian Confluence<a class="headerlink" href="#atlassian-confluence" title="Permalink to this headline">¶</a></h3>
+<p>Confluence是非常优秀的online wiki.
+Confluence的用处非常广泛，创建项目，创建各类文档，等等各种功能，非常好用。</p>
+<div class="section" id="id1">
+<h4>最佳实践<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>conflunce与数据库有一个心跳链接，在数据库中的表为clustersafety，这个表是用来保持confluence的standalone特性的，如果两个confluence用了一个数据库，5分钟内就能让你的所有数据混乱，这个心跳保持30s一跳，如果出现问题就会停止一个confluence连接。</p>
+<p>这里需要注意的是，如果用mysql数据库，打开binlog的情况下，confluence只支持binlog_format为row或者为mixed情况，不能支持mysql默认的statement格式。
+这个错误是我某天重启mysql，结果发现confluence再也连不上数据库了，查了官方文档才找到问题的所在。</p>
+</div>
+</div>
+<div class="section" id="atlassian-jira">
+<h3>Atlassian Jira<a class="headerlink" href="#atlassian-jira" title="Permalink to this headline">¶</a></h3>
+<p>Jira主要是问题缺陷管理的工具，在项目的使用中，主要由测试人员或者项目经理发起jira，类似于工单系统，一个流程走下来，既解决了问题，又提高了管理性。</p>
+</div>
+<div class="section" id="atlassian-bamboo">
+<h3>Atlassian Bamboo<a class="headerlink" href="#atlassian-bamboo" title="Permalink to this headline">¶</a></h3>
+<p>bamboo作为自动化构建项目的工具，需要进行一些项目任务配置。</p>
+<p>1.创建项目，点击create-&gt;new project；</p>
+<p>2.配置git，使bamboo获取项目工程，选择右上角linked repositories，点击add repository，配置git地址，并选择分支和填写用户名密码；</p>
+<p>3.创建plan，点击create-&gt;new plan；</p>
+<p>4.利用Docker创建容器并部署Agent；</p>
+<blockquote>
+<div><p>4.1.创建容器并部署agent，docker run -i -t -p 192.168.250.3:8887:8888 BambooAgent6/ubuntu:14.04 /startBambooAgent.sh；</p>
+<p>4.2.创建task，点击All build plan，点击右边铅笔，进入task配置页面，点击default job进行自动化任务配置（这里以base层工程为例）</p>
+<blockquote>
+<div><p>4.2.1点击add task，选择source code checkout，选择相应reposity，点击Save；</p>
+<p>4.2.2点击add task，选择maven3.X，在Goal中输入“clean install”（清理并构建）并指定working sub directory为ncloud-base-rp-conn（否则找不到构建工程）；</p>
+<p>4.2.3点击add task，选择maven3.X，在Goal中输入“clean install”（清理并构建）并指定working sub directory为ncloud-base；</p>
+<p>4.2.4点击add task，选择stop tomcat， 在tomcat的URL中输入http://172.17.0.4:8888/manager/并输入tomcat的管理员的帐号和密码（这里需要在tomcat进行一下配置），并制定application context为“/ncloud”；</p>
+<p>4.2.5点击add task，选择deploy tomcat application，配置和4.2.4相同，除了war file中指定base层的war包“/ncloud-base/target/ncloud-base-0.0.1-SNAPSHOT.war”；</p>
+<p>4.2.6点击add task，选择start tomcat，配置如4.2.4；</p>
+</div></blockquote>
+</div></blockquote>
+<p>5.创建容器并运行Agent，在宿主机上利用docker进行容器创建 docker run -i -t -p 192.168.250.3:8887:8888 BambooAgent6/ubuntu:14.04 /startBambooAgent.sh；</p>
+<p>6.配置Agent，右上角进入agents的配置页面，选项卡选中agent authorization，选择创建好的agent进行approve access，授权后，可以在online remote agents中看到相应的agent。这里需要注意，我们建议先进行任务创建再创建相应agent，如果先建立agent，可能无法进行自动构建，只能重新创建任务。</p>
+<p>7.运行计划任务，点击build all plan中的开始按钮，即可享受全自动的构建测试服务，之后看相应的报告即可。</p>
+<p><em>鸣谢：</em></p>
+<p>崔远智，bamboo使用的提倡者，解决bamboo任务运行中的坑，并发扬光大项目管理工具。</p>
+<p>黄金龙，首先吃螃蟹的人，解决工程配置中的坑，进行初始化的各种配置。</p>
+<p><strong>对于Linux和Mac用户，可以参考下面的脚本进行本地构建并部署到服务器上，Windows用户自求多福吧。</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1">#this is a deploy shell for base to 192.168.250.3</span>
+<span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">knight</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">ncloud</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">rp</span><span class="o">-</span><span class="n">conn</span>
+<span class="n">mvn</span> <span class="n">clean</span>
+<span class="n">mvn</span> <span class="n">install</span>
+
+<span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">knight</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">ncloud</span><span class="o">-</span><span class="n">base</span>
+<span class="n">mvn</span> <span class="n">clean</span>
+<span class="n">mvn</span> <span class="n">install</span>
+
+<span class="n">scp</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">knight</span><span class="o">/.</span><span class="n">m2</span><span class="o">/</span><span class="n">repository</span><span class="o">/</span><span class="n">Neunn</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">ncloud</span><span class="o">-</span><span class="n">base</span><span class="o">/</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">1</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">/</span><span class="n">ncloud</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">1</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">.</span><span class="n">war</span> <span class="n">root</span><span class="nd">@192</span><span class="o">.</span><span class="mf">168.250</span><span class="o">.</span><span class="mi">3</span><span class="p">:</span><span class="o">~/</span><span class="n">ncloud</span><span class="o">.</span><span class="n">war</span>
+
+<span class="n">ssh</span> <span class="n">root</span><span class="nd">@192</span><span class="o">.</span><span class="mf">168.250</span><span class="o">.</span><span class="mi">3</span> <span class="o">&lt;&lt;</span> <span class="n">EOF</span>
+<span class="n">cd</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">tomcat7</span><span class="o">/</span>
+<span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="n">webapps</span><span class="o">/</span><span class="n">ncloud</span><span class="o">*</span>
+<span class="n">cp</span> <span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">ncloud</span><span class="o">.</span><span class="n">war</span> <span class="n">webapps</span><span class="o">/</span>
+<span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">shutdown</span><span class="o">.</span><span class="n">sh</span>
+<span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">startup</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">EOF</span>
+</pre></div>
+</div>
+<p>参考:
+<a class="reference external" href="https://confluence.atlassian.com/display/BAMBOO/Bamboo+Documentation+Home">https://confluence.atlassian.com/display/BAMBOO/Bamboo+Documentation+Home</a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../programming/java/maven.html" title="Maven"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../index.html" title="Welcome to Knight’s Documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

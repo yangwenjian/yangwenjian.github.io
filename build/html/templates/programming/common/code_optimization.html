@@ -1,0 +1,283 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Code Optimization &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Code Optimization</a><ul>
+<li><a class="reference internal" href="#id1">一、 基本原则</a></li>
+<li><a class="reference internal" href="#id2">二、 优化方案的演变</a><ul>
+<li><a class="reference internal" href="#code-motion">1. Code Motion</a></li>
+<li><a class="reference internal" href="#reducing-procedure-calls">2. Reducing Procedure Calls</a></li>
+<li><a class="reference internal" href="#eliminating-unneeded-memory-reference">3. Eliminating Unneeded Memory Reference</a></li>
+<li><a class="reference internal" href="#understanding-modern-processors">4. Understanding Modern Processors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">最佳实践</a><ul>
+<li><a class="reference internal" href="#web">云医院web项目中的优化策略</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/programming/common/code_optimization.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="code-optimization">
+<h1>Code Optimization<a class="headerlink" href="#code-optimization" title="Permalink to this headline">¶</a></h1>
+<p>The biggest speedup you’ll ever get with a program will be when you first get it working.</p>
+<blockquote>
+<div>–John K. Ousterhout</div></blockquote>
+<div class="section" id="id1">
+<h2>一、 基本原则<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>优化的第一项原则就是保证代码在所有条件下运行正确，效率高但有bug的代码根本没有用。</li>
+<li>必须写出简洁清晰的代码，在review或者modification时可以更有效率。</li>
+<li>使用合适的数据结构和算法。</li>
+<li>编写出编译器能给出最大优化的代码。</li>
+<li>使用任务分割和并行计算来提高效率。</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>二、 优化方案的演变<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>我们度量循环程序中的速度，使用cycles per element（“CPE”），意思是每次迭代需要的时钟周期数。
+我们考虑将一个vector中的所有元素进行相加或者相乘，使用如下方案，CPE在29左右。</p>
+<div class="code cpp highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="nb">int</span> <span class="n">data_t</span><span class="p">;</span>
+<span class="n">typedef</span> <span class="n">struct</span><span class="p">{</span>
+    <span class="n">long</span> <span class="nb">int</span> <span class="nb">len</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">vec_rec</span><span class="p">,</span> <span class="o">*</span><span class="n">vec_prt</span><span class="p">;</span>
+
+<span class="c1">#define IDENT 0</span>
+<span class="c1">#define OP +</span>
+
+<span class="n">void</span> <span class="n">combine1</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data</span> <span class="o">*</span><span class="n">dest</span><span class="p">){</span>
+    <span class="n">long</span> <span class="nb">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">data_t</span> <span class="n">val</span><span class="p">;</span>
+        <span class="n">get_vec_element</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">val</span><span class="p">);</span>
+        <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="n">OP</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="code-motion">
+<h3>1. Code Motion<a class="headerlink" href="#code-motion" title="Permalink to this headline">¶</a></h3>
+<p>使用*Code Motion*技术，然vector的长度在整个计算过程中没有发生任何变化，我们就计算一次vector的长度，将其移出循环。
+将CPE提高8～12左右（integer～double）。</p>
+<div class="code cpp highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">combine2</span><span class="p">(</span><span class="n">vec_prt</span> <span class="n">v</span><span class="p">,</span> <span class="n">data</span> <span class="o">*</span><span class="n">dest</span><span class="p">){</span>
+    <span class="n">long</span> <span class="nb">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">long</span> <span class="nb">int</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">data_t</span> <span class="n">val</span><span class="p">;</span>
+        <span class="n">get_vec_element</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">val</span><span class="p">);</span>
+        <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="n">OP</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reducing-procedure-calls">
+<h3>2. Reducing Procedure Calls<a class="headerlink" href="#reducing-procedure-calls" title="Permalink to this headline">¶</a></h3>
+<p>使用*Reducing Procedure Calls*方式，可以减少循环内的方法调用。
+可以将加法的CPE降到6左右。</p>
+<div class="code cpp highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data_t</span> <span class="o">*</span><span class="n">get_vec_start</span><span class="p">(</span><span class="n">vec_prt</span> <span class="n">v</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">void</span> <span class="n">combine3</span><span class="p">(</span><span class="n">vec_prt</span> <span class="n">v</span><span class="p">,</span> <span class="n">data</span> <span class="o">*</span><span class="n">dest</span><span class="p">){</span>
+    <span class="n">long</span> <span class="nb">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">long</span> <span class="nb">int</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">get_vec_start</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="eliminating-unneeded-memory-reference">
+<h3>3. Eliminating Unneeded Memory Reference<a class="headerlink" href="#eliminating-unneeded-memory-reference" title="Permalink to this headline">¶</a></h3>
+<p>减少不必要的内存使用，因为汇编代码不能直接计算内存中的数据，需要进行提取到寄存器中，在进行计算和存储。
+通过减少内存的引用，可以将CPE提高到2～5(integer~double)。但编译器并不会进行这样的优化，因为编译器是非常小心的。
+考虑如下情况，*dest指向v中的某个数据，这样的话就会改变数组的值导致结果的不一致。</p>
+<div class="code cpp highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">combine4</span><span class="p">(</span><span class="n">vec_prt</span> <span class="n">v</span><span class="p">,</span> <span class="n">data</span> <span class="o">*</span><span class="n">dest</span><span class="p">){</span>
+    <span class="n">long</span> <span class="nb">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">long</span> <span class="nb">int</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">get_vec_start</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">data_t</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>通过减少内存的引用，可以将CPE提高到2～5(integer~double)。但编译器并不会进行这样的优化，因为编译器是非常小心的。
+考虑如下情况，*dest指向v中的某个数据，这样的话就会改变数组的值导致结果的不一致。</p>
+<p>通过加入编译选项-O2,可以将CPE减少到3～5（integer～double），汇编代码如下，减少了从内存读取的步骤：</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span>// i in %rdx, data in %rax, limit in %rbp, dest at %rx12, product in %xmm0
+.L560:                                  loop:
+    mulss   (%rax, %rdx, 4), %xmm0           Multiply product by data[i]
+    addq    $1, %rdx                        Increment i
+    cmpq    %rdx, %rbp                      Compare limit:i
+    movss   %xmm0, (%r12)                   Store product at dest
+    jg      .L560                           If &gt;, goto loop
+</pre></div>
+</div>
+<p>与-O1的情况进行比较，结果如下：</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">L498</span><span class="p">:</span>                                  <span class="n">loop</span><span class="p">:</span>
+    <span class="n">movss</span> <span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">),</span> <span class="o">%</span><span class="n">xmm0</span>                     <span class="n">Read</span> <span class="n">product</span> <span class="kn">from</span> <span class="nn">dest</span>
+    <span class="n">mulss</span> <span class="p">(</span><span class="o">%</span><span class="n">rax</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">rdx</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="o">%</span><span class="n">xmm0</span>            <span class="n">Multiply</span> <span class="n">product</span> <span class="n">by</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">movss</span> <span class="o">%</span><span class="n">xmm0</span><span class="p">,</span> <span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span>                     <span class="n">Store</span> <span class="n">product</span> <span class="n">at</span> <span class="n">dest</span>
+    <span class="n">cmpq</span> <span class="o">%</span><span class="n">rdx</span><span class="p">,</span> <span class="o">%</span><span class="n">r12</span>                         <span class="n">Compare</span> <span class="n">i</span><span class="p">:</span><span class="n">limit</span>
+    <span class="n">jg</span>   <span class="o">.</span><span class="n">L498</span>                              <span class="k">if</span> <span class="o">&gt;</span><span class="p">,</span> <span class="n">goto</span> <span class="n">loop</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="understanding-modern-processors">
+<h3>4. Understanding Modern Processors<a class="headerlink" href="#understanding-modern-processors" title="Permalink to this headline">¶</a></h3>
+<p>We must exploit the microarchitecture of the processor(instruction-level parralelism). Modern processor can employ a
+technique known as branch prediction. Using speculative execution, the processor begins fetching and decoding instructions
+at where it predicts the branch will go, and even begins executing these operations. If it later determines that the branch
+was predicted incorrectly, it resets the state to that at branch point and begins fetching and executing instructions in
+the other derection.</p>
+<p>But the result will not be stored in registers or data memory until the processor can be certain that these instructions
+should actually been executed.</p>
+<p>Incorrect prediction(misprediction) incurs a significant cost in performance. It takes a while before the new instructions
+can be fetched, decoded, and sent to the execution units.</p>
+<p>The execution units can send results directly to each other, to expedite the communication of reults from one instruction
+to another.</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="web">
+<h3>云医院web项目中的优化策略<a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>尽量重用对象，如连接String的时候尽量使用StringBuffer和StringBuilder，可以减少系统生成对象的时间，还能减少回收这些对象的时间；</li>
+<li>尽量使用局部变量，局部变量保存在Stack中，而静态和实例变量存储在Heap中，Heap访问比Stack访问慢，而且局部变量能被编译器优化；</li>
+<li>减少对代码的重复计算，有计算的情况保留结果值，比重新计算节省资源;</li>
+<li>不要在循环中使用try catch语句块;</li>
+<li>建立单字段索引，联合索引，优化mysql语句；</li>
+</ol>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span>SELECT
+    tb1.service_instance_code
+FROM
+    ch_ser_service_instance AS tb1,
+    ch_ser_service_instance_owner AS tb2
+WHERE tb1.service_instance_code = tb2.service_instance_code
+AND tb2.owner_type = &#39;DOCTOR&#39;
+AND tb2.owner_code = &#39;C569DAACBE4B0AAC03A718B52&#39;
+ORDER BY service_status DESC,
+service_start_date DESC
+IMIT 0, 8
+
+在两个表中100w数据量以上时，执行时间在27s左右，优化为如下代码后，执行时间变为2s左右
+
+SELECT
+    service_instance_code
+FROM
+    (SELECT
+        tb1.service_instance_code,
+        tb1.service_status,
+        tb1.service_start_date
+    FROM
+        ch_ser_service_instance AS tb1,
+        ch_ser_service_instance_owner AS tb2
+    WHERE tb1.service_instance_code = tb2.service_instance_code
+    AND tb2.owner_type = &#39;DOCTOR&#39;
+    AND tb2.owner_code = &#39;C569DAACBE4B0AAC03A718B52&#39;) tb3
+ORDER BY service_status DESC,
+    service_start_date DESC
+LIMIT 0, 8
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li>mvc中的intercepor里尽量减少代码逻辑和数据库访问，因为每次访问DispatchServlet时都会执行interceptor中的代码，如果里面有过多的
+数据库访问，造成用户数大量并发中出现严重的性能问题，在云医院的interceptor中，就多次访问数据库并且还进行了远程调用phr接口，
+修改后进行一次调用后进行缓存，存储到redis中或者session中都可以解决这个问题。</li>
+</ol>
+<p>Java本身在编译器上做了很多优化，而且是一门成熟的语言，在编写代码时不像C++那样需要自己管理内存，简化了很多优化工作，同时给程序员
+表现的机会也没那么多，只要注意几个浪费空间和时间点，其余可以在算法上做优化，语言本身的优化可能还要看多线程这块如何进行。</p>
+<dl class="docutils">
+<dt>参考资料：</dt>
+<dd><a class="reference external" href="http://nakata-yf.iteye.com/blog/23545">http://nakata-yf.iteye.com/blog/23545</a></dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

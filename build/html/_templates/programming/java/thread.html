@@ -23,7 +23,9 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" /> 
+    <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
+    <link rel="next" title="Synchronous And Asynchronous" href="synchronous.html" />
+    <link rel="prev" title="Junit Test" href="junit.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,6 +34,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="synchronous.html" title="Synchronous And Asynchronous"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="junit.html" title="Junit Test"
+             accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -44,10 +52,17 @@
 <li><a class="reference internal" href="#id2">任务执行顺序</a></li>
 <li><a class="reference internal" href="#id3">阻塞队列</a></li>
 <li><a class="reference internal" href="#id4">拒绝策略</a></li>
+<li><a class="reference internal" href="#io">IO线程与业务线程分离</a></li>
 </ul>
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="junit.html"
+                        title="previous chapter">Junit Test</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="synchronous.html"
+                        title="next chapter">Synchronous And Asynchronous</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/_templates/programming/java/thread.txt"
@@ -165,6 +180,15 @@ tryTransfer方法：
 </pre></div>
 </div>
 </div>
+<div class="section" id="io">
+<h2>IO线程与业务线程分离<a class="headerlink" href="#io" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>职责明确化。IO线程只负责IO的读写、编解码和心跳等简单功能，以便及时高效处理IO事件；业务线程负责复杂的业务处理；</li>
+<li>降低客户端间的相互影响。对于同一IO线程，避免了由于执行客户端A的请求阻塞而无法接受客户端B的请求等现象；</li>
+<li>IO线程负责监听，解码，编码，心跳；IO线程中尽量不要进行业务解析，避免阻塞IO线程；</li>
+<li>业务线程负责进行业务无处理，中间使用缓冲队列进行解耦；</li>
+</ul>
+</div>
 </div>
 
 
@@ -179,6 +203,12 @@ tryTransfer方法：
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="synchronous.html" title="Synchronous And Asynchronous"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="junit.html" title="Junit Test"
+             >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>

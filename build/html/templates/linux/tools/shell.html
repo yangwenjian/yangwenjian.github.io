@@ -1,0 +1,171 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Shell &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Shell</a><ul>
+<li><a class="reference internal" href="#id1">Shell</a></li>
+<li><a class="reference internal" href="#awk">Awk</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/linux/tools/shell.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="shell">
+<h1>Shell<a class="headerlink" href="#shell" title="Permalink to this headline">¶</a></h1>
+<p>Shell is the most powerfull tool in linux, no one of them.(最强工具，没有之一^-^)</p>
+<div class="section" id="id1">
+<h2>Shell<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>密码的艺术</p>
+<p>我们在使用服务器时经常喜欢用带有!&#64;#$的某些字符作为密码，这带来一个问题，shell中!是有意义的，表示上一条命令。
+这里有两种方式解决这个问题：</p>
+<p>进行转意，例如：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mysqldump -uroot -p&quot;Hello@&quot;\!&quot;$&quot; -A &gt; dump.sql
+</pre></div>
+</div>
+<p>或者使用脚本进行变量转换，例如：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>dumpfile=$(date +%Y%m%d%H%M).sql
+dbuser=root
+dbpassword=&#39;Hello@!$&#39;
+mysqldump -u${dbuser} -p${dbpassword} -A &gt; ${dumpfile}
+</pre></div>
+</div>
+</div>
+<div class="section" id="awk">
+<h2>Awk<a class="headerlink" href="#awk" title="Permalink to this headline">¶</a></h2>
+<p>Awk is very popular in linux operation. Awk process with text in architecutre.
+It defines every line one record, and defines every string one field, which is devided by something with others.</p>
+<p>Some examples:</p>
+<p>打印第一行：    awk ‘NR==1{print $0}’</p>
+<p>打印第一行最后一个字段：    awk -F: ‘NR==1{print $NF}’</p>
+<p>This is a shell use awk to start all the docker container when the power is on. I put this shell to excute in /etc/rc.local.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/bin/bash
+
+list=`docker ps -a | awk &#39;NR!=1{print $1}&#39;`
+echo ${list}
+
+for container in $list
+    do
+    docker start $container
+    done
+</pre></div>
+</div>
+<p>This is a shell check gmail.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/bin/bash
+
+curl -u yangwenjian99@gmail.com --silent &quot;https://mail.google.com/mail/feed/atom&quot; | perl -ne \
+    &#39;
+print &quot;Subject: $1 &quot; if /&lt;title&gt;(.+?)&lt;\/title&gt;/ &amp;&amp; $title++;
+print &quot;(from $1)\n&quot; if /&lt;email&gt;(.+?)&lt;\/email&gt;/
+    &#39;
+</pre></div>
+</div>
+<p>This is an example to check network.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/bin/bash
+
+for((i=1;i&lt;=255;i++));do
+    ping -c 5 192.168.1.$i
+    done
+</pre></div>
+</div>
+<p>Here is a pit in my work. I want to count the first line of one file, but it doesn’t work.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>count=0
+sum=0
+awk &#39;{print $1}&#39; public/shell/testfile | while read onehelloline
+do
+    echo $onehelloline
+    ((count= count+1))
+    echo $count
+    ((sum= sum+onehelloline))
+    echo $sum
+done
+echo $count
+echo $sum
+averagetime=`expr $(($sum/$count))`
+echo $averagetime
+</pre></div>
+</div>
+<p>最后发现count和sum都是0,原因是那块循环中并没有影响到全局变量。修改循环变量如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>data1=`awk &#39;{print $1}&#39; public/shell/testfile`
+for data in $data1;do
+    ((count= count+1))
+    ((sum= sum+data))
+done
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

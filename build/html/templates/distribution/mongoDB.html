@@ -1,0 +1,322 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>NoSQL and MongoDB &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">NoSQL and MongoDB</a><ul>
+<li><a class="reference internal" href="#sql-vs-nosql">SQL vs NoSQL</a><ul>
+<li><a class="reference internal" href="#history">History</a></li>
+<li><a class="reference internal" href="#datamodal">DataModal</a></li>
+<li><a class="reference internal" href="#transaction">Transaction</a></li>
+<li><a class="reference internal" href="#sql-or-nosql">SQL or NoSQL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mongdb">MongDB</a><ul>
+<li><a class="reference internal" href="#key-feature">Key Feature</a></li>
+<li><a class="reference internal" href="#document">Document</a></li>
+<li><a class="reference internal" href="#bson-types">BSON Types</a><ul>
+<li><a class="reference internal" href="#objectid">ObjectId</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mongodb">mongodb高级特性</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/templates/distribution/mongoDB.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="nosql-and-mongodb">
+<h1>NoSQL and MongoDB<a class="headerlink" href="#nosql-and-mongodb" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="sql-vs-nosql">
+<h2>SQL vs NoSQL<a class="headerlink" href="#sql-vs-nosql" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="history">
+<h3>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h3>
+<p>SQL：persistency, transaction, integration;</p>
+<p>NoSQL：non-relational, cluster-friendly,schema-less;</p>
+</div>
+<div class="section" id="datamodal">
+<h3>DataModal<a class="headerlink" href="#datamodal" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Document: mongoDB;</li>
+<li>Column-family: Cassandra, HBASE;</li>
+<li>Graph: Neo4j;</li>
+<li>Key-Value: redis;</li>
+</ul>
+<p>其中Document和Key-Value类似，只是Document-base的存储更transparent;</p>
+</div>
+<div class="section" id="transaction">
+<h3>Transaction<a class="headerlink" href="#transaction" title="Permalink to this headline">¶</a></h3>
+<p>RDBMS == ACID;</p>
+<p>NoSQL == Base;</p>
+<p>NoSQL并不那么依赖于事务，只要操作是aggregate boundry的；</p>
+<p>single aggregate == atomic, consistency, isolation, durable;</p>
+<p>Consistency分为logical和replication，其中logical在单机或者集群sharding时都需要注意，replication在集群中需要注意；</p>
+<p>CAP原则：在Partion保证的情况下，只能在consistency和availability做选择；</p>
+</div>
+<div class="section" id="sql-or-nosql">
+<h3>SQL or NoSQL<a class="headerlink" href="#sql-or-nosql" title="Permalink to this headline">¶</a></h3>
+<p>区别在于组织数据结构的方式</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span>SQL: schema, 组织好的数据，优美的格式，高效的sql查询，join连接多表，ACID，structure unchanging;
+     减少重复，防止变化，覆盖业务，交易时事务；
+</pre></div>
+</div>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span>NoSQL: data not clear, flexible, 关联较少， large volumes, cloudcomputing, scale across data centers, rapid development;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="mongdb">
+<h2>MongDB<a class="headerlink" href="#mongdb" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>MongoDB is an open-source document database that provides high performance, high availability, and automatic scaling.</li>
+<li>MongoDB stores data records as BSON documents. BSON is a binary representation of JSON documents, though it contains more data types than JSON.</li>
+</ul>
+<div class="section" id="key-feature">
+<h3>Key Feature<a class="headerlink" href="#key-feature" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>High Performance<ul>
+<li>reduces I/O activity</li>
+<li>Indexes support faster queries</li>
+</ul>
+</li>
+<li>Rich Query Language<ul>
+<li>Data Aggregation</li>
+<li>Text Search and Geospatial Queries</li>
+</ul>
+</li>
+<li>High Availability<ul>
+<li>automatic failover</li>
+<li>data redundancy</li>
+</ul>
+</li>
+<li>Horizontal Scalability<ul>
+<li>Sharding distributes data across a cluster of machines</li>
+<li>creating zones of data based on the shard key</li>
+</ul>
+</li>
+<li>Support for Multiple Storage Engines<ul>
+<li>WiredTiger Storage Engine</li>
+<li>In-Memory Storage Engine</li>
+<li>MMAPv1 Storage Engine</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="document">
+<h3>Document<a class="headerlink" href="#document" title="Permalink to this headline">¶</a></h3>
+<p>The maximum BSON document size is 16 megabytes.
+The maximum document size helps ensure that a single document cannot use excessive amount of RAM or,
+during transmission, excessive amount of bandwidth.</p>
+</div>
+<div class="section" id="bson-types">
+<h3>BSON Types<a class="headerlink" href="#bson-types" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="objectid">
+<h4>ObjectId<a class="headerlink" href="#objectid" title="Permalink to this headline">¶</a></h4>
+<p>In MongoDB, each document stored in a collection requires a unique _id field that acts as a primary key.</p>
+<ul class="simple">
+<li>a 4-byte value representing the seconds since the Unix epoch</li>
+<li>a 3-byte machine identifier</li>
+<li>a 2-byte process id</li>
+<li>a 3-byte counter, starting with a random value</li>
+</ul>
+<p>ObjectId Ordering:</p>
+<ul class="simple">
+<li>in the mongo shell, you can access the creation time of the ObjectId, using the ObjectId.getTimestamp() method.</li>
+<li>sorting on an _id field that stores ObjectId values is roughly equivalent to sorting by creation time.</li>
+<li>Only contain one second of temporal resolution, so ObjectId values created within the same second do not have a guaranteed ordering.</li>
+<li>Are generated by clients, which may have differing system clocks.</li>
+</ul>
+<p>Data Types:</p>
+<ul class="simple">
+<li>String: UTF-8, drivers for each programming language convert from the language’s string format to UTF-8 when serializing and deserializing BSON.</li>
+<li>Timestamps: 64 bit, 32 bits time_t value, 32 bits an incrementing ordinal for operations within a given second..</li>
+<li>Date: 64-bit integer that represends the milliseconds since the Unix epoch; singed.</li>
+</ul>
+<p>Objects Comparison:</p>
+<ul class="simple">
+<li>Recursively compare key-value pairs in the order that they appear within the BSON object.</li>
+<li>Compare the key field names.</li>
+<li>If the key field names are equal, compare the field values.</li>
+<li>If the field values are equal, compare the next key/value pair (return to step 1). An object without further pairs is less than an object with further pairs.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="mongodb">
+<h2>mongodb高级特性<a class="headerlink" href="#mongodb" title="Permalink to this headline">¶</a></h2>
+<p>关系维护：MongoDB 引用有两种：手动引用（Manual References）/DBRefs；</p>
+<p>MongoDB 覆盖索引查询
+&gt;db.users.ensureIndex({gender:1,user_name:1})
+&gt;db.users.find({gender:”M”},{user_name:1,_id:0})
+也就是说，对于上述查询，MongoDB的不会去数据库文件中查找。相反，它会从索引中提取数据，这是非常快速的数据查询
+下面的实例没有排除_id，查询就不会被覆盖：
+&gt;db.users.find({gender:”M”},{user_name:1})</p>
+<p>mongodb不支持事务，所以，在你的项目中应用时，要注意这点。无论什么设计，都不要要求mongodb保证数据的完整性。
+但是mongodb提供了许多原子操作，比如文档的保存，修改，删除等，都是原子操作
+.. code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="s2">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Los Angeles&quot;</span><span class="p">,</span>
+<span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;California&quot;</span><span class="p">,</span>
+<span class="s2">&quot;pincode&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span>
+<span class="p">},</span>
+<span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span>
+<span class="s2">&quot;music&quot;</span><span class="p">,</span>
+<span class="s2">&quot;cricket&quot;</span><span class="p">,</span>
+<span class="s2">&quot;blogs&quot;</span>
+<span class="p">],</span>
+<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Tom Benzamin&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用以下命令创建数组索引：
+&gt;db.users.ensureIndex({“tags”:1})
+创建索引后，我们可以这样检索集合的 tags 字段：
+&gt;db.users.find({tags:”cricket”})
+为了验证我们使用使用了索引，可以使用 explain 命令：
+&gt;db.users.find({tags:”cricket”}).explain()
+以上命令执行结果中会显示 “cursor” : “BtreeCursor tags_1” ，则表示已经使用了索引。</p>
+<p>索引子文档字段
+假设我们需要通过city、state、pincode字段来检索文档，由于这些字段是子文档的字段，所以我们需要对子文档建立索引。
+为子文档的三个字段创建索引，命令如下：
+&gt;db.users.ensureIndex({“address.city”:1,”address.state”:1,”address.pincode”:1})
+一旦创建索引，我们可以使用子文档的字段来检索数据：
+&gt;db.users.find({“address.city”:”Los Angeles”})
+查询表达不一定遵循指定的索引的顺序，mongodb 会自动优化。所以上面创建的索引将支持以下查询：
+&gt;db.users.find({“address.state”:”California”,”address.city”:”Los Angeles”})</p>
+<p>MongoDB Map Reduce
+Map-Reduce是一种计算模型，简单的说就是将大批量的工作（数据）分解（MAP）执行，然后再将结果合并成最终结果（REDUCE）。MongoDB提供的Map-Reduce非常灵活，对于大规模数据分析也相当实用。</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">db</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">mapReduce</span><span class="p">(</span>
+<span class="n">function</span><span class="p">()</span> <span class="p">{</span><span class="n">emit</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">);},</span> <span class="o">//</span><span class="nb">map</span> <span class="n">函数</span>
+<span class="n">function</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">values</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">reduceFunction</span><span class="p">},</span> <span class="o">//</span><span class="n">reduce</span> <span class="n">函数</span>
+<span class="p">{</span>
+<span class="n">out</span><span class="p">:</span> <span class="n">collection</span><span class="p">,</span>
+<span class="n">query</span><span class="p">:</span> <span class="n">document</span><span class="p">,</span>
+<span class="n">sort</span><span class="p">:</span> <span class="n">document</span><span class="p">,</span>
+<span class="n">limit</span><span class="p">:</span> <span class="n">number</span>
+<span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>使用 MapReduce 要实现两个函数 Map 函数和 Reduce 函数,Map 函数调用 emit(key, value), 遍历 collection 中所有的记录, 将 key 与 value 传递给 Reduce 函数进行处理。
+Map 函数必须调用 emit(key, value) 返回键值对。
+参数说明:
+map ：映射函数 (生成键值对序列,作为 reduce 函数参数)。
+reduce 统计函数，reduce函数的任务就是将key-values变成key-value，也就是把values数组变成一个单一的值value。。
+out 统计结果存放集合 (不指定则使用临时集合,在客户端断开后自动删除)。
+query 一个筛选条件，只有满足条件的文档才会调用map函数。（query。limit，sort可以随意组合）
+sort 和limit结合的sort排序参数（也是在发往map函数前给文档排序），可以优化分组机制
+limit 发往map函数的文档数量的上限（要是没有limit，单独使用sort的用处不大）</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span><span class="n">db</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">mapReduce</span><span class="p">(</span>
+<span class="n">function</span><span class="p">()</span> <span class="p">{</span> <span class="n">emit</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">user_name</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="p">},</span>
+<span class="n">function</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">Array</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)},</span>
+<span class="p">{</span>
+<span class="n">query</span><span class="p">:{</span><span class="n">status</span><span class="p">:</span><span class="s2">&quot;active&quot;</span><span class="p">},</span>
+<span class="n">out</span><span class="p">:</span><span class="s2">&quot;post_total&quot;</span>
+<span class="p">}</span>
+<span class="p">)</span>
+
+<span class="p">{</span>
+<span class="s2">&quot;result&quot;</span> <span class="p">:</span> <span class="s2">&quot;post_total&quot;</span><span class="p">,</span>
+<span class="s2">&quot;timeMillis&quot;</span> <span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
+<span class="s2">&quot;counts&quot;</span> <span class="p">:</span> <span class="p">{</span>
+<span class="s2">&quot;input&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+<span class="s2">&quot;emit&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+<span class="s2">&quot;reduce&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="s2">&quot;output&quot;</span> <span class="p">:</span> <span class="mi">2</span>
+<span class="p">},</span>
+<span class="s2">&quot;ok&quot;</span> <span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>MongoDB 全文检索
+全文检索对每一个词建立一个索引，指明该词在文章中出现的次数和位置，当用户查询时，检索程序就根据事先建立的索引进行查找，并将查找的结果反馈给用户的检索方式。
+这个过程类似于通过字典中的检索字表查字的过程。</p>
+<p>MongoDB 正则表达式
+正则表达式是使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。
+许多程序设计语言都支持利用正则表达式进行字符串操作。
+MongoDB 使用 $regex 操作符来设置匹配字符串的正则表达式。
+MongoDB使用PCRE (Perl Compatible Regular Expression) 作为正则表达式语言。
+&gt;db.posts.find({post_text:{$regex:”runoob”}})</p>
+<p>如果你的文档中字段设置了索引，那么使用索引相比于正则表达式匹配查找所有的数据查询速度更快。
+如果正则表达式是前缀表达式，所有匹配的数据将以指定的前缀字符串为开始。例如： 如果正则表达式为 ^tut ，查询语句将查找以 tut 为开头的字符串。
+这里面使用正则表达式有两点需要注意：
+正则表达式中使用变量。一定要使用eval将组合的字符串进行转换，不能直接将字符串拼接后传入给表达式。否则没有报错信息，只是结果为空！实例如下：
+var name=eval(“/” + 变量值key +”/i”);</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

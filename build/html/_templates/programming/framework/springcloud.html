@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="top" title="knight 1.0.1 documentation" href="../../../index.html" />
     <link rel="next" title="Spring Cloud Netflix" href="springcloud_netflix.html" />
-    <link rel="prev" title="Spring" href="spring.html" /> 
+    <link rel="prev" title="Spring Boot" href="spring_boot.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,7 +38,7 @@
           <a href="springcloud_netflix.html" title="Spring Cloud Netflix"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="spring.html" title="Spring"
+          <a href="spring_boot.html" title="Spring Boot"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -48,7 +48,8 @@
   <h3><a href="../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Spring Cloud</a><ul>
-<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#id1">微服务</a><ul>
 <li><a class="reference internal" href="#feature">Feature</a></li>
 <li><a class="reference internal" href="#main-project">Main Project</a><ul>
 <li><a class="reference internal" href="#spring-cloud-config">Spring Cloud Config</a></li>
@@ -75,12 +76,12 @@
 <li><a class="reference internal" href="#spring-cloud-openfeign">Spring Cloud OpenFeign</a></li>
 <li><a class="reference internal" href="#spring-cloud-pipelines">Spring Cloud Pipelines</a></li>
 <li><a class="reference internal" href="#spring-cloud-function">Spring Cloud Function</a></li>
-<li><a class="reference internal" href="#id1">个人理解</a></li>
+<li><a class="reference internal" href="#id2">个人理解</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id2">Spring Cloud Gateway</a><ul>
+<li><a class="reference internal" href="#id3">Spring Cloud Gateway</a><ul>
 <li><a class="reference internal" href="#glossary">Glossary</a></li>
 <li><a class="reference internal" href="#how-it-works">How it works</a></li>
 <li><a class="reference internal" href="#route-predicate-factories">Route Predicate Factories</a></li>
@@ -93,7 +94,7 @@
 <li><a class="reference internal" href="#tls-ssl">TLS/SSL</a></li>
 <li><a class="reference internal" href="#cors-configuration">CORS Configuration</a></li>
 <li><a class="reference internal" href="#using-spring-mvc-or-webflux">Using Spring MVC or Webflux</a></li>
-<li><a class="reference internal" href="#id3">最佳实践</a></li>
+<li><a class="reference internal" href="#id4">最佳实践</a></li>
 </ul>
 </li>
 </ul>
@@ -101,8 +102,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="spring.html"
-                        title="previous chapter">Spring</a></p>
+  <p class="topless"><a href="spring_boot.html"
+                        title="previous chapter">Spring Boot</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="springcloud_netflix.html"
                         title="next chapter">Spring Cloud Netflix</a></p>
@@ -138,6 +139,22 @@
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Spring Cloud is based on Spring boot.</p>
+</div>
+<div class="section" id="id1">
+<h2>微服务<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>微服务基本原则：</p>
+<ul class="simple">
+<li>单一目的 - 每项服务应专注于一个目的并做好。</li>
+<li>松耦合 - 服务彼此间没有太多联系。更改一项服务时不应要求更改其他服务。应仅通过公共服务接口进行服务之间的通信。</li>
+<li>高内聚 - 每个服务将所有相关行为和数据封装在一起。如果我们需要构建新功能，所有更改仅限于一个服务。</li>
+</ul>
+<p>缺少单一目的，每个微服务最终会做太多事情，成长为多个“单体”服务。我们不会从微服务架构中获得全部好处，还要支付运营成本。</p>
+<p>缺少松耦合，对一项服务的更改会影响其他服务，因此我们无法快速安全地发布更改，这是微服务架构的核心优势。更重要的是，紧耦合引起的问题可能是灾难性的，例如数据不一致甚至数据丢失。</p>
+<p>缺少高内聚，我们将最终得到一个分布式的单体系统，一组混乱的服务，必须同时进行更改和部署才能构建单一功能。由于多个服务协调的复杂性和成本（有时跨多个团队），分布式单体系统通常比集中式单体系统差得多。</p>
+<p>与此同时，了解微服务不是什么也很重要：</p>
+<p>微服务不是代码行数少或处理“微”任务的服务。这种误解来自“ 微服务” 这个名称。微服务架构的目标不是拥有尽可能多的小型服务。只要符合上述三项原则，服务也能够是复杂而重要的。</p>
+<p>微服务并不总是由新技术构建。尽管微服务架构能够让团队更轻松地验证新技术，但它并不是微服务架构的主要目标。只要团队从分离的服务中受益，就可以使用完全相同的技术栈构建新服务。</p>
+<p>微服务不是必须从头开始构建的服务。如果你已经拥有一个架构良好的单体应用程序，请避免养成从头开始构建每个新服务的习惯。也可以直接从单体服务中直接提取逻辑。同样，应该仍然遵循上述三个原则。</p>
 <div class="section" id="feature">
 <h3>Feature<a class="headerlink" href="#feature" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -263,8 +280,8 @@ zero downtime fashion and easilly rolled back of something goes wrong.</p>
 <p>Spring Cloud Function promotes the implementation of business logic via functions. It supports a uniform programming model across
 serverless providers, as well as the ability to run standalone (locally or in a PaaS).</p>
 </div>
-<div class="section" id="id1">
-<h4>个人理解<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id2">
+<h4>个人理解<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li>个人认为，如下几个服务是必要的：服务的自动注册和发现，负载均衡</li>
 <li>大型系统同时还需要：服务监控，服务链路跟踪，融断器</li>
@@ -273,8 +290,8 @@ serverless providers, as well as the ability to run standalone (locally or in a 
 </div>
 </div>
 </div>
-<div class="section" id="id2">
-<h2>Spring Cloud Gateway<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>Spring Cloud Gateway<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>Spring Cloud Gateway requires the Netty runtime provided by Spring Boot and Spring Webflux. It does not work in a traditional Servlet Container or built as a WAR.</p>
 <div class="section" id="glossary">
 <h3>Glossary<a class="headerlink" href="#glossary" title="Permalink to this headline">¶</a></h3>
@@ -475,8 +492,8 @@ public class GatewaySampleApplication {
 </pre></div>
 </div>
 </div>
-<div class="section" id="id3">
-<h3>最佳实践<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3>最佳实践<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <p>自定义filter</p>
 <div class="code java highlight-python"><div class="highlight"><pre><span></span>@Service
 public class AuthFilter implements GlobalFilter {
@@ -522,7 +539,7 @@ public class AuthFilter implements GlobalFilter {
           <a href="springcloud_netflix.html" title="Spring Cloud Netflix"
              >next</a> |</li>
         <li class="right" >
-          <a href="spring.html" title="Spring"
+          <a href="spring_boot.html" title="Spring Boot"
              >previous</a> |</li>
         <li><a href="../../../index.html">knight 1.0.1 documentation</a> &raquo;</li> 
       </ul>

@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Spring AOP &#8212; knight 1.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Spring AOP</a><ul>
+<li><a class="reference internal" href="#id1">Spring AOP</a></li>
+<li><a class="reference internal" href="#id2">最佳实践</a><ul>
+<li><a class="reference internal" href="#spring-bootehcache">Spring Boot配置ehcache</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/templates/programming/framework/spring_aop.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="spring-aop">
+<h1>Spring AOP<a class="headerlink" href="#spring-aop" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>Spring AOP<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Spring AOP可以有如下几种实现形式：</p>
+<p>1.经典的基于代理的AOP；
+2.&#64;AspectJ注解驱动的切面；
+3.纯POJO切面；
+4.注入式AspectJ切面。</p>
+<p>在base这个项目中，我使用aspectj进行aop代码的插入，这个配置起来比较方便，而且效率也很高。</p>
+<p>配置文件：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!--启动Spring对@AspectJ注解的支持 --&gt;
+&lt;aop:aspectj-autoproxy/&gt;
+</pre></div>
+</div>
+<p>这样就开启spring的aspectj的功能，我们就可以使用代码实现AOP编程了。</p>
+<p>代码实例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@Component</span>
+<span class="nd">@Aspect</span>
+<span class="n">public</span> <span class="k">class</span> <span class="nc">NovaAspectAdvice</span> <span class="p">{</span>
+    <span class="nd">@Before</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span><span class="s2">&quot;execution(* com.neunn.cloud.*.*(..))&quot;</span><span class="p">)</span>
+    <span class="n">public</span> <span class="n">void</span> <span class="n">doBefore</span><span class="p">(</span><span class="n">JoinPoint</span> <span class="n">jp</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+    <span class="nd">@After</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span><span class="s2">&quot;execution(* com.neunn.cloud.*.*(..))&quot;</span><span class="p">)</span>
+    <span class="n">public</span> <span class="n">void</span> <span class="n">doAfter</span><span class="p">(</span><span class="n">JoinPoint</span> <span class="n">jp</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+    <span class="nd">@AfterReturning</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;execution(* com.neunn.*.create*(..))&quot;</span><span class="p">,</span> <span class="n">returning</span> <span class="o">=</span> <span class="s2">&quot;result&quot;</span><span class="p">)</span>
+    <span class="n">public</span> <span class="n">void</span> <span class="n">doAfter</span><span class="p">(</span><span class="n">JoinPoint</span> <span class="n">jp</span><span class="p">,</span> <span class="n">Object</span> <span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+    <span class="nd">@Around</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;execution(* com.neunn.*.create*(..))&quot;</span><span class="p">)</span>
+    <span class="n">public</span> <span class="n">void</span> <span class="n">doAround</span><span class="p">(</span><span class="n">ProceedingJoinPoint</span> <span class="n">pjp</span><span class="p">)</span> <span class="n">throws</span> <span class="n">Throwable</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+    <span class="nd">@AfterThrowing</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;execution(* com.neunn.*.create*(..))&quot;</span><span class="p">,</span> <span class="n">throwing</span> <span class="o">=</span> <span class="s2">&quot;e&quot;</span><span class="p">)</span>
+    <span class="n">public</span> <span class="n">void</span> <span class="n">doThrow</span><span class="p">(</span><span class="n">JoinPoint</span> <span class="n">jp</span><span class="p">,</span> <span class="n">Throwable</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这里简单解释下，aspectj只是其中一种实现方法，包括五种方法，before，after，afterreturn，around，afterthrow分别作用在截获方法的开始，之后，返回后，整个执行过程，抛出异常后。
+网上有个参考资料把after return中的参数写成了String类型，导致我开始运行的时候怎么也截获不到AfterReturning方法之内，差点就换其他方式进行截获了。</p>
+<p>这里around方式没有执行成功，返回的对象jersyclient解析不了，暂时还未解决这个问题。</p>
+</div>
+<div class="section" id="id2">
+<h2>最佳实践<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="spring-bootehcache">
+<h3>Spring Boot配置ehcache<a class="headerlink" href="#spring-bootehcache" title="Permalink to this headline">¶</a></h3>
+<p>在开发中有一条token需要集群中各个点进行缓存共享，这里需要使用ehcache的远程对象调用（或者广播）等方式进行配置。
+在开发中发现ehcache怎么也不生效，原本以为是applicationContext搞的鬼，比如没有进行annotation的配置。</p>
+<p>之后我又重新搭建了一套工程，使用springboot进行配置，但不是web工程，后来查看资料，普通工程和web工程的上下文使用
+的是不同的类，这是由Spring Boot自动识别并配置的，也可以通过手动setApplicatonContex或者setWebEnviroment方式进行
+配置，但这样配置后，自己启动一会就莫名退出了，原因待查。</p>
+<p>通过将好用的配置不断进行对比，关键的方式是在与缓存的调用方式：</p>
+<div class="code java highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@Service</span>
+<span class="n">public</span> <span class="k">class</span> <span class="nc">SemanticService</span><span class="p">{</span>
+
+    <span class="nd">@Cacheable</span><span class="p">(</span><span class="s2">&quot;tokenCache&quot;</span><span class="p">)</span>
+    <span class="n">public</span> <span class="n">String</span> <span class="n">getToken</span><span class="p">(){</span>
+        <span class="o">......</span>
+    <span class="p">}</span>
+    <span class="n">public</span> <span class="n">void</span> <span class="n">searchIndex</span><span class="p">(){</span>
+        <span class="n">String</span> <span class="n">token</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">getToken</span><span class="p">();</span><span class="o">//</span><span class="n">在自己的其他方法调用getToken方法</span>
+        <span class="o">......</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">//</span><span class="n">上层类方法</span>
+<span class="nd">@Autowired</span>
+<span class="n">private</span> <span class="n">SemanticService</span> <span class="n">semanticService</span><span class="p">;</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">semanticService</span><span class="p">(){</span>
+    <span class="n">String</span> <span class="n">token</span> <span class="o">=</span> <span class="n">semanticService</span><span class="o">.</span><span class="n">getToken</span><span class="p">();</span><span class="o">//</span><span class="n">在上层调用者上调用getToken方法</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>那么上述两种方法都能走cache吗？</p>
+<p>回答是前者不能调用cache，后者可以。其实大家都很熟悉Spring的调用栈，并不是像我们平时new一个对象然后进行调用，
+而是生成一个动态代理对象，通过反射的方式进行调用，如果这期间方法签名上有任何AOP的配置，在反射调用前会检查
+Annotation的配置，然后进行Annotation的调用，再执行该方法。但如果你在自己的方法中调用getToken，这样就跳过了
+Spring的AOP，就相当于我们自己简单调用了自己一下，跳过AOP就会导致Cache的注解失效了。</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">knight 1.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014, knight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>
